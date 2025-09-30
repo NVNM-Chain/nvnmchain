@@ -3,7 +3,6 @@ package cmd
 import (
 	"time"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/MANTRA-Chain/mantrachain/v5/app"
 	cmtcfg "github.com/cometbft/cometbft/config"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
@@ -34,7 +33,6 @@ func initAppConfig() (string, interface{}) {
 		EVM     cosmosevmserverconfig.EVMConfig
 		JSONRPC cosmosevmserverconfig.JSONRPCConfig
 		TLS     cosmosevmserverconfig.TLSConfig
-		Wasm    wasmtypes.NodeConfig   `mapstructure:"wasm"`
 		Oracle  oracleconfig.AppConfig `mapstructure:"oracle" json:"oracle"`
 	}
 
@@ -57,7 +55,6 @@ func initAppConfig() (string, interface{}) {
 		EVM:     *evmConfig,
 		JSONRPC: *cosmosevmserverconfig.DefaultJSONRPCConfig(),
 		TLS:     *cosmosevmserverconfig.DefaultTLSConfig(),
-		Wasm:    wasmtypes.DefaultNodeConfig(),
 		Oracle:  oracleCfg,
 	}
 	// The SDK's default minimum gas price is set to "" (empty value) inside
@@ -76,7 +73,6 @@ func initAppConfig() (string, interface{}) {
 
 	customAppTemplate := serverconfig.DefaultConfigTemplate +
 		cosmosevmserverconfig.DefaultEVMConfigTemplate +
-		wasmtypes.DefaultConfigTemplate() +
 		oracleconfig.DefaultConfigTemplate
 
 	return customAppTemplate, customAppConfig

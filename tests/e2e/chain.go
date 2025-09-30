@@ -7,8 +7,6 @@ import (
 	"cosmossdk.io/log"
 	evidencetypes "cosmossdk.io/x/evidence/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/MANTRA-Chain/mantrachain/v5/app"
 	"github.com/MANTRA-Chain/mantrachain/v5/app/params"
 	tokenfactorytypes "github.com/MANTRA-Chain/mantrachain/v5/x/tokenfactory/types"
@@ -57,7 +55,6 @@ func init() {
 	distribtypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	ratelimittypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	feemarkettypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-	wasmTypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	tokenfactorytypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 
 	cdc = encodingConfig.Codec
@@ -91,14 +88,12 @@ func (c *chain) configDir() string {
 }
 
 func (c *chain) createAndInitValidators(count int) error {
-	var emptyWasmOpts []wasmkeeper.Option
 	tempApplication := app.New(
 		log.NewNopLogger(),
 		dbm.NewMemDB(),
 		nil,
 		true,
 		app.EmptyAppOptions{},
-		emptyWasmOpts,
 		app.MANTRAChainID,
 		app.NoOpEvmAppOptions,
 	)
@@ -136,14 +131,12 @@ func (c *chain) createAndInitValidators(count int) error {
 }
 
 func (c *chain) createAndInitValidatorsWithMnemonics(count int, mnemonics []string) error { //nolint:unused // this is called during e2e tests
-	var emptyWasmOpts []wasmkeeper.Option
 	tempApplication := app.New(
 		log.NewNopLogger(),
 		dbm.NewMemDB(),
 		nil,
 		true,
 		app.EmptyAppOptions{},
-		emptyWasmOpts,
 		app.MANTRAChainID,
 		app.NoOpEvmAppOptions,
 	)

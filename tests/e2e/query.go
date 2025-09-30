@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,7 +9,6 @@ import (
 
 	"cosmossdk.io/math"
 	evidencetypes "cosmossdk.io/x/evidence/types"
-	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	tokenfactorytypes "github.com/MANTRA-Chain/mantrachain/v5/x/tokenfactory/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -508,64 +506,6 @@ func queryICAAccountAddress(endpoint, owner, connectionID string) (string, error
 	}
 
 	return icaAccountResp.Address, nil
-}
-
-func queryWasmParams(endpoint string) (wasmTypes.Params, error) {
-	body, err := httpGet(fmt.Sprintf("%s/cosmwasm/wasm/v1/codes/params", endpoint))
-	if err != nil {
-		return wasmTypes.Params{}, fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var codesResp wasmTypes.QueryParamsResponse
-	if err := cdc.UnmarshalJSON(body, &codesResp); err != nil {
-		return wasmTypes.Params{}, err
-	}
-
-	return codesResp.Params, nil
-}
-
-func queryWasmCodes(endpoint string) (wasmTypes.QueryCodesResponse, error) {
-	body, err := httpGet(fmt.Sprintf("%s/cosmwasm/wasm/v1/code", endpoint))
-	if err != nil {
-		return wasmTypes.QueryCodesResponse{}, fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var codesResp wasmTypes.QueryCodesResponse
-	if err := cdc.UnmarshalJSON(body, &codesResp); err != nil {
-		return wasmTypes.QueryCodesResponse{}, err
-	}
-
-	return codesResp, nil
-}
-
-func queryWasmContractInfo(endpoint, contractAddr string) (wasmTypes.QueryContractInfoResponse, error) {
-	body, err := httpGet(fmt.Sprintf("%s/cosmwasm/wasm/v1/contract/%s", endpoint, contractAddr))
-	if err != nil {
-		return wasmTypes.QueryContractInfoResponse{}, fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var contractInfoResp wasmTypes.QueryContractInfoResponse
-	if err := cdc.UnmarshalJSON(body, &contractInfoResp); err != nil {
-		return wasmTypes.QueryContractInfoResponse{}, err
-	}
-
-	return contractInfoResp, nil
-}
-
-func queryWasmContractSmart(endpoint, contractAddr, message string) (wasmTypes.QuerySmartContractStateResponse, error) {
-	// Base64 encode the message
-	encodedMessage := base64.StdEncoding.EncodeToString([]byte(message))
-	body, err := httpGet(fmt.Sprintf("%s/cosmwasm/wasm/v1/contract/%s/smart/%s", endpoint, contractAddr, encodedMessage))
-	if err != nil {
-		return wasmTypes.QuerySmartContractStateResponse{}, fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var contractResp wasmTypes.QuerySmartContractStateResponse
-	if err := cdc.UnmarshalJSON(body, &contractResp); err != nil {
-		return wasmTypes.QuerySmartContractStateResponse{}, err
-	}
-
-	return contractResp, nil
 }
 
 // TODO: Uncomment this function when CCV module is added

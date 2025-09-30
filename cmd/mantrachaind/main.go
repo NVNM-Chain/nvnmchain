@@ -5,7 +5,6 @@ import (
 	"os"
 
 	clienthelpers "cosmossdk.io/client/v2/helpers"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/MANTRA-Chain/mantrachain/v5/app"
 	"github.com/MANTRA-Chain/mantrachain/v5/cmd/mantrachaind/cmd"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
@@ -64,5 +63,4 @@ func SetAddressPrefixes(config *sdk.Config) {
 	config.SetBech32PrefixForAccount(Bech32Prefix, Bech32PrefixAccPub)
 	config.SetBech32PrefixForValidator(Bech32PrefixValAddr, Bech32PrefixValPub)
 	config.SetBech32PrefixForConsensusNode(Bech32PrefixConsAddr, Bech32PrefixConsPub)
-	config.SetAddressVerifier(wasmtypes.VerifyAddressLen())
 }

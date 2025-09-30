@@ -7,9 +7,6 @@ import (
 
 	"cosmossdk.io/log"
 	confixcmd "cosmossdk.io/tools/confix/cmd"
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmcli "github.com/CosmWasm/wasmd/x/wasm/client/cli"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/MANTRA-Chain/mantrachain/v5/app"
 	cmtcli "github.com/cometbft/cometbft/libs/cli"
 	dbm "github.com/cosmos/cosmos-db"
@@ -31,8 +28,6 @@ import (
 	evmdebug "github.com/cosmos/evm/client/debug"
 	cosmosevmserver "github.com/cosmos/evm/server"
 	cosmosevmserverflags "github.com/cosmos/evm/server/flags"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -76,8 +71,6 @@ func initRootCmd(
 		addModuleInitFlags,
 	)
 
-	wasmcli.ExtendUnsafeResetAllCmd(rootCmd)
-
 	// add keybase, auxiliary RPC, query, genesis, and tx child commands
 	rootCmd.AddCommand(
 		server.StatusCommand(),
@@ -95,7 +88,6 @@ func initRootCmd(
 
 func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd) //nolint:staticcheck
-	wasm.AddModuleInitFlags(startCmd)
 }
 
 // genesisCommand builds genesis-related `mantrachaind genesis` command. Users may provide application specific commands as a parameter
@@ -165,22 +157,17 @@ func newApp(
 	appOpts servertypes.AppOptions,
 ) servertypes.Application {
 	baseappOptions := server.DefaultBaseappOptions(appOpts)
-	var wasmOpts []wasmkeeper.Option
-	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
 
 	return app.New(
 		logger, db, traceStore, true,
 		appOpts,
-		wasmOpts,
 		app.MANTRAChainID,
 		app.EvmAppOptions,
 		baseappOptions...,
 	)
 }
 
-// appExport creates a new wasm app (optionally at a given height) and exports state.
+// appExport creates a new inveniem app (optionally at a given height) and exports state.
 func appExport(
 	logger log.Logger,
 	db dbm.DB,
@@ -191,7 +178,7 @@ func appExport(
 	appOpts servertypes.AppOptions,
 	modulesToExport []string,
 ) (servertypes.ExportedApp, error) {
-	var wasmApp *app.App
+	var inveniemApp *app.App
 	// this check is necessary as we use the flag in x/upgrade.
 	// we can exit more gracefully by checking the flag here.
 	homePath, ok := appOpts.Get(flags.FlagHome).(string)
@@ -208,29 +195,27 @@ func appExport(
 	viperAppOpts.Set(server.FlagInvCheckPeriod, 1)
 	appOpts = viperAppOpts
 
-	var emptyWasmOpts []wasmkeeper.Option
-	wasmApp = app.New(
+	inveniemApp = app.New(
 		logger,
 		db,
 		traceStore,
 		height == -1,
 		appOpts,
-		emptyWasmOpts,
 		app.MANTRAChainID,
 		app.EvmAppOptions,
 	)
 
 	if height != -1 {
-		if err := wasmApp.LoadHeight(height); err != nil {
+		if err := inveniemApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	}
 
-	return wasmApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
+	return inveniemApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
 }
 
 var tempDir = func() string {
-	dir, err := os.MkdirTemp("", "wasmd")
+	dir, err := os.MkdirTemp("", "inveniem")
 	if err != nil {
 		panic("failed to create temp dir: " + err.Error())
 	}

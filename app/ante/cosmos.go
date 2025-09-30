@@ -3,11 +3,8 @@ package ante
 import (
 	"errors"
 
-	corestoretypes "cosmossdk.io/core/store"
 	circuitante "cosmossdk.io/x/circuit/ante"
 	circuitkeeper "cosmossdk.io/x/circuit/keeper"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
@@ -21,12 +18,9 @@ import (
 // HandlerOptions extend the SDK's AnteHandler options by r	equiring the IBC
 // channel keeper.
 type HandlerOptions struct {
-	EvmOptions            EVMHandlerOptions
-	IBCKeeper             *keeper.Keeper
-	WasmConfig            *wasmTypes.NodeConfig
-	WasmKeeper            *wasmkeeper.Keeper
-	TXCounterStoreService corestoretypes.KVStoreService
-	CircuitKeeper         *circuitkeeper.Keeper
+	EvmOptions    EVMHandlerOptions
+	IBCKeeper     *keeper.Keeper
+	CircuitKeeper *circuitkeeper.Keeper
 }
 
 // Validate checks if the keepers are defined
@@ -36,15 +30,6 @@ func (options HandlerOptions) Validate() error {
 	}
 	if options.IBCKeeper == nil {
 		return errors.New("ibc keeper is required for ante builder")
-	}
-	if options.WasmConfig == nil {
-		return errors.New("wasm config is required for ante builder")
-	}
-	if options.WasmKeeper == nil {
-		return errors.New("wasm keeper is required for ante builder")
-	}
-	if options.TXCounterStoreService == nil {
-		return errors.New("wasm store service is required for ante builder")
 	}
 	if options.CircuitKeeper == nil {
 		return errors.New("circuit keeper is required for ante builder")
@@ -61,9 +46,6 @@ func newCosmosAnteHandler(options HandlerOptions) sdk.AnteHandler {
 			sdk.MsgTypeURL(&vestingtypes.MsgCreateVestingAccount{}),
 		),
 		ante.NewSetUpContextDecorator(),
-		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit), // after setup context to enforce limits early
-		wasmkeeper.NewCountTXDecorator(options.TXCounterStoreService),
-		wasmkeeper.NewGasRegisterDecorator(options.WasmKeeper.GetGasRegister()),
 		circuitante.NewCircuitBreakerDecorator(options.CircuitKeeper),
 		ante.NewExtensionOptionsDecorator(options.EvmOptions.ExtensionOptionChecker),
 		ante.NewValidateBasicDecorator(),

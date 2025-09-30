@@ -14,9 +14,7 @@ import (
 	pruningtypes "cosmossdk.io/store/pruning/types"
 	"cosmossdk.io/store/snapshots"
 	snapshottypes "cosmossdk.io/store/snapshots/types"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	abci "github.com/cometbft/cometbft/abci/types"
-	cmtjson "github.com/cometbft/cometbft/libs/json"
 	cmttypes "github.com/cometbft/cometbft/types"
 	dbm "github.com/cosmos/cosmos-db"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
@@ -47,10 +45,9 @@ type SetupOptions struct {
 	Logger   log.Logger
 	DB       *dbm.MemDB
 	AppOpts  servertypes.AppOptions
-	WasmOpts []wasmkeeper.Option
 }
 
-func setup(tb testing.TB, chainID string, withGenesis bool, invCheckPeriod uint, opts ...wasmkeeper.Option) (*App, GenesisState) {
+func setup(tb testing.TB, chainID string, withGenesis bool, invCheckPeriod uint) (*App, GenesisState) {
 	tb.Helper()
 	db := dbm.NewMemDB()
 	nodeHome := tb.TempDir()
@@ -65,7 +62,7 @@ func setup(tb testing.TB, chainID string, withGenesis bool, invCheckPeriod uint,
 	appOptions := make(simtestutil.AppOptionsMap, 0)
 	appOptions[flags.FlagHome] = nodeHome // ensure unique folder
 	appOptions[server.FlagInvCheckPeriod] = invCheckPeriod
-	app := New(log.NewNopLogger(), db, nil, true, appOptions, opts, MANTRAChainID, NoOpEvmAppOptions,
+	app := New(log.NewNopLogger(), db, nil, true, appOptions, MANTRAChainID, NoOpEvmAppOptions,
 		bam.SetChainID(chainID), bam.SetSnapshot(snapshotStore, snapshottypes.SnapshotOptions{KeepRecent: 2}))
 	if withGenesis {
 		return app, app.DefaultGenesis()
@@ -73,50 +70,8 @@ func setup(tb testing.TB, chainID string, withGenesis bool, invCheckPeriod uint,
 	return app, GenesisState{}
 }
 
-// NewWasmAppWithCustomOptions initializes a new App with custom options.
-func NewWasmAppWithCustomOptions(t *testing.T, isCheckTx bool, options SetupOptions) *App {
-	t.Helper()
-
-	privVal := mock.NewPV()
-	pubKey, err := privVal.GetPubKey()
-	require.NoError(t, err)
-	// create validator set with single validator
-	validator := cmttypes.NewValidator(pubKey, 1)
-	valSet := cmttypes.NewValidatorSet([]*cmttypes.Validator{validator})
-
-	// generate genesis account
-	senderPrivKey := secp256k1.GenPrivKey()
-	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
-	balance := banktypes.Balance{
-		Address: acc.GetAddress().String(),
-		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(100000000000000))),
-	}
-
-	app := New(options.Logger, options.DB, nil, true, options.AppOpts, options.WasmOpts, MANTRAChainID, NoOpEvmAppOptions)
-	genesisState := app.DefaultGenesis()
-	genesisState, err = GenesisStateWithValSet(app.AppCodec(), genesisState, valSet, []authtypes.GenesisAccount{acc}, balance)
-	require.NoError(t, err)
-
-	if !isCheckTx {
-		// init chain must be called to stop deliverState from being nil
-		stateBytes, err := cmtjson.MarshalIndent(genesisState, "", " ")
-		require.NoError(t, err)
-
-		// Initialize the chain
-		_, err = app.InitChain(
-			&abci.RequestInitChain{
-				Validators:      []abci.ValidatorUpdate{},
-				ConsensusParams: simtestutil.DefaultConsensusParams,
-				AppStateBytes:   stateBytes,
-			})
-		require.NoError(t, err)
-	}
-
-	return app
-}
-
 // Setup initializes a new App. A Nop logger is set in App.
-func Setup(t *testing.T, opts ...wasmkeeper.Option) *App {
+func Setup(t *testing.T) *App {
 	t.Helper()
 
 	privVal := mock.NewPV()
@@ -135,7 +90,7 @@ func Setup(t *testing.T, opts ...wasmkeeper.Option) *App {
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(100000000000000))),
 	}
 	chainID := "testing"
-	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, chainID, opts, balance)
+	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, chainID, balance)
 
 	return app
 }
@@ -149,12 +104,11 @@ func SetupWithGenesisValSet(
 	valSet *cmttypes.ValidatorSet,
 	genAccs []authtypes.GenesisAccount,
 	chainID string,
-	opts []wasmkeeper.Option,
 	balances ...banktypes.Balance,
 ) *App {
 	t.Helper()
 
-	app, genesisState := setup(t, chainID, true, 5, opts...)
+	app, genesisState := setup(t, chainID, true, 5)
 	genesisState, err := GenesisStateWithValSet(app.AppCodec(), genesisState, valSet, genAccs, balances...)
 	require.NoError(t, err)
 
@@ -184,7 +138,7 @@ func SetupWithGenesisValSet(
 	return app
 }
 
-// SetupWithEmptyStore set up a wasmd app instance with empty DB
+// SetupWithEmptyStore set up a app instance with empty DB
 func SetupWithEmptyStore(tb testing.TB) *App {
 	tb.Helper()
 	app, _ := setup(tb, "testing", false, 0)
@@ -255,8 +209,6 @@ func initAccountWithCoins(app *App, ctx sdk.Context, addr sdk.AccAddress, coins 
 	}
 }
 
-var emptyWasmOptions []wasmkeeper.Option
-
 // NewTestNetworkFixture returns a new App AppConstructor for network simulation tests
 func NewTestNetworkFixture() network.TestFixture {
 	dir, err := os.MkdirTemp("", "simapp")
@@ -265,12 +217,11 @@ func NewTestNetworkFixture() network.TestFixture {
 	}
 	defer os.RemoveAll(dir)
 
-	app := New(log.NewNopLogger(), dbm.NewMemDB(), nil, true, simtestutil.NewAppOptionsWithFlagHome(dir), emptyWasmOptions, MANTRAChainID, NoOpEvmAppOptions)
+	app := New(log.NewNopLogger(), dbm.NewMemDB(), nil, true, simtestutil.NewAppOptionsWithFlagHome(dir), MANTRAChainID, NoOpEvmAppOptions)
 	appCtr := func(val network.ValidatorI) servertypes.Application {
 		return New(
 			val.GetCtx().Logger, dbm.NewMemDB(), nil, true,
 			simtestutil.NewAppOptionsWithFlagHome(val.GetCtx().Config.RootDir),
-			emptyWasmOptions,
 			MANTRAChainID, NoOpEvmAppOptions,
 			bam.SetPruning(pruningtypes.NewPruningOptionsFromString(val.GetAppConfig().Pruning)),
 			bam.SetMinGasPrices(val.GetAppConfig().MinGasPrices),

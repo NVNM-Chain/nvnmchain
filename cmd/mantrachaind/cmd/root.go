@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"cosmossdk.io/log"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/MANTRA-Chain/mantrachain/v5/app"
 	"github.com/MANTRA-Chain/mantrachain/v5/app/params"
 	dbm "github.com/cosmos/cosmos-db"
@@ -22,8 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// NewRootCmd creates a new root command for wasmd. It is called once in the
-// main function.
+// NewRootCmd creates a new root command. It is called once in the main function.
 func NewRootCmd() *cobra.Command {
 	// we "pre"-instantiate the application for getting the injected/configured encoding configuration
 	// note, this is not necessary when using app wiring, as depinject can be directly used (see root_v2.go)
@@ -35,7 +33,6 @@ func NewRootCmd() *cobra.Command {
 		nil,
 		false,
 		simtestutil.NewAppOptionsWithFlagHome(temp),
-		[]wasmkeeper.Option{},
 		app.MANTRAChainID,
 		app.EvmAppOptions,
 	)

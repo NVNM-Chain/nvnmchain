@@ -6,20 +6,10 @@ env:
   - GO111MODULE=on
   - CGO_ENABLED=1
 
-before:
-  hooks:
-    - wget https://github.com/CosmWasm/wasmvm/releases/download/{{ .Env.COSMWASM_VERSION }}/checksums.txt -O /tmp/checksums.txt
-
 builds:
   - id: mantrachaind-darwin-amd64
     main: ./cmd/mantrachaind/main.go
     binary: mantrachaind
-    hooks:
-      pre:
-        - wget https://github.com/CosmWasm/wasmvm/releases/download/{{ .Env.COSMWASM_VERSION }}/libwasmvmstatic_darwin.a -O /lib/libwasmvmstatic_darwin.a
-        # verify checksum
-        - sha256sum /lib/libwasmvmstatic_darwin.a | grep $(cat /tmp/checksums.txt | grep libwasmvmstatic_darwin | cut -d ' ' -f 1) || exit 1
-    env:
       - CC=o64-clang
       - CGO_LDFLAGS=-L/lib
     goos:
@@ -34,7 +24,7 @@ builds:
       - -X github.com/cosmos/cosmos-sdk/version.AppName=mantrachaind
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
-      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger,static_wasm
+      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
       - -X github.com/cometbft/cometbft/version.TMCoreSemVer={{ .Env.CMT_VERSION }}
       - -w -s
       - -linkmode=external
@@ -42,16 +32,10 @@ builds:
       - netgo
       - ledger
       - pebbledb
-      - static_wasm
 
   - id: mantrachaind-darwin-arm64
     main: ./cmd/mantrachaind/main.go
     binary: mantrachaind
-    hooks:
-      pre:
-        - wget https://github.com/CosmWasm/wasmvm/releases/download/{{ .Env.COSMWASM_VERSION }}/libwasmvmstatic_darwin.a -O /lib/libwasmvmstatic_darwin.a
-        # verify checksum
-        - sha256sum /lib/libwasmvmstatic_darwin.a | grep $(cat /tmp/checksums.txt | grep libwasmvmstatic_darwin | cut -d ' ' -f 1) || exit 1
     env:
       - CC=oa64-clang
       - CGO_LDFLAGS=-L/lib
@@ -67,7 +51,7 @@ builds:
       - -X github.com/cosmos/cosmos-sdk/version.AppName=mantrachaind
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
-      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger,static_wasm
+      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
       - -X github.com/cometbft/cometbft/version.TMCoreSemVer={{ .Env.CMT_VERSION }}
       - -w -s
       - -linkmode=external
@@ -75,7 +59,6 @@ builds:
       - netgo
       - ledger
       - pebbledb
-      - static_wasm
 
   - id: mantrachaind-linux-amd64
     main: ./cmd/mantrachaind
@@ -83,9 +66,6 @@ builds:
     hooks:
       pre:
         - apk add --update linux-headers
-        - wget https://github.com/CosmWasm/wasmvm/releases/download/{{ .Env.COSMWASM_VERSION }}/libwasmvm_muslc.x86_64.a -O /lib/libwasmvm_muslc.x86_64.a
-        # verify checksum
-        - sha256sum /lib/libwasmvm_muslc.x86_64.a | grep $(cat /tmp/checksums.txt | grep libwasmvm_muslc.x86_64 | cut -d ' ' -f 1) || exit 1
     goos:
       - linux
     goarch:
@@ -116,9 +96,6 @@ builds:
     hooks:
       pre:
         - apk add --update linux-headers
-        - wget https://github.com/CosmWasm/wasmvm/releases/download/{{ .Env.COSMWASM_VERSION }}/libwasmvm_muslc.aarch64.a -O /lib/libwasmvm_muslc.aarch64.a
-        # verify checksum
-        - sha256sum /lib/libwasmvm_muslc.aarch64.a | grep $(cat /tmp/checksums.txt | grep libwasmvm_muslc.aarch64 | cut -d ' ' -f 1) || exit 1
     goos:
       - linux
     goarch:
