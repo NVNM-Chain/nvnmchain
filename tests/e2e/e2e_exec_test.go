@@ -625,7 +625,7 @@ func (s *IntegrationTestSuite) execWithdrawReward(
 		"withdraw-rewards",
 		validatorAddress,
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, delegatorAddress),
-		fmt.Sprintf("--%s=%s", flags.FlagGasPrices, "300uom"),
+		fmt.Sprintf("--%s=%s", flags.FlagGasPrices, "300anvnm"),
 		fmt.Sprintf("--%s=%s", flags.FlagGas, "auto"),
 		fmt.Sprintf("--%s=%s", flags.FlagGasAdjustment, "1.5"),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),

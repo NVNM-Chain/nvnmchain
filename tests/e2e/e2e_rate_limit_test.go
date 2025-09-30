@@ -31,7 +31,7 @@ func (s *IntegrationTestSuite) writeAddRateLimitUomProposal(c *chain) {
 		 }
 		],
 		"metadata": "ipfs://CID",
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"title": "Add Rate Limit on (channel-0, uom)",
 		"summary": "e2e-test adding an IBC rate limit"
 	   }`
@@ -63,7 +63,7 @@ func (s *IntegrationTestSuite) writeUpdateRateLimitUomProposal(c *chain) {
 		 }
 		],
 		"metadata": "ipfs://CID",
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"title": "Update Rate Limit on (channel-0, uom)",
 		"summary": "e2e-test updating an IBC rate limit"
 	   }`
@@ -92,7 +92,7 @@ func (s *IntegrationTestSuite) writeResetRateLimitUomProposal(c *chain) {
 		 }
 		],
 		"metadata": "ipfs://CID",
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"title": "Reset Rate Limit on (channel-0, uom)",
 		"summary": "e2e-test resetting an IBC rate limit"
 	   }`
@@ -118,7 +118,7 @@ func (s *IntegrationTestSuite) writeRemoveRateLimitUomProposal(c *chain) {
 		 }
 		],
 		"metadata": "ipfs://CID",
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"title": "Remove Rate Limit (channel-0, uom)",
 		"summary": "e2e-test removing an IBC rate limit"
 	   }`

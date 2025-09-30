@@ -236,15 +236,15 @@ mocks:
 
 build-and-run-single-node: build
 	@echo "Building and running a single node for testing..."
-	@mkdir -p .mantrasinglenodetest
-	@if [ ! -f .mantrasinglenodetest/config/config.toml ]; then \
-		./build/inveniemd init single-node-test --chain-id test-chain --home .mantrasinglenodetest --default-denom uom; \
-		./build/inveniemd keys add validator --keyring-backend test --home .mantrasinglenodetest; \
-		./build/inveniemd genesis add-genesis-account $$(./build/inveniemd keys show validator -a --keyring-backend test --home .mantrasinglenodetest) 100000000000000uom --home .mantrasinglenodetest; \
-		./build/inveniemd genesis gentx validator 100000000uom --chain-id test-chain --keyring-backend test --home .mantrasinglenodetest; \
-		./build/inveniemd genesis collect-gentxs --home .mantrasinglenodetest; \
-		sed -i'' -e 's/"fee_denom": "stake"/"fee_denom": "uom"/' .mantrasinglenodetest/config/genesis.json; \
+	@mkdir -p .inveniemsinglenodetest
+	@if [ ! -f .inveniemsinglenodetest/config/config.toml ]; then \
+		./build/inveniemd init single-node-test --chain-id test-chain --home .inveniemsinglenodetest --default-denom uom; \
+		./build/inveniemd keys add validator --keyring-backend test --home .inveniemsinglenodetest; \
+		./build/inveniemd genesis add-genesis-account $$(./build/inveniemd keys show validator -a --keyring-backend test --home .inveniemsinglenodetest) 100000000000000anvnm --home .inveniemsinglenodetest; \
+		./build/inveniemd genesis gentx validator 100000000anvnm --chain-id test-chain --keyring-backend test --home .inveniemsinglenodetest; \
+		./build/inveniemd genesis collect-gentxs --home .inveniemsinglenodetest; \
+		sed -i'' -e 's/"fee_denom": "stake"/"fee_denom": "anvnm"/' .inveniemsinglenodetest/config/genesis.json; \
 	fi
-	./build/inveniemd start --home .mantrasinglenodetest --minimum-gas-prices 0uom
+	./build/inveniemd start --home .inveniemsinglenodetest --minimum-gas-prices 0anvnm
 
 .PHONY: build-and-run-single-node

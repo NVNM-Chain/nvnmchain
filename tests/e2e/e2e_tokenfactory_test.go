@@ -43,7 +43,7 @@ func (s *IntegrationTestSuite) writeDisableDenomSendProposal(c *chain, denom str
         	}
 		],
 		"metadata": "ipfs://CID",
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"title": "Disable %s for sending",
 		"summary": "e2e-test disable token send"
 	   }`
@@ -69,7 +69,7 @@ func (s *IntegrationTestSuite) writeEnableDenomSendProposal(c *chain, denom stri
         	}
 		],
 		"metadata": "ipfs://CID",
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"title": "Reenable %s for sending",
 		"summary": "e2e-test reenable token send"
 	   }`

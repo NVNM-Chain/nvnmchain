@@ -47,7 +47,7 @@ const (
 	keysCommand        = "keys"
 	mantraHomePath     = "/home/nonroot/.mantrachain"
 	uomDenom           = "anvnm"
-	initBalanceStr     = "100000000000000000uom"
+	initBalanceStr     = "100000000000000000anvnm"
 	minGasPrice        = "0.01"
 	// the test basefee in genesis is the same as minGasPrice
 	// global fee lower/higher than min_gas_price
@@ -706,7 +706,7 @@ func (s *IntegrationTestSuite) writeGovCommunitySpendProposal(c *chain, amount s
 			}]
 		  }
 		],
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"proposer": "Proposing validator address",
 		"metadata": "Community Pool Spend",
 		"title": "Fund Team!",
@@ -734,7 +734,7 @@ func (s *IntegrationTestSuite) writeSoftwareUpgradeProposal(c *chain, height int
 		 }
 		],
 		"metadata": "ipfs://CID",
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"title": "title",
 		"summary": "test"
 	   }`
@@ -754,7 +754,7 @@ func (s *IntegrationTestSuite) writeCancelSoftwareUpgradeProposal(c *chain) {
 		 }
 		],
 		"metadata": "ipfs://CID",
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"title": "title",
 		"summary": "test"
 	   }`
@@ -785,7 +785,7 @@ func (s *IntegrationTestSuite) writeLiquidStakingParamsUpdateProposal(c *chain, 
 		 }
 		],
 		"metadata": "ipfs://CID",
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"title": "Update LSM Params",
 		"summary": "e2e-test updating LSM staking params",
 		"expedited": false
@@ -821,7 +821,7 @@ func (s *IntegrationTestSuite) writeGovParamChangeProposalBlocksPerEpoch(c *chai
 			"params": %s
 		  }
 		],
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"proposer": "sample proposer",
 		"metadata": "sample metadata",
 		"title": "blocks per epoch title",
@@ -861,7 +861,7 @@ func (s *IntegrationTestSuite) writeFailingExpeditedProposal(c *chain, blocksPer
 			}
 		  }
 		],
-		"deposit": "100uom",
+		"deposit": "100anvnm",
 		"proposer": "sample proposer",
 		"metadata": "sample metadata",
 		"title": "blocks per epoch title",
@@ -894,7 +894,7 @@ func (s *IntegrationTestSuite) writeExpeditedSoftwareUpgradeProp(c *chain) {
   }
  ],
  "metadata": "ipfs://CID",
- "deposit": "100uom",
+ "deposit": "100anvnm",
  "title": "title",
  "summary": "test",
  "expedited": true
