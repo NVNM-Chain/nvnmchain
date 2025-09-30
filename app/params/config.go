@@ -6,7 +6,7 @@ import (
 
 const (
 	HumanCoinUnit = "om"
-	BaseCoinUnit  = "uom"
+	BaseCoinUnit  = "anvnm"
 	OmExponent    = 6
 
 	DefaultBondDenom = BaseCoinUnit

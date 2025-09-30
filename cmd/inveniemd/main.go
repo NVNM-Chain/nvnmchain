@@ -6,7 +6,7 @@ import (
 
 	clienthelpers "cosmossdk.io/client/v2/helpers"
 	"github.com/MANTRA-Chain/inveniem/app"
-	"github.com/MANTRA-Chain/inveniem/cmd/mantrachaind/cmd"
+	"github.com/MANTRA-Chain/inveniem/cmd/inveniemd/cmd"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	evmdcfg "github.com/cosmos/evm/evmd/cmd/evmd/config"
@@ -24,7 +24,7 @@ func main() {
 
 const (
 	HumanCoinUnit = "om"
-	BaseCoinUnit  = "uom"
+	BaseCoinUnit  = "anvnm"
 	OmExponent    = 6
 
 	DefaultBondDenom = BaseCoinUnit

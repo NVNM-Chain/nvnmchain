@@ -31,10 +31,10 @@ func NoOpEvmAppOptions(_ uint64) error {
 // that allows initializing the app with different coin info based on the
 // chain id
 var ChainCoinInfo = evmtypes.EvmCoinInfo{
-	Denom:         "uom",
-	ExtendedDenom: "aom",
-	DisplayDenom:  "om",
-	Decimals:      evmtypes.SixDecimals,
+	Denom:         "anvnm",
+	ExtendedDenom: "anvnm",
+	DisplayDenom:  "nvnm",
+	Decimals:      evmtypes.EighteenDecimals,
 }
 
 // EvmAppOptions allows to setup the global configuration

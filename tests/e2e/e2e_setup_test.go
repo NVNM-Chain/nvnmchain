@@ -46,7 +46,7 @@ const (
 	queryCommand       = "query"
 	keysCommand        = "keys"
 	mantraHomePath     = "/home/nonroot/.mantrachain"
-	uomDenom           = "uom"
+	uomDenom           = "anvnm"
 	initBalanceStr     = "100000000000000000uom"
 	minGasPrice        = "0.01"
 	// the test basefee in genesis is the same as minGasPrice

@@ -177,11 +177,11 @@ import (
 
 func init() {
 	// Replace evmos defaults
-	// manually update the power reduction by replacing micro (u) -> atto (a) evmos
-	sdk.DefaultPowerReduction = cosmosevmtypes.MicroPowerReduction
+	// manually update the power reduction by replacing micro (u) -> atto (a) nvnm
+	sdk.DefaultPowerReduction = cosmosevmtypes.AttoPowerReduction
 	stakingtypes.DefaultMinCommissionRate = math.LegacyZeroDec()
 
-	// DefaultNodeHome default home directories for mantrachaind
+	// DefaultNodeHome default home directories for inveniemd
 	var err error
 	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(NodeDir)
 	if err != nil {

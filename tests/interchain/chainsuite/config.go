@@ -31,7 +31,7 @@ type SuiteConfig struct {
 
 const (
 	CommitTimeout          = 4 * time.Second
-	Uom                    = "uom"
+	Uom                    = "anvnm"
 	GovMinDepositAmount    = 1000
 	GovDepositAmount       = "5000000" + Uom
 	GovDepositPeriod       = 60 * time.Second

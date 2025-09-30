@@ -77,7 +77,7 @@ var (
 		},
 	}
 
-	denom        = "uom"
+	denom        = "anvnm"
 	coinDecimals = int64(6)
 	spec         = &interchaintest.ChainSpec{
 		ChainName:     "slinky",
