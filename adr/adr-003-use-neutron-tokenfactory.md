@@ -1,4 +1,4 @@
-# ADR 003: Use Neutron Token Factory by copying code into Mantrachain
+# ADR 003: Use Neutron Token Factory by copying code into Inveniem
 
 ## Context
 
@@ -11,7 +11,7 @@ The token factory is a notoriously forked and fragmented module.  To use it we n
 And between weather or not we will:
 
 * import the code from another repository
-* add the code to mantrachain by attributed copy paste
+* add the code to inveniem by attributed copy paste
 
 ## Decision
 

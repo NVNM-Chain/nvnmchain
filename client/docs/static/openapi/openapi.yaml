@@ -9868,7 +9868,7 @@ paths:
                           format: byte
       tags:
         - Query
-  /MANTRA-Chain/mantrachain/tax/v1/params:
+  /MANTRA-Chain/inveniem/tax/v1/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: TaxParams
@@ -9918,7 +9918,7 @@ paths:
                           format: byte
       tags:
         - Query
-  /MANTRA-Chain/mantrachain/sanction/v1/blacklist:
+  /MANTRA-Chain/inveniem/sanction/v1/blacklist:
     get:
       summary: Blacklist queries the blacklisted accounts.
       operationId: Blacklist
@@ -9963,7 +9963,7 @@ paths:
                           format: byte
       tags:
         - Query
-  /MANTRA-Chain/mantrachain/sanction/v1/params:
+  /MANTRA-Chain/inveniem/sanction/v1/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: SanctionParams
@@ -51248,7 +51248,7 @@ components:
       title: |-
         WhitelistedAddressPair represents a sender-receiver combo that is
         not subject to rate limit restrictions
-    mantrachain.tax.v1.Params:
+    inveniem.tax.v1.Params:
       type: object
       properties:
         mca_tax:
@@ -51258,7 +51258,7 @@ components:
         max_mca_tax:
           type: string
       description: Params defines the parameters for the module.
-    mantrachain.tax.v1.QueryParamsResponse:
+    inveniem.tax.v1.QueryParamsResponse:
       type: object
       properties:
         params:
@@ -51272,10 +51272,10 @@ components:
             max_mca_tax:
               type: string
       description: QueryParamsResponse is response type for the Query/Params RPC method.
-    mantrachain.sanction.v1.Params:
+    inveniem.sanction.v1.Params:
       type: object
       description: Params defines the parameters for the module.
-    mantrachain.sanction.v1.QueryBlacklistResponse:
+    inveniem.sanction.v1.QueryBlacklistResponse:
       type: object
       properties:
         blacklisted_accounts:
@@ -51285,7 +51285,7 @@ components:
           description: blacklisted_accounts defines the list of blacklisted accounts.
       description: QueryBlacklistResponse is response type for the Query/Blacklist RPC
         method.
-    mantrachain.sanction.v1.QueryParamsResponse:
+    inveniem.sanction.v1.QueryParamsResponse:
       type: object
       properties:
         params:

@@ -1,8 +1,8 @@
-[![License](https://img.shields.io/github/license/MANTRA-Chain/mantrachain)](https://github.com/MANTRA-Chain/mantrachain/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/MANTRA-Chain/inveniem)](https://github.com/MANTRA-Chain/inveniem/blob/main/LICENSE)
 
-# Mantrachain
+# Inveniem
 
-Mantrachain is a global real-world assets platform built on blockchain technology. It leverages advanced blockchain features to facilitate the tokenization and trading of real-world assets.
+Inveniem is a global real-world assets platform built on blockchain technology. It leverages advanced blockchain features to facilitate the tokenization and trading of real-world assets.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ Mantrachain is a global real-world assets platform built on blockchain technolog
 
 ## Overview
 
-Mantrachain is designed to bridge the gap between traditional assets and the blockchain world. By enabling the tokenization of real-world assets, it opens up new possibilities for asset management, trading, and financial innovation.
+Inveniem is designed to bridge the gap between traditional assets and the blockchain world. By enabling the tokenization of real-world assets, it opens up new possibilities for asset management, trading, and financial innovation.
 
 ## Features
 
@@ -29,11 +29,11 @@ Mantrachain is designed to bridge the gap between traditional assets and the blo
 
 ## Joining the Mainnet
 
-[Please visit the official instructions on how to join the Mainnet here.](https://docs.mantrachain.io/node-and-validator-operations/node-setup-and-deployment/running-a-node)
+[Please visit the official instructions on how to join the Mainnet here.](https://docs.inveniem.io/node-and-validator-operations/node-setup-and-deployment/running-a-node)
 
 ## Getting Started
 
-To get started with Mantrachain, you'll need to set up your development environment.
+To get started with Inveniem, you'll need to set up your development environment.
 
 ### Prerequisites
 
@@ -43,8 +43,8 @@ To get started with Mantrachain, you'll need to set up your development environm
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/MANTRA-Chain/mantrachain.git
-   cd mantrachain
+   git clone https://github.com/MANTRA-Chain/inveniem.git
+   cd inveniem
    ```
 
 2. Build the project:
@@ -58,12 +58,12 @@ To get started with Mantrachain, you'll need to set up your development environm
 
 ### Testing
 
-#### To run unit tests:
+#### To run unit tests
 ```bash
 make test-unit
 ```
 
-#### To run e2e tests:
+#### To run e2e tests
 
 For the first time, run the following command to build image and run e2e tests:
 ```shell
@@ -90,13 +90,13 @@ docker run -t --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.64.8 golangc
 
 ## Architecture
 
-Mantrachain follows the Cosmos SDK architecture and implements several custom modules to achieve its functionality. The project uses Architecture Decision Records (ADRs) to document important architectural decisions.
+Inveniem follows the Cosmos SDK architecture and implements several custom modules to achieve its functionality. The project uses Architecture Decision Records (ADRs) to document important architectural decisions.
 
 For more information on the architecture and design decisions, please refer to the [ADR directory](adr/).
 
 ## Modules
 
-Mantrachain includes several custom modules:
+Inveniem includes several custom modules:
 
 - `x/sanction`: Blacklisting of addresses to prevent transactions from sanctioned entities.
 - `x/tokenfactory`: Allows for the creation and management of new tokens (based on Neutron's implementation).

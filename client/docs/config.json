@@ -70,7 +70,7 @@
       }
     },
     {
-      "url": "./tmp-swagger-gen/mantrachain/tax/v1/query.swagger.json",
+      "url": "./tmp-swagger-gen/inveniem/tax/v1/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "TaxParams"
@@ -78,7 +78,7 @@
       }
     },
     {
-      "url": "./tmp-swagger-gen/mantrachain/sanction/v1/query.swagger.json",
+      "url": "./tmp-swagger-gen/inveniem/sanction/v1/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "SanctionParams"

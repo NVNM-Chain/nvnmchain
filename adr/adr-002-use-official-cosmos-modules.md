@@ -12,7 +12,7 @@ Reassess whether official module modifications are necessary. If they are withou
 
 ## Decision
 
-Move to only use official imports of Comsos-SDK, IBC-Go and other future official modules maintained by the Cosmos team. All code modifications should be in mantrachain and if a official module need to be modified, we should copy the module and modify it in `/x`. The modified module should be written in a way where it imports from the files of the copied module as much as possible with minimal copied code.
+Move to only use official imports of Comsos-SDK, IBC-Go and other future official modules maintained by the Cosmos team. All code modifications should be in inveniem and if a official module need to be modified, we should copy the module and modify it in `/x`. The modified module should be written in a way where it imports from the files of the copied module as much as possible with minimal copied code.
 
 ## Status
 

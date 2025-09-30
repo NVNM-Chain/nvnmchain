@@ -44,11 +44,11 @@ jobs:
         run: |
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
         env:
-          OWNER: '${{ github.repository_owner }}'
+          OWNER: "${{ github.repository_owner }}"
 
       - uses: strangelove-ventures/heighliner-build-action@main
         with:
-          chain: mantrachain
+          chain: inveniem
           chains-spec-file: chains.yaml
           clone-key: ${{ secrets.GIT_CLONE_KEY }}
           # heighliner-owner: ${{ github.repository_owner }}

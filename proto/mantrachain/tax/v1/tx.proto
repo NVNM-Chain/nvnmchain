@@ -1,13 +1,13 @@
 syntax = "proto3";
-package mantrachain.tax.v1;
+package inveniem.tax.v1;
 
 import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
-import "mantrachain/tax/v1/params.proto";
+import "inveniem/tax/v1/params.proto";
 
-option go_package = "github.com/MANTRA-Chain/mantrachain/x/tax/types";
+option go_package = "github.com/MANTRA-Chain/inveniem/x/tax/types";
 
 // Msg defines the Msg service.
 service Msg {
@@ -20,7 +20,7 @@ service Msg {
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
-  option (amino.name) = "mantrachain/x/tax/MsgUpdateParams";
+  option (amino.name) = "inveniem/x/tax/MsgUpdateParams";
   option (cosmos.msg.v1.signer) = "authority";
 
   // authority is the address that controls the module parameters.

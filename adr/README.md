@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Architecture Decision Records (ADR)
 
-This is a location to record all high-level architecture decisions in mantrachain.
+This is a location to record all high-level architecture decisions in inveniem.
 
 An Architectural Decision (**AD**) is a software design choice that addresses a functional or non-functional requirement that is architecturally significant.
 An Architecturally Significant Requirement (**ASR**) is a requirement that has a measurable effect on a software system’s architecture and quality.
@@ -42,7 +42,7 @@ When writing ADRs, follow the same best practices for writing RFCs. When writing
 
 ### Accepted
 
-* [ADR 001: Mantrachain ADR Creation](./adr-001-adr-creation.md)
+* [ADR 001: Inveniem ADR Creation](./adr-001-adr-creation.md)
 
 ### Proposed
 

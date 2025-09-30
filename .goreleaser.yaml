@@ -1,15 +1,15 @@
 ---
 version: 2
-project_name: mantrachaind
+project_name: inveniemd
 
 env:
   - GO111MODULE=on
   - CGO_ENABLED=1
 
 builds:
-  - id: mantrachaind-darwin-amd64
-    main: ./cmd/mantrachaind/main.go
-    binary: mantrachaind
+  - id: inveniemd-darwin-amd64
+    main: ./cmd/inveniemd/main.go
+    binary: inveniemd
       - CC=o64-clang
       - CGO_LDFLAGS=-L/lib
     goos:
@@ -20,8 +20,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=mantrachain
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=mantrachaind
+      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniem
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniemd
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
@@ -33,9 +33,9 @@ builds:
       - ledger
       - pebbledb
 
-  - id: mantrachaind-darwin-arm64
-    main: ./cmd/mantrachaind/main.go
-    binary: mantrachaind
+  - id: inveniemd-darwin-arm64
+    main: ./cmd/inveniemd/main.go
+    binary: inveniemd
     env:
       - CC=oa64-clang
       - CGO_LDFLAGS=-L/lib
@@ -47,8 +47,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=mantrachain
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=mantrachaind
+      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniem
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniemd
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
@@ -60,9 +60,9 @@ builds:
       - ledger
       - pebbledb
 
-  - id: mantrachaind-linux-amd64
-    main: ./cmd/mantrachaind
-    binary: mantrachaind
+  - id: inveniemd-linux-amd64
+    main: ./cmd/inveniemd
+    binary: inveniemd
     hooks:
       pre:
         - apk add --update linux-headers
@@ -74,8 +74,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=mantrachain
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=mantrachaind
+      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniem
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniemd
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger,muslc,osusergo
@@ -90,9 +90,9 @@ builds:
       - osusergo
       - pebbledb
 
-  - id: mantrachaind-linux-arm64
-    main: ./cmd/mantrachaind
-    binary: mantrachaind
+  - id: inveniemd-linux-arm64
+    main: ./cmd/inveniemd
+    binary: inveniemd
     hooks:
       pre:
         - apk add --update linux-headers
@@ -104,8 +104,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=mantrachain
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=mantrachaind
+      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniem
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniemd
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger,muslc,osusergo
@@ -123,20 +123,20 @@ builds:
 archives:
   - id: zipped
     builds:
-      - mantrachaind-linux-amd64
-      - mantrachaind-linux-arm64
-      - mantrachaind-darwin-amd64
-      - mantrachaind-darwin-arm64
+      - inveniemd-linux-amd64
+      - inveniemd-linux-arm64
+      - inveniemd-darwin-amd64
+      - inveniemd-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     format: tar.gz
     files:
       - none*
   - id: binaries
     builds:
-      - mantrachaind-linux-amd64
-      - mantrachaind-linux-arm64
-      - mantrachaind-darwin-amd64
-      - mantrachaind-darwin-arm64
+      - inveniemd-linux-amd64
+      - inveniemd-linux-arm64
+      - inveniemd-darwin-amd64
+      - inveniemd-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     format: binary
     files:
@@ -169,11 +169,11 @@ release:
 
     ````bash
     git clone https://github.com/{{ .Env.REPO_OWNER }}/{{ .Env.REPO_NAME }}
-    cd mantrachain && git checkout v{{ .Version }}
+    cd inveniem && git checkout v{{ .Version }}
     make install
     ````
 
-  name_template: "Mantrachain v{{.Version}}"
+  name_template: "Inveniem v{{.Version}}"
   mode: replace
   draft: true
 # Docs: https://goreleaser.com/customization/announce/
