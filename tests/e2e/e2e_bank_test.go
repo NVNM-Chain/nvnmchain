@@ -31,13 +31,13 @@ func (s *IntegrationTestSuite) testBankTokenTransfer() {
 		// get balances of sender and recipient accounts
 		s.Require().Eventually(
 			func() bool {
-				beforeAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice.String(), uomDenom)
+				beforeAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice.String(), anvnmDenom)
 				s.Require().NoError(err)
 
-				beforeBobUomBalance, err = getSpecificBalance(chainEndpoint, bob.String(), uomDenom)
+				beforeBobUomBalance, err = getSpecificBalance(chainEndpoint, bob.String(), anvnmDenom)
 				s.Require().NoError(err)
 
-				beforeCharlieUomBalance, err = getSpecificBalance(chainEndpoint, charlie.String(), uomDenom)
+				beforeCharlieUomBalance, err = getSpecificBalance(chainEndpoint, charlie.String(), anvnmDenom)
 				s.Require().NoError(err)
 
 				return beforeAliceUomBalance.IsValid() && beforeBobUomBalance.IsValid() && beforeCharlieUomBalance.IsValid()
@@ -52,10 +52,10 @@ func (s *IntegrationTestSuite) testBankTokenTransfer() {
 		// check that the transfer was successful
 		s.Require().Eventually(
 			func() bool {
-				afterAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice.String(), uomDenom)
+				afterAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice.String(), anvnmDenom)
 				s.Require().NoError(err)
 
-				afterBobUomBalance, err = getSpecificBalance(chainEndpoint, bob.String(), uomDenom)
+				afterBobUomBalance, err = getSpecificBalance(chainEndpoint, bob.String(), anvnmDenom)
 				s.Require().NoError(err)
 
 				decremented := beforeAliceUomBalance.Sub(tokenAmount).Sub(standardFees).IsEqual(afterAliceUomBalance)
@@ -75,13 +75,13 @@ func (s *IntegrationTestSuite) testBankTokenTransfer() {
 
 		s.Require().Eventually(
 			func() bool {
-				afterAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice.String(), uomDenom)
+				afterAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice.String(), anvnmDenom)
 				s.Require().NoError(err)
 
-				afterBobUomBalance, err = getSpecificBalance(chainEndpoint, bob.String(), uomDenom)
+				afterBobUomBalance, err = getSpecificBalance(chainEndpoint, bob.String(), anvnmDenom)
 				s.Require().NoError(err)
 
-				afterCharlieUomBalance, err = getSpecificBalance(chainEndpoint, charlie.String(), uomDenom)
+				afterCharlieUomBalance, err = getSpecificBalance(chainEndpoint, charlie.String(), anvnmDenom)
 				s.Require().NoError(err)
 
 				decremented := beforeAliceUomBalance.Sub(tokenAmount).Sub(tokenAmount).Sub(standardFees).IsEqual(afterAliceUomBalance)

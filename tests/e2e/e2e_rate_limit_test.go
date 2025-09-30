@@ -37,7 +37,7 @@ func (s *IntegrationTestSuite) writeAddRateLimitUomProposal(c *chain) {
 	   }`
 	propMsgBody := fmt.Sprintf(template,
 		govAuthority,
-		uomDenom,                   // denom: uom
+		anvnmDenom,                   // denom: uom
 		transferChannel,            // channel_id: channel-0
 		sdkmath.NewInt(1).String(), // max_percent_send: 1%
 		sdkmath.NewInt(1).String(), // max_percent_recv: 1%
@@ -69,7 +69,7 @@ func (s *IntegrationTestSuite) writeUpdateRateLimitUomProposal(c *chain) {
 	   }`
 	propMsgBody := fmt.Sprintf(template,
 		govAuthority,
-		uomDenom,                   // denom: uom
+		anvnmDenom,                   // denom: uom
 		transferChannel,            // channel_id: channel-0
 		sdkmath.NewInt(2).String(), // max_percent_send: 2%
 		sdkmath.NewInt(1).String(), // max_percent_recv: 1%
@@ -98,7 +98,7 @@ func (s *IntegrationTestSuite) writeResetRateLimitUomProposal(c *chain) {
 	   }`
 	propMsgBody := fmt.Sprintf(template,
 		govAuthority,
-		uomDenom,        // denom: uom
+		anvnmDenom,        // denom: uom
 		transferChannel, // channel_id: channel-0
 	)
 
@@ -124,7 +124,7 @@ func (s *IntegrationTestSuite) writeRemoveRateLimitUomProposal(c *chain) {
 	   }`
 	propMsgBody := fmt.Sprintf(template,
 		govAuthority,
-		uomDenom,        // denom: uom
+		anvnmDenom,        // denom: uom
 		transferChannel, // channel_id: channel-0
 	)
 
@@ -156,12 +156,12 @@ func (s *IntegrationTestSuite) testAddRateLimits() {
 			s.Require().NoError(err)
 			s.Require().Len(rateLimits, 1)
 			s.Require().Equal(transferChannel, rateLimits[0].Path.ChannelOrClientId)
-			s.Require().Equal(uomDenom, rateLimits[0].Path.Denom)
+			s.Require().Equal(anvnmDenom, rateLimits[0].Path.Denom)
 			s.Require().Equal(uint64(24), rateLimits[0].Quota.DurationHours)
 			s.Require().Equal(sdkmath.NewInt(1), rateLimits[0].Quota.MaxPercentRecv)
 			s.Require().Equal(sdkmath.NewInt(1), rateLimits[0].Quota.MaxPercentSend)
 
-			res, err := queryRateLimit(chainEndpoint, transferChannel, uomDenom)
+			res, err := queryRateLimit(chainEndpoint, transferChannel, anvnmDenom)
 			s.Require().NoError(err)
 			s.Require().NotNil(res.RateLimit)
 			s.Require().Equal(*rateLimits[0].Path, *res.RateLimit.Path)
@@ -200,7 +200,7 @@ func (s *IntegrationTestSuite) testUpdateRateLimit() {
 		func() bool {
 			s.T().Logf("After UpdateRateLimit proposal")
 
-			res, err := queryRateLimit(chainEndpoint, transferChannel, uomDenom)
+			res, err := queryRateLimit(chainEndpoint, transferChannel, anvnmDenom)
 			s.Require().NoError(err)
 			s.Require().NotNil(res.RateLimit)
 			s.Require().Equal(sdkmath.NewInt(2), res.RateLimit.Quota.MaxPercentSend)
@@ -233,7 +233,7 @@ func (s *IntegrationTestSuite) testResetRateLimit() {
 		func() bool {
 			s.T().Logf("After ResetRateLimit proposal")
 
-			res, err := queryRateLimit(chainEndpoint, transferChannel, uomDenom)
+			res, err := queryRateLimit(chainEndpoint, transferChannel, anvnmDenom)
 			s.Require().NoError(err)
 			s.Require().NotNil(res.RateLimit)
 			s.Require().Equal(sdkmath.NewInt(0), res.RateLimit.Flow.Inflow)
@@ -270,7 +270,7 @@ func (s *IntegrationTestSuite) testRemoveRateLimit() {
 			s.Require().NoError(err)
 			s.Require().Empty(rateLimits)
 
-			res, err := queryRateLimit(chainEndpoint, transferChannel, uomDenom)
+			res, err := queryRateLimit(chainEndpoint, transferChannel, anvnmDenom)
 			s.Require().NoError(err)
 			s.Require().Nil(res.RateLimit)
 
@@ -290,17 +290,17 @@ func (s *IntegrationTestSuite) testIBCTransfer(expToFail bool) {
 	address, _ = s.chainB.validators[0].keyInfo.GetAddress()
 	recipient := address.String()
 
-	totalAmount, err := querySupplyOf(chainEndpoint, uomDenom)
+	totalAmount, err := querySupplyOf(chainEndpoint, anvnmDenom)
 	s.Require().NoError(err)
 
 	threshold := totalAmount.Amount.Mul(sdkmath.NewInt(1)).Quo(sdkmath.NewInt(100))
 	tokenAmt := threshold.Add(sdkmath.NewInt(10)).String()
-	s.sendIBC(s.chainA, 0, sender, recipient, tokenAmt+uomDenom, standardFees.String(), "", expToFail)
+	s.sendIBC(s.chainA, 0, sender, recipient, tokenAmt+anvnmDenom, standardFees.String(), "", expToFail)
 
 	if !expToFail {
 		s.T().Logf("After successful IBC transfer")
 
-		res, err := queryRateLimit(chainEndpoint, transferChannel, uomDenom)
+		res, err := queryRateLimit(chainEndpoint, transferChannel, anvnmDenom)
 		s.Require().NoError(err)
 		s.Require().NotNil(res.RateLimit)
 		s.Require().Equal(sdkmath.NewInt(0), res.RateLimit.Flow.Inflow)

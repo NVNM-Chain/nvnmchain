@@ -59,7 +59,7 @@ func (s *IntegrationTestSuite) testICARegisterAccountAndSendTx() {
 		)
 
 		tokenAmount := 3300000000
-		s.sendIBC(s.chainA, 0, icaOwnerAccount, icaAccount, strconv.Itoa(tokenAmount)+uomDenom, standardFees.String(), "", false)
+		s.sendIBC(s.chainA, 0, icaOwnerAccount, icaAccount, strconv.Itoa(tokenAmount)+anvnmDenom, standardFees.String(), "", false)
 
 		pass := s.hermesClearPacket(hermesConfigWithGasPrices, s.chainA.id, transferPort, transferChannel)
 		s.Require().True(pass)
@@ -144,7 +144,7 @@ func (s *IntegrationTestSuite) registerICAAccount(c *chain, valIdx int, sender, 
 	}))
 
 	icaCmd := []string{
-		mantrachaindBinary,
+		inveniemdBinary,
 		txCommand,
 		"interchain-accounts",
 		"controller",
@@ -170,7 +170,7 @@ func (s *IntegrationTestSuite) sendICATransaction(c *chain, valIdx int, sender, 
 	defer cancel()
 
 	icaCmd := []string{
-		mantrachaindBinary,
+		inveniemdBinary,
 		txCommand,
 		"interchain-accounts",
 		"controller",

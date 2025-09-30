@@ -107,10 +107,10 @@ func (s *IntegrationTestSuite) GovCommunityPoolSpend() {
 	sender := senderAddress.String()
 	recipientAddress, _ := s.chainA.validators[1].keyInfo.GetAddress()
 	recipient := recipientAddress.String()
-	sendAmount := sdk.NewCoin(uomDenom, math.NewInt(10000000)) // 10uom
+	sendAmount := sdk.NewCoin(anvnmDenom, math.NewInt(10000000)) // 10uom
 	s.writeGovCommunitySpendProposal(s.chainA, sendAmount, recipient)
 
-	beforeRecipientBalance, err := getSpecificBalance(chainAAPIEndpoint, recipient, uomDenom)
+	beforeRecipientBalance, err := getSpecificBalance(chainAAPIEndpoint, recipient, anvnmDenom)
 	s.Require().NoError(err)
 
 	// Gov tests may be run in arbitrary order, each test must increment proposalCounter to have the correct proposal id to submit and query
@@ -122,7 +122,7 @@ func (s *IntegrationTestSuite) GovCommunityPoolSpend() {
 
 	s.Require().Eventually(
 		func() bool {
-			afterRecipientBalance, err := getSpecificBalance(chainAAPIEndpoint, recipient, uomDenom)
+			afterRecipientBalance, err := getSpecificBalance(chainAAPIEndpoint, recipient, anvnmDenom)
 			s.Require().NoError(err)
 
 			return afterRecipientBalance.Sub(sendAmount).IsEqual(beforeRecipientBalance)

@@ -20,13 +20,13 @@ func (s *IntegrationTestSuite) testDistribution() {
 
 	newWithdrawalAddress, _ := s.chainA.genesisAccounts[3].keyInfo.GetAddress()
 
-	beforeBalance, err := getSpecificBalance(chainEndpoint, newWithdrawalAddress.String(), uomDenom)
+	beforeBalance, err := getSpecificBalance(chainEndpoint, newWithdrawalAddress.String(), anvnmDenom)
 	s.Require().NoError(err)
 	if beforeBalance.IsNil() {
-		beforeBalance = sdk.NewCoin(uomDenom, math.NewInt(0))
+		beforeBalance = sdk.NewCoin(anvnmDenom, math.NewInt(0))
 	}
 
-	s.execSetWithdrawAddress(s.chainA, 0, standardFees.String(), delegatorAddress.String(), newWithdrawalAddress.String(), mantraHomePath)
+	s.execSetWithdrawAddress(s.chainA, 0, standardFees.String(), delegatorAddress.String(), newWithdrawalAddress.String(), inveniemHomePath)
 
 	// Verify
 	s.Require().Eventually(
@@ -40,10 +40,10 @@ func (s *IntegrationTestSuite) testDistribution() {
 		5*time.Second,
 	)
 
-	s.execWithdrawReward(s.chainA, 0, delegatorAddress.String(), valOperAddressA, mantraHomePath)
+	s.execWithdrawReward(s.chainA, 0, delegatorAddress.String(), valOperAddressA, inveniemHomePath)
 	s.Require().Eventually(
 		func() bool {
-			afterBalance, err := getSpecificBalance(chainEndpoint, newWithdrawalAddress.String(), uomDenom)
+			afterBalance, err := getSpecificBalance(chainEndpoint, newWithdrawalAddress.String(), anvnmDenom)
 			s.Require().NoError(err)
 
 			return afterBalance.IsGTE(beforeBalance)
@@ -67,7 +67,7 @@ func (s *IntegrationTestSuite) fundCommunityPool() {
 	beforeDistUomBalance, _ := getSpecificBalance(chainAAPIEndpoint, distModuleAddress, tokenAmount.Denom)
 	if beforeDistUomBalance.IsNil() {
 		// Set balance to 0 if previous balance does not exist
-		beforeDistUomBalance = sdk.NewInt64Coin(uomDenom, 0)
+		beforeDistUomBalance = sdk.NewInt64Coin(anvnmDenom, 0)
 	}
 
 	s.execDistributionFundCommunityPool(s.chainA, 0, sender.String(), tokenAmount.String(), standardFees.String())

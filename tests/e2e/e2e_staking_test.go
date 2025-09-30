@@ -23,7 +23,7 @@ func (s *IntegrationTestSuite) testStaking() {
 
 	delegatorAddress, _ := s.chainA.genesisAccounts[2].keyInfo.GetAddress()
 
-	fees := sdk.NewCoin(uomDenom, math.NewInt(1))
+	fees := sdk.NewCoin(anvnmDenom, math.NewInt(1))
 
 	existingDelegation := math.LegacyZeroDec()
 	res, err := queryDelegation(chainEndpoint, validatorAddressA, delegatorAddress.String())
@@ -32,10 +32,10 @@ func (s *IntegrationTestSuite) testStaking() {
 	}
 
 	delegationAmount := math.NewInt(500000000)
-	delegation := sdk.NewCoin(uomDenom, delegationAmount) // 500 om
+	delegation := sdk.NewCoin(anvnmDenom, delegationAmount) // 500 om
 
 	// Alice delegate uom to Validator A
-	s.execDelegate(s.chainA, 0, delegation.String(), validatorAddressA, delegatorAddress.String(), mantraHomePath, fees.String())
+	s.execDelegate(s.chainA, 0, delegation.String(), validatorAddressA, delegatorAddress.String(), inveniemHomePath, fees.String())
 
 	// Validate delegation successful
 	s.Require().Eventually(
@@ -51,10 +51,10 @@ func (s *IntegrationTestSuite) testStaking() {
 	)
 
 	redelegationAmount := delegationAmount.Quo(math.NewInt(2))
-	redelegation := sdk.NewCoin(uomDenom, redelegationAmount) // 250 om
+	redelegation := sdk.NewCoin(anvnmDenom, redelegationAmount) // 250 om
 
 	// Alice re-delegate half of her uom delegation from Validator A to Validator B
-	s.execRedelegate(s.chainA, 0, redelegation.String(), validatorAddressA, validatorAddressB, delegatorAddress.String(), mantraHomePath, fees.String())
+	s.execRedelegate(s.chainA, 0, redelegation.String(), validatorAddressA, validatorAddressB, delegatorAddress.String(), inveniemHomePath, fees.String())
 
 	// Validate re-delegation successful
 	s.Require().Eventually(
@@ -82,7 +82,7 @@ func (s *IntegrationTestSuite) testStaking() {
 			s.Require().NoError(err)
 
 			currDelegationAmount = amt.TruncateInt()
-			currDelegation = sdk.NewCoin(uomDenom, currDelegationAmount)
+			currDelegation = sdk.NewCoin(anvnmDenom, currDelegationAmount)
 
 			return currDelegation.IsValid()
 		},
@@ -91,7 +91,7 @@ func (s *IntegrationTestSuite) testStaking() {
 	)
 
 	// Alice unbonds all her uom delegation from Validator A
-	s.execUnbondDelegation(s.chainA, 0, currDelegation.String(), validatorAddressA, delegatorAddress.String(), mantraHomePath, fees.String())
+	s.execUnbondDelegation(s.chainA, 0, currDelegation.String(), validatorAddressA, delegatorAddress.String(), inveniemHomePath, fees.String())
 
 	var ubdDelegationEntry types.UnbondingDelegationEntry
 
@@ -118,7 +118,7 @@ func (s *IntegrationTestSuite) testStaking() {
 		validatorAddressA,
 		strconv.Itoa(int(ubdDelegationEntry.CreationHeight)),
 		delegatorAddress.String(),
-		mantraHomePath,
+		inveniemHomePath,
 		fees.String(),
 	)
 

@@ -30,7 +30,7 @@ func (s *IntegrationTestSuite) sendIBC(c *chain, valIdx int, sender, recipient, 
 	defer cancel()
 
 	ibcCmd := []string{
-		mantrachaindBinary,
+		inveniemdBinary,
 		txCommand,
 		"ibc-transfer",
 		"transfer",
@@ -246,7 +246,7 @@ func (s *IntegrationTestSuite) testIBCTokenTransfer() {
 		}
 
 		tokenAmt := 3300000000
-		s.sendIBC(s.chainA, 0, sender, recipient, strconv.Itoa(tokenAmt)+uomDenom, standardFees.String(), "", false)
+		s.sendIBC(s.chainA, 0, sender, recipient, strconv.Itoa(tokenAmt)+anvnmDenom, standardFees.String(), "", false)
 
 		pass := s.hermesClearPacket(hermesConfigWithGasPrices, s.chainA.id, transferPort, transferChannel)
 		s.Require().True(pass)
@@ -316,10 +316,10 @@ Steps:
 
 // 		s.Require().Eventually(
 // 			func() bool {
-// 				beforeSenderUOmBalance, err = getSpecificBalance(chainAAPIEndpoint, sender, uomDenom)
+// 				beforeSenderUOmBalance, err = getSpecificBalance(chainAAPIEndpoint, sender, anvnmDenom)
 // 				s.Require().NoError(err)
 
-// 				beforeRecipientUOmBalance, err = getSpecificBalance(chainAAPIEndpoint, recipient, uomDenom)
+// 				beforeRecipientUOmBalance, err = getSpecificBalance(chainAAPIEndpoint, recipient, anvnmDenom)
 // 				s.Require().NoError(err)
 
 // 				return beforeSenderUOmBalance.IsValid() && beforeRecipientUOmBalance.IsValid()
@@ -339,17 +339,17 @@ Steps:
 // 		memo, err := json.Marshal(firstHopMetadata)
 // 		s.Require().NoError(err)
 
-// 		s.sendIBC(s.chainA, 0, sender, middlehop, strconv.Itoa(tokenAmt)+uomDenom, standardFees.String(), string(memo), false)
+// 		s.sendIBC(s.chainA, 0, sender, middlehop, strconv.Itoa(tokenAmt)+anvnmDenom, standardFees.String(), string(memo), false)
 
 // 		pass := s.hermesClearPacket(hermesConfigWithGasPrices, s.chainA.id, transferPort, transferChannel)
 // 		s.Require().True(pass)
 
 // 		s.Require().Eventually(
 // 			func() bool {
-// 				afterSenderUOmBalance, err := getSpecificBalance(chainAAPIEndpoint, sender, uomDenom)
+// 				afterSenderUOmBalance, err := getSpecificBalance(chainAAPIEndpoint, sender, anvnmDenom)
 // 				s.Require().NoError(err)
 
-// 				afterRecipientUOmBalance, err := getSpecificBalance(chainAAPIEndpoint, recipient, uomDenom)
+// 				afterRecipientUOmBalance, err := getSpecificBalance(chainAAPIEndpoint, recipient, anvnmDenom)
 // 				s.Require().NoError(err)
 
 // 				decremented := beforeSenderUOmBalance.Sub(tokenAmount).Sub(standardFees).IsEqual(afterSenderUOmBalance)
@@ -394,7 +394,7 @@ Middleware will send the tokens back to the original account after failing.
 
 // 		s.Require().Eventually(
 // 			func() bool {
-// 				beforeSenderUOmBalance, err = getSpecificBalance(chainAAPIEndpoint, sender, uomDenom)
+// 				beforeSenderUOmBalance, err = getSpecificBalance(chainAAPIEndpoint, sender, anvnmDenom)
 // 				s.Require().NoError(err)
 
 // 				return beforeSenderUOmBalance.IsValid()
@@ -414,12 +414,12 @@ Middleware will send the tokens back to the original account after failing.
 // 		memo, err := json.Marshal(firstHopMetadata)
 // 		s.Require().NoError(err)
 
-// 		s.sendIBC(s.chainA, 0, sender, middlehop, strconv.Itoa(tokenAmt)+uomDenom, standardFees.String(), string(memo), false)
+// 		s.sendIBC(s.chainA, 0, sender, middlehop, strconv.Itoa(tokenAmt)+anvnmDenom, standardFees.String(), string(memo), false)
 
 // 		// Sender account should be initially decremented the full amount
 // 		s.Require().Eventually(
 // 			func() bool {
-// 				afterSenderUOmBalance, err := getSpecificBalance(chainAAPIEndpoint, sender, uomDenom)
+// 				afterSenderUOmBalance, err := getSpecificBalance(chainAAPIEndpoint, sender, anvnmDenom)
 // 				s.Require().NoError(err)
 
 // 				returned := beforeSenderUOmBalance.Sub(tokenAmount).Sub(standardFees).IsEqual(afterSenderUOmBalance)
@@ -436,7 +436,7 @@ Middleware will send the tokens back to the original account after failing.
 // 				pass := s.hermesClearPacket(hermesConfigWithGasPrices, s.chainA.id, transferPort, transferChannel)
 // 				s.Require().True(pass)
 
-// 				afterSenderUOmBalance, err := getSpecificBalance(chainAAPIEndpoint, sender, uomDenom)
+// 				afterSenderUOmBalance, err := getSpecificBalance(chainAAPIEndpoint, sender, anvnmDenom)
 // 				s.Require().NoError(err)
 // 				returned := beforeSenderUOmBalance.Sub(standardFees).IsEqual(afterSenderUOmBalance)
 // 				return returned

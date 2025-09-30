@@ -100,12 +100,12 @@ func (s *IntegrationTestSuite) testTokenfactoryCreate() {
 
 		denomCreationFee, err := queryTokenfactoryDenomCreationFee(chainEndpoint)
 		s.Require().NoError(err)
-		s.Require().Equal(uomDenom, denomCreationFee.Denom)
+		s.Require().Equal(anvnmDenom, denomCreationFee.Denom)
 
 		// get balances of sender and recipient accounts
 		s.Require().Eventually(
 			func() bool {
-				beforeAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice, uomDenom)
+				beforeAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice, anvnmDenom)
 				s.Require().NoError(err)
 
 				return beforeAliceUomBalance.IsValid()
@@ -119,7 +119,7 @@ func (s *IntegrationTestSuite) testTokenfactoryCreate() {
 		// check that the creation was successful
 		s.Require().Eventually(
 			func() bool {
-				afterAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice, uomDenom)
+				afterAliceUomBalance, err = getSpecificBalance(chainEndpoint, alice, anvnmDenom)
 				s.Require().NoError(err)
 
 				beforeAlice := beforeAliceUomBalance.Sub(denomCreationFee).Sub(standardFees)
@@ -171,7 +171,7 @@ func (s *IntegrationTestSuite) testTokenfactorySetMetadata() {
 		s.T().Logf("Start setting metadata for denom %s", customDenom)
 
 		// Set the metadata using the CLI command
-		s.setDenomMetadata(c, valIdx, s.getAlice(), filepath.Join(mantraHomePath, metadataFileName), standardFees.String(), false)
+		s.setDenomMetadata(c, valIdx, s.getAlice(), filepath.Join(inveniemHomePath, metadataFileName), standardFees.String(), false)
 
 		s.T().Logf("Successfully set metadata for denom %s", customDenom)
 
@@ -517,7 +517,7 @@ func (s *IntegrationTestSuite) createDenom(c *chain, valIdx int, sender, subdeno
 	defer cancel()
 
 	ibcCmd := []string{
-		mantrachaindBinary,
+		inveniemdBinary,
 		txCommand,
 		"tokenfactory",
 		"create-denom",
@@ -549,7 +549,7 @@ func (s *IntegrationTestSuite) setDenomMetadata(c *chain, valIdx int, sender, me
 
 	// Sample tx: https://mantrascan.io/dukong/tx/4f40cc08aadb5ca005a4138353c707b1398858c577186458d5ce2a70bd3a67c8
 	cmd := []string{
-		mantrachaindBinary,
+		inveniemdBinary,
 		txCommand,
 		"tokenfactory",
 		"set-denom-metadata",
@@ -583,7 +583,7 @@ func (s *IntegrationTestSuite) mintDenom(c *chain, valIdx int, sender, mintCoin,
 	var ibcCmd []string
 	if mintTo == "" {
 		ibcCmd = []string{
-			mantrachaindBinary,
+			inveniemdBinary,
 			txCommand,
 			"tokenfactory",
 			"mint",
@@ -601,7 +601,7 @@ func (s *IntegrationTestSuite) mintDenom(c *chain, valIdx int, sender, mintCoin,
 		mintTo = sender
 	} else {
 		ibcCmd = []string{
-			mantrachaindBinary,
+			inveniemdBinary,
 			txCommand,
 			"tokenfactory",
 			"mint",
@@ -636,7 +636,7 @@ func (s *IntegrationTestSuite) burnDenom(c *chain, valIdx int, sender, burnCoin,
 	var ibcCmd []string
 	if burnFrom == "" {
 		ibcCmd = []string{
-			mantrachaindBinary,
+			inveniemdBinary,
 			txCommand,
 			"tokenfactory",
 			"burn",
@@ -654,7 +654,7 @@ func (s *IntegrationTestSuite) burnDenom(c *chain, valIdx int, sender, burnCoin,
 		burnFrom = sender
 	} else {
 		ibcCmd = []string{
-			mantrachaindBinary,
+			inveniemdBinary,
 			txCommand,
 			"tokenfactory",
 			"burn",
