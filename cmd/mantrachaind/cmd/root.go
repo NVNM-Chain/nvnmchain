@@ -4,8 +4,8 @@ import (
 	"os"
 
 	"cosmossdk.io/log"
-	"github.com/MANTRA-Chain/mantrachain/v5/app"
-	"github.com/MANTRA-Chain/mantrachain/v5/app/params"
+	"github.com/MANTRA-Chain/inveniem/app"
+	"github.com/MANTRA-Chain/inveniem/app/params"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/client"
 	clientcfg "github.com/cosmos/cosmos-sdk/client/config"

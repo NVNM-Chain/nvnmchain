@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"cosmossdk.io/log"
-	"github.com/MANTRA-Chain/mantrachain/v5/app/params"
+	"github.com/MANTRA-Chain/inveniem/app/params"
 	dbm "github.com/cosmos/cosmos-db"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 )

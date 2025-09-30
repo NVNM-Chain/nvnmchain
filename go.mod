@@ -1,4 +1,4 @@
-module github.com/MANTRA-Chain/mantrachain/v5
+module github.com/MANTRA-Chain/inveniem
 
 go 1.23.8
 
