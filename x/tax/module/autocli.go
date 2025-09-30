@@ -39,7 +39,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						},
 					},
 					Short:   "Update the parameters of the tax module",
-					Example: "mantrachaind tx tax update-params --mca_tax 0.4 --mca_address mantra1axznhnm82lah8qqvp9hxdad49yx3s5dcj66qka",
+					Example: "inveniemd tx tax update-params --mca_tax 0.4 --mca_address inveniem1axznhnm82lah8qqvp9hxdad49yx3s5dc2p4pfz",
 				},
 			},
 		},

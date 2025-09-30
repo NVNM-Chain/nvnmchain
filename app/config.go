@@ -83,14 +83,14 @@ var (
 		"mantra-canary-net-1": 7888, // devnet Chain ID
 	}
 
-	MANTRAChainID uint64 = 262144 // default Chain ID
+	EVMChainID uint64 = 262144 // default Chain ID
 )
 
-// init initializes the MANTRAChainID variable by reading the chain ID from the
+// init initializes the EVMChainID variable by reading the chain ID from the
 // genesis file or app.toml file in the node's home directory.
 // If the genesis file exists, it reads the Cosmos chain ID from there and finds the EVM Chain ID
 // against the EVMChainIDMap; otherwise, it checks the app.toml file for the EVM chain ID.
-// If neither file exists or the chain ID is not found, it defaults to the MANTRA Chain ID (262144).
+// If neither file exists or the chain ID is not found, it defaults to the EVM Chain ID (262144).
 func init() {
 	nodeHome, err := clienthelpers.GetNodeHomeDirectory(NodeDir)
 	if err != nil {
@@ -109,7 +109,7 @@ func init() {
 			if err == nil && chainID != "" {
 				evmChainID, found := EVMChainIDMap[chainID]
 				if found {
-					MANTRAChainID = evmChainID
+					EVMChainID = evmChainID
 					return
 				}
 			}
@@ -133,7 +133,7 @@ func init() {
 			evmChainIDKey := "evm.evm-chain-id"
 			if v.IsSet(evmChainIDKey) {
 				evmChainID := v.GetUint64(evmChainIDKey)
-				MANTRAChainID = evmChainID
+				EVMChainID = evmChainID
 				return
 			}
 		}
@@ -145,7 +145,7 @@ func init() {
 		if err != nil {
 			panic(err)
 		}
-		MANTRAChainID = evmChainID
+		EVMChainID = evmChainID
 		return
 	}
 

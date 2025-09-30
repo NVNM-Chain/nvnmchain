@@ -13,7 +13,7 @@ func MakeTestApp(tb testing.TB) *App {
 	tb.Helper()
 	// we "pre"-instantiate the application for getting the injected/configured encoding configuration
 	// note, this is not necessary when using app wiring, as depinject can be directly used (see root_v2.go)
-	return New(log.NewNopLogger(), dbm.NewMemDB(), nil, true, simtestutil.NewAppOptionsWithFlagHome(tb.TempDir()), MANTRAChainID, NoOpEvmAppOptions)
+	return New(log.NewNopLogger(), dbm.NewMemDB(), nil, true, simtestutil.NewAppOptionsWithFlagHome(tb.TempDir()), EVMChainID, NoOpEvmAppOptions)
 }
 
 // MakeEncodingConfig creates a new EncodingConfig with all modules registered. For testing only

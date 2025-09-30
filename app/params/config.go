@@ -5,15 +5,15 @@ import (
 )
 
 const (
-	HumanCoinUnit = "om"
+	HumanCoinUnit = "nvnm"
 	BaseCoinUnit  = "anvnm"
-	OmExponent    = 6
+	NvnmExponent  = 18
 
 	DefaultBondDenom = BaseCoinUnit
 )
 
 var (
-	Bech32Prefix = "mantra"
+	Bech32Prefix = "inveniem"
 	// Bech32PrefixAccPub defines the Bech32 prefix of an account's public key.
 	Bech32PrefixAccPub = Bech32Prefix + "pub"
 	// Bech32PrefixValAddr defines the Bech32 prefix of a validator's operator address.
@@ -27,14 +27,7 @@ var (
 )
 
 func init() {
-	sdk.SetCoinDenomRegex(MantraCoinDenomRegex)
 	SetAddressPrefixes()
-}
-
-// MantraCoinDenomRegex returns the mantra regex string
-// this is used to override the default sdk coin denom regex
-func MantraCoinDenomRegex() string {
-	return `[a-zA-Z][a-zA-Z0-9/:._-]{1,127}`
 }
 
 // SetAddressPrefixes builds the Config with Bech32 addressPrefix and publKeyPrefix for accounts, validators, and consensus nodes and verifies that addreeses have correct format.

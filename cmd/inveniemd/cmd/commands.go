@@ -90,7 +90,7 @@ func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd) //nolint:staticcheck
 }
 
-// genesisCommand builds genesis-related `mantrachaind genesis` command. Users may provide application specific commands as a parameter
+// genesisCommand builds genesis-related `inveniemd genesis` command. Users may provide application specific commands as a parameter
 func genesisCommand(txConfig client.TxConfig, basicManager module.BasicManager, cmds ...*cobra.Command) *cobra.Command {
 	cmd := genutilcli.Commands(txConfig, basicManager, app.DefaultNodeHome)
 
@@ -161,7 +161,7 @@ func newApp(
 	return app.New(
 		logger, db, traceStore, true,
 		appOpts,
-		app.MANTRAChainID,
+		app.EVMChainID,
 		app.EvmAppOptions,
 		baseappOptions...,
 	)
@@ -201,7 +201,7 @@ func appExport(
 		traceStore,
 		height == -1,
 		appOpts,
-		app.MANTRAChainID,
+		app.EVMChainID,
 		app.EvmAppOptions,
 	)
 

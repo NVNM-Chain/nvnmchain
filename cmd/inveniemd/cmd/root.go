@@ -33,7 +33,7 @@ func NewRootCmd() *cobra.Command {
 		nil,
 		false,
 		simtestutil.NewAppOptionsWithFlagHome(temp),
-		app.MANTRAChainID,
+		app.EVMChainID,
 		app.EvmAppOptions,
 	)
 
@@ -53,13 +53,13 @@ func NewRootCmd() *cobra.Command {
 		WithAccountRetriever(authtypes.AccountRetriever{}).
 		WithBroadcastMode(flags.BroadcastSync).
 		WithHomeDir(app.DefaultNodeHome).
-		WithViper("MANTRA").
+		WithViper("INVENIEM").
 		WithKeyringOptions(hd.EthSecp256k1Option()).
 		WithLedgerHasProtobuf(true)
 
 	rootCmd := &cobra.Command{
 		Use:           version.AppName,
-		Short:         "Mantra Daemon (server)",
+		Short:         "Inveniem Daemon (server)",
 		SilenceErrors: true,
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
@@ -118,7 +118,7 @@ func NewRootCmd() *cobra.Command {
 		panic(err)
 	}
 
-	if err := app.EvmAppOptions(app.MANTRAChainID); err != nil {
+	if err := app.EvmAppOptions(app.EVMChainID); err != nil {
 		panic(err)
 	}
 
