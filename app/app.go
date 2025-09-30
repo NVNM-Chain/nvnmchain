@@ -212,9 +212,9 @@ var maccPerms = map[string][]string{
 	taxtypes.ModuleName:          nil,
 
 	// Cosmos EVM modules
-	evmtypes.ModuleName:         {authtypes.Minter, authtypes.Burner},
-	feemarkettypes.ModuleName:   nil,
-	erc20types.ModuleName:       {authtypes.Minter, authtypes.Burner},
+	evmtypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
+	feemarkettypes.ModuleName: nil,
+	erc20types.ModuleName:     {authtypes.Minter, authtypes.Burner},
 
 	oracletypes.ModuleName: nil,
 }
@@ -275,9 +275,9 @@ type App struct {
 	TaxKeeper          taxkeeper.Keeper
 
 	// Cosmos EVM keepers
-	FeeMarketKeeper   feemarketkeeper.Keeper
-	EVMKeeper         *evmkeeper.Keeper
-	Erc20Keeper       erc20keeper.Keeper
+	FeeMarketKeeper feemarketkeeper.Keeper
+	EVMKeeper       *evmkeeper.Keeper
+	Erc20Keeper     erc20keeper.Keeper
 
 	// the module manager
 	ModuleManager      *module.Manager
@@ -785,7 +785,7 @@ func New(
 		staking.NewAppModule(appCodec, &app.StakingKeeper, app.AccountKeeper, app.BankKeeper, nil),
 		upgrade.NewAppModule(app.UpgradeKeeper, app.AccountKeeper.AddressCodec()),
 		evidence.NewAppModule(app.EvidenceKeeper),
-		params.NewAppModule(app.ParamsKeeper), //nolint:staticcheck
+		params.NewAppModule(app.ParamsKeeper),
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),

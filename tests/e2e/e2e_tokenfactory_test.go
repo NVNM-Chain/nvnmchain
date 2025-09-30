@@ -575,39 +575,7 @@ func (s *IntegrationTestSuite) setDenomMetadata(c *chain, valIdx int, sender, me
 	}
 }
 
-func (s *IntegrationTestSuite) setBeforeSendHook(c *chain, valIdx int, sender, customDenom, contractAddr, fees string, expErr bool) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-
-	// Sample tx: https://mantrascan.io/dukong/tx/4f40cc08aadb5ca005a4138353c707b1398858c577186458d5ce2a70bd3a67c8
-	cmd := []string{
-		mantrachaindBinary,
-		txCommand,
-		"tokenfactory",
-		"set-before-send-hook",
-		customDenom,
-		contractAddr,
-		fmt.Sprintf("--from=%s", sender),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, fees),
-		fmt.Sprintf("--%s=%s", flags.FlagGas, "auto"),
-		fmt.Sprintf("--%s=%s", flags.FlagGasAdjustment, "1.5"),
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
-		"--keyring-backend=test",
-		"--broadcast-mode=sync",
-		"--output=json",
-		"-y",
-	}
-
-	s.T().Logf("Address %s is setting before send hook for denom %s to contract address %s", sender, customDenom, contractAddr)
-	if expErr {
-		s.executeTxCommand(ctx, c, cmd, valIdx, s.expectErrExecValidation(c, valIdx, true))
-		s.T().Log("set before-send-hook unsuccessful")
-	} else {
-		s.executeTxCommand(ctx, c, cmd, valIdx, s.defaultExecValidation(c, valIdx))
-		s.T().Log("successfully set before-send-hook")
-	}
-}
-
+//nolint:unparam
 func (s *IntegrationTestSuite) mintDenom(c *chain, valIdx int, sender, mintCoin, mintTo, fees string, expErr bool) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
@@ -641,7 +609,7 @@ func (s *IntegrationTestSuite) mintDenom(c *chain, valIdx int, sender, mintCoin,
 			mintTo,
 			fmt.Sprintf("--from=%s", sender),
 			fmt.Sprintf("--%s=%s", flags.FlagFees, fees),
-			fmt.Sprintf("--%s=%s", flags.FlagGas, "auto"),
+			fmt.Sprintf("--%s=%s", flags.FlagGas, "auto"), ////nolint:unparam
 			fmt.Sprintf("--%s=%s", flags.FlagGasAdjustment, "1.5"),
 			fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
 			"--keyring-backend=test",

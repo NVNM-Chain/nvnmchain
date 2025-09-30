@@ -42,9 +42,9 @@ import (
 
 // SetupOptions defines arguments that are passed into `App` constructor.
 type SetupOptions struct {
-	Logger   log.Logger
-	DB       *dbm.MemDB
-	AppOpts  servertypes.AppOptions
+	Logger  log.Logger
+	DB      *dbm.MemDB
+	AppOpts servertypes.AppOptions
 }
 
 func setup(tb testing.TB, chainID string, withGenesis bool, invCheckPeriod uint) (*App, GenesisState) {

@@ -37,5 +37,4 @@ type Fork struct {
 	BeginForkLogic func(ctx sdk.Context)
 }
 
-type UpgradeKeepers struct {
-}
+type UpgradeKeepers struct{}

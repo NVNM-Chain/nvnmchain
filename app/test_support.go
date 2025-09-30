@@ -27,4 +27,3 @@ func (app *App) GetStakingKeeper() *stakingkeeper.Keeper {
 func (app *App) GetAccountKeeper() authkeeper.AccountKeeper {
 	return app.AccountKeeper
 }
-

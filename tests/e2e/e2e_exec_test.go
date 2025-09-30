@@ -639,6 +639,7 @@ func (s *IntegrationTestSuite) execWithdrawReward(
 	s.T().Logf("Successfully withdrew distribution rewards for delegator %s from validator %s", delegatorAddress, validatorAddress)
 }
 
+//nolint:unparam
 func (s *IntegrationTestSuite) executeTxCommand(ctx context.Context, c *chain, mantraCommand []string, valIdx int, validation func([]byte, []byte) bool) string {
 	if validation == nil {
 		validation = s.defaultExecValidation(s.chainA, 0)

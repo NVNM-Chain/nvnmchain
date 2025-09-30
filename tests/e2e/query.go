@@ -57,6 +57,7 @@ func queryTx(endpoint, txHash string) error {
 	return nil
 }
 
+//nolint:unused
 func queryTxEvents(endpoint, txHash string) (map[string][]string, error) {
 	resp, err := http.Get(fmt.Sprintf("%s/cosmos/tx/v1beta1/txs/%s", endpoint, txHash))
 	if err != nil {
