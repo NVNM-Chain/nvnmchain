@@ -1,5 +1,5 @@
 syntax = "proto3";
-package inveniem.tax.v1;
+package mantrachain.tax.v1;
 
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";

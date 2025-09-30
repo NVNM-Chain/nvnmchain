@@ -1,11 +1,11 @@
 syntax = "proto3";
-package inveniem.tax.v1;
+package mantrachain.tax.v1;
 
 import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
-import "inveniem/tax/v1/params.proto";
+import "mantrachain/tax/v1/params.proto";
 
 option go_package = "github.com/MANTRA-Chain/inveniem/x/tax/types";
 

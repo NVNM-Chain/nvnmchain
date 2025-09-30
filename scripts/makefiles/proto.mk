@@ -61,13 +61,6 @@ proto-download-deps:
 	mv ./proto/cosmos/* ../cosmos
 	rm -rf "$(THIRD_PARTY_DIR)/evm_tmp"
 
-	mkdir -p "$(THIRD_PARTY_DIR)/wasm_tmp" && \
-	cd "$(THIRD_PARTY_DIR)/wasm_tmp" && \
-	git clone --depth 1 --branch v0.55.0-ibc2.0 https://github.com/CosmWasm/wasmd.git . && \
-	rm -f ./proto/buf.* && \
-	mv ./proto/* ..
-	rm -rf "$(THIRD_PARTY_DIR)/wasm_tmp"
-
 	mkdir -p "$(THIRD_PARTY_DIR)/ibc_tmp" && \
 	cd "$(THIRD_PARTY_DIR)/ibc_tmp" && \
 	git clone --depth 1 --branch release/v10.2.x https://github.com/cosmos/ibc-go.git . && \
