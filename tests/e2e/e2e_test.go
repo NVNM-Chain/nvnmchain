@@ -129,14 +129,6 @@ func (s *IntegrationTestSuite) TestTokenfactory() {
 	s.testTokenfactoryHooks()
 }
 
-func (s *IntegrationTestSuite) TestSanction() {
-	if !runSanctionTest {
-		s.T().Skip()
-	}
-	s.testAddToBlacklist()
-	s.testRemoveFromBlacklist()
-}
-
 func (s *IntegrationTestSuite) TestWasm() {
 	// The wasm contract will call the tokenfactory module, so we need to run both tests together.
 	if !runWasmTest || !runTokenfactoryTest {

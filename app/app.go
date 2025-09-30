@@ -48,13 +48,8 @@ import (
 	"github.com/MANTRA-Chain/mantrachain/v5/app/ante"
 	queries "github.com/MANTRA-Chain/mantrachain/v5/app/queries"
 	"github.com/MANTRA-Chain/mantrachain/v5/app/upgrades"
-	v5 "github.com/MANTRA-Chain/mantrachain/v5/app/upgrades/v5"
-	v5rc9 "github.com/MANTRA-Chain/mantrachain/v5/app/upgrades/v5rc9"
 	_ "github.com/MANTRA-Chain/mantrachain/v5/client/docs/statik"
 	"github.com/MANTRA-Chain/mantrachain/v5/client/docs/swagger"
-	sanctionkeeper "github.com/MANTRA-Chain/mantrachain/v5/x/sanction/keeper"
-	sanction "github.com/MANTRA-Chain/mantrachain/v5/x/sanction/module"
-	sanctiontypes "github.com/MANTRA-Chain/mantrachain/v5/x/sanction/types"
 	taxkeeper "github.com/MANTRA-Chain/mantrachain/v5/x/tax/keeper"
 	tax "github.com/MANTRA-Chain/mantrachain/v5/x/tax/module"
 	taxtypes "github.com/MANTRA-Chain/mantrachain/v5/x/tax/types"
@@ -231,7 +226,6 @@ var maccPerms = map[string][]string{
 	wasmtypes.ModuleName:         {authtypes.Burner},
 	tokenfactorytypes.ModuleName: {authtypes.Minter, authtypes.Burner},
 	taxtypes.ModuleName:          nil,
-	sanctiontypes.ModuleName:     nil,
 
 	// Cosmos EVM modules
 	evmtypes.ModuleName:         {authtypes.Minter, authtypes.Burner},
@@ -242,7 +236,7 @@ var maccPerms = map[string][]string{
 	oracletypes.ModuleName: nil,
 }
 
-var Upgrades = []upgrades.Upgrade{v5rc9.Upgrade, v5.Upgrade}
+var Upgrades = []upgrades.Upgrade{}
 
 var (
 	_ runtime.AppI            = (*App)(nil)
@@ -299,7 +293,6 @@ type App struct {
 	// MANTRAChain keepers
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
 	TaxKeeper          taxkeeper.Keeper
-	SanctionKeeper     sanctionkeeper.Keeper
 
 	// Cosmos EVM keepers
 	FeeMarketKeeper   feemarketkeeper.Keeper
@@ -394,7 +387,7 @@ func New(
 		ibcexported.StoreKey, ibctransfertypes.StoreKey,
 		wasmtypes.StoreKey,
 		ratelimittypes.StoreKey,
-		tokenfactorytypes.StoreKey, taxtypes.StoreKey, sanctiontypes.StoreKey,
+		tokenfactorytypes.StoreKey, taxtypes.StoreKey,
 		icacontrollertypes.StoreKey, icahosttypes.StoreKey,
 		oracletypes.StoreKey, marketmaptypes.StoreKey,
 
@@ -578,13 +571,6 @@ func New(
 		&app.BankKeeper,
 		&app.WasmKeeper,
 		&app.Erc20Keeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
-	)
-
-	app.SanctionKeeper = sanctionkeeper.NewKeeper(
-		appCodec,
-		runtime.NewKVStoreService(keys[sanctiontypes.StoreKey]),
-		logger,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
@@ -936,7 +922,6 @@ func New(
 		// mantrachain modules
 		tokenfactory.NewAppModule(appCodec, app.TokenFactoryKeeper),
 		tax.NewAppModule(appCodec, app.TaxKeeper),
-		sanction.NewAppModule(appCodec, app.SanctionKeeper),
 
 		// Cosmos EVM modules
 		vm.NewAppModule(app.EVMKeeper, app.AccountKeeper, app.AccountKeeper.AddressCodec()),
@@ -999,7 +984,6 @@ func New(
 		tokenfactorytypes.ModuleName,
 		oracletypes.ModuleName,
 		marketmaptypes.ModuleName,
-		sanctiontypes.ModuleName,
 		precisebanktypes.ModuleName,
 	)
 
@@ -1027,7 +1011,6 @@ func New(
 		tokenfactorytypes.ModuleName,
 		oracletypes.ModuleName,
 		marketmaptypes.ModuleName,
-		sanctiontypes.ModuleName,
 		precisebanktypes.ModuleName,
 	)
 
@@ -1079,7 +1062,6 @@ func New(
 		wasmtypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		taxtypes.ModuleName,
-		sanctiontypes.ModuleName,
 
 		// market map genesis must be called AFTER all consuming modules (i.e. x/oracle, etc.)
 		oracletypes.ModuleName,
@@ -1209,7 +1191,6 @@ func (app *App) setAnteHandler(txConfig client.TxConfig, wasmConfig wasmtypes.No
 		WasmKeeper:            &app.WasmKeeper,
 		TXCounterStoreService: runtime.NewKVStoreService(txCounterStoreKey),
 		CircuitKeeper:         &app.CircuitKeeper,
-		SanctionKeeper:        &app.SanctionKeeper,
 	}
 
 	if err := handlerOpts.Validate(); err != nil {
@@ -1468,17 +1449,7 @@ func (app *App) setupUpgradeHandlers() {
 			upgrade.CreateUpgradeHandler(
 				app.ModuleManager,
 				app.configurator,
-				&upgrades.UpgradeKeepers{
-					ChannelKeeper:      app.IBCKeeper.ChannelKeeper,
-					TransferKeeper:     app.TransferKeeper,
-					TokenFactoryKeeper: &app.TokenFactoryKeeper,
-					SanctionKeeper:     app.SanctionKeeper,
-					FeeMarketKeeper:    app.FeeMarketKeeper,
-					AccountKeeper:      app.AccountKeeper,
-					BankKeeper:         app.BankKeeper,
-					EVMKeeper:          *app.EVMKeeper,
-					Erc20Keeper:        app.Erc20Keeper,
-				},
+				&upgrades.UpgradeKeepers{},
 				app.keys,
 			),
 		)
