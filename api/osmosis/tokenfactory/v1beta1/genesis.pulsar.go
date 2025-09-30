@@ -3,15 +3,16 @@ package tokenfactoryv1beta1
 
 import (
 	fmt "fmt"
-	tokenfactory "github.com/MANTRA-Chain/mantrachain/api/osmosis/tokenfactory"
+	io "io"
+	reflect "reflect"
+	sync "sync"
+
+	tokenfactory "github.com/MANTRA-Chain/inveniem/api/osmosis/tokenfactory"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoiface "google.golang.org/protobuf/runtime/protoiface"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	io "io"
-	reflect "reflect"
-	sync "sync"
 )
 
 var _ protoreflect.List = (*_GenesisState_2_list)(nil)
