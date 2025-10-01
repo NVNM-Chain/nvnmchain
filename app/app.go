@@ -156,14 +156,6 @@ import (
 	ibctm "github.com/cosmos/ibc-go/v10/modules/light-clients/07-tendermint"
 
 	"github.com/gorilla/mux"
-	marketmap "github.com/skip-mev/connect/v2/x/marketmap"
-	marketmapkeeper "github.com/skip-mev/connect/v2/x/marketmap/keeper"
-	marketmaptypes "github.com/skip-mev/connect/v2/x/marketmap/types"
-	oracle "github.com/skip-mev/connect/v2/x/oracle"
-	oraclekeeper "github.com/skip-mev/connect/v2/x/oracle/keeper"
-	oracletypes "github.com/skip-mev/connect/v2/x/oracle/types"
-
-	legacyfeemarkettypes "github.com/skip-mev/feemarket/x/feemarket/types"
 )
 
 func init() {
@@ -215,8 +207,6 @@ var maccPerms = map[string][]string{
 	evmtypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
 	feemarkettypes.ModuleName: nil,
 	erc20types.ModuleName:     {authtypes.Minter, authtypes.Burner},
-
-	oracletypes.ModuleName: nil,
 }
 
 var Upgrades = []upgrades.Upgrade{}
@@ -257,10 +247,6 @@ type App struct {
 	NFTKeeper             nftkeeper.Keeper
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
 	CircuitKeeper         circuitkeeper.Keeper
-
-	// Connect
-	OracleKeeper    *oraclekeeper.Keeper
-	MarketMapKeeper *marketmapkeeper.Keeper
 
 	// IBC
 	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
@@ -305,8 +291,6 @@ func New(
 	appCodec := encodingConfig.Codec
 	legacyAmino := encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
-	// register legacy feemarket types for legacy proposals
-	legacyfeemarkettypes.RegisterInterfaces(interfaceRegistry)
 
 	var prepareProposalHandler sdk.PrepareProposalHandler
 	var processProposalHandler sdk.ProcessProposalHandler
@@ -355,7 +339,6 @@ func New(
 		ratelimittypes.StoreKey,
 		tokenfactorytypes.StoreKey, taxtypes.StoreKey,
 		icacontrollertypes.StoreKey, icahosttypes.StoreKey,
-		oracletypes.StoreKey, marketmaptypes.StoreKey,
 
 		// Cosmos EVM store keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey, erc20types.StoreKey,
@@ -561,20 +544,6 @@ func New(
 		app.BankKeeper,
 		authtypes.FeeCollectorName,
 	)
-
-	app.MarketMapKeeper = marketmapkeeper.NewKeeper(
-		runtime.NewKVStoreService(keys[marketmaptypes.StoreKey]),
-		appCodec,
-		authtypes.NewModuleAddress(govtypes.ModuleName),
-	)
-	marketmapModule := marketmap.NewAppModule(appCodec, app.MarketMapKeeper)
-
-	oracleKeeper := oraclekeeper.NewKeeper(runtime.NewKVStoreService(keys[oracletypes.StoreKey]),
-		appCodec,
-		app.MarketMapKeeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName))
-	app.OracleKeeper = &oracleKeeper
-	oracleModule := oracle.NewAppModule(appCodec, *app.OracleKeeper)
 
 	// ICA Host keeper
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
@@ -796,9 +765,6 @@ func New(
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 		ibctm.NewAppModule(tmLightClientModule),
 		ratelimit.NewAppModule(appCodec, app.RateLimitKeeper),
-		// connect
-		marketmapModule,
-		oracleModule,
 
 		// mantrachain modules
 		tokenfactory.NewAppModule(appCodec, app.TokenFactoryKeeper),
@@ -860,8 +826,6 @@ func New(
 		icatypes.ModuleName,
 		ratelimittypes.ModuleName,
 		tokenfactorytypes.ModuleName,
-		oracletypes.ModuleName,
-		marketmaptypes.ModuleName,
 	)
 
 	app.ModuleManager.SetOrderEndBlockers(
@@ -883,8 +847,6 @@ func New(
 		icatypes.ModuleName,
 		ratelimittypes.ModuleName,
 		tokenfactorytypes.ModuleName,
-		oracletypes.ModuleName,
-		marketmaptypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -928,10 +890,6 @@ func New(
 
 		tokenfactorytypes.ModuleName,
 		taxtypes.ModuleName,
-
-		// market map genesis must be called AFTER all consuming modules (i.e. x/oracle, etc.)
-		oracletypes.ModuleName,
-		marketmaptypes.ModuleName,
 	}
 	app.ModuleManager.SetOrderInitGenesis(genesisModuleOrder...)
 	app.ModuleManager.SetOrderExportGenesis(genesisModuleOrder...)
@@ -997,16 +955,6 @@ func New(
 
 	app.setAnteHandler(txConfig, maxGasWanted)
 	// app.setPostHandler()
-
-	// oracle initialization
-	client, metrics, err := app.initializeOracle(appOpts)
-	if err != nil {
-		panic(fmt.Errorf("failed to initialize oracle client and metrics: %w", err))
-	}
-
-	app.MarketMapKeeper.SetHooks(app.OracleKeeper.Hooks())
-
-	app.initializeABCIExtensions(client, metrics, prepareProposalHandler, processProposalHandler)
 
 	// Register any on-chain upgrades.
 	app.setupUpgradeStoreLoaders()

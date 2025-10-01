@@ -7,7 +7,6 @@ import (
 	cmtcfg "github.com/cometbft/cometbft/config"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	cosmosevmserverconfig "github.com/cosmos/evm/server/config"
-	oracleconfig "github.com/skip-mev/connect/v2/oracle/config"
 )
 
 // initCometBFTConfig helps to override default CometBFT Config values.
@@ -33,19 +32,12 @@ func initAppConfig() (string, interface{}) {
 		EVM     cosmosevmserverconfig.EVMConfig
 		JSONRPC cosmosevmserverconfig.JSONRPCConfig
 		TLS     cosmosevmserverconfig.TLSConfig
-		Oracle  oracleconfig.AppConfig `mapstructure:"oracle" json:"oracle"`
 	}
 
 	// Optionally allow the chain developer to overwrite the SDK's default
 	// server config.
 	srvCfg := serverconfig.DefaultConfig()
 
-	oracleCfg := oracleconfig.AppConfig{
-		Enabled:        false,
-		OracleAddress:  "localhost:8080",
-		ClientTimeout:  time.Second * 2,
-		MetricsEnabled: false,
-	}
 
 	evmConfig := cosmosevmserverconfig.DefaultEVMConfig()
 	evmConfig.EVMChainID = app.EVMChainID
@@ -55,7 +47,6 @@ func initAppConfig() (string, interface{}) {
 		EVM:     *evmConfig,
 		JSONRPC: *cosmosevmserverconfig.DefaultJSONRPCConfig(),
 		TLS:     *cosmosevmserverconfig.DefaultTLSConfig(),
-		Oracle:  oracleCfg,
 	}
 	// The SDK's default minimum gas price is set to "" (empty value) inside
 	// app.toml. If left empty by validators, the node will halt on startup.
@@ -72,8 +63,7 @@ func initAppConfig() (string, interface{}) {
 	srvCfg.MinGasPrices = "0anvnm"
 
 	customAppTemplate := serverconfig.DefaultConfigTemplate +
-		cosmosevmserverconfig.DefaultEVMConfigTemplate +
-		oracleconfig.DefaultConfigTemplate
+		cosmosevmserverconfig.DefaultEVMConfigTemplate
 
 	return customAppTemplate, customAppConfig
 }

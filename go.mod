@@ -30,11 +30,6 @@ replace (
 	// use regen protobufs
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-	// Direct cosmos-sdk branch link: https://github.com/MANTRA-Chain/connect/tree/mantra/v2.3.0, current branch: mantra/v2.3.0
-	// Direct commit link: https://github.com/MANTRA-Chain/connect/commit/8ad89803888daa06cc93e546e120fe633aa53110
-	// Direct tag link: https://github.com/MANTRA-Chain/connect/tree/v2.3.0-mantra-1.2
-	github.com/skip-mev/connect/v2 => github.com/MANTRA-Chain/connect/v2 v2.3.0-mantra-1.3
-
 	// replace broken goleveldb
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 )
@@ -77,8 +72,6 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.23.0
 	github.com/ory/dockertest/v3 v3.11.0
 	github.com/rakyll/statik v0.1.7
-	github.com/skip-mev/connect/v2 v2.1.0
-	github.com/skip-mev/feemarket v1.1.1
 	github.com/spf13/cast v1.9.2
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.7
@@ -169,7 +162,6 @@ require (
 	github.com/cosmos/gogogateway v1.2.0 // indirect
 	github.com/cosmos/iavl v1.2.4 // indirect
 	github.com/cosmos/ics23/go v0.11.0 // indirect
-	github.com/cosmos/interchain-security/v7 v7.0.1 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.14.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect
 	github.com/crate-crypto/go-eth-kzg v1.3.0 // indirect
