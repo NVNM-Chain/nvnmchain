@@ -37,7 +37,7 @@ func (s *IntegrationTestSuite) writeAddRateLimitUomProposal(c *chain) {
 	   }`
 	propMsgBody := fmt.Sprintf(template,
 		govAuthority,
-		anvnmDenom,                   // denom: uom
+		anvnmDenom,                 // denom: uom
 		transferChannel,            // channel_id: channel-0
 		sdkmath.NewInt(1).String(), // max_percent_send: 1%
 		sdkmath.NewInt(1).String(), // max_percent_recv: 1%
@@ -69,7 +69,7 @@ func (s *IntegrationTestSuite) writeUpdateRateLimitUomProposal(c *chain) {
 	   }`
 	propMsgBody := fmt.Sprintf(template,
 		govAuthority,
-		anvnmDenom,                   // denom: uom
+		anvnmDenom,                 // denom: uom
 		transferChannel,            // channel_id: channel-0
 		sdkmath.NewInt(2).String(), // max_percent_send: 2%
 		sdkmath.NewInt(1).String(), // max_percent_recv: 1%
@@ -98,7 +98,7 @@ func (s *IntegrationTestSuite) writeResetRateLimitUomProposal(c *chain) {
 	   }`
 	propMsgBody := fmt.Sprintf(template,
 		govAuthority,
-		anvnmDenom,        // denom: uom
+		anvnmDenom,      // denom: uom
 		transferChannel, // channel_id: channel-0
 	)
 
@@ -124,7 +124,7 @@ func (s *IntegrationTestSuite) writeRemoveRateLimitUomProposal(c *chain) {
 	   }`
 	propMsgBody := fmt.Sprintf(template,
 		govAuthority,
-		anvnmDenom,        // denom: uom
+		anvnmDenom,      // denom: uom
 		transferChannel, // channel_id: channel-0
 	)
 

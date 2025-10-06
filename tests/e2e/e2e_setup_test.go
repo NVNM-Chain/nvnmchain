@@ -41,14 +41,14 @@ import (
 )
 
 const (
-	inveniemdBinary = "inveniemd"
-	txCommand          = "tx"
-	queryCommand       = "query"
-	keysCommand        = "keys"
-	inveniemHomePath     = "/home/nonroot/.inveniemchain"
-	anvnmDenom           = "anvnm"
-	initBalanceStr     = "100000000000000000anvnm"
-	minGasPrice        = "0.01"
+	inveniemdBinary  = "inveniemd"
+	txCommand        = "tx"
+	queryCommand     = "query"
+	keysCommand      = "keys"
+	inveniemHomePath = "/home/nonroot/.inveniemchain"
+	anvnmDenom       = "anvnm"
+	initBalanceStr   = "100000000000000000anvnm"
+	minGasPrice      = "0.01"
 	// the test basefee in genesis is the same as minGasPrice
 	// global fee lower/higher than min_gas_price
 	initialBaseFeeAmt               = "0.01"
@@ -80,13 +80,13 @@ const (
 )
 
 var (
-	inveniemConfigPath  = filepath.Join(inveniemHomePath, "config")
-	stakingAmount     = math.NewInt(100000000000)
-	stakingAmountCoin = sdk.NewCoin(anvnmDenom, stakingAmount)
-	tokenAmount       = sdk.NewCoin(anvnmDenom, math.NewInt(3300000000)) 
-	standardFees      = sdk.NewCoin(anvnmDenom, math.NewInt(100000))     
-	depositAmount     = sdk.NewCoin(anvnmDenom, math.NewInt(3300000000)) 
-	proposalCounter   = 0
+	inveniemConfigPath = filepath.Join(inveniemHomePath, "config")
+	stakingAmount      = math.NewInt(100000000000)
+	stakingAmountCoin  = sdk.NewCoin(anvnmDenom, stakingAmount)
+	tokenAmount        = sdk.NewCoin(anvnmDenom, math.NewInt(3300000000))
+	standardFees       = sdk.NewCoin(anvnmDenom, math.NewInt(100000))
+	depositAmount      = sdk.NewCoin(anvnmDenom, math.NewInt(3300000000))
+	proposalCounter    = 0
 
 	distModuleAddress, govModuleAddress string
 )

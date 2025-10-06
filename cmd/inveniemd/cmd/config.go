@@ -38,7 +38,6 @@ func initAppConfig() (string, interface{}) {
 	// server config.
 	srvCfg := serverconfig.DefaultConfig()
 
-
 	evmConfig := cosmosevmserverconfig.DefaultEVMConfig()
 	evmConfig.EVMChainID = app.EVMChainID
 
