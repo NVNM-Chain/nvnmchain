@@ -159,7 +159,7 @@ jobs:
         if: steps.changed-files.outputs.only_changed == 'false'
         working-directory: inveniem-e2e
         run: |
-          make test-e2e-nix-skip-inveniemd-build
+          make test-e2e-nix-skip-inveniemd-build CHAIN_CONFIG=inveniemd
       - name: "Tar debug files"
         if: failure()
         working-directory: inveniem-e2e
