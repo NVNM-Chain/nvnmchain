@@ -140,34 +140,34 @@ jobs:
       - uses: cachix/cachix-action@6a9a34cdd93d0ae4b4b59fd678660efb08109f2f # v12
         if: steps.changed-files.outputs.only_changed == 'false'
         with:
-          name: inveniem-e2e
+          name: mantrachain-e2e
           extraPullNames: dapp
           # github don't pass secrets for pull request from fork repos,
           # in that case the push is disabled naturally.
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-      - name: Checkout inveniem-e2e
+      - name: Checkout mantrachain-e2e
         if: steps.changed-files.outputs.only_changed == 'false'
         uses: actions/checkout@v4
         with:
           repository: MANTRA-Chain/mantrachain-e2e
           submodules: recursive
           fetch-depth: 1
-          path: inveniem-e2e
+          path: mantrachain-e2e
           ref: release/v5
 
       - name: Run integration tests
         if: steps.changed-files.outputs.only_changed == 'false'
-        working-directory: inveniem-e2e
+        working-directory: mantrachain-e2e
         run: |
           make test-e2e-nix-skip-mantrachaind-build CHAIN_CONFIG=inveniemd
       - name: "Tar debug files"
         if: failure()
-        working-directory: inveniem-e2e
+        working-directory: mantrachain-e2e
         run: |
           tar cfz debug_files.tar.gz -C "${TMPDIR-/tmp}/pytest-of-runner" .
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: debug-files
-          path: inveniem-e2e/debug_files.tar.gz
+          path: mantrachain-e2e/debug_files.tar.gz
           if-no-files-found: ignore
