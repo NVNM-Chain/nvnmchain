@@ -149,7 +149,7 @@ jobs:
         if: steps.changed-files.outputs.only_changed == 'false'
         uses: actions/checkout@v4
         with:
-          repository: MANTRA-Chain/inveniem-e2e
+          repository: MANTRA-Chain/mantrachain-e2e
           submodules: recursive
           fetch-depth: 1
           path: inveniem-e2e
@@ -159,7 +159,7 @@ jobs:
         if: steps.changed-files.outputs.only_changed == 'false'
         working-directory: inveniem-e2e
         run: |
-          make test-e2e-nix-skip-inveniemd-build CHAIN_CONFIG=inveniemd
+          make test-e2e-nix-skip-mantrachaind-build CHAIN_CONFIG=inveniemd
       - name: "Tar debug files"
         if: failure()
         working-directory: inveniem-e2e
