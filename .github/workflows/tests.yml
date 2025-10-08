@@ -106,11 +106,13 @@ jobs:
     name: E2E Nix Tests
     runs-on: ubuntu-latest-x64-xlarge
     timeout-minutes: 240
+    environment: ci
     strategy:
       matrix:
         tests: [all]
     env:
       TESTS_TO_RUN: ${{ matrix.tests }}
+      ENVS: ${{ secrets.ENVS }}
     steps:
       - name: Create more disk space
         run: sudo rm -rf /usr/share/dotnet && sudo rm -rf /opt/ghc && sudo rm -rf "/usr/local/share/boost" && sudo rm -rf "$AGENT_TOOLSDIRECTORY"
