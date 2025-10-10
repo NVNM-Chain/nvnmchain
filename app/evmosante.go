@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/MANTRA-Chain/inveniem/app/ante"
+	"github.com/MANTRA-Chain/inveniam/app/ante"
 	"github.com/cosmos/cosmos-sdk/client"
 	evmante "github.com/cosmos/evm/ante"
 	cosmosevmante "github.com/cosmos/evm/ante/evm"

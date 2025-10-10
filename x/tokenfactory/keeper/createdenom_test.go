@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/inveniem/app/params"
-	keepertest "github.com/MANTRA-Chain/inveniem/testutil/keeper"
+	appparams "github.com/MANTRA-Chain/inveniam/app/params"
+	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,7 +18,7 @@ func TestCreateDenom(t *testing.T) {
 		expectNewDenom string
 	}{
 		{
-			address:        "mantra13jq8lj4l2hjt9zs2wjpwzvfftmxtuzx7wrdk4l",
+			address:        "inveniam13jq8lj4l2hjt9zs2wjpwzvfftmxtuzx7823eag",
 			subdenom:       "test",
 			expectError:    false,
 			expectNewDenom: "",
@@ -57,14 +57,14 @@ func TestUpdateDenomWithERC20(t *testing.T) {
 	}{
 		{
 			name:            "successful update of existing denom",
-			denom:           "factory/mantra13jq8lj4l2hjt9zs2wjpwzvfftmxtuzx7wrdk4l/test",
+			denom:           "factory/inveniam13jq8lj4l2hjt9zs2wjpwzvfftmxtuzx7823eag/test",
 			denomExists:     true,
 			erc20AlreadyReg: false,
 			expectError:     false,
 		},
 		{
 			name:                "fail when denom does not exist",
-			denom:               "factory/mantra13jq8lj4l2hjt9zs2wjpwzvfftmxtuzx7wrdk4l/nonexistent",
+			denom:               "factory/inveniam13jq8lj4l2hjt9zs2wjpwzvfftmxtuzx7823eag/nonexistent",
 			denomExists:         false,
 			erc20AlreadyReg:     false,
 			expectError:         true,
@@ -72,7 +72,7 @@ func TestUpdateDenomWithERC20(t *testing.T) {
 		},
 		{
 			name:            "fail when ERC20 is already registered",
-			denom:           "factory/mantra13jq8lj4l2hjt9zs2wjpwzvfftmxtuzx7wrdk4l/duplicate",
+			denom:           "factory/inveniam13jq8lj4l2hjt9zs2wjpwzvfftmxtuzx7823eag/duplicate",
 			denomExists:     true,
 			erc20AlreadyReg: true,
 			expectError:     false,

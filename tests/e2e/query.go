@@ -9,7 +9,7 @@ import (
 
 	"cosmossdk.io/math"
 	evidencetypes "cosmossdk.io/x/evidence/types"
-	tokenfactorytypes "github.com/MANTRA-Chain/inveniem/x/tokenfactory/types"
+	tokenfactorytypes "github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"

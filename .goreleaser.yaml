@@ -1,15 +1,16 @@
 ---
 version: 2
-project_name: inveniemd
+project_name: inveniamd
 
 env:
   - GO111MODULE=on
   - CGO_ENABLED=1
 
 builds:
-  - id: inveniemd-darwin-amd64
-    main: ./cmd/inveniemd/main.go
-    binary: inveniemd
+  - id: inveniamd-darwin-amd64
+    main: ./cmd/inveniamd/main.go
+    binary: inveniamd
+    env:
       - CC=o64-clang
       - CGO_LDFLAGS=-L/lib
     goos:
@@ -20,8 +21,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniem
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniemd
+      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniam
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
@@ -33,9 +34,9 @@ builds:
       - ledger
       - pebbledb
 
-  - id: inveniemd-darwin-arm64
-    main: ./cmd/inveniemd/main.go
-    binary: inveniemd
+  - id: inveniamd-darwin-arm64
+    main: ./cmd/inveniamd/main.go
+    binary: inveniamd
     env:
       - CC=oa64-clang
       - CGO_LDFLAGS=-L/lib
@@ -47,8 +48,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniem
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniemd
+      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniam
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
@@ -60,9 +61,9 @@ builds:
       - ledger
       - pebbledb
 
-  - id: inveniemd-linux-amd64
-    main: ./cmd/inveniemd
-    binary: inveniemd
+  - id: inveniamd-linux-amd64
+    main: ./cmd/inveniamd
+    binary: inveniamd
     hooks:
       pre:
         - apk add --update linux-headers
@@ -74,8 +75,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniem
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniemd
+      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniam
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger,muslc,osusergo
@@ -90,9 +91,9 @@ builds:
       - osusergo
       - pebbledb
 
-  - id: inveniemd-linux-arm64
-    main: ./cmd/inveniemd
-    binary: inveniemd
+  - id: inveniamd-linux-arm64
+    main: ./cmd/inveniamd
+    binary: inveniamd
     hooks:
       pre:
         - apk add --update linux-headers
@@ -104,8 +105,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniem
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniemd
+      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniam
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger,muslc,osusergo
@@ -123,20 +124,20 @@ builds:
 archives:
   - id: zipped
     builds:
-      - inveniemd-linux-amd64
-      - inveniemd-linux-arm64
-      - inveniemd-darwin-amd64
-      - inveniemd-darwin-arm64
+      - inveniamd-linux-amd64
+      - inveniamd-linux-arm64
+      - inveniamd-darwin-amd64
+      - inveniamd-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     format: tar.gz
     files:
       - none*
   - id: binaries
     builds:
-      - inveniemd-linux-amd64
-      - inveniemd-linux-arm64
-      - inveniemd-darwin-amd64
-      - inveniemd-darwin-arm64
+      - inveniamd-linux-amd64
+      - inveniamd-linux-arm64
+      - inveniamd-darwin-amd64
+      - inveniamd-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     format: binary
     files:
@@ -169,13 +170,14 @@ release:
 
     ````bash
     git clone https://github.com/{{ .Env.REPO_OWNER }}/{{ .Env.REPO_NAME }}
-    cd inveniem && git checkout v{{ .Version }}
+    cd inveniam && git checkout v{{ .Version }}
     make install
     ````
 
-  name_template: "Inveniem v{{.Version}}"
+  name_template: "Inveniam v{{.Version}}"
   mode: replace
   draft: true
+
 # Docs: https://goreleaser.com/customization/announce/
 # We could automatically announce the release in
 # - discord

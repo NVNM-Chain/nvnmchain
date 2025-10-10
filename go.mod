@@ -1,4 +1,4 @@
-module github.com/MANTRA-Chain/inveniem
+module github.com/MANTRA-Chain/inveniam
 
 go 1.23.8
 
@@ -7,10 +7,6 @@ toolchain go1.23.9
 replace (
 	// use cosmos fork of keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-
-	// Direct cosmos-sdk branch link: https://github.com/MANTRA-Chain/wasmd/tree/mantra/v0.61.1, current branch: mantra/v0.61.1
-	// Direct commit link: https://github.com/MANTRA-Chain/wasmd/commit/5d3a4a2c160d41262ce861fba27365cf35af6bc6
-	github.com/CosmWasm/wasmd => github.com/MANTRA-Chain/wasmd v0.0.0-20250724044732-5d3a4a2c160d
 
 	// Direct cosmos-sdk branch link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/mantra/v0.53.3, current branch: mantra/v0.53.3
 	// Direct commit link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/ad28aabb7f56ac7b1aae2a3f12f6a55b0f9979dd
@@ -51,8 +47,6 @@ require (
 	cosmossdk.io/x/nft v0.1.1
 	cosmossdk.io/x/tx v0.14.0
 	cosmossdk.io/x/upgrade v0.2.0
-	github.com/CosmWasm/wasmd v0.61.1
-	github.com/CosmWasm/wasmvm/v3 v3.0.0
 	github.com/bufbuild/buf v1.46.0
 	github.com/cometbft/cometbft v0.38.18
 	github.com/cosmos/cosmos-db v1.1.3
@@ -64,6 +58,7 @@ require (
 	github.com/cosmos/gogoproto v1.7.0
 	github.com/cosmos/ibc-apps/modules/rate-limiting/v10 v10.1.0
 	github.com/cosmos/ibc-go/v10 v10.3.0
+	github.com/cosmos/interchain-security/v7 v7.0.0-20250408210344-06e0dc6bf6d6
 	github.com/ethereum/go-ethereum v1.15.11
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.4
@@ -318,7 +313,6 @@ require (
 	github.com/sasha-s/go-deadlock v0.3.5 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/segmentio/encoding v0.4.0 // indirect
-	github.com/shamaton/msgpack/v2 v2.2.3 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect

@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 
 	"cosmossdk.io/errors"
-	"github.com/MANTRA-Chain/inveniem/x/tokenfactory/types"
+	"github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	ethcommon "github.com/ethereum/go-ethereum/common"
@@ -241,38 +241,6 @@ func (server msgServer) SetDenomMetadata(goCtx context.Context, msg *types.MsgSe
 	})
 
 	return &types.MsgSetDenomMetadataResponse{}, nil
-}
-
-func (server msgServer) SetBeforeSendHook(goCtx context.Context, msg *types.MsgSetBeforeSendHook) (*types.MsgSetBeforeSendHookResponse, error) {
-	if err := msg.Validate(); err != nil {
-		return nil, errors.Wrap(err, "failed to validate MsgSetBeforeSendHook")
-	}
-
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	authorityMetadata, err := server.Keeper.GetAuthorityMetadata(ctx, msg.Denom)
-	if err != nil {
-		return nil, err
-	}
-
-	if msg.Sender != authorityMetadata.GetAdmin() {
-		return nil, types.ErrUnauthorized
-	}
-
-	err = server.Keeper.setBeforeSendHook(ctx, msg.Denom, msg.ContractAddr)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx.EventManager().EmitEvents(sdk.Events{
-		sdk.NewEvent(
-			types.TypeMsgSetBeforeSendHook,
-			sdk.NewAttribute(types.AttributeDenom, msg.GetDenom()),
-			sdk.NewAttribute(types.AttributeBeforeSendHookAddress, msg.GetContractAddr()),
-		),
-	})
-
-	return &types.MsgSetBeforeSendHookResponse{}, nil
 }
 
 // UpdateParams updates the module parameters

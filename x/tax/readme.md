@@ -3,7 +3,7 @@
 
 ## Overview
 
-The Tax Module is a crucial component of the Inveniem ecosystem, responsible for managing and allocating taxes within the blockchain network. It provides functionality to set tax parameters, allocate taxes to designated addresses, and manage the overall tax system of the chain.
+The Tax Module is a crucial component of the Inveniam ecosystem, responsible for managing and allocating taxes within the blockchain network. It provides functionality to set tax parameters, allocate taxes to designated addresses, and manage the overall tax system of the chain.
 
 ## Key Components
 

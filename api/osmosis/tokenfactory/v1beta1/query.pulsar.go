@@ -3,7 +3,7 @@ package tokenfactoryv1beta1
 
 import (
 	fmt "fmt"
-	tokenfactory "github.com/MANTRA-Chain/inveniem/api/osmosis/tokenfactory"
+	tokenfactory "github.com/MANTRA-Chain/inveniam/api/osmosis/tokenfactory"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -2625,910 +2625,6 @@ func (x *fastReflection_QueryDenomsFromCreatorResponse) ProtoMethods() *protoifa
 	}
 }
 
-var (
-	md_QueryBeforeSendHookAddressRequest          protoreflect.MessageDescriptor
-	fd_QueryBeforeSendHookAddressRequest_creator  protoreflect.FieldDescriptor
-	fd_QueryBeforeSendHookAddressRequest_subdenom protoreflect.FieldDescriptor
-)
-
-func init() {
-	file_osmosis_tokenfactory_v1beta1_query_proto_init()
-	md_QueryBeforeSendHookAddressRequest = File_osmosis_tokenfactory_v1beta1_query_proto.Messages().ByName("QueryBeforeSendHookAddressRequest")
-	fd_QueryBeforeSendHookAddressRequest_creator = md_QueryBeforeSendHookAddressRequest.Fields().ByName("creator")
-	fd_QueryBeforeSendHookAddressRequest_subdenom = md_QueryBeforeSendHookAddressRequest.Fields().ByName("subdenom")
-}
-
-var _ protoreflect.Message = (*fastReflection_QueryBeforeSendHookAddressRequest)(nil)
-
-type fastReflection_QueryBeforeSendHookAddressRequest QueryBeforeSendHookAddressRequest
-
-func (x *QueryBeforeSendHookAddressRequest) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_QueryBeforeSendHookAddressRequest)(x)
-}
-
-func (x *QueryBeforeSendHookAddressRequest) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_query_proto_msgTypes[6]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-var _fastReflection_QueryBeforeSendHookAddressRequest_messageType fastReflection_QueryBeforeSendHookAddressRequest_messageType
-var _ protoreflect.MessageType = fastReflection_QueryBeforeSendHookAddressRequest_messageType{}
-
-type fastReflection_QueryBeforeSendHookAddressRequest_messageType struct{}
-
-func (x fastReflection_QueryBeforeSendHookAddressRequest_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_QueryBeforeSendHookAddressRequest)(nil)
-}
-func (x fastReflection_QueryBeforeSendHookAddressRequest_messageType) New() protoreflect.Message {
-	return new(fastReflection_QueryBeforeSendHookAddressRequest)
-}
-func (x fastReflection_QueryBeforeSendHookAddressRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryBeforeSendHookAddressRequest
-}
-
-// Descriptor returns message descriptor, which contains only the protobuf
-// type information for the message.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryBeforeSendHookAddressRequest
-}
-
-// Type returns the message type, which encapsulates both Go and protobuf
-// type information. If the Go type information is not needed,
-// it is recommended that the message descriptor be used instead.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) Type() protoreflect.MessageType {
-	return _fastReflection_QueryBeforeSendHookAddressRequest_messageType
-}
-
-// New returns a newly allocated and mutable empty message.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) New() protoreflect.Message {
-	return new(fastReflection_QueryBeforeSendHookAddressRequest)
-}
-
-// Interface unwraps the message reflection interface and
-// returns the underlying ProtoMessage interface.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) Interface() protoreflect.ProtoMessage {
-	return (*QueryBeforeSendHookAddressRequest)(x)
-}
-
-// Range iterates over every populated field in an undefined order,
-// calling f for each field descriptor and value encountered.
-// Range returns immediately if f returns false.
-// While iterating, mutating operations may only be performed
-// on the current field descriptor.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if x.Creator != "" {
-		value := protoreflect.ValueOfString(x.Creator)
-		if !f(fd_QueryBeforeSendHookAddressRequest_creator, value) {
-			return
-		}
-	}
-	if x.Subdenom != "" {
-		value := protoreflect.ValueOfString(x.Subdenom)
-		if !f(fd_QueryBeforeSendHookAddressRequest_subdenom, value) {
-			return
-		}
-	}
-}
-
-// Has reports whether a field is populated.
-//
-// Some fields have the property of nullability where it is possible to
-// distinguish between the default value of a field and whether the field
-// was explicitly populated with the default value. Singular message fields,
-// member fields of a oneof, and proto2 scalar fields are nullable. Such
-// fields are populated only if explicitly set.
-//
-// In other cases (aside from the nullable cases above),
-// a proto3 scalar field is populated if it contains a non-zero value, and
-// a repeated field is populated if it is non-empty.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) Has(fd protoreflect.FieldDescriptor) bool {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.creator":
-		return x.Creator != ""
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.subdenom":
-		return x.Subdenom != ""
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest does not contain field %s", fd.FullName()))
-	}
-}
-
-// Clear clears the field such that a subsequent Has call reports false.
-//
-// Clearing an extension field clears both the extension type and value
-// associated with the given field number.
-//
-// Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) Clear(fd protoreflect.FieldDescriptor) {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.creator":
-		x.Creator = ""
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.subdenom":
-		x.Subdenom = ""
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest does not contain field %s", fd.FullName()))
-	}
-}
-
-// Get retrieves the value for a field.
-//
-// For unpopulated scalars, it returns the default value, where
-// the default value of a bytes scalar is guaranteed to be a copy.
-// For unpopulated composite types, it returns an empty, read-only view
-// of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
-	switch descriptor.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.creator":
-		value := x.Creator
-		return protoreflect.ValueOfString(value)
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.subdenom":
-		value := x.Subdenom
-		return protoreflect.ValueOfString(value)
-	default:
-		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest does not contain field %s", descriptor.FullName()))
-	}
-}
-
-// Set stores the value for a field.
-//
-// For a field belonging to a oneof, it implicitly clears any other field
-// that may be currently set within the same oneof.
-// For extension fields, it implicitly stores the provided ExtensionType.
-// When setting a composite type, it is unspecified whether the stored value
-// aliases the source's memory in any way. If the composite value is an
-// empty, read-only value, then it panics.
-//
-// Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.creator":
-		x.Creator = value.Interface().(string)
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.subdenom":
-		x.Subdenom = value.Interface().(string)
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest does not contain field %s", fd.FullName()))
-	}
-}
-
-// Mutable returns a mutable reference to a composite type.
-//
-// If the field is unpopulated, it may allocate a composite value.
-// For a field belonging to a oneof, it implicitly clears any other field
-// that may be currently set within the same oneof.
-// For extension fields, it implicitly stores the provided ExtensionType
-// if not already stored.
-// It panics if the field does not contain a composite type.
-//
-// Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.creator":
-		panic(fmt.Errorf("field creator of message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest is not mutable"))
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.subdenom":
-		panic(fmt.Errorf("field subdenom of message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest is not mutable"))
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest does not contain field %s", fd.FullName()))
-	}
-}
-
-// NewField returns a new value that is assignable to the field
-// for the given descriptor. For scalars, this returns the default value.
-// For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.creator":
-		return protoreflect.ValueOfString("")
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest.subdenom":
-		return protoreflect.ValueOfString("")
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest does not contain field %s", fd.FullName()))
-	}
-}
-
-// WhichOneof reports which field within the oneof is populated,
-// returning nil if none are populated.
-// It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
-	switch d.FullName() {
-	default:
-		panic(fmt.Errorf("%s is not a oneof field in osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest", d.FullName()))
-	}
-	panic("unreachable")
-}
-
-// GetUnknown retrieves the entire list of unknown fields.
-// The caller may only mutate the contents of the RawFields
-// if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) GetUnknown() protoreflect.RawFields {
-	return x.unknownFields
-}
-
-// SetUnknown stores an entire list of unknown fields.
-// The raw fields must be syntactically valid according to the wire format.
-// An implementation may panic if this is not the case.
-// Once stored, the caller must not mutate the content of the RawFields.
-// An empty RawFields may be passed to clear the fields.
-//
-// SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) SetUnknown(fields protoreflect.RawFields) {
-	x.unknownFields = fields
-}
-
-// IsValid reports whether the message is valid.
-//
-// An invalid message is an empty, read-only value.
-//
-// An invalid message often corresponds to a nil pointer of the concrete
-// message type, but the details are implementation dependent.
-// Validity is not part of the protobuf data model, and may not
-// be preserved in marshaling or other operations.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) IsValid() bool {
-	return x != nil
-}
-
-// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
-// This method may return nil.
-//
-// The returned methods type is identical to
-// "google.golang.org/protobuf/runtime/protoiface".Methods.
-// Consult the protoiface package documentation for details.
-func (x *fastReflection_QueryBeforeSendHookAddressRequest) ProtoMethods() *protoiface.Methods {
-	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*QueryBeforeSendHookAddressRequest)
-		if x == nil {
-			return protoiface.SizeOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Size:              0,
-			}
-		}
-		options := runtime.SizeInputToOptions(input)
-		_ = options
-		var n int
-		var l int
-		_ = l
-		l = len(x.Creator)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
-		}
-		l = len(x.Subdenom)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
-		}
-		if x.unknownFields != nil {
-			n += len(x.unknownFields)
-		}
-		return protoiface.SizeOutput{
-			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-			Size:              n,
-		}
-	}
-
-	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*QueryBeforeSendHookAddressRequest)
-		if x == nil {
-			return protoiface.MarshalOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Buf:               input.Buf,
-			}, nil
-		}
-		options := runtime.MarshalInputToOptions(input)
-		_ = options
-		size := options.Size(x)
-		dAtA := make([]byte, size)
-		i := len(dAtA)
-		_ = i
-		var l int
-		_ = l
-		if x.unknownFields != nil {
-			i -= len(x.unknownFields)
-			copy(dAtA[i:], x.unknownFields)
-		}
-		if len(x.Subdenom) > 0 {
-			i -= len(x.Subdenom)
-			copy(dAtA[i:], x.Subdenom)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Subdenom)))
-			i--
-			dAtA[i] = 0x12
-		}
-		if len(x.Creator) > 0 {
-			i -= len(x.Creator)
-			copy(dAtA[i:], x.Creator)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Creator)))
-			i--
-			dAtA[i] = 0xa
-		}
-		if input.Buf != nil {
-			input.Buf = append(input.Buf, dAtA...)
-		} else {
-			input.Buf = dAtA
-		}
-		return protoiface.MarshalOutput{
-			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-			Buf:               input.Buf,
-		}, nil
-	}
-	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*QueryBeforeSendHookAddressRequest)
-		if x == nil {
-			return protoiface.UnmarshalOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Flags:             input.Flags,
-			}, nil
-		}
-		options := runtime.UnmarshalInputToOptions(input)
-		_ = options
-		dAtA := input.Buf
-		l := len(dAtA)
-		iNdEx := 0
-		for iNdEx < l {
-			preIndex := iNdEx
-			var wire uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				wire |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			fieldNum := int32(wire >> 3)
-			wireType := int(wire & 0x7)
-			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryBeforeSendHookAddressRequest: wiretype end group for non-group")
-			}
-			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryBeforeSendHookAddressRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-			}
-			switch fieldNum {
-			case 1:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.Creator = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
-			case 2:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Subdenom", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.Subdenom = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
-			default:
-				iNdEx = preIndex
-				skippy, err := runtime.Skip(dAtA[iNdEx:])
-				if err != nil {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
-				}
-				if (skippy < 0) || (iNdEx+skippy) < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if (iNdEx + skippy) > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				if !options.DiscardUnknown {
-					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
-				}
-				iNdEx += skippy
-			}
-		}
-
-		if iNdEx > l {
-			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-		}
-		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
-	}
-	return &protoiface.Methods{
-		NoUnkeyedLiterals: struct{}{},
-		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
-		Size:              size,
-		Marshal:           marshal,
-		Unmarshal:         unmarshal,
-		Merge:             nil,
-		CheckInitialized:  nil,
-	}
-}
-
-var (
-	md_QueryBeforeSendHookAddressResponse               protoreflect.MessageDescriptor
-	fd_QueryBeforeSendHookAddressResponse_contract_addr protoreflect.FieldDescriptor
-)
-
-func init() {
-	file_osmosis_tokenfactory_v1beta1_query_proto_init()
-	md_QueryBeforeSendHookAddressResponse = File_osmosis_tokenfactory_v1beta1_query_proto.Messages().ByName("QueryBeforeSendHookAddressResponse")
-	fd_QueryBeforeSendHookAddressResponse_contract_addr = md_QueryBeforeSendHookAddressResponse.Fields().ByName("contract_addr")
-}
-
-var _ protoreflect.Message = (*fastReflection_QueryBeforeSendHookAddressResponse)(nil)
-
-type fastReflection_QueryBeforeSendHookAddressResponse QueryBeforeSendHookAddressResponse
-
-func (x *QueryBeforeSendHookAddressResponse) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_QueryBeforeSendHookAddressResponse)(x)
-}
-
-func (x *QueryBeforeSendHookAddressResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_query_proto_msgTypes[7]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-var _fastReflection_QueryBeforeSendHookAddressResponse_messageType fastReflection_QueryBeforeSendHookAddressResponse_messageType
-var _ protoreflect.MessageType = fastReflection_QueryBeforeSendHookAddressResponse_messageType{}
-
-type fastReflection_QueryBeforeSendHookAddressResponse_messageType struct{}
-
-func (x fastReflection_QueryBeforeSendHookAddressResponse_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_QueryBeforeSendHookAddressResponse)(nil)
-}
-func (x fastReflection_QueryBeforeSendHookAddressResponse_messageType) New() protoreflect.Message {
-	return new(fastReflection_QueryBeforeSendHookAddressResponse)
-}
-func (x fastReflection_QueryBeforeSendHookAddressResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryBeforeSendHookAddressResponse
-}
-
-// Descriptor returns message descriptor, which contains only the protobuf
-// type information for the message.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) Descriptor() protoreflect.MessageDescriptor {
-	return md_QueryBeforeSendHookAddressResponse
-}
-
-// Type returns the message type, which encapsulates both Go and protobuf
-// type information. If the Go type information is not needed,
-// it is recommended that the message descriptor be used instead.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) Type() protoreflect.MessageType {
-	return _fastReflection_QueryBeforeSendHookAddressResponse_messageType
-}
-
-// New returns a newly allocated and mutable empty message.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) New() protoreflect.Message {
-	return new(fastReflection_QueryBeforeSendHookAddressResponse)
-}
-
-// Interface unwraps the message reflection interface and
-// returns the underlying ProtoMessage interface.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) Interface() protoreflect.ProtoMessage {
-	return (*QueryBeforeSendHookAddressResponse)(x)
-}
-
-// Range iterates over every populated field in an undefined order,
-// calling f for each field descriptor and value encountered.
-// Range returns immediately if f returns false.
-// While iterating, mutating operations may only be performed
-// on the current field descriptor.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if x.ContractAddr != "" {
-		value := protoreflect.ValueOfString(x.ContractAddr)
-		if !f(fd_QueryBeforeSendHookAddressResponse_contract_addr, value) {
-			return
-		}
-	}
-}
-
-// Has reports whether a field is populated.
-//
-// Some fields have the property of nullability where it is possible to
-// distinguish between the default value of a field and whether the field
-// was explicitly populated with the default value. Singular message fields,
-// member fields of a oneof, and proto2 scalar fields are nullable. Such
-// fields are populated only if explicitly set.
-//
-// In other cases (aside from the nullable cases above),
-// a proto3 scalar field is populated if it contains a non-zero value, and
-// a repeated field is populated if it is non-empty.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) Has(fd protoreflect.FieldDescriptor) bool {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse.contract_addr":
-		return x.ContractAddr != ""
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// Clear clears the field such that a subsequent Has call reports false.
-//
-// Clearing an extension field clears both the extension type and value
-// associated with the given field number.
-//
-// Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) Clear(fd protoreflect.FieldDescriptor) {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse.contract_addr":
-		x.ContractAddr = ""
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// Get retrieves the value for a field.
-//
-// For unpopulated scalars, it returns the default value, where
-// the default value of a bytes scalar is guaranteed to be a copy.
-// For unpopulated composite types, it returns an empty, read-only view
-// of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
-	switch descriptor.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse.contract_addr":
-		value := x.ContractAddr
-		return protoreflect.ValueOfString(value)
-	default:
-		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse does not contain field %s", descriptor.FullName()))
-	}
-}
-
-// Set stores the value for a field.
-//
-// For a field belonging to a oneof, it implicitly clears any other field
-// that may be currently set within the same oneof.
-// For extension fields, it implicitly stores the provided ExtensionType.
-// When setting a composite type, it is unspecified whether the stored value
-// aliases the source's memory in any way. If the composite value is an
-// empty, read-only value, then it panics.
-//
-// Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse.contract_addr":
-		x.ContractAddr = value.Interface().(string)
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// Mutable returns a mutable reference to a composite type.
-//
-// If the field is unpopulated, it may allocate a composite value.
-// For a field belonging to a oneof, it implicitly clears any other field
-// that may be currently set within the same oneof.
-// For extension fields, it implicitly stores the provided ExtensionType
-// if not already stored.
-// It panics if the field does not contain a composite type.
-//
-// Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse.contract_addr":
-		panic(fmt.Errorf("field contract_addr of message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse is not mutable"))
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// NewField returns a new value that is assignable to the field
-// for the given descriptor. For scalars, this returns the default value.
-// For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse.contract_addr":
-		return protoreflect.ValueOfString("")
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// WhichOneof reports which field within the oneof is populated,
-// returning nil if none are populated.
-// It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
-	switch d.FullName() {
-	default:
-		panic(fmt.Errorf("%s is not a oneof field in osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse", d.FullName()))
-	}
-	panic("unreachable")
-}
-
-// GetUnknown retrieves the entire list of unknown fields.
-// The caller may only mutate the contents of the RawFields
-// if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) GetUnknown() protoreflect.RawFields {
-	return x.unknownFields
-}
-
-// SetUnknown stores an entire list of unknown fields.
-// The raw fields must be syntactically valid according to the wire format.
-// An implementation may panic if this is not the case.
-// Once stored, the caller must not mutate the content of the RawFields.
-// An empty RawFields may be passed to clear the fields.
-//
-// SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) SetUnknown(fields protoreflect.RawFields) {
-	x.unknownFields = fields
-}
-
-// IsValid reports whether the message is valid.
-//
-// An invalid message is an empty, read-only value.
-//
-// An invalid message often corresponds to a nil pointer of the concrete
-// message type, but the details are implementation dependent.
-// Validity is not part of the protobuf data model, and may not
-// be preserved in marshaling or other operations.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) IsValid() bool {
-	return x != nil
-}
-
-// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
-// This method may return nil.
-//
-// The returned methods type is identical to
-// "google.golang.org/protobuf/runtime/protoiface".Methods.
-// Consult the protoiface package documentation for details.
-func (x *fastReflection_QueryBeforeSendHookAddressResponse) ProtoMethods() *protoiface.Methods {
-	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*QueryBeforeSendHookAddressResponse)
-		if x == nil {
-			return protoiface.SizeOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Size:              0,
-			}
-		}
-		options := runtime.SizeInputToOptions(input)
-		_ = options
-		var n int
-		var l int
-		_ = l
-		l = len(x.ContractAddr)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
-		}
-		if x.unknownFields != nil {
-			n += len(x.unknownFields)
-		}
-		return protoiface.SizeOutput{
-			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-			Size:              n,
-		}
-	}
-
-	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*QueryBeforeSendHookAddressResponse)
-		if x == nil {
-			return protoiface.MarshalOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Buf:               input.Buf,
-			}, nil
-		}
-		options := runtime.MarshalInputToOptions(input)
-		_ = options
-		size := options.Size(x)
-		dAtA := make([]byte, size)
-		i := len(dAtA)
-		_ = i
-		var l int
-		_ = l
-		if x.unknownFields != nil {
-			i -= len(x.unknownFields)
-			copy(dAtA[i:], x.unknownFields)
-		}
-		if len(x.ContractAddr) > 0 {
-			i -= len(x.ContractAddr)
-			copy(dAtA[i:], x.ContractAddr)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ContractAddr)))
-			i--
-			dAtA[i] = 0xa
-		}
-		if input.Buf != nil {
-			input.Buf = append(input.Buf, dAtA...)
-		} else {
-			input.Buf = dAtA
-		}
-		return protoiface.MarshalOutput{
-			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-			Buf:               input.Buf,
-		}, nil
-	}
-	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*QueryBeforeSendHookAddressResponse)
-		if x == nil {
-			return protoiface.UnmarshalOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Flags:             input.Flags,
-			}, nil
-		}
-		options := runtime.UnmarshalInputToOptions(input)
-		_ = options
-		dAtA := input.Buf
-		l := len(dAtA)
-		iNdEx := 0
-		for iNdEx < l {
-			preIndex := iNdEx
-			var wire uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				wire |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			fieldNum := int32(wire >> 3)
-			wireType := int(wire & 0x7)
-			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryBeforeSendHookAddressResponse: wiretype end group for non-group")
-			}
-			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryBeforeSendHookAddressResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-			}
-			switch fieldNum {
-			case 1:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ContractAddr", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.ContractAddr = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
-			default:
-				iNdEx = preIndex
-				skippy, err := runtime.Skip(dAtA[iNdEx:])
-				if err != nil {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
-				}
-				if (skippy < 0) || (iNdEx+skippy) < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if (iNdEx + skippy) > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				if !options.DiscardUnknown {
-					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
-				}
-				iNdEx += skippy
-			}
-		}
-
-		if iNdEx > l {
-			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-		}
-		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
-	}
-	return &protoiface.Methods{
-		NoUnkeyedLiterals: struct{}{},
-		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
-		Size:              size,
-		Marshal:           marshal,
-		Unmarshal:         unmarshal,
-		Merge:             nil,
-		CheckInitialized:  nil,
-	}
-}
-
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -3762,86 +2858,6 @@ func (x *QueryDenomsFromCreatorResponse) GetDenoms() []string {
 	return nil
 }
 
-type QueryBeforeSendHookAddressRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Creator  string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Subdenom string `protobuf:"bytes,2,opt,name=subdenom,proto3" json:"subdenom,omitempty"`
-}
-
-func (x *QueryBeforeSendHookAddressRequest) Reset() {
-	*x = QueryBeforeSendHookAddressRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_query_proto_msgTypes[6]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *QueryBeforeSendHookAddressRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QueryBeforeSendHookAddressRequest) ProtoMessage() {}
-
-// Deprecated: Use QueryBeforeSendHookAddressRequest.ProtoReflect.Descriptor instead.
-func (*QueryBeforeSendHookAddressRequest) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_query_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *QueryBeforeSendHookAddressRequest) GetCreator() string {
-	if x != nil {
-		return x.Creator
-	}
-	return ""
-}
-
-func (x *QueryBeforeSendHookAddressRequest) GetSubdenom() string {
-	if x != nil {
-		return x.Subdenom
-	}
-	return ""
-}
-
-// QueryBeforeSendHookAddressResponse defines the response structure for the
-// DenomBeforeSendHook gRPC query.
-type QueryBeforeSendHookAddressResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	ContractAddr string `protobuf:"bytes,1,opt,name=contract_addr,json=contractAddr,proto3" json:"contract_addr,omitempty"`
-}
-
-func (x *QueryBeforeSendHookAddressResponse) Reset() {
-	*x = QueryBeforeSendHookAddressResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_query_proto_msgTypes[7]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *QueryBeforeSendHookAddressResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QueryBeforeSendHookAddressResponse) ProtoMessage() {}
-
-// Deprecated: Use QueryBeforeSendHookAddressResponse.ProtoReflect.Descriptor instead.
-func (*QueryBeforeSendHookAddressResponse) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_query_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *QueryBeforeSendHookAddressResponse) GetContractAddr() string {
-	if x != nil {
-		return x.ContractAddr
-	}
-	return ""
-}
-
 var File_osmosis_tokenfactory_v1beta1_query_proto protoreflect.FileDescriptor
 
 var file_osmosis_tokenfactory_v1beta1_query_proto_rawDesc = []byte{
@@ -3894,95 +2910,64 @@ var file_osmosis_tokenfactory_v1beta1_query_proto_rawDesc = []byte{
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x29, 0x0a, 0x06, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x73,
 	0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x42, 0x11, 0xf2, 0xde, 0x1f, 0x0d, 0x79, 0x61, 0x6d, 0x6c,
 	0x3a, 0x22, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x22, 0x52, 0x06, 0x64, 0x65, 0x6e, 0x6f, 0x6d,
-	0x73, 0x22, 0x82, 0x01, 0x0a, 0x21, 0x51, 0x75, 0x65, 0x72, 0x79, 0x42, 0x65, 0x66, 0x6f, 0x72,
-	0x65, 0x53, 0x65, 0x6e, 0x64, 0x48, 0x6f, 0x6f, 0x6b, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2c, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74,
-	0x6f, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x12, 0xf2, 0xde, 0x1f, 0x0e, 0x79, 0x61,
-	0x6d, 0x6c, 0x3a, 0x22, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0x52, 0x07, 0x63, 0x72,
-	0x65, 0x61, 0x74, 0x6f, 0x72, 0x12, 0x2f, 0x0a, 0x08, 0x73, 0x75, 0x62, 0x64, 0x65, 0x6e, 0x6f,
-	0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x13, 0xf2, 0xde, 0x1f, 0x0f, 0x79, 0x61, 0x6d,
-	0x6c, 0x3a, 0x22, 0x73, 0x75, 0x62, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x22, 0x52, 0x08, 0x73, 0x75,
-	0x62, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x22, 0x63, 0x0a, 0x22, 0x51, 0x75, 0x65, 0x72, 0x79, 0x42,
-	0x65, 0x66, 0x6f, 0x72, 0x65, 0x53, 0x65, 0x6e, 0x64, 0x48, 0x6f, 0x6f, 0x6b, 0x41, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3d, 0x0a, 0x0d,
-	0x63, 0x6f, 0x6e, 0x74, 0x72, 0x61, 0x63, 0x74, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x42, 0x18, 0xf2, 0xde, 0x1f, 0x14, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x63,
-	0x6f, 0x6e, 0x74, 0x72, 0x61, 0x63, 0x74, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x22, 0x52, 0x0c, 0x63,
-	0x6f, 0x6e, 0x74, 0x72, 0x61, 0x63, 0x74, 0x41, 0x64, 0x64, 0x72, 0x32, 0xf2, 0x06, 0x0a, 0x05,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0x9b, 0x01, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73,
-	0x12, 0x30, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
-	0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x31, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b,
-	0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61,
-	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2c, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x26, 0x12, 0x24, 0x2f,
-	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63,
-	0x74, 0x6f, 0x72, 0x79, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2f, 0x70, 0x61, 0x72,
-	0x61, 0x6d, 0x73, 0x12, 0xfb, 0x01, 0x0a, 0x16, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x41, 0x75, 0x74,
-	0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x40,
-	0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61,
-	0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x51, 0x75,
-	0x65, 0x72, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74,
-	0x79, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x41, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
-	0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72,
-	0x69, 0x74, 0x79, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x5c, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x56, 0x12, 0x54, 0x2f, 0x6f, 0x73,
-	0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f,
-	0x72, 0x79, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2f, 0x64, 0x65, 0x6e, 0x6f, 0x6d,
-	0x73, 0x2f, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x7b, 0x63, 0x72, 0x65, 0x61, 0x74,
-	0x6f, 0x72, 0x7d, 0x2f, 0x7b, 0x73, 0x75, 0x62, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x7d, 0x2f, 0x61,
-	0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x5f, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74,
-	0x61, 0x12, 0xd3, 0x01, 0x0a, 0x11, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x46, 0x72, 0x6f, 0x6d,
-	0x43, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x12, 0x3b, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69,
-	0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76,
-	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x44, 0x65, 0x6e, 0x6f,
-	0x6d, 0x73, 0x46, 0x72, 0x6f, 0x6d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x3c, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74,
-	0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65,
-	0x74, 0x61, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x46,
-	0x72, 0x6f, 0x6d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x43, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x3d, 0x12, 0x3b, 0x2f, 0x6f, 0x73, 0x6d,
-	0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72,
-	0x79, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x73,
-	0x5f, 0x66, 0x72, 0x6f, 0x6d, 0x5f, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x2f, 0x7b, 0x63,
-	0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x7d, 0x12, 0xf6, 0x01, 0x0a, 0x15, 0x42, 0x65, 0x66, 0x6f,
-	0x72, 0x65, 0x53, 0x65, 0x6e, 0x64, 0x48, 0x6f, 0x6f, 0x6b, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
-	0x73, 0x12, 0x3f, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65,
-	0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31,
-	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x53, 0x65, 0x6e, 0x64,
-	0x48, 0x6f, 0x6f, 0x6b, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x40, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b,
-	0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61,
-	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x53, 0x65, 0x6e,
-	0x64, 0x48, 0x6f, 0x6f, 0x6b, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x5a, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x54, 0x12, 0x52, 0x2f, 0x6f,
-	0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74,
-	0x6f, 0x72, 0x79, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2f, 0x64, 0x65, 0x6e, 0x6f,
-	0x6d, 0x73, 0x2f, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x7b, 0x63, 0x72, 0x65, 0x61,
-	0x74, 0x6f, 0x72, 0x7d, 0x2f, 0x7b, 0x73, 0x75, 0x62, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x7d, 0x2f,
-	0x62, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x5f, 0x73, 0x65, 0x6e, 0x64, 0x5f, 0x68, 0x6f, 0x6f, 0x6b,
-	0x42, 0x97, 0x02, 0x0a, 0x20, 0x63, 0x6f, 0x6d, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73,
+	0x73, 0x32, 0xf9, 0x04, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0x9b, 0x01, 0x0a, 0x06,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x30, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73,
 	0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31,
-	0x62, 0x65, 0x74, 0x61, 0x31, 0x42, 0x0a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x72, 0x6f, 0x74,
-	0x6f, 0x50, 0x01, 0x5a, 0x55, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
-	0x4d, 0x41, 0x4e, 0x54, 0x52, 0x41, 0x2d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x69, 0x6e, 0x76,
-	0x65, 0x6e, 0x69, 0x65, 0x6d, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69,
-	0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x76,
-	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x3b, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74,
-	0x6f, 0x72, 0x79, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xa2, 0x02, 0x03, 0x4f, 0x54, 0x58,
-	0xaa, 0x02, 0x1c, 0x4f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x54, 0x6f, 0x6b, 0x65, 0x6e,
-	0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xca,
-	0x02, 0x1c, 0x4f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x5c, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66,
-	0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x5c, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xe2, 0x02,
-	0x28, 0x4f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x5c, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61,
-	0x63, 0x74, 0x6f, 0x72, 0x79, 0x5c, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x5c, 0x47, 0x50,
-	0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x1e, 0x4f, 0x73, 0x6d, 0x6f,
-	0x73, 0x69, 0x73, 0x3a, 0x3a, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72,
-	0x79, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d,
+	0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e,
+	0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72,
+	0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2c, 0x82, 0xd3, 0xe4,
+	0x93, 0x02, 0x26, 0x12, 0x24, 0x2f, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f,
+	0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74,
+	0x61, 0x31, 0x2f, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0xfb, 0x01, 0x0a, 0x16, 0x44, 0x65,
+	0x6e, 0x6f, 0x6d, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x4d, 0x65, 0x74, 0x61,
+	0x64, 0x61, 0x74, 0x61, 0x12, 0x40, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74,
+	0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65,
+	0x74, 0x61, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x41, 0x75,
+	0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x41, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73,
+	0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31,
+	0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d,
+	0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74,
+	0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x5c, 0x82, 0xd3, 0xe4, 0x93, 0x02,
+	0x56, 0x12, 0x54, 0x2f, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65,
+	0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31,
+	0x2f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x2f, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f,
+	0x7b, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x7d, 0x2f, 0x7b, 0x73, 0x75, 0x62, 0x64, 0x65,
+	0x6e, 0x6f, 0x6d, 0x7d, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x5f, 0x6d,
+	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0xd3, 0x01, 0x0a, 0x11, 0x44, 0x65, 0x6e, 0x6f,
+	0x6d, 0x73, 0x46, 0x72, 0x6f, 0x6d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x12, 0x3b, 0x2e,
+	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63,
+	0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x51, 0x75, 0x65,
+	0x72, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x46, 0x72, 0x6f, 0x6d, 0x43, 0x72, 0x65, 0x61,
+	0x74, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x3c, 0x2e, 0x6f, 0x73, 0x6d,
+	0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72,
+	0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x44,
+	0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x46, 0x72, 0x6f, 0x6d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x43, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x3d,
+	0x12, 0x3b, 0x2f, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
+	0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2f,
+	0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x5f, 0x66, 0x72, 0x6f, 0x6d, 0x5f, 0x63, 0x72, 0x65, 0x61,
+	0x74, 0x6f, 0x72, 0x2f, 0x7b, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x7d, 0x42, 0x97, 0x02,
+	0x0a, 0x20, 0x63, 0x6f, 0x6d, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f,
+	0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74,
+	0x61, 0x31, 0x42, 0x0a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01,
+	0x5a, 0x55, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x4d, 0x41, 0x4e,
+	0x54, 0x52, 0x41, 0x2d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x69, 0x6e, 0x76, 0x65, 0x6e, 0x69,
+	0x65, 0x6d, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74,
+	0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x76, 0x31, 0x62, 0x65,
+	0x74, 0x61, 0x31, 0x3b, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79,
+	0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xa2, 0x02, 0x03, 0x4f, 0x54, 0x58, 0xaa, 0x02, 0x1c,
+	0x4f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63,
+	0x74, 0x6f, 0x72, 0x79, 0x2e, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xca, 0x02, 0x1c, 0x4f,
+	0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x5c, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74,
+	0x6f, 0x72, 0x79, 0x5c, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xe2, 0x02, 0x28, 0x4f, 0x73,
+	0x6d, 0x6f, 0x73, 0x69, 0x73, 0x5c, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f,
+	0x72, 0x79, 0x5c, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65,
+	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x1e, 0x4f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73,
+	0x3a, 0x3a, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x3a, 0x3a,
+	0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -3997,7 +2982,7 @@ func file_osmosis_tokenfactory_v1beta1_query_proto_rawDescGZIP() []byte {
 	return file_osmosis_tokenfactory_v1beta1_query_proto_rawDescData
 }
 
-var file_osmosis_tokenfactory_v1beta1_query_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_osmosis_tokenfactory_v1beta1_query_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_osmosis_tokenfactory_v1beta1_query_proto_goTypes = []interface{}{
 	(*QueryParamsRequest)(nil),                  // 0: osmosis.tokenfactory.v1beta1.QueryParamsRequest
 	(*QueryParamsResponse)(nil),                 // 1: osmosis.tokenfactory.v1beta1.QueryParamsResponse
@@ -4005,24 +2990,20 @@ var file_osmosis_tokenfactory_v1beta1_query_proto_goTypes = []interface{}{
 	(*QueryDenomAuthorityMetadataResponse)(nil), // 3: osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse
 	(*QueryDenomsFromCreatorRequest)(nil),       // 4: osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest
 	(*QueryDenomsFromCreatorResponse)(nil),      // 5: osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse
-	(*QueryBeforeSendHookAddressRequest)(nil),   // 6: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest
-	(*QueryBeforeSendHookAddressResponse)(nil),  // 7: osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse
-	(*tokenfactory.Params)(nil),                 // 8: osmosis.tokenfactory.Params
-	(*DenomAuthorityMetadata)(nil),              // 9: osmosis.tokenfactory.v1beta1.DenomAuthorityMetadata
+	(*tokenfactory.Params)(nil),                 // 6: osmosis.tokenfactory.Params
+	(*DenomAuthorityMetadata)(nil),              // 7: osmosis.tokenfactory.v1beta1.DenomAuthorityMetadata
 }
 var file_osmosis_tokenfactory_v1beta1_query_proto_depIdxs = []int32{
-	8, // 0: osmosis.tokenfactory.v1beta1.QueryParamsResponse.params:type_name -> osmosis.tokenfactory.Params
-	9, // 1: osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse.authority_metadata:type_name -> osmosis.tokenfactory.v1beta1.DenomAuthorityMetadata
+	6, // 0: osmosis.tokenfactory.v1beta1.QueryParamsResponse.params:type_name -> osmosis.tokenfactory.Params
+	7, // 1: osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse.authority_metadata:type_name -> osmosis.tokenfactory.v1beta1.DenomAuthorityMetadata
 	0, // 2: osmosis.tokenfactory.v1beta1.Query.Params:input_type -> osmosis.tokenfactory.v1beta1.QueryParamsRequest
 	2, // 3: osmosis.tokenfactory.v1beta1.Query.DenomAuthorityMetadata:input_type -> osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataRequest
 	4, // 4: osmosis.tokenfactory.v1beta1.Query.DenomsFromCreator:input_type -> osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest
-	6, // 5: osmosis.tokenfactory.v1beta1.Query.BeforeSendHookAddress:input_type -> osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressRequest
-	1, // 6: osmosis.tokenfactory.v1beta1.Query.Params:output_type -> osmosis.tokenfactory.v1beta1.QueryParamsResponse
-	3, // 7: osmosis.tokenfactory.v1beta1.Query.DenomAuthorityMetadata:output_type -> osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse
-	5, // 8: osmosis.tokenfactory.v1beta1.Query.DenomsFromCreator:output_type -> osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse
-	7, // 9: osmosis.tokenfactory.v1beta1.Query.BeforeSendHookAddress:output_type -> osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
+	1, // 5: osmosis.tokenfactory.v1beta1.Query.Params:output_type -> osmosis.tokenfactory.v1beta1.QueryParamsResponse
+	3, // 6: osmosis.tokenfactory.v1beta1.Query.DenomAuthorityMetadata:output_type -> osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse
+	5, // 7: osmosis.tokenfactory.v1beta1.Query.DenomsFromCreator:output_type -> osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
@@ -4107,30 +3088,6 @@ func file_osmosis_tokenfactory_v1beta1_query_proto_init() {
 				return nil
 			}
 		}
-		file_osmosis_tokenfactory_v1beta1_query_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryBeforeSendHookAddressRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_osmosis_tokenfactory_v1beta1_query_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryBeforeSendHookAddressResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -4138,7 +3095,7 @@ func file_osmosis_tokenfactory_v1beta1_query_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_osmosis_tokenfactory_v1beta1_query_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

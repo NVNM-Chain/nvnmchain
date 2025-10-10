@@ -3,7 +3,6 @@ package types
 import (
 	"context"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	erc20types "github.com/cosmos/evm/x/erc20/types"
@@ -31,17 +30,6 @@ type BankKeeper interface {
 type AccountKeeper interface {
 	GetAccount(context.Context, sdk.AccAddress) sdk.AccountI
 	GetModuleAccount(ctx context.Context, moduleName string) sdk.ModuleAccountI
-}
-
-// BankHooks event hooks
-type BankHooks interface {
-	TrackBeforeSend(ctx context.Context, from, to sdk.AccAddress, amount sdk.Coins)       // Must be before any send is executed
-	BlockBeforeSend(ctx context.Context, from, to sdk.AccAddress, amount sdk.Coins) error // Must be before any send is executed
-}
-
-type WasmKeeper interface {
-	Sudo(ctx context.Context, contractAddress sdk.AccAddress, msg []byte) ([]byte, error)
-	GetContractInfo(ctx context.Context, contractAddress sdk.AccAddress) *wasmtypes.ContractInfo
 }
 
 type ERC20Keeper interface {

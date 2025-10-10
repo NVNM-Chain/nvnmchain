@@ -22,7 +22,6 @@ const (
 	Query_Params_FullMethodName                 = "/osmosis.tokenfactory.v1beta1.Query/Params"
 	Query_DenomAuthorityMetadata_FullMethodName = "/osmosis.tokenfactory.v1beta1.Query/DenomAuthorityMetadata"
 	Query_DenomsFromCreator_FullMethodName      = "/osmosis.tokenfactory.v1beta1.Query/DenomsFromCreator"
-	Query_BeforeSendHookAddress_FullMethodName  = "/osmosis.tokenfactory.v1beta1.Query/BeforeSendHookAddress"
 )
 
 // QueryClient is the client API for Query service.
@@ -40,9 +39,6 @@ type QueryClient interface {
 	// DenomsFromCreator defines a gRPC query method for fetching all
 	// denominations created by a specific admin/creator.
 	DenomsFromCreator(ctx context.Context, in *QueryDenomsFromCreatorRequest, opts ...grpc.CallOption) (*QueryDenomsFromCreatorResponse, error)
-	// BeforeSendHookAddress defines a gRPC query method for
-	// getting the address registered for the before send hook.
-	BeforeSendHookAddress(ctx context.Context, in *QueryBeforeSendHookAddressRequest, opts ...grpc.CallOption) (*QueryBeforeSendHookAddressResponse, error)
 }
 
 type queryClient struct {
@@ -83,16 +79,6 @@ func (c *queryClient) DenomsFromCreator(ctx context.Context, in *QueryDenomsFrom
 	return out, nil
 }
 
-func (c *queryClient) BeforeSendHookAddress(ctx context.Context, in *QueryBeforeSendHookAddressRequest, opts ...grpc.CallOption) (*QueryBeforeSendHookAddressResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(QueryBeforeSendHookAddressResponse)
-	err := c.cc.Invoke(ctx, Query_BeforeSendHookAddress_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -108,9 +94,6 @@ type QueryServer interface {
 	// DenomsFromCreator defines a gRPC query method for fetching all
 	// denominations created by a specific admin/creator.
 	DenomsFromCreator(context.Context, *QueryDenomsFromCreatorRequest) (*QueryDenomsFromCreatorResponse, error)
-	// BeforeSendHookAddress defines a gRPC query method for
-	// getting the address registered for the before send hook.
-	BeforeSendHookAddress(context.Context, *QueryBeforeSendHookAddressRequest) (*QueryBeforeSendHookAddressResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -129,9 +112,6 @@ func (UnimplementedQueryServer) DenomAuthorityMetadata(context.Context, *QueryDe
 }
 func (UnimplementedQueryServer) DenomsFromCreator(context.Context, *QueryDenomsFromCreatorRequest) (*QueryDenomsFromCreatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DenomsFromCreator not implemented")
-}
-func (UnimplementedQueryServer) BeforeSendHookAddress(context.Context, *QueryBeforeSendHookAddressRequest) (*QueryBeforeSendHookAddressResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BeforeSendHookAddress not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -208,24 +188,6 @@ func _Query_DenomsFromCreator_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_BeforeSendHookAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryBeforeSendHookAddressRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).BeforeSendHookAddress(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Query_BeforeSendHookAddress_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).BeforeSendHookAddress(ctx, req.(*QueryBeforeSendHookAddressRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -244,10 +206,6 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DenomsFromCreator",
 			Handler:    _Query_DenomsFromCreator_Handler,
-		},
-		{
-			MethodName: "BeforeSendHookAddress",
-			Handler:    _Query_BeforeSendHookAddress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -31,7 +31,7 @@ func NewDefaultGenesisState(cdc codec.JSONCodec) GenesisState {
 		Params: distributiontypes.Params{
 			CommunityTax: math.LegacyMustNewDecFromStr("0.01"),
 			//			McaTax:              math.LegacyMustNewDecFromStr("0.4"),
-			//			McaAddress:          "inveniem15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzkagqq0",
+			//			McaAddress:          "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzkagqq0",
 			WithdrawAddrEnabled: true,
 		},
 	}

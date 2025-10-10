@@ -7,7 +7,7 @@ import (
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/log"
 	"cosmossdk.io/store/prefix"
-	"github.com/MANTRA-Chain/inveniem/x/tokenfactory/types"
+	"github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,14 +15,13 @@ import (
 
 type (
 	Keeper struct {
-		storeService   store.KVStoreService
-		knownModules   []string
-		cdc            codec.Codec
-		accountKeeper  types.AccountKeeper
-		bankKeeper     types.BankKeeper
-		contractKeeper types.WasmKeeper
-		erc20Keeper    types.ERC20Keeper
-		authority      string
+		storeService  store.KVStoreService
+		knownModules  []string
+		cdc           codec.Codec
+		accountKeeper types.AccountKeeper
+		bankKeeper    types.BankKeeper
+		erc20Keeper   types.ERC20Keeper
+		authority     string
 	}
 )
 
@@ -33,19 +32,17 @@ func NewKeeper(
 	knownModules []string,
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
-	contractKeeper types.WasmKeeper,
 	erc20Keeper types.ERC20Keeper,
 	authority string,
 ) Keeper {
 	return Keeper{
-		cdc:            cdc,
-		storeService:   storeService,
-		knownModules:   knownModules,
-		accountKeeper:  accountKeeper,
-		bankKeeper:     bankKeeper,
-		contractKeeper: contractKeeper,
-		erc20Keeper:    erc20Keeper,
-		authority:      authority,
+		cdc:           cdc,
+		storeService:  storeService,
+		knownModules:  knownModules,
+		accountKeeper: accountKeeper,
+		bankKeeper:    bankKeeper,
+		erc20Keeper:   erc20Keeper,
+		authority:     authority,
 	}
 }
 
@@ -75,11 +72,6 @@ func (k Keeper) GetCreatorPrefixStore(ctx sdk.Context, creator string) prefix.St
 func (k Keeper) GetCreatorsPrefixStore(ctx sdk.Context) prefix.Store {
 	store := runtime.KVStoreAdapter(k.storeService.OpenKVStore(ctx))
 	return prefix.NewStore(store, types.GetCreatorsPrefix())
-}
-
-// Set the wasm keeper.
-func (k *Keeper) SetContractKeeper(contractKeeper types.WasmKeeper) {
-	k.contractKeeper = contractKeeper
 }
 
 // CreateModuleAccount creates a module account with minting and burning capabilities

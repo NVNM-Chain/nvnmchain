@@ -26,7 +26,7 @@ func (s *IntegrationTestSuite) testDistribution() {
 		beforeBalance = sdk.NewCoin(anvnmDenom, math.NewInt(0))
 	}
 
-	s.execSetWithdrawAddress(s.chainA, 0, standardFees.String(), delegatorAddress.String(), newWithdrawalAddress.String(), inveniemHomePath)
+	s.execSetWithdrawAddress(s.chainA, 0, standardFees.String(), delegatorAddress.String(), newWithdrawalAddress.String(), inveniamHomePath)
 
 	// Verify
 	s.Require().Eventually(
@@ -40,7 +40,7 @@ func (s *IntegrationTestSuite) testDistribution() {
 		5*time.Second,
 	)
 
-	s.execWithdrawReward(s.chainA, 0, delegatorAddress.String(), valOperAddressA, inveniemHomePath)
+	s.execWithdrawReward(s.chainA, 0, delegatorAddress.String(), valOperAddressA, inveniamHomePath)
 	s.Require().Eventually(
 		func() bool {
 			afterBalance, err := getSpecificBalance(chainEndpoint, newWithdrawalAddress.String(), anvnmDenom)

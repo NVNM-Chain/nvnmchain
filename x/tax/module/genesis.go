@@ -1,8 +1,8 @@
 package tax
 
 import (
-	"github.com/MANTRA-Chain/inveniem/x/tax/keeper"
-	"github.com/MANTRA-Chain/inveniem/x/tax/types"
+	"github.com/MANTRA-Chain/inveniam/x/tax/keeper"
+	"github.com/MANTRA-Chain/inveniam/x/tax/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

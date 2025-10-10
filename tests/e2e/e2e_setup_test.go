@@ -16,7 +16,7 @@ import (
 
 	"cosmossdk.io/math"
 	evidencetypes "cosmossdk.io/x/evidence/types"
-	appparams "github.com/MANTRA-Chain/inveniem/app/params"
+	appparams "github.com/MANTRA-Chain/inveniam/app/params"
 	tmconfig "github.com/cometbft/cometbft/config"
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	tmjson "github.com/cometbft/cometbft/libs/json"
@@ -41,11 +41,11 @@ import (
 )
 
 const (
-	inveniemdBinary  = "inveniemd"
+	inveniamdBinary  = "inveniamd"
 	txCommand        = "tx"
 	queryCommand     = "query"
 	keysCommand      = "keys"
-	inveniemHomePath = "/home/nonroot/.inveniemchain"
+	inveniamHomePath = "/home/nonroot/.inveniamchain"
 	anvnmDenom       = "anvnm"
 	initBalanceStr   = "100000000000000000anvnm"
 	minGasPrice      = "0.01"
@@ -76,11 +76,11 @@ const (
 	transferPort              = "transfer"
 	transferChannel           = "channel-0"
 
-	govAuthority = "inveniem10d07y265gmmuvt4z0w9aw880jnsr700j3fep4f"
+	govAuthority = "inveniam10d07y265gmmuvt4z0w9aw880jnsr700j3fep4f"
 )
 
 var (
-	inveniemConfigPath = filepath.Join(inveniemHomePath, "config")
+	inveniamConfigPath = filepath.Join(inveniamHomePath, "config")
 	stakingAmount      = math.NewInt(100000000000)
 	stakingAmountCoin  = sdk.NewCoin(anvnmDenom, stakingAmount)
 	tokenAmount        = sdk.NewCoin(anvnmDenom, math.NewInt(3300000000))
@@ -126,10 +126,10 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.T().Log("setting up e2e integration test suite...")
 
 	var err error
-	s.chainA, err = newChain("inveniem-canary-net-1")
+	s.chainA, err = newChain("inveniam-canary-net-1")
 	s.Require().NoError(err)
 
-	s.chainB, err = newChain("inveniem-1")
+	s.chainB, err = newChain("inveniam-1")
 	s.Require().NoError(err)
 
 	s.dkrPool, err = dockertest.NewPool("")
@@ -157,8 +157,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 
 	// The bootstrapping phase is as follows:
 	//
-	// 1. Initialize inveniem validator nodes.
-	// 2. Create and initialize inveniem validator genesis files (both chains)
+	// 1. Initialize inveniam validator nodes.
+	// 2. Create and initialize inveniam validator genesis files (both chains)
 	// 3. Start both networks.
 	// 4. Create and run IBC relayer (Hermes) containers.
 
@@ -181,7 +181,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 }
 
 func (s *IntegrationTestSuite) TearDownSuite() {
-	if str := os.Getenv("inveniem_E2E_SKIP_CLEANUP"); len(str) > 0 {
+	if str := os.Getenv("inveniam_E2E_SKIP_CLEANUP"); len(str) > 0 {
 		skipCleanup, err := strconv.ParseBool(str)
 		s.Require().NoError(err)
 
@@ -552,7 +552,7 @@ func (s *IntegrationTestSuite) initValidatorConfigs(c *chain) {
 
 // runValidators runs the validators in the chain
 func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
-	s.T().Logf("starting inveniem %s validator containers...", c.id)
+	s.T().Logf("starting inveniam %s validator containers...", c.id)
 
 	s.valResources[c.id] = make([]*dockertest.Resource, len(c.validators))
 	for i, val := range c.validators {
@@ -560,9 +560,9 @@ func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
 			Name:      val.instanceName(),
 			NetworkID: s.dkrNet.Network.ID,
 			Mounts: []string{
-				fmt.Sprintf("%s/:%s", val.configDir(), inveniemHomePath),
+				fmt.Sprintf("%s/:%s", val.configDir(), inveniamHomePath),
 			},
-			Repository: "inveniem-chain/inveniemchain",
+			Repository: "mantra-chain/inveniam",
 			Tag:        "latest",
 		}
 
@@ -589,7 +589,7 @@ func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
 		s.Require().NoError(err)
 
 		s.valResources[c.id][i] = resource
-		s.T().Logf("started inveniem %s validator container: %s", c.id, resource.Container.ID)
+		s.T().Logf("started inveniam %s validator container: %s", c.id, resource.Container.ID)
 	}
 
 	rpcClient, err := rpchttp.New("tcp://localhost:26657", "/websocket")
@@ -613,7 +613,7 @@ func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
 		},
 		5*time.Minute,
 		time.Second,
-		"inveniem node failed to produce blocks",
+		"inveniam node failed to produce blocks",
 	)
 }
 
@@ -629,15 +629,15 @@ func noRestart(config *docker.HostConfig) {
 func (s *IntegrationTestSuite) runIBCRelayer() {
 	s.T().Log("starting Hermes relayer container")
 
-	tmpDir, err := os.MkdirTemp("", "inveniem-e2e-testnet-hermes-")
+	tmpDir, err := os.MkdirTemp("", "inveniam-e2e-testnet-hermes-")
 	s.Require().NoError(err)
 	s.tmpDirs = append(s.tmpDirs, tmpDir)
 
-	inveniemAVal := s.chainA.validators[0]
-	inveniemBVal := s.chainB.validators[0]
+	inveniamAVal := s.chainA.validators[0]
+	inveniamBVal := s.chainB.validators[0]
 
-	inveniemARly := s.chainA.genesisAccounts[relayerAccountIndexHermes]
-	inveniemBRly := s.chainB.genesisAccounts[relayerAccountIndexHermes]
+	inveniamARly := s.chainA.genesisAccounts[relayerAccountIndexHermes]
+	inveniamBRly := s.chainB.genesisAccounts[relayerAccountIndexHermes]
 
 	hermesCfgPath := path.Join(tmpDir, "hermes")
 
@@ -661,14 +661,14 @@ func (s *IntegrationTestSuite) runIBCRelayer() {
 				"3031/tcp": {{HostIP: "", HostPort: "3031"}},
 			},
 			Env: []string{
-				fmt.Sprintf("INVENIEM_A_E2E_CHAIN_ID=%s", s.chainA.id),
-				fmt.Sprintf("INVENIEM_B_E2E_CHAIN_ID=%s", s.chainB.id),
-				fmt.Sprintf("INVENIEM_A_E2E_VAL_MNEMONIC=%s", inveniemAVal.mnemonic),
-				fmt.Sprintf("INVENIEM_B_E2E_VAL_MNEMONIC=%s", inveniemBVal.mnemonic),
-				fmt.Sprintf("INVENIEM_A_E2E_RLY_MNEMONIC=%s", inveniemARly.mnemonic),
-				fmt.Sprintf("INVENIEM_B_E2E_RLY_MNEMONIC=%s", inveniemBRly.mnemonic),
-				fmt.Sprintf("INVENIEM_A_E2E_VAL_HOST=%s", s.valResources[s.chainA.id][0].Container.Name[1:]),
-				fmt.Sprintf("INVENIEM_B_E2E_VAL_HOST=%s", s.valResources[s.chainB.id][0].Container.Name[1:]),
+				fmt.Sprintf("INVENIAM_A_E2E_CHAIN_ID=%s", s.chainA.id),
+				fmt.Sprintf("INVENIAM_B_E2E_CHAIN_ID=%s", s.chainB.id),
+				fmt.Sprintf("INVENIAM_A_E2E_VAL_MNEMONIC=%s", inveniamAVal.mnemonic),
+				fmt.Sprintf("INVENIAM_B_E2E_VAL_MNEMONIC=%s", inveniamBVal.mnemonic),
+				fmt.Sprintf("INVENIAM_A_E2E_RLY_MNEMONIC=%s", inveniamARly.mnemonic),
+				fmt.Sprintf("INVENIAM_B_E2E_RLY_MNEMONIC=%s", inveniamBRly.mnemonic),
+				fmt.Sprintf("INVENIAM_A_E2E_VAL_HOST=%s", s.valResources[s.chainA.id][0].Container.Name[1:]),
+				fmt.Sprintf("INVENIAM_B_E2E_VAL_HOST=%s", s.valResources[s.chainB.id][0].Container.Name[1:]),
 			},
 			User: "root",
 			Entrypoint: []string{
@@ -687,7 +687,7 @@ func (s *IntegrationTestSuite) runIBCRelayer() {
 	// transport errors.
 	time.Sleep(10 * time.Second)
 
-	// create the client, connection and channel between the two inveniem chains
+	// create the client, connection and channel between the two inveniam chains
 	s.createConnection()
 	s.createChannel()
 }
@@ -724,7 +724,7 @@ func (s *IntegrationTestSuite) writeSoftwareUpgradeProposal(c *chain, height int
 		"messages": [
 		 {
 		  "@type": "/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade",
-		  "authority": "inveniem10d07y265gmmuvt4z0w9aw880jnsr700j3fep4f",
+		  "authority": "inveniam10d07y265gmmuvt4z0w9aw880jnsr700j3fep4f",
 		  "plan": {
 		   "name": "%s",
 		   "height": "%d",
@@ -750,7 +750,7 @@ func (s *IntegrationTestSuite) writeCancelSoftwareUpgradeProposal(c *chain) {
 		"messages": [
 		 {
 		  "@type": "/cosmos.upgrade.v1beta1.MsgCancelUpgrade",
-		  "authority": "inveniem10d07y265gmmuvt4z0w9aw880jnsr700j3fep4f"
+		  "authority": "inveniam10d07y265gmmuvt4z0w9aw880jnsr700j3fep4f"
 		 }
 		],
 		"metadata": "ipfs://CID",
@@ -884,7 +884,7 @@ func (s *IntegrationTestSuite) writeExpeditedSoftwareUpgradeProp(c *chain) {
  "messages": [
   {
    "@type": "/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade",
-   "authority": "inveniem10d07y265gmmuvt4z0w9aw880jnsr700j3fep4f",
+   "authority": "inveniam10d07y265gmmuvt4z0w9aw880jnsr700jcq9wa7",
    "plan": {
     "name": "test-expedited-upgrade",
     "height": "123456789",
@@ -905,6 +905,6 @@ func (s *IntegrationTestSuite) writeExpeditedSoftwareUpgradeProp(c *chain) {
 }
 
 func configFile(filename string) string {
-	filepath := filepath.Join(inveniemConfigPath, filename)
+	filepath := filepath.Join(inveniamConfigPath, filename)
 	return filepath
 }

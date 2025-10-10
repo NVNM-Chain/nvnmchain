@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "osmosis/tokenfactory/params.proto";
 import "osmosis/tokenfactory/v1beta1/authorityMetadata.proto";
 
-option go_package = "github.com/MANTRA-Chain/inveniem/x/tokenfactory/types";
+option go_package = "github.com/MANTRA-Chain/inveniam/x/tokenfactory/types";
 
 // Query defines the gRPC querier service.
 service Query {
@@ -31,15 +31,6 @@ service Query {
       returns (QueryDenomsFromCreatorResponse) {
     option (google.api.http).get =
         "/osmosis/tokenfactory/v1beta1/denoms_from_creator/{creator}";
-  }
-
-  // BeforeSendHookAddress defines a gRPC query method for
-  // getting the address registered for the before send hook.
-  rpc BeforeSendHookAddress(QueryBeforeSendHookAddressRequest)
-      returns (QueryBeforeSendHookAddressResponse) {
-    option (google.api.http).get =
-        "/osmosis/tokenfactory/v1beta1/denoms/factory/{creator}/{subdenom}/"
-        "before_send_hook";
   }
 }
 
@@ -78,15 +69,4 @@ message QueryDenomsFromCreatorRequest {
 // DenomsFromCreator gRPC query.
 message QueryDenomsFromCreatorResponse {
   repeated string denoms = 1 [ (gogoproto.moretags) = "yaml:\"denoms\"" ];
-}
-
-message QueryBeforeSendHookAddressRequest {
-  string creator = 1 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
-  string subdenom = 2 [ (gogoproto.moretags) = "yaml:\"subdenom\"" ];
-}
-
-// QueryBeforeSendHookAddressResponse defines the response structure for the
-// DenomBeforeSendHook gRPC query.
-message QueryBeforeSendHookAddressResponse {
-  string contract_addr = 1 [ (gogoproto.moretags) = "yaml:\"contract_addr\"" ];
 }

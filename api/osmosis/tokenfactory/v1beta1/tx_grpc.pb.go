@@ -19,14 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Msg_CreateDenom_FullMethodName       = "/osmosis.tokenfactory.v1beta1.Msg/CreateDenom"
-	Msg_Mint_FullMethodName              = "/osmosis.tokenfactory.v1beta1.Msg/Mint"
-	Msg_Burn_FullMethodName              = "/osmosis.tokenfactory.v1beta1.Msg/Burn"
-	Msg_ChangeAdmin_FullMethodName       = "/osmosis.tokenfactory.v1beta1.Msg/ChangeAdmin"
-	Msg_SetDenomMetadata_FullMethodName  = "/osmosis.tokenfactory.v1beta1.Msg/SetDenomMetadata"
-	Msg_SetBeforeSendHook_FullMethodName = "/osmosis.tokenfactory.v1beta1.Msg/SetBeforeSendHook"
-	Msg_ForceTransfer_FullMethodName     = "/osmosis.tokenfactory.v1beta1.Msg/ForceTransfer"
-	Msg_UpdateParams_FullMethodName      = "/osmosis.tokenfactory.v1beta1.Msg/UpdateParams"
+	Msg_CreateDenom_FullMethodName      = "/osmosis.tokenfactory.v1beta1.Msg/CreateDenom"
+	Msg_Mint_FullMethodName             = "/osmosis.tokenfactory.v1beta1.Msg/Mint"
+	Msg_Burn_FullMethodName             = "/osmosis.tokenfactory.v1beta1.Msg/Burn"
+	Msg_ChangeAdmin_FullMethodName      = "/osmosis.tokenfactory.v1beta1.Msg/ChangeAdmin"
+	Msg_SetDenomMetadata_FullMethodName = "/osmosis.tokenfactory.v1beta1.Msg/SetDenomMetadata"
+	Msg_ForceTransfer_FullMethodName    = "/osmosis.tokenfactory.v1beta1.Msg/ForceTransfer"
+	Msg_UpdateParams_FullMethodName     = "/osmosis.tokenfactory.v1beta1.Msg/UpdateParams"
 )
 
 // MsgClient is the client API for Msg service.
@@ -40,7 +39,6 @@ type MsgClient interface {
 	Burn(ctx context.Context, in *MsgBurn, opts ...grpc.CallOption) (*MsgBurnResponse, error)
 	ChangeAdmin(ctx context.Context, in *MsgChangeAdmin, opts ...grpc.CallOption) (*MsgChangeAdminResponse, error)
 	SetDenomMetadata(ctx context.Context, in *MsgSetDenomMetadata, opts ...grpc.CallOption) (*MsgSetDenomMetadataResponse, error)
-	SetBeforeSendHook(ctx context.Context, in *MsgSetBeforeSendHook, opts ...grpc.CallOption) (*MsgSetBeforeSendHookResponse, error)
 	ForceTransfer(ctx context.Context, in *MsgForceTransfer, opts ...grpc.CallOption) (*MsgForceTransferResponse, error)
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 }
@@ -103,16 +101,6 @@ func (c *msgClient) SetDenomMetadata(ctx context.Context, in *MsgSetDenomMetadat
 	return out, nil
 }
 
-func (c *msgClient) SetBeforeSendHook(ctx context.Context, in *MsgSetBeforeSendHook, opts ...grpc.CallOption) (*MsgSetBeforeSendHookResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(MsgSetBeforeSendHookResponse)
-	err := c.cc.Invoke(ctx, Msg_SetBeforeSendHook_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *msgClient) ForceTransfer(ctx context.Context, in *MsgForceTransfer, opts ...grpc.CallOption) (*MsgForceTransferResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MsgForceTransferResponse)
@@ -144,7 +132,6 @@ type MsgServer interface {
 	Burn(context.Context, *MsgBurn) (*MsgBurnResponse, error)
 	ChangeAdmin(context.Context, *MsgChangeAdmin) (*MsgChangeAdminResponse, error)
 	SetDenomMetadata(context.Context, *MsgSetDenomMetadata) (*MsgSetDenomMetadataResponse, error)
-	SetBeforeSendHook(context.Context, *MsgSetBeforeSendHook) (*MsgSetBeforeSendHookResponse, error)
 	ForceTransfer(context.Context, *MsgForceTransfer) (*MsgForceTransferResponse, error)
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 	mustEmbedUnimplementedMsgServer()
@@ -171,9 +158,6 @@ func (UnimplementedMsgServer) ChangeAdmin(context.Context, *MsgChangeAdmin) (*Ms
 }
 func (UnimplementedMsgServer) SetDenomMetadata(context.Context, *MsgSetDenomMetadata) (*MsgSetDenomMetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetDenomMetadata not implemented")
-}
-func (UnimplementedMsgServer) SetBeforeSendHook(context.Context, *MsgSetBeforeSendHook) (*MsgSetBeforeSendHookResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetBeforeSendHook not implemented")
 }
 func (UnimplementedMsgServer) ForceTransfer(context.Context, *MsgForceTransfer) (*MsgForceTransferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForceTransfer not implemented")
@@ -292,24 +276,6 @@ func _Msg_SetDenomMetadata_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_SetBeforeSendHook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSetBeforeSendHook)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).SetBeforeSendHook(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Msg_SetBeforeSendHook_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).SetBeforeSendHook(ctx, req.(*MsgSetBeforeSendHook))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Msg_ForceTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgForceTransfer)
 	if err := dec(in); err != nil {
@@ -372,10 +338,6 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetDenomMetadata",
 			Handler:    _Msg_SetDenomMetadata_Handler,
-		},
-		{
-			MethodName: "SetBeforeSendHook",
-			Handler:    _Msg_SetBeforeSendHook_Handler,
 		},
 		{
 			MethodName: "ForceTransfer",

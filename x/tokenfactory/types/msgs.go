@@ -10,13 +10,12 @@ import (
 
 // constants
 const (
-	TypeMsgCreateDenom       = "create_denom"
-	TypeMsgMint              = "tf_mint"
-	TypeMsgBurn              = "tf_burn"
-	TypeMsgForceTransfer     = "force_transfer"
-	TypeMsgChangeAdmin       = "change_admin"
-	TypeMsgSetDenomMetadata  = "set_denom_metadata"
-	TypeMsgSetBeforeSendHook = "set_before_send_hook"
+	TypeMsgCreateDenom      = "create_denom"
+	TypeMsgMint             = "tf_mint"
+	TypeMsgBurn             = "tf_burn"
+	TypeMsgForceTransfer    = "force_transfer"
+	TypeMsgChangeAdmin      = "change_admin"
+	TypeMsgSetDenomMetadata = "set_denom_metadata"
 )
 
 var _ sdk.Msg = &MsgCreateDenom{}
@@ -271,49 +270,6 @@ func (m MsgSetDenomMetadata) GetSignBytes() []byte {
 }
 
 func (m MsgSetDenomMetadata) GetSigners() []sdk.AccAddress {
-	sender, _ := sdk.AccAddressFromBech32(m.Sender)
-	return []sdk.AccAddress{sender}
-}
-
-var _ sdk.Msg = &MsgSetBeforeSendHook{}
-
-// NewMsgSetBeforeSendHook creates a message to set a new before send hook
-func NewMsgSetBeforeSendHook(sender, denom, contractAddr string) *MsgSetBeforeSendHook {
-	return &MsgSetBeforeSendHook{
-		Sender:       sender,
-		Denom:        denom,
-		ContractAddr: contractAddr,
-	}
-}
-
-func (m MsgSetBeforeSendHook) Route() string { return RouterKey }
-func (m MsgSetBeforeSendHook) Type() string  { return TypeMsgSetBeforeSendHook }
-func (m MsgSetBeforeSendHook) Validate() error {
-	_, err := sdk.AccAddressFromBech32(m.Sender)
-	if err != nil {
-		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid sender address (%s)", err)
-	}
-
-	if m.ContractAddr != "" {
-		_, err = sdk.AccAddressFromBech32(m.ContractAddr)
-		if err != nil {
-			return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid cosmwasm contract address (%s)", err)
-		}
-	}
-
-	_, _, err = DeconstructDenom(m.Denom)
-	if err != nil {
-		return ErrInvalidDenom
-	}
-
-	return nil
-}
-
-func (m MsgSetBeforeSendHook) GetSignBytes() []byte {
-	return ModuleCdc.MustMarshalJSON(&m)
-}
-
-func (m MsgSetBeforeSendHook) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(m.Sender)
 	return []sdk.AccAddress{sender}
 }

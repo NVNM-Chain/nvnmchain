@@ -57,7 +57,7 @@ func applyOptions(chainID string, options []flagOption) map[string]interface{} {
 		flagBroadcastMode:  "sync",
 		flagGasAdjustment:  "1.5",
 		flagChainID:        chainID,
-		flagHome:           inveniemHomePath,
+		flagHome:           inveniamHomePath,
 		flagFees:           standardFees.String(),
 	}
 	for _, apply := range options {
@@ -75,9 +75,9 @@ func (s *IntegrationTestSuite) execEncode(
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("%s - Executing inveniemd encoding with %v", c.id, txPath)
+	s.T().Logf("%s - Executing inveniamd encoding with %v", c.id, txPath)
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		"encode",
 		txPath,
@@ -107,9 +107,9 @@ func (s *IntegrationTestSuite) execDecode(
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("%s - Executing inveniemd decoding with %v", c.id, txPath)
+	s.T().Logf("%s - Executing inveniamd decoding with %v", c.id, txPath)
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		"decode",
 		txPath,
@@ -140,9 +140,9 @@ func (s *IntegrationTestSuite) execVestingTx(
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("%s - Executing inveniemd %s with %v", c.id, method, args)
+	s.T().Logf("%s - Executing inveniamd %s with %v", c.id, method, args)
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		vestingtypes.ModuleName,
 		method,
@@ -164,7 +164,7 @@ func (s *IntegrationTestSuite) execCreatePeriodicVestingAccount(
 	jsonPath string,
 	opt ...flagOption,
 ) {
-	s.T().Logf("Executing inveniemd create periodic vesting account %s", c.id)
+	s.T().Logf("Executing inveniamd create periodic vesting account %s", c.id)
 	s.execVestingTx(c, "create-periodic-vesting-account", []string{address, jsonPath}, opt...)
 	s.T().Logf("successfully created periodic vesting account %s with %s", address, jsonPath)
 }
@@ -177,9 +177,9 @@ func (s *IntegrationTestSuite) execUnjail(
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing inveniemd slashing unjail %s with options: %v", c.id, opt)
+	s.T().Logf("Executing inveniamd slashing unjail %s with options: %v", c.id, opt)
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		slashingtypes.ModuleName,
 		"unjail",
@@ -206,7 +206,7 @@ func (s *IntegrationTestSuite) execFeeGrant(c *chain, valIdx int, granter, grant
 	s.T().Logf("granting %s fee from %s on chain %s", grantee, granter, c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		feegrant.ModuleName,
 		"grant",
@@ -236,7 +236,7 @@ func (s *IntegrationTestSuite) execFeeGrant(c *chain, valIdx int, granter, grant
 // 	s.T().Logf("revoking %s fee grant from %s on chain %s", grantee, granter, c.id)
 
 // 	mantraCommand := []string{
-// 		inveniemdBinary,
+// 		inveniamdBinary,
 // 		txCommand,
 // 		feegrant.ModuleName,
 // 		"revoke",
@@ -273,7 +273,7 @@ func (s *IntegrationTestSuite) execBankSend(
 	s.T().Logf("sending %s tokens from %s to %s on chain %s", amt, from, to, c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		banktypes.ModuleName,
 		"send",
@@ -310,7 +310,7 @@ func (s *IntegrationTestSuite) execBankMultiSend(
 	s.T().Logf("sending %s tokens from %s to %s on chain %s", amt, from, to, c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		banktypes.ModuleName,
 		"multi-send",
@@ -331,10 +331,10 @@ func (s *IntegrationTestSuite) execDistributionFundCommunityPool(c *chain, valId
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing inveniemd tx distribution fund-community-pool on chain %s", c.id)
+	s.T().Logf("Executing inveniamd tx distribution fund-community-pool on chain %s", c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		distributiontypes.ModuleName,
 		"fund-community-pool",
@@ -360,7 +360,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 	}
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		govtypes.ModuleName,
 		govCommand,
@@ -377,7 +377,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 	}
 
 	mantraCommand = concatFlags(mantraCommand, proposalFlags, generalFlags)
-	s.T().Logf("Executing inveniemd tx gov %s on chain %s", govCommand, c.id)
+	s.T().Logf("Executing inveniamd tx gov %s on chain %s", govCommand, c.id)
 	s.executeTxCommand(ctx, c, mantraCommand, valIdx, validateResponse)
 	s.T().Logf("Successfully executed %s", govCommand)
 }
@@ -388,7 +388,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 // 	defer cancel()
 
 // 	mantraCommand := []string{
-// 		inveniemdBinary,
+// 		inveniamdBinary,
 // 		keysCommand,
 // 		"add",
 // 		name,
@@ -414,7 +414,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 // 	defer cancel()
 
 // 	mantraCommand := []string{
-// 		inveniemdBinary,
+// 		inveniamdBinary,
 // 		keysCommand,
 // 		"list",
 // 		"--keyring-backend=test",
@@ -431,10 +431,10 @@ func (s *IntegrationTestSuite) execDelegate(c *chain, valIdx int, amount, valOpe
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing inveniemd tx staking delegate %s", c.id)
+	s.T().Logf("Executing inveniamd tx staking delegate %s", c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		stakingtypes.ModuleName,
 		"delegate",
@@ -458,10 +458,10 @@ func (s *IntegrationTestSuite) execUnbondDelegation(c *chain, valIdx int, amount
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing inveniemd tx staking unbond %s", c.id)
+	s.T().Logf("Executing inveniamd tx staking unbond %s", c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		stakingtypes.ModuleName,
 		"unbond",
@@ -485,10 +485,10 @@ func (s *IntegrationTestSuite) execCancelUnbondingDelegation(c *chain, valIdx in
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing inveniemd tx staking cancel-unbond %s", c.id)
+	s.T().Logf("Executing inveniamd tx staking cancel-unbond %s", c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		stakingtypes.ModuleName,
 		"cancel-unbond",
@@ -514,10 +514,10 @@ func (s *IntegrationTestSuite) execRedelegate(c *chain, valIdx int, amount, orig
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing inveniemd tx staking redelegate %s", c.id)
+	s.T().Logf("Executing inveniamd tx staking redelegate %s", c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		stakingtypes.ModuleName,
 		"redelegate",
@@ -549,7 +549,7 @@ func (s *IntegrationTestSuite) getLatestBlockHeight(c *chain, valIdx int) int {
 	}
 
 	var currentHeight int
-	mantraCommand := []string{inveniemdBinary, "status"}
+	mantraCommand := []string{inveniamdBinary, "status"}
 	s.executeTxCommand(ctx, c, mantraCommand, valIdx, func(stdOut []byte, stdErr []byte) bool {
 		var (
 			err   error
@@ -589,7 +589,7 @@ func (s *IntegrationTestSuite) execSetWithdrawAddress(
 
 	s.T().Logf("Setting distribution withdrawal address on chain %s for %s to %s", c.id, delegatorAddress, newWithdrawalAddress)
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		distributiontypes.ModuleName,
 		"set-withdraw-addr",
@@ -619,7 +619,7 @@ func (s *IntegrationTestSuite) execWithdrawReward(
 
 	s.T().Logf("Withdrawing distribution rewards on chain %s for delegator %s from %s validator", c.id, delegatorAddress, validatorAddress)
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		distributiontypes.ModuleName,
 		"withdraw-rewards",
@@ -792,10 +792,10 @@ func (s *IntegrationTestSuite) expectTxSubmitError(expectErrString string) func(
 // 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 // 	defer cancel()
 
-// 	s.T().Logf("Executing inveniemd tx staking validator-bond %s", c.id)
+// 	s.T().Logf("Executing inveniamd tx staking validator-bond %s", c.id)
 
 // 	mantraCommand := []string{
-// 		inveniemdBinary,
+// 		inveniamdBinary,
 // 		txCommand,
 // 		stakingtypes.ModuleName,
 // 		"validator-bond",
@@ -817,10 +817,10 @@ func (s *IntegrationTestSuite) expectTxSubmitError(expectErrString string) func(
 // 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 // 	defer cancel()
 
-// 	s.T().Logf("Executing inveniemd tx staking tokenize-share %s", c.id)
+// 	s.T().Logf("Executing inveniamd tx staking tokenize-share %s", c.id)
 
 // 	mantraCommand := []string{
-// 		inveniemdBinary,
+// 		inveniamdBinary,
 // 		txCommand,
 // 		stakingtypes.ModuleName,
 // 		"tokenize-share",
@@ -846,10 +846,10 @@ func (s *IntegrationTestSuite) executeRedeemShares(c *chain, valIdx int, amount,
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing inveniemd tx staking redeem-tokens %s", c.id)
+	s.T().Logf("Executing inveniamd tx staking redeem-tokens %s", c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		stakingtypes.ModuleName,
 		"redeem-tokens",
@@ -873,10 +873,10 @@ func (s *IntegrationTestSuite) executeTransferTokenizeShareRecord(c *chain, valI
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing inveniemd tx staking transfer-tokenize-share-record %s", c.id)
+	s.T().Logf("Executing inveniamd tx staking transfer-tokenize-share-record %s", c.id)
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		stakingtypes.ModuleName,
 		"transfer-tokenize-share-record",
@@ -905,12 +905,12 @@ func (s *IntegrationTestSuite) signTxFileOnline(chain *chain, valIdx int, from s
 	defer cancel()
 
 	mantraCommand := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		"sign",
-		filepath.Join(inveniemHomePath, txFilePath),
+		filepath.Join(inveniamHomePath, txFilePath),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, chain.id),
-		fmt.Sprintf("--%s=%s", flags.FlagHome, inveniemHomePath),
+		fmt.Sprintf("--%s=%s", flags.FlagHome, inveniamHomePath),
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, from),
 		"--keyring-backend=test",
 		"--output=json",
@@ -942,12 +942,12 @@ func (s *IntegrationTestSuite) broadcastTxFile(chain *chain, valIdx int, from st
 	defer cancel()
 
 	broadcastTxCmd := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		"broadcast",
-		filepath.Join(inveniemHomePath, txFilePath),
+		filepath.Join(inveniamHomePath, txFilePath),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, chain.id),
-		fmt.Sprintf("--%s=%s", flags.FlagHome, inveniemHomePath),
+		fmt.Sprintf("--%s=%s", flags.FlagHome, inveniamHomePath),
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, from),
 		"--keyring-backend=test",
 		"--output=json",

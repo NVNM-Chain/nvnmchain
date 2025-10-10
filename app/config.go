@@ -78,12 +78,11 @@ func setBaseDenom(ci evmtypes.EvmCoinInfo) error {
 
 var (
 	EVMChainIDMap = map[string]uint64{
-		"mantra-1":            5888, // mainnet Chain ID
-		"mantra-dukong-1":     5887, // testnet Chain ID
-		"mantra-canary-net-1": 7888, // devnet Chain ID
+		"inveniam-1":  58888, // mainnet Chain ID
+		"manveniam-1": 58887, // testnet Chain ID
 	}
 
-	EVMChainID uint64 = 262144 // default Chain ID
+	EVMChainID uint64 = 58886 // default Chain ID
 )
 
 // init initializes the EVMChainID variable by reading the chain ID from the

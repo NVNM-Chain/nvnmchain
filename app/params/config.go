@@ -13,7 +13,7 @@ const (
 )
 
 var (
-	Bech32Prefix = "inveniem"
+	Bech32Prefix = "inveniam"
 	// Bech32PrefixAccPub defines the Bech32 prefix of an account's public key.
 	Bech32PrefixAccPub = Bech32Prefix + "pub"
 	// Bech32PrefixValAddr defines the Bech32 prefix of a validator's operator address.

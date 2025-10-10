@@ -39,8 +39,8 @@ func (msg MsgUpdateParams) ValidateBasic() error {
 		if err != nil {
 			return fmt.Errorf("invalid mca address: %w", err)
 		}
-		if !strings.HasPrefix(msg.McaAddress, "inveniem") {
-			return fmt.Errorf("mca address must have 'inveniem' prefix")
+		if !strings.HasPrefix(msg.McaAddress, "inveniam") {
+			return fmt.Errorf("mca address must have 'inveniam' prefix")
 		}
 	}
 

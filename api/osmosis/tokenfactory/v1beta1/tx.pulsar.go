@@ -7,7 +7,7 @@ import (
 	v1beta1 "cosmossdk.io/api/cosmos/base/v1beta1"
 	_ "cosmossdk.io/api/cosmos/msg/v1"
 	fmt "fmt"
-	tokenfactory "github.com/MANTRA-Chain/inveniem/api/osmosis/tokenfactory"
+	tokenfactory "github.com/MANTRA-Chain/inveniam/api/osmosis/tokenfactory"
 	_ "github.com/cosmos/cosmos-proto"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
 	_ "github.com/cosmos/gogoproto/gogoproto"
@@ -3666,910 +3666,6 @@ func (x *fastReflection_MsgChangeAdminResponse) ProtoMethods() *protoiface.Metho
 }
 
 var (
-	md_MsgSetBeforeSendHook               protoreflect.MessageDescriptor
-	fd_MsgSetBeforeSendHook_sender        protoreflect.FieldDescriptor
-	fd_MsgSetBeforeSendHook_denom         protoreflect.FieldDescriptor
-	fd_MsgSetBeforeSendHook_contract_addr protoreflect.FieldDescriptor
-)
-
-func init() {
-	file_osmosis_tokenfactory_v1beta1_tx_proto_init()
-	md_MsgSetBeforeSendHook = File_osmosis_tokenfactory_v1beta1_tx_proto.Messages().ByName("MsgSetBeforeSendHook")
-	fd_MsgSetBeforeSendHook_sender = md_MsgSetBeforeSendHook.Fields().ByName("sender")
-	fd_MsgSetBeforeSendHook_denom = md_MsgSetBeforeSendHook.Fields().ByName("denom")
-	fd_MsgSetBeforeSendHook_contract_addr = md_MsgSetBeforeSendHook.Fields().ByName("contract_addr")
-}
-
-var _ protoreflect.Message = (*fastReflection_MsgSetBeforeSendHook)(nil)
-
-type fastReflection_MsgSetBeforeSendHook MsgSetBeforeSendHook
-
-func (x *MsgSetBeforeSendHook) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_MsgSetBeforeSendHook)(x)
-}
-
-func (x *MsgSetBeforeSendHook) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[8]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-var _fastReflection_MsgSetBeforeSendHook_messageType fastReflection_MsgSetBeforeSendHook_messageType
-var _ protoreflect.MessageType = fastReflection_MsgSetBeforeSendHook_messageType{}
-
-type fastReflection_MsgSetBeforeSendHook_messageType struct{}
-
-func (x fastReflection_MsgSetBeforeSendHook_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_MsgSetBeforeSendHook)(nil)
-}
-func (x fastReflection_MsgSetBeforeSendHook_messageType) New() protoreflect.Message {
-	return new(fastReflection_MsgSetBeforeSendHook)
-}
-func (x fastReflection_MsgSetBeforeSendHook_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgSetBeforeSendHook
-}
-
-// Descriptor returns message descriptor, which contains only the protobuf
-// type information for the message.
-func (x *fastReflection_MsgSetBeforeSendHook) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgSetBeforeSendHook
-}
-
-// Type returns the message type, which encapsulates both Go and protobuf
-// type information. If the Go type information is not needed,
-// it is recommended that the message descriptor be used instead.
-func (x *fastReflection_MsgSetBeforeSendHook) Type() protoreflect.MessageType {
-	return _fastReflection_MsgSetBeforeSendHook_messageType
-}
-
-// New returns a newly allocated and mutable empty message.
-func (x *fastReflection_MsgSetBeforeSendHook) New() protoreflect.Message {
-	return new(fastReflection_MsgSetBeforeSendHook)
-}
-
-// Interface unwraps the message reflection interface and
-// returns the underlying ProtoMessage interface.
-func (x *fastReflection_MsgSetBeforeSendHook) Interface() protoreflect.ProtoMessage {
-	return (*MsgSetBeforeSendHook)(x)
-}
-
-// Range iterates over every populated field in an undefined order,
-// calling f for each field descriptor and value encountered.
-// Range returns immediately if f returns false.
-// While iterating, mutating operations may only be performed
-// on the current field descriptor.
-func (x *fastReflection_MsgSetBeforeSendHook) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if x.Sender != "" {
-		value := protoreflect.ValueOfString(x.Sender)
-		if !f(fd_MsgSetBeforeSendHook_sender, value) {
-			return
-		}
-	}
-	if x.Denom != "" {
-		value := protoreflect.ValueOfString(x.Denom)
-		if !f(fd_MsgSetBeforeSendHook_denom, value) {
-			return
-		}
-	}
-	if x.ContractAddr != "" {
-		value := protoreflect.ValueOfString(x.ContractAddr)
-		if !f(fd_MsgSetBeforeSendHook_contract_addr, value) {
-			return
-		}
-	}
-}
-
-// Has reports whether a field is populated.
-//
-// Some fields have the property of nullability where it is possible to
-// distinguish between the default value of a field and whether the field
-// was explicitly populated with the default value. Singular message fields,
-// member fields of a oneof, and proto2 scalar fields are nullable. Such
-// fields are populated only if explicitly set.
-//
-// In other cases (aside from the nullable cases above),
-// a proto3 scalar field is populated if it contains a non-zero value, and
-// a repeated field is populated if it is non-empty.
-func (x *fastReflection_MsgSetBeforeSendHook) Has(fd protoreflect.FieldDescriptor) bool {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.sender":
-		return x.Sender != ""
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.denom":
-		return x.Denom != ""
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.contract_addr":
-		return x.ContractAddr != ""
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook does not contain field %s", fd.FullName()))
-	}
-}
-
-// Clear clears the field such that a subsequent Has call reports false.
-//
-// Clearing an extension field clears both the extension type and value
-// associated with the given field number.
-//
-// Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetBeforeSendHook) Clear(fd protoreflect.FieldDescriptor) {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.sender":
-		x.Sender = ""
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.denom":
-		x.Denom = ""
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.contract_addr":
-		x.ContractAddr = ""
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook does not contain field %s", fd.FullName()))
-	}
-}
-
-// Get retrieves the value for a field.
-//
-// For unpopulated scalars, it returns the default value, where
-// the default value of a bytes scalar is guaranteed to be a copy.
-// For unpopulated composite types, it returns an empty, read-only view
-// of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_MsgSetBeforeSendHook) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
-	switch descriptor.FullName() {
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.sender":
-		value := x.Sender
-		return protoreflect.ValueOfString(value)
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.denom":
-		value := x.Denom
-		return protoreflect.ValueOfString(value)
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.contract_addr":
-		value := x.ContractAddr
-		return protoreflect.ValueOfString(value)
-	default:
-		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook does not contain field %s", descriptor.FullName()))
-	}
-}
-
-// Set stores the value for a field.
-//
-// For a field belonging to a oneof, it implicitly clears any other field
-// that may be currently set within the same oneof.
-// For extension fields, it implicitly stores the provided ExtensionType.
-// When setting a composite type, it is unspecified whether the stored value
-// aliases the source's memory in any way. If the composite value is an
-// empty, read-only value, then it panics.
-//
-// Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetBeforeSendHook) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.sender":
-		x.Sender = value.Interface().(string)
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.denom":
-		x.Denom = value.Interface().(string)
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.contract_addr":
-		x.ContractAddr = value.Interface().(string)
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook does not contain field %s", fd.FullName()))
-	}
-}
-
-// Mutable returns a mutable reference to a composite type.
-//
-// If the field is unpopulated, it may allocate a composite value.
-// For a field belonging to a oneof, it implicitly clears any other field
-// that may be currently set within the same oneof.
-// For extension fields, it implicitly stores the provided ExtensionType
-// if not already stored.
-// It panics if the field does not contain a composite type.
-//
-// Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetBeforeSendHook) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.sender":
-		panic(fmt.Errorf("field sender of message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook is not mutable"))
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.denom":
-		panic(fmt.Errorf("field denom of message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook is not mutable"))
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.contract_addr":
-		panic(fmt.Errorf("field contract_addr of message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook is not mutable"))
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook does not contain field %s", fd.FullName()))
-	}
-}
-
-// NewField returns a new value that is assignable to the field
-// for the given descriptor. For scalars, this returns the default value.
-// For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_MsgSetBeforeSendHook) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
-	switch fd.FullName() {
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.sender":
-		return protoreflect.ValueOfString("")
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.denom":
-		return protoreflect.ValueOfString("")
-	case "osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook.contract_addr":
-		return protoreflect.ValueOfString("")
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook does not contain field %s", fd.FullName()))
-	}
-}
-
-// WhichOneof reports which field within the oneof is populated,
-// returning nil if none are populated.
-// It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_MsgSetBeforeSendHook) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
-	switch d.FullName() {
-	default:
-		panic(fmt.Errorf("%s is not a oneof field in osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook", d.FullName()))
-	}
-	panic("unreachable")
-}
-
-// GetUnknown retrieves the entire list of unknown fields.
-// The caller may only mutate the contents of the RawFields
-// if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_MsgSetBeforeSendHook) GetUnknown() protoreflect.RawFields {
-	return x.unknownFields
-}
-
-// SetUnknown stores an entire list of unknown fields.
-// The raw fields must be syntactically valid according to the wire format.
-// An implementation may panic if this is not the case.
-// Once stored, the caller must not mutate the content of the RawFields.
-// An empty RawFields may be passed to clear the fields.
-//
-// SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetBeforeSendHook) SetUnknown(fields protoreflect.RawFields) {
-	x.unknownFields = fields
-}
-
-// IsValid reports whether the message is valid.
-//
-// An invalid message is an empty, read-only value.
-//
-// An invalid message often corresponds to a nil pointer of the concrete
-// message type, but the details are implementation dependent.
-// Validity is not part of the protobuf data model, and may not
-// be preserved in marshaling or other operations.
-func (x *fastReflection_MsgSetBeforeSendHook) IsValid() bool {
-	return x != nil
-}
-
-// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
-// This method may return nil.
-//
-// The returned methods type is identical to
-// "google.golang.org/protobuf/runtime/protoiface".Methods.
-// Consult the protoiface package documentation for details.
-func (x *fastReflection_MsgSetBeforeSendHook) ProtoMethods() *protoiface.Methods {
-	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*MsgSetBeforeSendHook)
-		if x == nil {
-			return protoiface.SizeOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Size:              0,
-			}
-		}
-		options := runtime.SizeInputToOptions(input)
-		_ = options
-		var n int
-		var l int
-		_ = l
-		l = len(x.Sender)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
-		}
-		l = len(x.Denom)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
-		}
-		l = len(x.ContractAddr)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
-		}
-		if x.unknownFields != nil {
-			n += len(x.unknownFields)
-		}
-		return protoiface.SizeOutput{
-			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-			Size:              n,
-		}
-	}
-
-	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*MsgSetBeforeSendHook)
-		if x == nil {
-			return protoiface.MarshalOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Buf:               input.Buf,
-			}, nil
-		}
-		options := runtime.MarshalInputToOptions(input)
-		_ = options
-		size := options.Size(x)
-		dAtA := make([]byte, size)
-		i := len(dAtA)
-		_ = i
-		var l int
-		_ = l
-		if x.unknownFields != nil {
-			i -= len(x.unknownFields)
-			copy(dAtA[i:], x.unknownFields)
-		}
-		if len(x.ContractAddr) > 0 {
-			i -= len(x.ContractAddr)
-			copy(dAtA[i:], x.ContractAddr)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ContractAddr)))
-			i--
-			dAtA[i] = 0x1a
-		}
-		if len(x.Denom) > 0 {
-			i -= len(x.Denom)
-			copy(dAtA[i:], x.Denom)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Denom)))
-			i--
-			dAtA[i] = 0x12
-		}
-		if len(x.Sender) > 0 {
-			i -= len(x.Sender)
-			copy(dAtA[i:], x.Sender)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Sender)))
-			i--
-			dAtA[i] = 0xa
-		}
-		if input.Buf != nil {
-			input.Buf = append(input.Buf, dAtA...)
-		} else {
-			input.Buf = dAtA
-		}
-		return protoiface.MarshalOutput{
-			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-			Buf:               input.Buf,
-		}, nil
-	}
-	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*MsgSetBeforeSendHook)
-		if x == nil {
-			return protoiface.UnmarshalOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Flags:             input.Flags,
-			}, nil
-		}
-		options := runtime.UnmarshalInputToOptions(input)
-		_ = options
-		dAtA := input.Buf
-		l := len(dAtA)
-		iNdEx := 0
-		for iNdEx < l {
-			preIndex := iNdEx
-			var wire uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				wire |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			fieldNum := int32(wire >> 3)
-			wireType := int(wire & 0x7)
-			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetBeforeSendHook: wiretype end group for non-group")
-			}
-			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetBeforeSendHook: illegal tag %d (wire type %d)", fieldNum, wire)
-			}
-			switch fieldNum {
-			case 1:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.Sender = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
-			case 2:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Denom", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.Denom = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
-			case 3:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ContractAddr", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.ContractAddr = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
-			default:
-				iNdEx = preIndex
-				skippy, err := runtime.Skip(dAtA[iNdEx:])
-				if err != nil {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
-				}
-				if (skippy < 0) || (iNdEx+skippy) < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if (iNdEx + skippy) > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				if !options.DiscardUnknown {
-					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
-				}
-				iNdEx += skippy
-			}
-		}
-
-		if iNdEx > l {
-			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-		}
-		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
-	}
-	return &protoiface.Methods{
-		NoUnkeyedLiterals: struct{}{},
-		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
-		Size:              size,
-		Marshal:           marshal,
-		Unmarshal:         unmarshal,
-		Merge:             nil,
-		CheckInitialized:  nil,
-	}
-}
-
-var (
-	md_MsgSetBeforeSendHookResponse protoreflect.MessageDescriptor
-)
-
-func init() {
-	file_osmosis_tokenfactory_v1beta1_tx_proto_init()
-	md_MsgSetBeforeSendHookResponse = File_osmosis_tokenfactory_v1beta1_tx_proto.Messages().ByName("MsgSetBeforeSendHookResponse")
-}
-
-var _ protoreflect.Message = (*fastReflection_MsgSetBeforeSendHookResponse)(nil)
-
-type fastReflection_MsgSetBeforeSendHookResponse MsgSetBeforeSendHookResponse
-
-func (x *MsgSetBeforeSendHookResponse) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_MsgSetBeforeSendHookResponse)(x)
-}
-
-func (x *MsgSetBeforeSendHookResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[9]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-var _fastReflection_MsgSetBeforeSendHookResponse_messageType fastReflection_MsgSetBeforeSendHookResponse_messageType
-var _ protoreflect.MessageType = fastReflection_MsgSetBeforeSendHookResponse_messageType{}
-
-type fastReflection_MsgSetBeforeSendHookResponse_messageType struct{}
-
-func (x fastReflection_MsgSetBeforeSendHookResponse_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_MsgSetBeforeSendHookResponse)(nil)
-}
-func (x fastReflection_MsgSetBeforeSendHookResponse_messageType) New() protoreflect.Message {
-	return new(fastReflection_MsgSetBeforeSendHookResponse)
-}
-func (x fastReflection_MsgSetBeforeSendHookResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgSetBeforeSendHookResponse
-}
-
-// Descriptor returns message descriptor, which contains only the protobuf
-// type information for the message.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgSetBeforeSendHookResponse
-}
-
-// Type returns the message type, which encapsulates both Go and protobuf
-// type information. If the Go type information is not needed,
-// it is recommended that the message descriptor be used instead.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) Type() protoreflect.MessageType {
-	return _fastReflection_MsgSetBeforeSendHookResponse_messageType
-}
-
-// New returns a newly allocated and mutable empty message.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) New() protoreflect.Message {
-	return new(fastReflection_MsgSetBeforeSendHookResponse)
-}
-
-// Interface unwraps the message reflection interface and
-// returns the underlying ProtoMessage interface.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) Interface() protoreflect.ProtoMessage {
-	return (*MsgSetBeforeSendHookResponse)(x)
-}
-
-// Range iterates over every populated field in an undefined order,
-// calling f for each field descriptor and value encountered.
-// Range returns immediately if f returns false.
-// While iterating, mutating operations may only be performed
-// on the current field descriptor.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-}
-
-// Has reports whether a field is populated.
-//
-// Some fields have the property of nullability where it is possible to
-// distinguish between the default value of a field and whether the field
-// was explicitly populated with the default value. Singular message fields,
-// member fields of a oneof, and proto2 scalar fields are nullable. Such
-// fields are populated only if explicitly set.
-//
-// In other cases (aside from the nullable cases above),
-// a proto3 scalar field is populated if it contains a non-zero value, and
-// a repeated field is populated if it is non-empty.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) Has(fd protoreflect.FieldDescriptor) bool {
-	switch fd.FullName() {
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// Clear clears the field such that a subsequent Has call reports false.
-//
-// Clearing an extension field clears both the extension type and value
-// associated with the given field number.
-//
-// Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) Clear(fd protoreflect.FieldDescriptor) {
-	switch fd.FullName() {
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// Get retrieves the value for a field.
-//
-// For unpopulated scalars, it returns the default value, where
-// the default value of a bytes scalar is guaranteed to be a copy.
-// For unpopulated composite types, it returns an empty, read-only view
-// of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
-	switch descriptor.FullName() {
-	default:
-		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse does not contain field %s", descriptor.FullName()))
-	}
-}
-
-// Set stores the value for a field.
-//
-// For a field belonging to a oneof, it implicitly clears any other field
-// that may be currently set within the same oneof.
-// For extension fields, it implicitly stores the provided ExtensionType.
-// When setting a composite type, it is unspecified whether the stored value
-// aliases the source's memory in any way. If the composite value is an
-// empty, read-only value, then it panics.
-//
-// Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
-	switch fd.FullName() {
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// Mutable returns a mutable reference to a composite type.
-//
-// If the field is unpopulated, it may allocate a composite value.
-// For a field belonging to a oneof, it implicitly clears any other field
-// that may be currently set within the same oneof.
-// For extension fields, it implicitly stores the provided ExtensionType
-// if not already stored.
-// It panics if the field does not contain a composite type.
-//
-// Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
-	switch fd.FullName() {
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// NewField returns a new value that is assignable to the field
-// for the given descriptor. For scalars, this returns the default value.
-// For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
-	switch fd.FullName() {
-	default:
-		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse"))
-		}
-		panic(fmt.Errorf("message osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse does not contain field %s", fd.FullName()))
-	}
-}
-
-// WhichOneof reports which field within the oneof is populated,
-// returning nil if none are populated.
-// It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
-	switch d.FullName() {
-	default:
-		panic(fmt.Errorf("%s is not a oneof field in osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse", d.FullName()))
-	}
-	panic("unreachable")
-}
-
-// GetUnknown retrieves the entire list of unknown fields.
-// The caller may only mutate the contents of the RawFields
-// if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) GetUnknown() protoreflect.RawFields {
-	return x.unknownFields
-}
-
-// SetUnknown stores an entire list of unknown fields.
-// The raw fields must be syntactically valid according to the wire format.
-// An implementation may panic if this is not the case.
-// Once stored, the caller must not mutate the content of the RawFields.
-// An empty RawFields may be passed to clear the fields.
-//
-// SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) SetUnknown(fields protoreflect.RawFields) {
-	x.unknownFields = fields
-}
-
-// IsValid reports whether the message is valid.
-//
-// An invalid message is an empty, read-only value.
-//
-// An invalid message often corresponds to a nil pointer of the concrete
-// message type, but the details are implementation dependent.
-// Validity is not part of the protobuf data model, and may not
-// be preserved in marshaling or other operations.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) IsValid() bool {
-	return x != nil
-}
-
-// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
-// This method may return nil.
-//
-// The returned methods type is identical to
-// "google.golang.org/protobuf/runtime/protoiface".Methods.
-// Consult the protoiface package documentation for details.
-func (x *fastReflection_MsgSetBeforeSendHookResponse) ProtoMethods() *protoiface.Methods {
-	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*MsgSetBeforeSendHookResponse)
-		if x == nil {
-			return protoiface.SizeOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Size:              0,
-			}
-		}
-		options := runtime.SizeInputToOptions(input)
-		_ = options
-		var n int
-		var l int
-		_ = l
-		if x.unknownFields != nil {
-			n += len(x.unknownFields)
-		}
-		return protoiface.SizeOutput{
-			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-			Size:              n,
-		}
-	}
-
-	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*MsgSetBeforeSendHookResponse)
-		if x == nil {
-			return protoiface.MarshalOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Buf:               input.Buf,
-			}, nil
-		}
-		options := runtime.MarshalInputToOptions(input)
-		_ = options
-		size := options.Size(x)
-		dAtA := make([]byte, size)
-		i := len(dAtA)
-		_ = i
-		var l int
-		_ = l
-		if x.unknownFields != nil {
-			i -= len(x.unknownFields)
-			copy(dAtA[i:], x.unknownFields)
-		}
-		if input.Buf != nil {
-			input.Buf = append(input.Buf, dAtA...)
-		} else {
-			input.Buf = dAtA
-		}
-		return protoiface.MarshalOutput{
-			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-			Buf:               input.Buf,
-		}, nil
-	}
-	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*MsgSetBeforeSendHookResponse)
-		if x == nil {
-			return protoiface.UnmarshalOutput{
-				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
-				Flags:             input.Flags,
-			}, nil
-		}
-		options := runtime.UnmarshalInputToOptions(input)
-		_ = options
-		dAtA := input.Buf
-		l := len(dAtA)
-		iNdEx := 0
-		for iNdEx < l {
-			preIndex := iNdEx
-			var wire uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-				}
-				if iNdEx >= l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				wire |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			fieldNum := int32(wire >> 3)
-			wireType := int(wire & 0x7)
-			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetBeforeSendHookResponse: wiretype end group for non-group")
-			}
-			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetBeforeSendHookResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-			}
-			switch fieldNum {
-			default:
-				iNdEx = preIndex
-				skippy, err := runtime.Skip(dAtA[iNdEx:])
-				if err != nil {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
-				}
-				if (skippy < 0) || (iNdEx+skippy) < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if (iNdEx + skippy) > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				if !options.DiscardUnknown {
-					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
-				}
-				iNdEx += skippy
-			}
-		}
-
-		if iNdEx > l {
-			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-		}
-		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
-	}
-	return &protoiface.Methods{
-		NoUnkeyedLiterals: struct{}{},
-		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
-		Size:              size,
-		Marshal:           marshal,
-		Unmarshal:         unmarshal,
-		Merge:             nil,
-		CheckInitialized:  nil,
-	}
-}
-
-var (
 	md_MsgSetDenomMetadata          protoreflect.MessageDescriptor
 	fd_MsgSetDenomMetadata_sender   protoreflect.FieldDescriptor
 	fd_MsgSetDenomMetadata_metadata protoreflect.FieldDescriptor
@@ -4591,7 +3687,7 @@ func (x *MsgSetDenomMetadata) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgSetDenomMetadata) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[10]
+	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5086,7 +4182,7 @@ func (x *MsgSetDenomMetadataResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgSetDenomMetadataResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[11]
+	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5450,7 +4546,7 @@ func (x *MsgForceTransfer) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgForceTransfer) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[12]
+	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6069,7 +5165,7 @@ func (x *MsgForceTransferResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgForceTransferResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[13]
+	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6429,7 +5525,7 @@ func (x *MsgUpdateParams) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgUpdateParams) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[14]
+	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6924,7 +6020,7 @@ func (x *MsgUpdateParamsResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgUpdateParamsResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[15]
+	mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7604,87 +6700,6 @@ func (*MsgChangeAdminResponse) Descriptor() ([]byte, []int) {
 	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{7}
 }
 
-// MsgSetBeforeSendHook is the sdk.Msg type for allowing an admin account to
-// assign a CosmWasm contract to call with a BeforeSend hook
-type MsgSetBeforeSendHook struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Sender       string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
-	Denom        string `protobuf:"bytes,2,opt,name=denom,proto3" json:"denom,omitempty"`
-	ContractAddr string `protobuf:"bytes,3,opt,name=contract_addr,json=contractAddr,proto3" json:"contract_addr,omitempty"`
-}
-
-func (x *MsgSetBeforeSendHook) Reset() {
-	*x = MsgSetBeforeSendHook{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[8]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *MsgSetBeforeSendHook) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*MsgSetBeforeSendHook) ProtoMessage() {}
-
-// Deprecated: Use MsgSetBeforeSendHook.ProtoReflect.Descriptor instead.
-func (*MsgSetBeforeSendHook) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *MsgSetBeforeSendHook) GetSender() string {
-	if x != nil {
-		return x.Sender
-	}
-	return ""
-}
-
-func (x *MsgSetBeforeSendHook) GetDenom() string {
-	if x != nil {
-		return x.Denom
-	}
-	return ""
-}
-
-func (x *MsgSetBeforeSendHook) GetContractAddr() string {
-	if x != nil {
-		return x.ContractAddr
-	}
-	return ""
-}
-
-// MsgSetBeforeSendHookResponse defines the response structure for an executed
-// MsgSetBeforeSendHook message.
-type MsgSetBeforeSendHookResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *MsgSetBeforeSendHookResponse) Reset() {
-	*x = MsgSetBeforeSendHookResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[9]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *MsgSetBeforeSendHookResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*MsgSetBeforeSendHookResponse) ProtoMessage() {}
-
-// Deprecated: Use MsgSetBeforeSendHookResponse.ProtoReflect.Descriptor instead.
-func (*MsgSetBeforeSendHookResponse) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{9}
-}
-
 // MsgSetDenomMetadata is the sdk.Msg type for allowing an admin account to set
 // the denom's bank metadata
 type MsgSetDenomMetadata struct {
@@ -7699,7 +6714,7 @@ type MsgSetDenomMetadata struct {
 func (x *MsgSetDenomMetadata) Reset() {
 	*x = MsgSetDenomMetadata{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[10]
+		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7713,7 +6728,7 @@ func (*MsgSetDenomMetadata) ProtoMessage() {}
 
 // Deprecated: Use MsgSetDenomMetadata.ProtoReflect.Descriptor instead.
 func (*MsgSetDenomMetadata) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{10}
+	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *MsgSetDenomMetadata) GetSender() string {
@@ -7741,7 +6756,7 @@ type MsgSetDenomMetadataResponse struct {
 func (x *MsgSetDenomMetadataResponse) Reset() {
 	*x = MsgSetDenomMetadataResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[11]
+		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7755,7 +6770,7 @@ func (*MsgSetDenomMetadataResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgSetDenomMetadataResponse.ProtoReflect.Descriptor instead.
 func (*MsgSetDenomMetadataResponse) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{11}
+	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{9}
 }
 
 type MsgForceTransfer struct {
@@ -7772,7 +6787,7 @@ type MsgForceTransfer struct {
 func (x *MsgForceTransfer) Reset() {
 	*x = MsgForceTransfer{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[12]
+		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7786,7 +6801,7 @@ func (*MsgForceTransfer) ProtoMessage() {}
 
 // Deprecated: Use MsgForceTransfer.ProtoReflect.Descriptor instead.
 func (*MsgForceTransfer) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{12}
+	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *MsgForceTransfer) GetSender() string {
@@ -7826,7 +6841,7 @@ type MsgForceTransferResponse struct {
 func (x *MsgForceTransferResponse) Reset() {
 	*x = MsgForceTransferResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[13]
+		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7840,7 +6855,7 @@ func (*MsgForceTransferResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgForceTransferResponse.ProtoReflect.Descriptor instead.
 func (*MsgForceTransferResponse) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{13}
+	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{11}
 }
 
 // MsgUpdateParams is the MsgUpdateParams request type.
@@ -7862,7 +6877,7 @@ type MsgUpdateParams struct {
 func (x *MsgUpdateParams) Reset() {
 	*x = MsgUpdateParams{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[14]
+		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7876,7 +6891,7 @@ func (*MsgUpdateParams) ProtoMessage() {}
 
 // Deprecated: Use MsgUpdateParams.ProtoReflect.Descriptor instead.
 func (*MsgUpdateParams) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{14}
+	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *MsgUpdateParams) GetAuthority() string {
@@ -7906,7 +6921,7 @@ type MsgUpdateParamsResponse struct {
 func (x *MsgUpdateParamsResponse) Reset() {
 	*x = MsgUpdateParamsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[15]
+		mi := &file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7920,7 +6935,7 @@ func (*MsgUpdateParamsResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgUpdateParamsResponse.ProtoReflect.Descriptor instead.
 func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
-	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{15}
+	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP(), []int{13}
 }
 
 var File_osmosis_tokenfactory_v1beta1_tx_proto protoreflect.FileDescriptor
@@ -8005,149 +7020,125 @@ var file_osmosis_tokenfactory_v1beta1_tx_proto_rawDesc = []byte{
 	0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x63, 0x68, 0x61,
 	0x6e, 0x67, 0x65, 0x2d, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x22, 0x18, 0x0a, 0x16, 0x4d, 0x73, 0x67,
 	0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0xe2, 0x01, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x42, 0x65,
-	0x66, 0x6f, 0x72, 0x65, 0x53, 0x65, 0x6e, 0x64, 0x48, 0x6f, 0x6f, 0x6b, 0x12, 0x29, 0x0a, 0x06,
-	0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x11, 0xf2, 0xde,
-	0x1f, 0x0d, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x22, 0x52,
-	0x06, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x12, 0x26, 0x0a, 0x05, 0x64, 0x65, 0x6e, 0x6f, 0x6d,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x10, 0xf2, 0xde, 0x1f, 0x0c, 0x79, 0x61, 0x6d, 0x6c,
-	0x3a, 0x22, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x22, 0x52, 0x05, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x12,
-	0x3d, 0x0a, 0x0d, 0x63, 0x6f, 0x6e, 0x74, 0x72, 0x61, 0x63, 0x74, 0x5f, 0x61, 0x64, 0x64, 0x72,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xf2, 0xde, 0x1f, 0x14, 0x79, 0x61, 0x6d, 0x6c,
-	0x3a, 0x22, 0x63, 0x6f, 0x6e, 0x74, 0x72, 0x61, 0x63, 0x74, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x22,
-	0x52, 0x0c, 0x63, 0x6f, 0x6e, 0x74, 0x72, 0x61, 0x63, 0x74, 0x41, 0x64, 0x64, 0x72, 0x3a, 0x38,
-	0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x8a, 0xe7, 0xb0, 0x2a, 0x28,
-	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63,
-	0x74, 0x6f, 0x72, 0x79, 0x2f, 0x73, 0x65, 0x74, 0x2d, 0x62, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x73,
-	0x65, 0x6e, 0x64, 0x2d, 0x68, 0x6f, 0x6f, 0x6b, 0x22, 0x1e, 0x0a, 0x1c, 0x4d, 0x73, 0x67, 0x53,
-	0x65, 0x74, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x53, 0x65, 0x6e, 0x64, 0x48, 0x6f, 0x6f, 0x6b,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xa1, 0x01, 0x0a, 0x13, 0x4d, 0x73, 0x67,
-	0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61,
-	0x12, 0x29, 0x0a, 0x06, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x42, 0x11, 0xf2, 0xde, 0x1f, 0x0d, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x73, 0x65, 0x6e, 0x64,
-	0x65, 0x72, 0x22, 0x52, 0x06, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x12, 0x52, 0x0a, 0x08, 0x6d,
-	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e,
-	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65,
-	0x74, 0x61, 0x31, 0x2e, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x42, 0x17, 0xc8, 0xde,
-	0x1f, 0x00, 0xf2, 0xde, 0x1f, 0x0f, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x65, 0x74, 0x61,
-	0x64, 0x61, 0x74, 0x61, 0x22, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x3a,
-	0x0b, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x22, 0x1d, 0x0a, 0x1b,
-	0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64,
-	0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xde, 0x02, 0x0a, 0x10,
-	0x4d, 0x73, 0x67, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72,
-	0x12, 0x29, 0x0a, 0x06, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x42, 0x11, 0xf2, 0xde, 0x1f, 0x0d, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x73, 0x65, 0x6e, 0x64,
-	0x65, 0x72, 0x22, 0x52, 0x06, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x12, 0x48, 0x0a, 0x06, 0x61,
-	0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f,
-	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61,
-	0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x15, 0xc8, 0xde, 0x1f, 0x00, 0xf2, 0xde, 0x1f, 0x0d,
-	0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x52, 0x06, 0x61,
-	0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x52, 0x0a, 0x13, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65,
-	0x72, 0x46, 0x72, 0x6f, 0x6d, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x03, 0x20, 0x01,
-	0x28, 0x09, 0x42, 0x20, 0xf2, 0xde, 0x1f, 0x1c, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x74, 0x72,
-	0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x5f, 0x66, 0x72, 0x6f, 0x6d, 0x5f, 0x61, 0x64, 0x64, 0x72,
-	0x65, 0x73, 0x73, 0x22, 0x52, 0x13, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x46, 0x72,
-	0x6f, 0x6d, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x4c, 0x0a, 0x11, 0x74, 0x72, 0x61,
-	0x6e, 0x73, 0x66, 0x65, 0x72, 0x54, 0x6f, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x04,
-	0x20, 0x01, 0x28, 0x09, 0x42, 0x1e, 0xf2, 0xde, 0x1f, 0x1a, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22,
-	0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x5f, 0x74, 0x6f, 0x5f, 0x61, 0x64, 0x64, 0x72,
-	0x65, 0x73, 0x73, 0x22, 0x52, 0x11, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x54, 0x6f,
-	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x3a, 0x33, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x73, 0x65,
-	0x6e, 0x64, 0x65, 0x72, 0x8a, 0xe7, 0xb0, 0x2a, 0x23, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73,
-	0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x66, 0x6f,
-	0x72, 0x63, 0x65, 0x2d, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x22, 0x1a, 0x0a, 0x18,
-	0x4d, 0x73, 0x67, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xc0, 0x01, 0x0a, 0x0f, 0x4d, 0x73, 0x67,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x36, 0x0a, 0x09,
-	0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42,
-	0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72,
-	0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f,
-	0x72, 0x69, 0x74, 0x79, 0x12, 0x3f, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1c, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74,
-	0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x50, 0x61, 0x72, 0x61,
-	0x6d, 0x73, 0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x06, 0x70,
-	0x61, 0x72, 0x61, 0x6d, 0x73, 0x3a, 0x34, 0x82, 0xe7, 0xb0, 0x2a, 0x09, 0x61, 0x75, 0x74, 0x68,
-	0x6f, 0x72, 0x69, 0x74, 0x79, 0x8a, 0xe7, 0xb0, 0x2a, 0x21, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x63,
-	0x68, 0x61, 0x69, 0x6e, 0x71, 0x75, 0x65, 0x72, 0x69, 0x65, 0x73, 0x2f, 0x4d, 0x73, 0x67, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x22, 0x19, 0x0a, 0x17, 0x4d,
-	0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xa6, 0x07, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x71,
-	0x0a, 0x0b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x2c, 0x2e,
-	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63,
-	0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67,
-	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x1a, 0x34, 0x2e, 0x6f, 0x73,
-	0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f,
-	0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x72,
-	0x65, 0x61, 0x74, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x12, 0x5c, 0x0a, 0x04, 0x4d, 0x69, 0x6e, 0x74, 0x12, 0x25, 0x2e, 0x6f, 0x73, 0x6d, 0x6f,
-	0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79,
-	0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74,
-	0x1a, 0x2d, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
-	0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e,
-	0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x5c, 0x0a, 0x04, 0x42, 0x75, 0x72, 0x6e, 0x12, 0x25, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69,
-	0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76,
-	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x1a, 0x2d,
-	0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61,
-	0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73,
-	0x67, 0x42, 0x75, 0x72, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x71, 0x0a,
-	0x0b, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x12, 0x2c, 0x2e, 0x6f,
-	0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74,
-	0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43,
-	0x68, 0x61, 0x6e, 0x67, 0x65, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x1a, 0x34, 0x2e, 0x6f, 0x73, 0x6d,
-	0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72,
-	0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x68, 0x61,
-	0x6e, 0x67, 0x65, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x80, 0x01, 0x0a, 0x10, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74,
-	0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x31, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e,
-	0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62,
-	0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d,
-	0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x1a, 0x39, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x6e, 0x73, 0x65, 0x22, 0xa1, 0x01, 0x0a, 0x13, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65,
+	0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x29, 0x0a, 0x06, 0x73,
+	0x65, 0x6e, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x11, 0xf2, 0xde, 0x1f,
+	0x0d, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x22, 0x52, 0x06,
+	0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x12, 0x52, 0x0a, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61,
+	0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
+	0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d,
+	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x42, 0x17, 0xc8, 0xde, 0x1f, 0x00, 0xf2, 0xde, 0x1f,
+	0x0f, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x22,
+	0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x3a, 0x0b, 0x82, 0xe7, 0xb0, 0x2a,
+	0x06, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x22, 0x1d, 0x0a, 0x1b, 0x4d, 0x73, 0x67, 0x53, 0x65,
+	0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xde, 0x02, 0x0a, 0x10, 0x4d, 0x73, 0x67, 0x46, 0x6f,
+	0x72, 0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x12, 0x29, 0x0a, 0x06, 0x73,
+	0x65, 0x6e, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x11, 0xf2, 0xde, 0x1f,
+	0x0d, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x22, 0x52, 0x06,
+	0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x12, 0x48, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e,
+	0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69,
+	0x6e, 0x42, 0x15, 0xc8, 0xde, 0x1f, 0x00, 0xf2, 0xde, 0x1f, 0x0d, 0x79, 0x61, 0x6d, 0x6c, 0x3a,
+	0x22, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74,
+	0x12, 0x52, 0x0a, 0x13, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x46, 0x72, 0x6f, 0x6d,
+	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x20, 0xf2,
+	0xde, 0x1f, 0x1c, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65,
+	0x72, 0x5f, 0x66, 0x72, 0x6f, 0x6d, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x22, 0x52,
+	0x13, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x46, 0x72, 0x6f, 0x6d, 0x41, 0x64, 0x64,
+	0x72, 0x65, 0x73, 0x73, 0x12, 0x4c, 0x0a, 0x11, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72,
+	0x54, 0x6f, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x42,
+	0x1e, 0xf2, 0xde, 0x1f, 0x1a, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x74, 0x72, 0x61, 0x6e, 0x73,
+	0x66, 0x65, 0x72, 0x5f, 0x74, 0x6f, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x22, 0x52,
+	0x11, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x54, 0x6f, 0x41, 0x64, 0x64, 0x72, 0x65,
+	0x73, 0x73, 0x3a, 0x33, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x73, 0x65, 0x6e, 0x64, 0x65, 0x72, 0x8a,
+	0xe7, 0xb0, 0x2a, 0x23, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65,
+	0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x66, 0x6f, 0x72, 0x63, 0x65, 0x2d, 0x74,
+	0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x22, 0x1a, 0x0a, 0x18, 0x4d, 0x73, 0x67, 0x46, 0x6f,
+	0x72, 0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0xc0, 0x01, 0x0a, 0x0f, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x36, 0x0a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f,
+	0x72, 0x69, 0x74, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74,
+	0x72, 0x69, 0x6e, 0x67, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x12,
+	0x3f, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x1c, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66,
+	0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x09, 0xc8,
+	0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73,
+	0x3a, 0x34, 0x82, 0xe7, 0xb0, 0x2a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79,
+	0x8a, 0xe7, 0xb0, 0x2a, 0x21, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x71,
+	0x75, 0x65, 0x72, 0x69, 0x65, 0x73, 0x2f, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x22, 0x19, 0x0a, 0x17, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x32, 0xa0, 0x06, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x71, 0x0a, 0x0b, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x2c, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
 	0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e,
-	0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65,
-	0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x12, 0x83, 0x01, 0x0a, 0x11, 0x53, 0x65, 0x74, 0x42, 0x65, 0x66, 0x6f, 0x72,
-	0x65, 0x53, 0x65, 0x6e, 0x64, 0x48, 0x6f, 0x6f, 0x6b, 0x12, 0x32, 0x2e, 0x6f, 0x73, 0x6d, 0x6f,
-	0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79,
-	0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x42,
-	0x65, 0x66, 0x6f, 0x72, 0x65, 0x53, 0x65, 0x6e, 0x64, 0x48, 0x6f, 0x6f, 0x6b, 0x1a, 0x3a, 0x2e,
-	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63,
-	0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67,
-	0x53, 0x65, 0x74, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x53, 0x65, 0x6e, 0x64, 0x48, 0x6f, 0x6f,
-	0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x77, 0x0a, 0x0d, 0x46, 0x6f, 0x72,
-	0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x12, 0x2e, 0x2e, 0x6f, 0x73, 0x6d,
-	0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72,
-	0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x46, 0x6f, 0x72,
-	0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x1a, 0x36, 0x2e, 0x6f, 0x73, 0x6d,
-	0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72,
-	0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x46, 0x6f, 0x72,
-	0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x74, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61,
-	0x6d, 0x73, 0x12, 0x2d, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b,
+	0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74,
+	0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x1a, 0x34, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73,
+	0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31,
+	0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44,
+	0x65, 0x6e, 0x6f, 0x6d, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x5c, 0x0a, 0x04,
+	0x4d, 0x69, 0x6e, 0x74, 0x12, 0x25, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74,
+	0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65,
+	0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x1a, 0x2d, 0x2e, 0x6f, 0x73,
+	0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f,
+	0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x69,
+	0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x5c, 0x0a, 0x04, 0x42, 0x75,
+	0x72, 0x6e, 0x12, 0x25, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b,
 	0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61,
-	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d,
-	0x73, 0x1a, 0x35, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65,
-	0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31,
-	0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x1a, 0x05, 0x80, 0xe7, 0xb0, 0x2a, 0x01, 0x42,
-	0x94, 0x02, 0x0a, 0x20, 0x63, 0x6f, 0x6d, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e,
+	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x1a, 0x2d, 0x2e, 0x6f, 0x73, 0x6d, 0x6f,
+	0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79,
+	0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x71, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x6e,
+	0x67, 0x65, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x12, 0x2c, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69,
+	0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76,
+	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65,
+	0x41, 0x64, 0x6d, 0x69, 0x6e, 0x1a, 0x34, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e,
 	0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62,
-	0x65, 0x74, 0x61, 0x31, 0x42, 0x07, 0x54, 0x78, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a,
-	0x55, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x4d, 0x41, 0x4e, 0x54,
-	0x52, 0x41, 0x2d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x69, 0x6e, 0x76, 0x65, 0x6e, 0x69, 0x65,
-	0x6d, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2f, 0x74, 0x6f,
-	0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74,
-	0x61, 0x31, 0x3b, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x76,
-	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xa2, 0x02, 0x03, 0x4f, 0x54, 0x58, 0xaa, 0x02, 0x1c, 0x4f,
-	0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74,
-	0x6f, 0x72, 0x79, 0x2e, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xca, 0x02, 0x1c, 0x4f, 0x73,
-	0x6d, 0x6f, 0x73, 0x69, 0x73, 0x5c, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f,
-	0x72, 0x79, 0x5c, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xe2, 0x02, 0x28, 0x4f, 0x73, 0x6d,
-	0x6f, 0x73, 0x69, 0x73, 0x5c, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72,
-	0x79, 0x5c, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74,
-	0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x1e, 0x4f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x3a,
-	0x3a, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x3a, 0x3a, 0x56,
-	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x41, 0x64,
+	0x6d, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x80, 0x01, 0x0a, 0x10,
+	0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61,
+	0x12, 0x31, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
+	0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e,
+	0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64,
+	0x61, 0x74, 0x61, 0x1a, 0x39, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f,
+	0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74,
+	0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65,
+	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x77,
+	0x0a, 0x0d, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x12,
+	0x2e, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66,
+	0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d,
+	0x73, 0x67, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x1a,
+	0x36, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66,
+	0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d,
+	0x73, 0x67, 0x46, 0x6f, 0x72, 0x63, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x74, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x2d, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69,
+	0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76,
+	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x1a, 0x35, 0x2e, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73,
+	0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x76, 0x31,
+	0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50,
+	0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x1a, 0x05, 0x80,
+	0xe7, 0xb0, 0x2a, 0x01, 0x42, 0x94, 0x02, 0x0a, 0x20, 0x63, 0x6f, 0x6d, 0x2e, 0x6f, 0x73, 0x6d,
+	0x6f, 0x73, 0x69, 0x73, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72,
+	0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x42, 0x07, 0x54, 0x78, 0x50, 0x72, 0x6f,
+	0x74, 0x6f, 0x50, 0x01, 0x5a, 0x55, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d,
+	0x2f, 0x4d, 0x41, 0x4e, 0x54, 0x52, 0x41, 0x2d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x69, 0x6e,
+	0x76, 0x65, 0x6e, 0x69, 0x65, 0x6d, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x69, 0x73, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2f,
+	0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x3b, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63,
+	0x74, 0x6f, 0x72, 0x79, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xa2, 0x02, 0x03, 0x4f, 0x54,
+	0x58, 0xaa, 0x02, 0x1c, 0x4f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x2e, 0x54, 0x6f, 0x6b, 0x65,
+	0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31,
+	0xca, 0x02, 0x1c, 0x4f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x5c, 0x54, 0x6f, 0x6b, 0x65, 0x6e,
+	0x66, 0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x5c, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0xe2,
+	0x02, 0x28, 0x4f, 0x73, 0x6d, 0x6f, 0x73, 0x69, 0x73, 0x5c, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66,
+	0x61, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x5c, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x5c, 0x47,
+	0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x1e, 0x4f, 0x73, 0x6d,
+	0x6f, 0x73, 0x69, 0x73, 0x3a, 0x3a, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x66, 0x61, 0x63, 0x74, 0x6f,
+	0x72, 0x79, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -8162,52 +7153,48 @@ func file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescGZIP() []byte {
 	return file_osmosis_tokenfactory_v1beta1_tx_proto_rawDescData
 }
 
-var file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_osmosis_tokenfactory_v1beta1_tx_proto_goTypes = []interface{}{
-	(*MsgCreateDenom)(nil),               // 0: osmosis.tokenfactory.v1beta1.MsgCreateDenom
-	(*MsgCreateDenomResponse)(nil),       // 1: osmosis.tokenfactory.v1beta1.MsgCreateDenomResponse
-	(*MsgMint)(nil),                      // 2: osmosis.tokenfactory.v1beta1.MsgMint
-	(*MsgMintResponse)(nil),              // 3: osmosis.tokenfactory.v1beta1.MsgMintResponse
-	(*MsgBurn)(nil),                      // 4: osmosis.tokenfactory.v1beta1.MsgBurn
-	(*MsgBurnResponse)(nil),              // 5: osmosis.tokenfactory.v1beta1.MsgBurnResponse
-	(*MsgChangeAdmin)(nil),               // 6: osmosis.tokenfactory.v1beta1.MsgChangeAdmin
-	(*MsgChangeAdminResponse)(nil),       // 7: osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse
-	(*MsgSetBeforeSendHook)(nil),         // 8: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook
-	(*MsgSetBeforeSendHookResponse)(nil), // 9: osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse
-	(*MsgSetDenomMetadata)(nil),          // 10: osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata
-	(*MsgSetDenomMetadataResponse)(nil),  // 11: osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse
-	(*MsgForceTransfer)(nil),             // 12: osmosis.tokenfactory.v1beta1.MsgForceTransfer
-	(*MsgForceTransferResponse)(nil),     // 13: osmosis.tokenfactory.v1beta1.MsgForceTransferResponse
-	(*MsgUpdateParams)(nil),              // 14: osmosis.tokenfactory.v1beta1.MsgUpdateParams
-	(*MsgUpdateParamsResponse)(nil),      // 15: osmosis.tokenfactory.v1beta1.MsgUpdateParamsResponse
-	(*v1beta1.Coin)(nil),                 // 16: cosmos.base.v1beta1.Coin
-	(*v1beta11.Metadata)(nil),            // 17: cosmos.bank.v1beta1.Metadata
-	(*tokenfactory.Params)(nil),          // 18: osmosis.tokenfactory.Params
+	(*MsgCreateDenom)(nil),              // 0: osmosis.tokenfactory.v1beta1.MsgCreateDenom
+	(*MsgCreateDenomResponse)(nil),      // 1: osmosis.tokenfactory.v1beta1.MsgCreateDenomResponse
+	(*MsgMint)(nil),                     // 2: osmosis.tokenfactory.v1beta1.MsgMint
+	(*MsgMintResponse)(nil),             // 3: osmosis.tokenfactory.v1beta1.MsgMintResponse
+	(*MsgBurn)(nil),                     // 4: osmosis.tokenfactory.v1beta1.MsgBurn
+	(*MsgBurnResponse)(nil),             // 5: osmosis.tokenfactory.v1beta1.MsgBurnResponse
+	(*MsgChangeAdmin)(nil),              // 6: osmosis.tokenfactory.v1beta1.MsgChangeAdmin
+	(*MsgChangeAdminResponse)(nil),      // 7: osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse
+	(*MsgSetDenomMetadata)(nil),         // 8: osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata
+	(*MsgSetDenomMetadataResponse)(nil), // 9: osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse
+	(*MsgForceTransfer)(nil),            // 10: osmosis.tokenfactory.v1beta1.MsgForceTransfer
+	(*MsgForceTransferResponse)(nil),    // 11: osmosis.tokenfactory.v1beta1.MsgForceTransferResponse
+	(*MsgUpdateParams)(nil),             // 12: osmosis.tokenfactory.v1beta1.MsgUpdateParams
+	(*MsgUpdateParamsResponse)(nil),     // 13: osmosis.tokenfactory.v1beta1.MsgUpdateParamsResponse
+	(*v1beta1.Coin)(nil),                // 14: cosmos.base.v1beta1.Coin
+	(*v1beta11.Metadata)(nil),           // 15: cosmos.bank.v1beta1.Metadata
+	(*tokenfactory.Params)(nil),         // 16: osmosis.tokenfactory.Params
 }
 var file_osmosis_tokenfactory_v1beta1_tx_proto_depIdxs = []int32{
-	16, // 0: osmosis.tokenfactory.v1beta1.MsgMint.amount:type_name -> cosmos.base.v1beta1.Coin
-	16, // 1: osmosis.tokenfactory.v1beta1.MsgBurn.amount:type_name -> cosmos.base.v1beta1.Coin
-	17, // 2: osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata.metadata:type_name -> cosmos.bank.v1beta1.Metadata
-	16, // 3: osmosis.tokenfactory.v1beta1.MsgForceTransfer.amount:type_name -> cosmos.base.v1beta1.Coin
-	18, // 4: osmosis.tokenfactory.v1beta1.MsgUpdateParams.params:type_name -> osmosis.tokenfactory.Params
+	14, // 0: osmosis.tokenfactory.v1beta1.MsgMint.amount:type_name -> cosmos.base.v1beta1.Coin
+	14, // 1: osmosis.tokenfactory.v1beta1.MsgBurn.amount:type_name -> cosmos.base.v1beta1.Coin
+	15, // 2: osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata.metadata:type_name -> cosmos.bank.v1beta1.Metadata
+	14, // 3: osmosis.tokenfactory.v1beta1.MsgForceTransfer.amount:type_name -> cosmos.base.v1beta1.Coin
+	16, // 4: osmosis.tokenfactory.v1beta1.MsgUpdateParams.params:type_name -> osmosis.tokenfactory.Params
 	0,  // 5: osmosis.tokenfactory.v1beta1.Msg.CreateDenom:input_type -> osmosis.tokenfactory.v1beta1.MsgCreateDenom
 	2,  // 6: osmosis.tokenfactory.v1beta1.Msg.Mint:input_type -> osmosis.tokenfactory.v1beta1.MsgMint
 	4,  // 7: osmosis.tokenfactory.v1beta1.Msg.Burn:input_type -> osmosis.tokenfactory.v1beta1.MsgBurn
 	6,  // 8: osmosis.tokenfactory.v1beta1.Msg.ChangeAdmin:input_type -> osmosis.tokenfactory.v1beta1.MsgChangeAdmin
-	10, // 9: osmosis.tokenfactory.v1beta1.Msg.SetDenomMetadata:input_type -> osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata
-	8,  // 10: osmosis.tokenfactory.v1beta1.Msg.SetBeforeSendHook:input_type -> osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHook
-	12, // 11: osmosis.tokenfactory.v1beta1.Msg.ForceTransfer:input_type -> osmosis.tokenfactory.v1beta1.MsgForceTransfer
-	14, // 12: osmosis.tokenfactory.v1beta1.Msg.UpdateParams:input_type -> osmosis.tokenfactory.v1beta1.MsgUpdateParams
-	1,  // 13: osmosis.tokenfactory.v1beta1.Msg.CreateDenom:output_type -> osmosis.tokenfactory.v1beta1.MsgCreateDenomResponse
-	3,  // 14: osmosis.tokenfactory.v1beta1.Msg.Mint:output_type -> osmosis.tokenfactory.v1beta1.MsgMintResponse
-	5,  // 15: osmosis.tokenfactory.v1beta1.Msg.Burn:output_type -> osmosis.tokenfactory.v1beta1.MsgBurnResponse
-	7,  // 16: osmosis.tokenfactory.v1beta1.Msg.ChangeAdmin:output_type -> osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse
-	11, // 17: osmosis.tokenfactory.v1beta1.Msg.SetDenomMetadata:output_type -> osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse
-	9,  // 18: osmosis.tokenfactory.v1beta1.Msg.SetBeforeSendHook:output_type -> osmosis.tokenfactory.v1beta1.MsgSetBeforeSendHookResponse
-	13, // 19: osmosis.tokenfactory.v1beta1.Msg.ForceTransfer:output_type -> osmosis.tokenfactory.v1beta1.MsgForceTransferResponse
-	15, // 20: osmosis.tokenfactory.v1beta1.Msg.UpdateParams:output_type -> osmosis.tokenfactory.v1beta1.MsgUpdateParamsResponse
-	13, // [13:21] is the sub-list for method output_type
-	5,  // [5:13] is the sub-list for method input_type
+	8,  // 9: osmosis.tokenfactory.v1beta1.Msg.SetDenomMetadata:input_type -> osmosis.tokenfactory.v1beta1.MsgSetDenomMetadata
+	10, // 10: osmosis.tokenfactory.v1beta1.Msg.ForceTransfer:input_type -> osmosis.tokenfactory.v1beta1.MsgForceTransfer
+	12, // 11: osmosis.tokenfactory.v1beta1.Msg.UpdateParams:input_type -> osmosis.tokenfactory.v1beta1.MsgUpdateParams
+	1,  // 12: osmosis.tokenfactory.v1beta1.Msg.CreateDenom:output_type -> osmosis.tokenfactory.v1beta1.MsgCreateDenomResponse
+	3,  // 13: osmosis.tokenfactory.v1beta1.Msg.Mint:output_type -> osmosis.tokenfactory.v1beta1.MsgMintResponse
+	5,  // 14: osmosis.tokenfactory.v1beta1.Msg.Burn:output_type -> osmosis.tokenfactory.v1beta1.MsgBurnResponse
+	7,  // 15: osmosis.tokenfactory.v1beta1.Msg.ChangeAdmin:output_type -> osmosis.tokenfactory.v1beta1.MsgChangeAdminResponse
+	9,  // 16: osmosis.tokenfactory.v1beta1.Msg.SetDenomMetadata:output_type -> osmosis.tokenfactory.v1beta1.MsgSetDenomMetadataResponse
+	11, // 17: osmosis.tokenfactory.v1beta1.Msg.ForceTransfer:output_type -> osmosis.tokenfactory.v1beta1.MsgForceTransferResponse
+	13, // 18: osmosis.tokenfactory.v1beta1.Msg.UpdateParams:output_type -> osmosis.tokenfactory.v1beta1.MsgUpdateParamsResponse
+	12, // [12:19] is the sub-list for method output_type
+	5,  // [5:12] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
 	5,  // [5:5] is the sub-list for extension extendee
 	0,  // [0:5] is the sub-list for field type_name
@@ -8316,30 +7303,6 @@ func file_osmosis_tokenfactory_v1beta1_tx_proto_init() {
 			}
 		}
 		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSetBeforeSendHook); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSetBeforeSendHookResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MsgSetDenomMetadata); i {
 			case 0:
 				return &v.state
@@ -8351,7 +7314,7 @@ func file_osmosis_tokenfactory_v1beta1_tx_proto_init() {
 				return nil
 			}
 		}
-		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MsgSetDenomMetadataResponse); i {
 			case 0:
 				return &v.state
@@ -8363,7 +7326,7 @@ func file_osmosis_tokenfactory_v1beta1_tx_proto_init() {
 				return nil
 			}
 		}
-		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MsgForceTransfer); i {
 			case 0:
 				return &v.state
@@ -8375,7 +7338,7 @@ func file_osmosis_tokenfactory_v1beta1_tx_proto_init() {
 				return nil
 			}
 		}
-		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MsgForceTransferResponse); i {
 			case 0:
 				return &v.state
@@ -8387,7 +7350,7 @@ func file_osmosis_tokenfactory_v1beta1_tx_proto_init() {
 				return nil
 			}
 		}
-		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MsgUpdateParams); i {
 			case 0:
 				return &v.state
@@ -8399,7 +7362,7 @@ func file_osmosis_tokenfactory_v1beta1_tx_proto_init() {
 				return nil
 			}
 		}
-		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+		file_osmosis_tokenfactory_v1beta1_tx_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MsgUpdateParamsResponse); i {
 			case 0:
 				return &v.state
@@ -8418,7 +7381,7 @@ func file_osmosis_tokenfactory_v1beta1_tx_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_osmosis_tokenfactory_v1beta1_tx_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/MANTRA-Chain/inveniem/x/tokenfactory/types"
+	"github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -30,7 +30,6 @@ func GetTxCmd() *cobra.Command {
 		NewBurnCmd(),
 		NewForceTransferCmd(),
 		NewChangeAdminCmd(),
-		NewSetBeforeSendHook(),
 		NewSetDenomMetadataCmd(),
 	)
 
@@ -258,37 +257,6 @@ func NewChangeAdminCmd() *cobra.Command {
 			}
 
 			msg := types.NewMsgChangeAdmin(
-				clientCtx.GetFromAddress().String(),
-				args[0],
-				args[1],
-			)
-
-			return tx.GenerateOrBroadcastTxWithFactory(clientCtx, txf.WithTxConfig(clientCtx.TxConfig).WithAccountRetriever(clientCtx.AccountRetriever), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-	return cmd
-}
-
-// NewSetBeforeSendHook broadcast MsgSetBeforeSendHook
-func NewSetBeforeSendHook() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "set-before-send-hook [denom] [contract-addr] [flags]",
-		Short: "Sets the before send hook for a factory-created denom. Must have admin authority to do so.",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			txf, err := tx.NewFactoryCLI(clientCtx, cmd.Flags())
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgSetBeforeSendHook(
 				clientCtx.GetFromAddress().String(),
 				args[0],
 				args[1],

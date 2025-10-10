@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/inveniem/app/params"
-	"github.com/MANTRA-Chain/inveniem/x/tax/types"
+	appparams "github.com/MANTRA-Chain/inveniam/app/params"
+	"github.com/MANTRA-Chain/inveniam/x/tax/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,14 +30,14 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "invalid bech32 address",
 			genState: &types.GenesisState{
-				Params: types.NewParams(types.DefaultMcaTax, "mantra1axznhnm82lah8qqvp9hxdad49yx3s5dcj66qkb"),
+				Params: types.NewParams(types.DefaultMcaTax, "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx073"),
 			},
 			valid: false,
 		},
 		{
 			desc: "valid custom parameters",
 			genState: &types.GenesisState{
-				Params: types.NewParams("0.1", "mantra15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzwx8pls"),
+				Params: types.NewParams("0.1", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"),
 			},
 			valid: true,
 		},

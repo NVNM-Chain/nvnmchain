@@ -2,7 +2,7 @@ package keeper
 
 import (
 	"cosmossdk.io/store/prefix"
-	"github.com/MANTRA-Chain/inveniem/x/tokenfactory/types"
+	"github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

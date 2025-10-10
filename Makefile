@@ -11,7 +11,7 @@ help:
 	@echo "Usage:"
 	@echo "    make [command]"
 	@echo ""
-	@echo "  make build                 Build inveniemd binary"
+	@echo "  make build                 Build inveniamd binary"
 	@echo "  make lint                  Show available lint commands"
 	@echo "  make test                  Show available test commands"
 	@echo "  make proto                 Show available proto commands"
@@ -69,9 +69,9 @@ ifeq ($(LEDGER_ENABLED),true)
   endif
 endif
 
-ifeq (cleveldb,$(findstring cleveldb,$(INVENIEM_BUILD_OPTIONS)))
+ifeq (cleveldb,$(findstring cleveldb,$(INVENIAM_BUILD_OPTIONS)))
   build_tags += gcc
-else ifeq (rocksdb,$(findstring rocksdb,$(INVENIEM_BUILD_OPTIONS)))
+else ifeq (rocksdb,$(findstring rocksdb,$(INVENIAM_BUILD_OPTIONS)))
   build_tags += gcc
 endif
 build_tags += $(BUILD_TAGS)
@@ -84,19 +84,19 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 
 # process linker flags
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=inveniem \
-	-X github.com/cosmos/cosmos-sdk/version.AppName=inveniemd \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=inveniam \
+	-X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 	-X github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep) \
 	-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(CMT_VERSION)
 
-ifeq (cleveldb,$(findstring cleveldb,$(INVENIEM_BUILD_OPTIONS)))
+ifeq (cleveldb,$(findstring cleveldb,$(INVENIAM_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
-else ifeq (rocksdb,$(findstring rocksdb,$(INVENIEM_BUILD_OPTIONS)))
+else ifeq (rocksdb,$(findstring rocksdb,$(INVENIAM_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb
 endif
-ifeq (,$(findstring nostrip,$(INVENIEM_BUILD_OPTIONS)))
+ifeq (,$(findstring nostrip,$(INVENIAM_BUILD_OPTIONS)))
   ldflags += -w -s
 endif
 ifeq ($(LINK_STATICALLY),true)
@@ -107,7 +107,7 @@ ldflags := $(strip $(ldflags))
 
 BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
 # check for nostrip option
-ifeq (,$(findstring nostrip,$(INVENIEM_BUILD_OPTIONS)))
+ifeq (,$(findstring nostrip,$(INVENIAM_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
 
@@ -123,10 +123,10 @@ build-arm:
 build-linux:
 	GOOS=linux GOARCH=$(if $(findstring aarch64,$(shell uname -m)) || $(findstring arm64,$(shell uname -m)),arm64,amd64) $(MAKE) build
 build-image:
-	docker build -f Dockerfile -t mantra-chain/inveniem .
+	docker build -f Dockerfile -t mantra-chain/inveniam .
 
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
-	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) $(GO_MODULE)/cmd/inveniemd
+	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) $(GO_MODULE)/cmd/inveniamd
 $(BUILDDIR)/:
 	mkdir -p $(BUILDDIR)/
 
@@ -172,9 +172,8 @@ GO_VERSION_FALLBACK := 1.24.1
 GORELEASER_IMAGE := $(shell docker manifest inspect $(GORELEASER_CROSS):v$(GO_VERSION) > /dev/null 2>&1 && echo $(GORELEASER_CROSS):v$(GO_VERSION) || echo $(GORELEASER_CROSS):v$(GO_VERSION_FALLBACK))
 endif
 GORELEASER_PLATFORM ?= linux/amd64
-COSMWASM_VERSION := $(shell go list -m github.com/CosmWasm/wasmvm/v3 | sed 's/.* //')
 REPO_OWNER ?= MANTRA-Chain
-REPO_NAME ?= inveniem
+REPO_NAME ?= inveniam
 
 # Check if GITHUB_TOKEN is defined
 ifndef GITHUB_TOKEN
@@ -186,12 +185,11 @@ release:
 	docker run \
 		--rm \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
-		-e COSMWASM_VERSION=$(COSMWASM_VERSION) \
 		-e CMT_VERSION=$(CMT_VERSION) \
 		-e REPO_OWNER=$(REPO_OWNER) \
 		-e REPO_NAME=$(REPO_NAME) \
-		-v `pwd`:/go/src/inveniemd \
-		-w /go/src/inveniemd \
+		-v `pwd`:/go/src/inveniamd \
+		-w /go/src/inveniamd \
 		--platform=$(GORELEASER_PLATFORM) \
 		$(GORELEASER_IMAGE) \
 		release $(if $(GORELEASER_SKIP),--skip=$(GORELEASER_SKIP)) $(if $(GORELEASER_CONFIG),--config=$(GORELEASER_CONFIG)) \
@@ -206,12 +204,11 @@ endif
 goreleaser-build-local:
 	docker run \
 		--rm \
-		-e COSMWASM_VERSION=$(COSMWASM_VERSION) \
 		-e CMT_VERSION=$(CMT_VERSION) \
 		-e REPO_OWNER=$(REPO_OWNER) \
 		-e REPO_NAME=$(REPO_NAME) \
-		-v `pwd`:/go/src/inveniemd \
-		-w /go/src/inveniemd \
+		-v `pwd`:/go/src/inveniamd \
+		-w /go/src/inveniamd \
 		--platform=$(GORELEASER_PLATFORM) \
 		$(GORELEASER_IMAGE) \
 		build $(if $(GORELEASER_IDS),$(shell echo $(GORELEASER_IDS) | tr ',' ' ' | sed 's/[^ ]*/--id=&/g')) \
@@ -236,15 +233,15 @@ mocks:
 
 build-and-run-single-node: build
 	@echo "Building and running a single node for testing..."
-	@mkdir -p .inveniemsinglenodetest
-	@if [ ! -f .inveniemsinglenodetest/config/config.toml ]; then \
-		./build/inveniemd init single-node-test --chain-id test-chain --home .inveniemsinglenodetest --default-denom anvnm; \
-		./build/inveniemd keys add validator --keyring-backend test --home .inveniemsinglenodetest; \
-		./build/inveniemd genesis add-genesis-account $$(./build/inveniemd keys show validator -a --keyring-backend test --home .inveniemsinglenodetest) 100000000000000anvnm --home .inveniemsinglenodetest; \
-		./build/inveniemd genesis gentx validator 100000000anvnm --chain-id test-chain --keyring-backend test --home .inveniemsinglenodetest; \
-		./build/inveniemd genesis collect-gentxs --home .inveniemsinglenodetest; \
-		sed -i'' -e 's/"fee_denom": "stake"/"fee_denom": "anvnm"/' .inveniemsinglenodetest/config/genesis.json; \
+	@mkdir -p .inveniamsinglenodetest
+	@if [ ! -f .inveniamsinglenodetest/config/config.toml ]; then \
+		./build/inveniamd init single-node-test --chain-id test-chain --home .inveniamsinglenodetest --default-denom anvnm; \
+		./build/inveniamd keys add validator --keyring-backend test --home .inveniamsinglenodetest; \
+		./build/inveniamd genesis add-genesis-account $$(./build/inveniamd keys show validator -a --keyring-backend test --home .inveniamsinglenodetest) 100000000000000anvnm --home .inveniamsinglenodetest; \
+		./build/inveniamd genesis gentx validator 100000000anvnm --chain-id test-chain --keyring-backend test --home .inveniamsinglenodetest; \
+		./build/inveniamd genesis collect-gentxs --home .inveniamsinglenodetest; \
+		sed -i'' -e 's/"fee_denom": "stake"/"fee_denom": "anvnm"/' .inveniamsinglenodetest/config/genesis.json; \
 	fi
-	./build/inveniemd start --home .inveniemsinglenodetest --minimum-gas-prices 0anvnm
+	./build/inveniamd start --home .inveniamsinglenodetest --minimum-gas-prices 0anvnm
 
 .PHONY: build-and-run-single-node

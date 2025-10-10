@@ -3,10 +3,10 @@ package keeper_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/inveniem/app/params"
-	keepertest "github.com/MANTRA-Chain/inveniem/testutil/keeper"
-	"github.com/MANTRA-Chain/inveniem/x/tax/keeper"
-	"github.com/MANTRA-Chain/inveniem/x/tax/types"
+	appparams "github.com/MANTRA-Chain/inveniam/app/params"
+	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
+	"github.com/MANTRA-Chain/inveniam/x/tax/keeper"
+	"github.com/MANTRA-Chain/inveniam/x/tax/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -38,7 +38,7 @@ func TestMsgUpdateParams(t *testing.T) {
 		{
 			name: "update mca tax",
 			input: &types.MsgUpdateParams{
-				Authority:  "mantra15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzwx8pls",
+				Authority:  "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
 				McaTax:     "0.200000000000000000",
 				McaAddress: "",
 			},
@@ -47,16 +47,16 @@ func TestMsgUpdateParams(t *testing.T) {
 		{
 			name: "update mca address",
 			input: &types.MsgUpdateParams{
-				Authority:  "mantra15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzwx8pls",
+				Authority:  "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
 				McaTax:     "",
-				McaAddress: "mantra1axznhnm82lah8qqvp9hxdad49yx3s5dcj66qka",
+				McaAddress: "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072",
 			},
 			expErr: false,
 		},
 		{
 			name: "old authority address no longer work",
 			input: &types.MsgUpdateParams{
-				Authority:  "mantra15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzwx8pls",
+				Authority:  "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
 				McaTax:     "",
 				McaAddress: "",
 			},
@@ -66,9 +66,9 @@ func TestMsgUpdateParams(t *testing.T) {
 		{
 			name: "update both",
 			input: &types.MsgUpdateParams{
-				Authority:  "mantra1axznhnm82lah8qqvp9hxdad49yx3s5dcj66qka",
+				Authority:  "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072",
 				McaTax:     "0.200000000000000000",
-				McaAddress: "mantra15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzwx8pls",
+				McaAddress: "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
 			},
 			expErr: false,
 		},

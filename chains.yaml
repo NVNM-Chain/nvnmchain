@@ -1,12 +1,12 @@
-# Inveniem
-- name: inveniem
+# Inveniam
+- name: inveniam
   github-organization: MANTRA-Chain
-  github-repo: inveniem
+  github-repo: inveniam
   dockerfile: cosmos
   build-target: |
     LEDGER_ENABLED=true BUILD_TAGS='muslc osusergo' LINK_STATICALLY=true make build
   binaries:
-    - build/inveniemd
+    - build/inveniamd
   platforms:
     - linux/amd64
     - linux/arm64

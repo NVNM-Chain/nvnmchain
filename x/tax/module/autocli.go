@@ -2,7 +2,7 @@ package tax
 
 import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
-	taxapi "github.com/MANTRA-Chain/inveniem/api/mantrachain/tax/v1"
+	taxapi "github.com/MANTRA-Chain/inveniam/api/mantrachain/tax/v1"
 )
 
 // AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
@@ -39,7 +39,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						},
 					},
 					Short:   "Update the parameters of the tax module",
-					Example: "inveniemd tx tax update-params --mca_tax 0.4 --mca_address inveniem1axznhnm82lah8qqvp9hxdad49yx3s5dc2p4pfz",
+					Example: "inveniamd tx tax update-params --mca_tax 0.4 --mca_address inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dc2p4pfz",
 				},
 			},
 		},

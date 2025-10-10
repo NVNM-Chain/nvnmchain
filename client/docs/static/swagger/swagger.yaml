@@ -5419,7 +5419,7 @@ paths:
                       format: byte
       tags:
         - Query
-  /MANTRA-Chain/inveniem/tax/v1/params:
+  /MANTRA-Chain/inveniam/tax/v1/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: TaxParams
@@ -5497,58 +5497,6 @@ paths:
               for the
 
               DenomAuthorityMetadata gRPC query.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    type_url:
-                      type: string
-                    value:
-                      type: string
-                      format: byte
-      parameters:
-        - name: creator
-          in: path
-          required: true
-          type: string
-        - name: subdenom
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /osmosis/tokenfactory/v1beta1/denoms/factory/{creator}/{subdenom}/before_send_hook:
-    get:
-      summary: |-
-        BeforeSendHookAddress defines a gRPC query method for
-        getting the address registered for the before send hook.
-      operationId: BeforeSendHookAddress
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              contract_addr:
-                type: string
-            description: >-
-              QueryBeforeSendHookAddressResponse defines the response structure
-              for the
-
-              DenomBeforeSendHook gRPC query.
         default:
           description: An unexpected error response.
           schema:
@@ -47842,14 +47790,6 @@ definitions:
       DenomAuthorityMetadata specifies metadata for addresses that have specific
       capabilities over a token factory denom. Right now there is only one Admin
       permission, but is planned to be extended to the future.
-  osmosis.tokenfactory.v1beta1.QueryBeforeSendHookAddressResponse:
-    type: object
-    properties:
-      contract_addr:
-        type: string
-    description: |-
-      QueryBeforeSendHookAddressResponse defines the response structure for the
-      DenomBeforeSendHook gRPC query.
   osmosis.tokenfactory.v1beta1.QueryDenomAuthorityMetadataResponse:
     type: object
     properties:

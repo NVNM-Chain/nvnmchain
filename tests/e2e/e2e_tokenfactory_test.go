@@ -171,7 +171,7 @@ func (s *IntegrationTestSuite) testTokenfactorySetMetadata() {
 		s.T().Logf("Start setting metadata for denom %s", customDenom)
 
 		// Set the metadata using the CLI command
-		s.setDenomMetadata(c, valIdx, s.getAlice(), filepath.Join(inveniemHomePath, metadataFileName), standardFees.String(), false)
+		s.setDenomMetadata(c, valIdx, s.getAlice(), filepath.Join(inveniamHomePath, metadataFileName), standardFees.String(), false)
 
 		s.T().Logf("Successfully set metadata for denom %s", customDenom)
 
@@ -517,7 +517,7 @@ func (s *IntegrationTestSuite) createDenom(c *chain, valIdx int, sender, subdeno
 	defer cancel()
 
 	ibcCmd := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		"tokenfactory",
 		"create-denom",
@@ -549,7 +549,7 @@ func (s *IntegrationTestSuite) setDenomMetadata(c *chain, valIdx int, sender, me
 
 	// Sample tx: https://mantrascan.io/dukong/tx/4f40cc08aadb5ca005a4138353c707b1398858c577186458d5ce2a70bd3a67c8
 	cmd := []string{
-		inveniemdBinary,
+		inveniamdBinary,
 		txCommand,
 		"tokenfactory",
 		"set-denom-metadata",
@@ -583,7 +583,7 @@ func (s *IntegrationTestSuite) mintDenom(c *chain, valIdx int, sender, mintCoin,
 	var ibcCmd []string
 	if mintTo == "" {
 		ibcCmd = []string{
-			inveniemdBinary,
+			inveniamdBinary,
 			txCommand,
 			"tokenfactory",
 			"mint",
@@ -601,7 +601,7 @@ func (s *IntegrationTestSuite) mintDenom(c *chain, valIdx int, sender, mintCoin,
 		mintTo = sender
 	} else {
 		ibcCmd = []string{
-			inveniemdBinary,
+			inveniamdBinary,
 			txCommand,
 			"tokenfactory",
 			"mint",
@@ -636,7 +636,7 @@ func (s *IntegrationTestSuite) burnDenom(c *chain, valIdx int, sender, burnCoin,
 	var ibcCmd []string
 	if burnFrom == "" {
 		ibcCmd = []string{
-			inveniemdBinary,
+			inveniamdBinary,
 			txCommand,
 			"tokenfactory",
 			"burn",
@@ -654,7 +654,7 @@ func (s *IntegrationTestSuite) burnDenom(c *chain, valIdx int, sender, burnCoin,
 		burnFrom = sender
 	} else {
 		ibcCmd = []string{
-			inveniemdBinary,
+			inveniamdBinary,
 			txCommand,
 			"tokenfactory",
 			"burn",

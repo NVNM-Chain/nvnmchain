@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"cosmossdk.io/math"
-	tokenfactorytypes "github.com/MANTRA-Chain/inveniem/x/tokenfactory/types"
+	tokenfactorytypes "github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"

@@ -9,6 +9,7 @@ import (
 	"sort"
 
 	corevm "github.com/ethereum/go-ethereum/core/vm"
+	"github.com/gorilla/mux"
 	"github.com/spf13/cast"
 
 	// Force-load the tracer engines to trigger registration due to Go-Ethereum v1.10.15 changes
@@ -40,16 +41,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/mempool"
 	"github.com/cosmos/evm/evmd"
 
-	"github.com/MANTRA-Chain/inveniem/app/ante"
-	"github.com/MANTRA-Chain/inveniem/app/upgrades"
-	_ "github.com/MANTRA-Chain/inveniem/client/docs/statik"
-	"github.com/MANTRA-Chain/inveniem/client/docs/swagger"
-	taxkeeper "github.com/MANTRA-Chain/inveniem/x/tax/keeper"
-	tax "github.com/MANTRA-Chain/inveniem/x/tax/module"
-	taxtypes "github.com/MANTRA-Chain/inveniem/x/tax/types"
-	"github.com/MANTRA-Chain/inveniem/x/tokenfactory"
-	tokenfactorykeeper "github.com/MANTRA-Chain/inveniem/x/tokenfactory/keeper"
-	tokenfactorytypes "github.com/MANTRA-Chain/inveniem/x/tokenfactory/types"
+	"github.com/MANTRA-Chain/inveniam/app/ante"
+	"github.com/MANTRA-Chain/inveniam/app/upgrades"
+	_ "github.com/MANTRA-Chain/inveniam/client/docs/statik"
+	"github.com/MANTRA-Chain/inveniam/client/docs/swagger"
+	taxkeeper "github.com/MANTRA-Chain/inveniam/x/tax/keeper"
+	tax "github.com/MANTRA-Chain/inveniam/x/tax/module"
+	taxtypes "github.com/MANTRA-Chain/inveniam/x/tax/types"
+	"github.com/MANTRA-Chain/inveniam/x/tokenfactory"
+	tokenfactorykeeper "github.com/MANTRA-Chain/inveniam/x/tokenfactory/keeper"
+	tokenfactorytypes "github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -87,7 +88,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/consensus"
 	consensusparamkeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
-	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
@@ -107,7 +107,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	evmosencoding "github.com/cosmos/evm/encoding"
@@ -154,7 +153,12 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v10/modules/core/keeper"
 	ibctm "github.com/cosmos/ibc-go/v10/modules/light-clients/07-tendermint"
 
-	"github.com/gorilla/mux"
+	consumer "github.com/cosmos/interchain-security/v7/x/ccv/consumer"
+	consumerkeeper "github.com/cosmos/interchain-security/v7/x/ccv/consumer/keeper"
+	consumertypes "github.com/cosmos/interchain-security/v7/x/ccv/consumer/types"
+	ccvdistr "github.com/cosmos/interchain-security/v7/x/ccv/democracy/distribution"
+	ccvstaking "github.com/cosmos/interchain-security/v7/x/ccv/democracy/staking"
+	ccvtypes "github.com/cosmos/interchain-security/v7/x/ccv/types"
 )
 
 func init() {
@@ -163,7 +167,7 @@ func init() {
 	sdk.DefaultPowerReduction = cosmosevmtypes.AttoPowerReduction
 	stakingtypes.DefaultMinCommissionRate = math.LegacyZeroDec()
 
-	// DefaultNodeHome default home directories for inveniemd
+	// DefaultNodeHome default home directories for inveniamd
 	var err error
 	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(NodeDir)
 	if err != nil {
@@ -181,7 +185,7 @@ const (
 
 // We pull these out so we can set them with LDFLAGS in the Makefile
 var (
-	NodeDir = ".inveniem"
+	NodeDir = ".inveniam"
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
 )
@@ -206,6 +210,10 @@ var maccPerms = map[string][]string{
 	evmtypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
 	feemarkettypes.ModuleName: nil,
 	erc20types.ModuleName:     {authtypes.Minter, authtypes.Burner},
+
+	// Consumer
+	consumertypes.ConsumerRedistributeName:     nil,
+	consumertypes.ConsumerToSendToProviderName: nil,
 }
 
 var Upgrades = []upgrades.Upgrade{}
@@ -233,7 +241,7 @@ type App struct {
 	// keepers
 	AccountKeeper         authkeeper.AccountKeeper
 	BankKeeper            bankkeeper.BaseKeeper
-	StakingKeeper         stakingkeeper.Keeper
+	StakingKeeper         *stakingkeeper.Keeper
 	SlashingKeeper        slashingkeeper.Keeper
 	MintKeeper            mintkeeper.Keeper
 	DistrKeeper           distrkeeper.Keeper
@@ -263,6 +271,9 @@ type App struct {
 	FeeMarketKeeper feemarketkeeper.Keeper
 	EVMKeeper       *evmkeeper.Keeper
 	Erc20Keeper     erc20keeper.Keeper
+
+	// Consumer
+	ConsumerKeeper consumerkeeper.Keeper
 
 	// the module manager
 	ModuleManager      *module.Manager
@@ -338,6 +349,7 @@ func New(
 		ratelimittypes.StoreKey,
 		tokenfactorytypes.StoreKey, taxtypes.StoreKey,
 		icacontrollertypes.StoreKey, icahosttypes.StoreKey,
+		consumertypes.StoreKey,
 
 		// Cosmos EVM store keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey, erc20types.StoreKey,
@@ -395,7 +407,7 @@ func New(
 		logger,
 	)
 
-	app.StakingKeeper = *stakingkeeper.NewKeeper(
+	app.StakingKeeper = stakingkeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[stakingtypes.StoreKey]),
 		app.AccountKeeper,
@@ -411,7 +423,7 @@ func New(
 		app.StakingKeeper,
 		app.AccountKeeper,
 		&app.BankKeeper,
-		authtypes.FeeCollectorName,
+		minttypes.ModuleName,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
@@ -421,7 +433,7 @@ func New(
 		app.AccountKeeper,
 		&app.BankKeeper,
 		app.StakingKeeper,
-		authtypes.FeeCollectorName,
+		consumertypes.ConsumerRedistributeName,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
@@ -429,17 +441,11 @@ func New(
 		appCodec,
 		legacyAmino,
 		runtime.NewKVStoreService(keys[slashingtypes.StoreKey]),
-		&app.StakingKeeper,
+		app.StakingKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, runtime.NewKVStoreService(keys[feegrant.StoreKey]), app.AccountKeeper)
-
-	// register the staking hooks
-	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.StakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
-	)
 
 	app.CircuitKeeper = circuitkeeper.NewKeeper(
 		appCodec,
@@ -472,6 +478,22 @@ func New(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
+	// register the staking hooks
+	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
+	// NOTE: slashing hook was removed since it's only relevant for consumerKeeper
+	app.StakingKeeper.SetHooks(
+		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks()),
+	)
+
+	// pre-initialize ConsumerKeeper to satsfy ibckeeper.NewKeeper
+	// which would panic on nil or zero keeper
+	// ConsumerKeeper implements StakingKeeper but all function calls result in no-ops so this is safe
+	// communication over IBC is not affected by these changes
+	app.ConsumerKeeper = consumerkeeper.NewNonZeroKeeper(
+		appCodec,
+		keys[consumertypes.StoreKey],
+	)
+
 	app.IBCKeeper = ibckeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[ibcexported.StoreKey]),
@@ -479,6 +501,41 @@ func New(
 		app.UpgradeKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+
+	// Create CCV consumer and modules
+	app.ConsumerKeeper = consumerkeeper.NewKeeper(
+		appCodec,
+		keys[consumertypes.StoreKey],
+		app.IBCKeeper.ChannelKeeper,
+		app.IBCKeeper.ConnectionKeeper,
+		app.IBCKeeper.ClientKeeper,
+		app.SlashingKeeper,
+		app.BankKeeper,
+		app.AccountKeeper,
+		&app.TransferKeeper,
+		app.IBCKeeper,
+		minttypes.ModuleName,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ValidatorAddrPrefix()),
+		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
+	)
+
+	// Setting the standalone staking keeper is only needed for standalone to consumer changeover chains
+	app.ConsumerKeeper.SetStandaloneStakingKeeper(app.StakingKeeper)
+
+	// consumer keeper satisfies the staking keeper interface
+	// of the slashing module
+	app.SlashingKeeper = slashingkeeper.NewKeeper(
+		appCodec,
+		legacyAmino,
+		runtime.NewKVStoreService(keys[slashingtypes.StoreKey]),
+		&app.ConsumerKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
+	// register slashing module StakingHooks to the consumer keeper
+	app.ConsumerKeeper = *app.ConsumerKeeper.SetHooks(app.SlashingKeeper.Hooks())
+	consumerModule := consumer.NewAppModule(app.ConsumerKeeper, app.GetSubspace(consumertypes.ModuleName))
 
 	sortedKnownModules := make([]string, 0, len(maccPerms))
 	for moduleName := range maccPerms {
@@ -492,15 +549,12 @@ func New(
 		sortedKnownModules,
 		app.AccountKeeper,
 		&app.BankKeeper,
-		nil, // no wasm keeper
 		&app.Erc20Keeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	app.BankKeeper.BaseSendKeeper = app.BankKeeper.SetHooks(
-		banktypes.NewMultiBankHooks(
-			app.TokenFactoryKeeper.Hooks(),
-		))
+		banktypes.NewMultiBankHooks())
 
 	// Register the proposal types
 	// Deprecated: Avoid adding new handlers, instead use the new proposal flow
@@ -592,7 +646,7 @@ func New(
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[evidencetypes.StoreKey]),
-		&app.StakingKeeper,
+		&app.ConsumerKeeper,
 		app.SlashingKeeper,
 		app.AccountKeeper.AddressCodec(),
 		runtime.ProvideCometInfoService(),
@@ -693,26 +747,27 @@ func New(
 	ibcRouter := porttypes.NewRouter().
 		AddRoute(icahosttypes.SubModuleName, icaHostStack).
 		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
-		AddRoute(ibctransfertypes.ModuleName, transferStack)
+		AddRoute(ibctransfertypes.ModuleName, transferStack).
+		AddRoute(ccvtypes.ConsumerPortID, consumerModule)
 
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// TODO: Configure EVM precompiles when needed
-	corePrecompiles := evmd.NewAvailableStaticPrecompiles(
-		app.StakingKeeper,
-		app.DistrKeeper,
-		app.BankKeeper,
-		app.Erc20Keeper,
-		app.TransferKeeper,
-		app.IBCKeeper.ChannelKeeper,
-		app.EVMKeeper,
-		app.GovKeeper,
-		app.SlashingKeeper,
-		app.AppCodec(),
-	)
-	app.EVMKeeper.WithStaticPrecompiles(
-		corePrecompiles,
-	)
+	// corePrecompiles := evmd.NewAvailableStaticPrecompiles(
+	// 	app.StakingKeeper,
+	// 	app.DistrKeeper,
+	// 	app.BankKeeper,
+	// 	app.Erc20Keeper,
+	// 	app.TransferKeeper,
+	// 	app.IBCKeeper.ChannelKeeper,
+	// 	app.EVMKeeper,
+	// 	app.GovKeeper,
+	// 	app.SlashingKeeper,
+	// 	app.AppCodec(),
+	// )
+	// app.EVMKeeper.WithStaticPrecompiles(
+	// 	corePrecompiles,
+	// )
 
 	storeProvider := app.IBCKeeper.ClientKeeper.GetStoreProvider()
 	tmLightClientModule := ibctm.NewLightClientModule(appCodec, storeProvider)
@@ -737,7 +792,7 @@ func New(
 	app.ModuleManager = module.NewManager(
 		genutil.NewAppModule(
 			app.AccountKeeper,
-			app.StakingKeeper,
+			&app.ConsumerKeeper,
 			app,
 			txConfig,
 		),
@@ -748,8 +803,8 @@ func New(
 		gov.NewAppModule(appCodec, &app.GovKeeper, app.AccountKeeper, app.BankKeeper, nil),
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil, nil),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, nil, app.interfaceRegistry),
-		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, nil),
-		staking.NewAppModule(appCodec, &app.StakingKeeper, app.AccountKeeper, app.BankKeeper, nil),
+		ccvdistr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, *app.StakingKeeper, authtypes.FeeCollectorName, app.GetSubspace(distrtypes.ModuleName)),
+		ccvstaking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
 		upgrade.NewAppModule(app.UpgradeKeeper, app.AccountKeeper.AddressCodec()),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		params.NewAppModule(app.ParamsKeeper), //nolint:staticcheck
@@ -757,6 +812,7 @@ func New(
 		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
 		circuit.NewAppModule(appCodec, app.CircuitKeeper),
+		consumerModule,
 		// non sdk modules
 		ibc.NewAppModule(app.IBCKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
@@ -824,6 +880,7 @@ func New(
 		icatypes.ModuleName,
 		ratelimittypes.ModuleName,
 		tokenfactorytypes.ModuleName,
+		consumertypes.ModuleName,
 	)
 
 	app.ModuleManager.SetOrderEndBlockers(
@@ -845,6 +902,7 @@ func New(
 		icatypes.ModuleName,
 		ratelimittypes.ModuleName,
 		tokenfactorytypes.ModuleName,
+		consumertypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -888,6 +946,7 @@ func New(
 
 		tokenfactorytypes.ModuleName,
 		taxtypes.ModuleName,
+		consumertypes.ModuleName,
 	}
 	app.ModuleManager.SetOrderInitGenesis(genesisModuleOrder...)
 	app.ModuleManager.SetOrderExportGenesis(genesisModuleOrder...)
@@ -943,7 +1002,7 @@ func New(
 
 	// must be before Loading version
 	// requires the snapshot store to be created and registered as a BaseAppOption
-	// see cmd/inveniemd/root.go: 206 - 214 approx
+	// see cmd/inveniamd/root.go: 206 - 214 approx
 	if manager := app.SnapshotManager(); manager != nil {
 		err := manager.RegisterExtensions()
 		if err != nil {
@@ -988,9 +1047,10 @@ func (app *App) setAnteHandler(txConfig client.TxConfig, maxGasWanted uint64) {
 	}
 
 	handlerOpts := ante.HandlerOptions{
-		EvmOptions:    evmHandlerOpts.Options(),
-		IBCKeeper:     app.IBCKeeper,
-		CircuitKeeper: &app.CircuitKeeper,
+		EvmOptions:     evmHandlerOpts.Options(),
+		IBCKeeper:      app.IBCKeeper,
+		CircuitKeeper:  &app.CircuitKeeper,
+		ConsumerKeeper: app.ConsumerKeeper,
 	}
 
 	if err := handlerOpts.Validate(); err != nil {
@@ -1282,6 +1342,12 @@ func BlockedAddresses() map[string]bool {
 	for _, acc := range accs {
 		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = true
 	}
+
+	// Remove the fee-pool from the group of blocked recipient addresses in bank
+	// this is required for the consumer chain to be able to send tokens to
+	// the provider chain
+	delete(blockedAddrs, authtypes.NewModuleAddress(
+		consumertypes.ConsumerToSendToProviderName).String())
 
 	blockedPrecompilesHex := evmtypes.AvailableStaticPrecompiles
 	for _, addr := range corevm.PrecompiledAddressesPrague {

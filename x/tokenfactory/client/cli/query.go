@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/MANTRA-Chain/inveniem/x/tokenfactory/types"
+	"github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
@@ -24,7 +24,6 @@ func GetQueryCmd() *cobra.Command {
 		GetParams(),
 		GetCmdDenomAuthorityMetadata(),
 		GetCmdDenomsFromCreator(),
-		GetCmdBeforeSendHook(),
 	)
 
 	return cmd
@@ -107,42 +106,6 @@ func GetCmdDenomsFromCreator() *cobra.Command {
 
 			res, err := queryClient.DenomsFromCreator(cmd.Context(), &types.QueryDenomsFromCreatorRequest{
 				Creator: args[0],
-			})
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddQueryFlagsToCmd(cmd)
-
-	return cmd
-}
-
-// GetCmdBeforeSendHook returns the BeforeSendHook for a queried denom
-func GetCmdBeforeSendHook() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "before-send-hook [denom] [flags]",
-		Short: "Get the before send hook for a specific denom",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-			queryClient := types.NewQueryClient(clientCtx)
-
-			denom := args[0]
-			creator, subdenom, err := types.DeconstructDenom(denom)
-			if err != nil {
-				return err
-			}
-
-			res, err := queryClient.BeforeSendHookAddress(cmd.Context(), &types.QueryBeforeSendHookAddressRequest{
-				Creator:  creator,
-				Subdenom: subdenom,
 			})
 			if err != nil {
 				return err
