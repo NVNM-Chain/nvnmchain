@@ -361,6 +361,7 @@ func _Msg_AddDocument_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+var Msg_serviceDesc = _Msg_serviceDesc
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "mantrachain.document.v1.Msg",
 	HandlerType: (*MsgServer)(nil),
