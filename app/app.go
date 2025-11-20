@@ -112,6 +112,9 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	"cosmossdk.io/client/v2/autocli"
+	documentkeeper "github.com/MANTRA-Chain/inveniam/x/document/keeper"
+	document "github.com/MANTRA-Chain/inveniam/x/document/module"
+	documenttypes "github.com/MANTRA-Chain/inveniam/x/document/types"
 	chainante "github.com/cosmos/evm/evmd/ante"
 	srvflags "github.com/cosmos/evm/server/flags"
 	cosmosevmtypes "github.com/cosmos/evm/types"
@@ -211,6 +214,9 @@ var maccPerms = map[string][]string{
 	// Consumer
 	consumertypes.ConsumerRedistributeName:     nil,
 	consumertypes.ConsumerToSendToProviderName: nil,
+
+	// Inveniam Specific Modules
+	documenttypes.ModuleName: nil,
 }
 
 var Upgrades = []upgrades.Upgrade{}
@@ -262,6 +268,9 @@ type App struct {
 	// MANTRAChain keepers
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
 	TaxKeeper          taxkeeper.Keeper
+
+	// Inveniam keepers
+	DocumentKeeper documentkeeper.Keeper
 
 	// Cosmos EVM keepers
 	FeeMarketKeeper feemarketkeeper.Keeper
@@ -344,7 +353,7 @@ func New(
 		ratelimittypes.StoreKey,
 		tokenfactorytypes.StoreKey, taxtypes.StoreKey,
 		icacontrollertypes.StoreKey, icahosttypes.StoreKey,
-		consumertypes.StoreKey,
+		consumertypes.StoreKey, documenttypes.StoreKey,
 
 		// Cosmos EVM store keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey, erc20types.StoreKey,
@@ -536,6 +545,13 @@ func New(
 		&app.BankKeeper,
 		&app.Erc20Keeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
+	app.DocumentKeeper = documentkeeper.NewKeeper(
+		appCodec,
+		app.AccountKeeper.AddressCodec(),
+		runtime.NewKVStoreService(keys[documenttypes.StoreKey]),
+		app.TokenFactoryKeeper,
 	)
 
 	app.BankKeeper.BaseSendKeeper = app.BankKeeper.SetHooks(
@@ -808,6 +824,9 @@ func New(
 		tokenfactory.NewAppModule(appCodec, app.TokenFactoryKeeper),
 		tax.NewAppModule(appCodec, app.TaxKeeper),
 
+		// inveniam modules
+		document.NewAppModule(appCodec, app.DocumentKeeper),
+
 		// Cosmos EVM modules
 		vm.NewAppModule(app.EVMKeeper, app.AccountKeeper, app.AccountKeeper.AddressCodec()),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
@@ -929,6 +948,7 @@ func New(
 		tokenfactorytypes.ModuleName,
 		taxtypes.ModuleName,
 		consumertypes.ModuleName,
+		documenttypes.ModuleName,
 	}
 	app.ModuleManager.SetOrderInitGenesis(genesisModuleOrder...)
 	app.ModuleManager.SetOrderExportGenesis(genesisModuleOrder...)

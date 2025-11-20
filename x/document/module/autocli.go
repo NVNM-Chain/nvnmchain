@@ -36,6 +36,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:   "Update the parameters of the document module",
 					Example: "inveniamd tx document update-params --admin inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dc2p4pfz",
 				},
+				{
+					RpcMethod: "AddDocument",
+					Use:       "add-document [path_to_document.json]",
+					Short:     "Adds a new document from a JSON file",
+					Example:   "inveniamd tx document add-document /path/to/your_document.json",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{
+							ProtoField: "document",
+						},
+					},
+				},
 			},
 		},
 	}
