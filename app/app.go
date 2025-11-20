@@ -508,9 +508,6 @@ func New(
 		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
 	)
 
-	// Setting the standalone staking keeper is only needed for standalone to consumer changeover chains
-	app.ConsumerKeeper.SetStandaloneStakingKeeper(app.StakingKeeper)
-
 	// consumer keeper satisfies the staking keeper interface
 	// of the slashing module
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
