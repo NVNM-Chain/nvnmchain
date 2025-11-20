@@ -6,6 +6,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "mantrachain/document/v1/params.proto";
+import "mantrachain/document/v1/document.proto";
 
 option go_package = "github.com/MANTRA-Chain/inveniam/x/document/types";
 
@@ -14,6 +15,13 @@ service Query {
   // Parameters queries the parameters of the module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/MANTRA-Chain/inveniam/document/v1/params";
+  }
+
+  // Documents queries documents by denom and index.
+  rpc Documents(QueryDocumentsRequest)
+      returns (QueryDocumentsResponse) {
+    option (google.api.http).get =
+        "/MANTRA-Chain/inveniam/document/{denom}/{index}";
   }
 }
 
@@ -26,3 +34,19 @@ message QueryParamsResponse {
   Params params = 1
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
+
+// QueryDocumentsRequest is request type for the Query/Documents RPC method.
+message QueryDocumentsRequest {
+  string denom = 1;
+  uint64 index = 2;
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryDocumentsResponse is response type for the Query/Documents RPC method.
+message QueryDocumentsResponse {
+  // documents is a list of documents
+  repeated Document documents = 1;
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+} 
