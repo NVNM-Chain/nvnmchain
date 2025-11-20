@@ -19,9 +19,11 @@ The Keeper is the main component that handles the business logic of the document
 
 The module defines several important types:
 
-1. `Params`: Stores the tax module parameters
+1. `Params`: Stores the document module parameters
 2. `GenesisState`: Defines the initial state of the module
-3. `MsgUpdateParams`: Message for updating tax parameters
+3. `MsgUpdateParams`: Message for updating document parameters
+4. `MsgAddDocument`: Message for adding a new document
+5. `Document`: Represents a document associated with a token denom
 
 ### Events
 
