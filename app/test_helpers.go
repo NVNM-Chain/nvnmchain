@@ -62,7 +62,7 @@ func setup(tb testing.TB, chainID string, withGenesis bool, invCheckPeriod uint)
 	appOptions := make(simtestutil.AppOptionsMap, 0)
 	appOptions[flags.FlagHome] = nodeHome // ensure unique folder
 	appOptions[server.FlagInvCheckPeriod] = invCheckPeriod
-	app := New(log.NewNopLogger(), db, nil, true, appOptions, EVMChainID, NoOpEvmAppOptions,
+	app := New(log.NewNopLogger(), db, nil, true, appOptions,
 		bam.SetChainID(chainID), bam.SetSnapshot(snapshotStore, snapshottypes.SnapshotOptions{KeepRecent: 2}))
 	if withGenesis {
 		return app, app.DefaultGenesis()
@@ -217,12 +217,11 @@ func NewTestNetworkFixture() network.TestFixture {
 	}
 	defer os.RemoveAll(dir)
 
-	app := New(log.NewNopLogger(), dbm.NewMemDB(), nil, true, simtestutil.NewAppOptionsWithFlagHome(dir), EVMChainID, NoOpEvmAppOptions)
+	app := New(log.NewNopLogger(), dbm.NewMemDB(), nil, true, simtestutil.NewAppOptionsWithFlagHome(dir))
 	appCtr := func(val network.ValidatorI) servertypes.Application {
 		return New(
 			val.GetCtx().Logger, dbm.NewMemDB(), nil, true,
 			simtestutil.NewAppOptionsWithFlagHome(val.GetCtx().Config.RootDir),
-			EVMChainID, NoOpEvmAppOptions,
 			bam.SetPruning(pruningtypes.NewPruningOptionsFromString(val.GetAppConfig().Pruning)),
 			bam.SetMinGasPrices(val.GetAppConfig().MinGasPrices),
 			bam.SetChainID(val.GetCtx().Viper.GetString(flags.FlagChainID)),

@@ -3,6 +3,7 @@ package chainsuite
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/strangelove-ventures/interchaintest/v8"
@@ -32,6 +33,7 @@ type SuiteConfig struct {
 const (
 	CommitTimeout          = 4 * time.Second
 	Uom                    = "anvnm"
+	HumanCoinUnit          = "nvnm"
 	GovMinDepositAmount    = 1000
 	GovDepositAmount       = "5000000" + Uom
 	GovDepositPeriod       = 60 * time.Second
@@ -157,5 +159,34 @@ func DefaultGenesis() []cosmos.GenesisKV {
 		cosmos.NewGenesisKV("app_state.gov.params.min_deposit.0.amount", strconv.Itoa(GovMinDepositAmount)),
 		cosmos.NewGenesisKV("app_state.slashing.params.signed_blocks_window", strconv.Itoa(ProviderSlashingWindow)),
 		cosmos.NewGenesisKV("app_state.slashing.params.downtime_jail_duration", DowntimeJailDuration.String()),
+		{
+			Key:   "app_state.evm.params.evm_denom",
+			Value: Uom,
+		},
+		{
+			Key:   "app_state.evm.params.extended_denom_options.extended_denom",
+			Value: Uom,
+		},
+		{
+			Key: "app_state.bank.denom_metadata",
+			Value: []map[string]interface{}{
+				{
+					"base":        Uom,
+					"display":     HumanCoinUnit,
+					"symbol":      strings.ToUpper(HumanCoinUnit),
+					"description": "The native staking token of the inveniam network",
+					"denom_units": []map[string]interface{}{
+						{
+							"denom":    Uom,
+							"exponent": 0,
+						},
+						{
+							"denom":    HumanCoinUnit,
+							"exponent": 18,
+						},
+					},
+				},
+			},
+		},
 	}
 }
