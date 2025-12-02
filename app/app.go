@@ -43,6 +43,7 @@ import (
 
 	"github.com/MANTRA-Chain/inveniam/app/ante"
 	"github.com/MANTRA-Chain/inveniam/app/upgrades"
+	v1rc2 "github.com/MANTRA-Chain/inveniam/app/upgrades/v1rc2"
 	_ "github.com/MANTRA-Chain/inveniam/client/docs/statik"
 	"github.com/MANTRA-Chain/inveniam/client/docs/swagger"
 	taxkeeper "github.com/MANTRA-Chain/inveniam/x/tax/keeper"
@@ -221,7 +222,7 @@ var maccPerms = map[string][]string{
 	consumertypes.ConsumerToSendToProviderName: nil,
 }
 
-var Upgrades = []upgrades.Upgrade{}
+var Upgrades = []upgrades.Upgrade{v1rc2.Upgrade}
 
 var (
 	_ runtime.AppI            = (*App)(nil)
