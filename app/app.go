@@ -551,7 +551,6 @@ func New(
 		appCodec,
 		app.AccountKeeper.AddressCodec(),
 		runtime.NewKVStoreService(keys[documenttypes.StoreKey]),
-		app.TokenFactoryKeeper,
 	)
 
 	app.BankKeeper.BaseSendKeeper = app.BankKeeper.SetHooks(

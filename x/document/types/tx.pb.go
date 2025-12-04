@@ -31,6 +31,206 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// MsgGrantRole is the Msg/GrantRole request type.
+type MsgGrantRole struct {
+	// admin is the address that grants the role.
+	Admin string `protobuf:"bytes,1,opt,name=admin,proto3" json:"admin,omitempty"`
+	// address to grant role to
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	// role to grant (e.g., "admin", "editor")
+	Role string `protobuf:"bytes,3,opt,name=role,proto3" json:"role,omitempty"`
+}
+
+func (m *MsgGrantRole) Reset()         { *m = MsgGrantRole{} }
+func (m *MsgGrantRole) String() string { return proto.CompactTextString(m) }
+func (*MsgGrantRole) ProtoMessage()    {}
+func (*MsgGrantRole) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6c08326d5d046eb9, []int{0}
+}
+func (m *MsgGrantRole) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgGrantRole) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgGrantRole.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgGrantRole) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgGrantRole.Merge(m, src)
+}
+func (m *MsgGrantRole) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgGrantRole) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgGrantRole.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgGrantRole proto.InternalMessageInfo
+
+func (m *MsgGrantRole) GetAdmin() string {
+	if m != nil {
+		return m.Admin
+	}
+	return ""
+}
+
+func (m *MsgGrantRole) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *MsgGrantRole) GetRole() string {
+	if m != nil {
+		return m.Role
+	}
+	return ""
+}
+
+type MsgGrantRoleResponse struct {
+}
+
+func (m *MsgGrantRoleResponse) Reset()         { *m = MsgGrantRoleResponse{} }
+func (m *MsgGrantRoleResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgGrantRoleResponse) ProtoMessage()    {}
+func (*MsgGrantRoleResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6c08326d5d046eb9, []int{1}
+}
+func (m *MsgGrantRoleResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgGrantRoleResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgGrantRoleResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgGrantRoleResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgGrantRoleResponse.Merge(m, src)
+}
+func (m *MsgGrantRoleResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgGrantRoleResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgGrantRoleResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgGrantRoleResponse proto.InternalMessageInfo
+
+// MsgRevokeRole is the Msg/RevokeRole request type.
+type MsgRevokeRole struct {
+	// admin is the address that revokes the role.
+	Admin string `protobuf:"bytes,1,opt,name=admin,proto3" json:"admin,omitempty"`
+	// address to revoke role from
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	// role to revoke (e.g., "admin", "editor")
+	Role string `protobuf:"bytes,3,opt,name=role,proto3" json:"role,omitempty"`
+}
+
+func (m *MsgRevokeRole) Reset()         { *m = MsgRevokeRole{} }
+func (m *MsgRevokeRole) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeRole) ProtoMessage()    {}
+func (*MsgRevokeRole) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6c08326d5d046eb9, []int{2}
+}
+func (m *MsgRevokeRole) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeRole) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeRole.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeRole) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeRole.Merge(m, src)
+}
+func (m *MsgRevokeRole) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeRole) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeRole.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeRole proto.InternalMessageInfo
+
+func (m *MsgRevokeRole) GetAdmin() string {
+	if m != nil {
+		return m.Admin
+	}
+	return ""
+}
+
+func (m *MsgRevokeRole) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *MsgRevokeRole) GetRole() string {
+	if m != nil {
+		return m.Role
+	}
+	return ""
+}
+
+type MsgRevokeRoleResponse struct {
+}
+
+func (m *MsgRevokeRoleResponse) Reset()         { *m = MsgRevokeRoleResponse{} }
+func (m *MsgRevokeRoleResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeRoleResponse) ProtoMessage()    {}
+func (*MsgRevokeRoleResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6c08326d5d046eb9, []int{3}
+}
+func (m *MsgRevokeRoleResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeRoleResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeRoleResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeRoleResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeRoleResponse.Merge(m, src)
+}
+func (m *MsgRevokeRoleResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeRoleResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeRoleResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeRoleResponse proto.InternalMessageInfo
+
 // MsgUpdateParams is the Msg/UpdateParams request type.
 type MsgUpdateParams struct {
 	// authority is the address that controls the module parameters.
@@ -42,7 +242,7 @@ func (m *MsgUpdateParams) Reset()         { *m = MsgUpdateParams{} }
 func (m *MsgUpdateParams) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParams) ProtoMessage()    {}
 func (*MsgUpdateParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6c08326d5d046eb9, []int{0}
+	return fileDescriptor_6c08326d5d046eb9, []int{4}
 }
 func (m *MsgUpdateParams) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -94,7 +294,7 @@ func (m *MsgUpdateParamsResponse) Reset()         { *m = MsgUpdateParamsResponse
 func (m *MsgUpdateParamsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParamsResponse) ProtoMessage()    {}
 func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6c08326d5d046eb9, []int{1}
+	return fileDescriptor_6c08326d5d046eb9, []int{5}
 }
 func (m *MsgUpdateParamsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -134,7 +334,7 @@ func (m *MsgAddDocument) Reset()         { *m = MsgAddDocument{} }
 func (m *MsgAddDocument) String() string { return proto.CompactTextString(m) }
 func (*MsgAddDocument) ProtoMessage()    {}
 func (*MsgAddDocument) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6c08326d5d046eb9, []int{2}
+	return fileDescriptor_6c08326d5d046eb9, []int{6}
 }
 func (m *MsgAddDocument) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -186,7 +386,7 @@ func (m *MsgAddDocumentResponse) Reset()         { *m = MsgAddDocumentResponse{}
 func (m *MsgAddDocumentResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgAddDocumentResponse) ProtoMessage()    {}
 func (*MsgAddDocumentResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6c08326d5d046eb9, []int{3}
+	return fileDescriptor_6c08326d5d046eb9, []int{7}
 }
 func (m *MsgAddDocumentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -227,7 +427,7 @@ func (m *MsgRemoveDocument) Reset()         { *m = MsgRemoveDocument{} }
 func (m *MsgRemoveDocument) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveDocument) ProtoMessage()    {}
 func (*MsgRemoveDocument) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6c08326d5d046eb9, []int{4}
+	return fileDescriptor_6c08326d5d046eb9, []int{8}
 }
 func (m *MsgRemoveDocument) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -286,7 +486,7 @@ func (m *MsgRemoveDocumentResponse) Reset()         { *m = MsgRemoveDocumentResp
 func (m *MsgRemoveDocumentResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveDocumentResponse) ProtoMessage()    {}
 func (*MsgRemoveDocumentResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6c08326d5d046eb9, []int{5}
+	return fileDescriptor_6c08326d5d046eb9, []int{9}
 }
 func (m *MsgRemoveDocumentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -316,6 +516,10 @@ func (m *MsgRemoveDocumentResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgRemoveDocumentResponse proto.InternalMessageInfo
 
 func init() {
+	proto.RegisterType((*MsgGrantRole)(nil), "mantrachain.document.v1.MsgGrantRole")
+	proto.RegisterType((*MsgGrantRoleResponse)(nil), "mantrachain.document.v1.MsgGrantRoleResponse")
+	proto.RegisterType((*MsgRevokeRole)(nil), "mantrachain.document.v1.MsgRevokeRole")
+	proto.RegisterType((*MsgRevokeRoleResponse)(nil), "mantrachain.document.v1.MsgRevokeRoleResponse")
 	proto.RegisterType((*MsgUpdateParams)(nil), "mantrachain.document.v1.MsgUpdateParams")
 	proto.RegisterType((*MsgUpdateParamsResponse)(nil), "mantrachain.document.v1.MsgUpdateParamsResponse")
 	proto.RegisterType((*MsgAddDocument)(nil), "mantrachain.document.v1.MsgAddDocument")
@@ -327,40 +531,47 @@ func init() {
 func init() { proto.RegisterFile("mantrachain/document/v1/tx.proto", fileDescriptor_6c08326d5d046eb9) }
 
 var fileDescriptor_6c08326d5d046eb9 = []byte{
-	// 517 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x94, 0xcf, 0x6b, 0x13, 0x41,
-	0x14, 0xc7, 0x33, 0xad, 0x29, 0x76, 0x2a, 0x95, 0x2e, 0xc1, 0x24, 0x2b, 0x2c, 0x71, 0xfd, 0x15,
-	0x02, 0xdd, 0x6d, 0x22, 0xf6, 0x10, 0xf0, 0x90, 0xea, 0x4d, 0x56, 0x64, 0xd5, 0x8b, 0x17, 0x99,
-	0x66, 0x86, 0xc9, 0x08, 0x33, 0xb3, 0xec, 0x4c, 0x42, 0x7a, 0x13, 0x8f, 0x9e, 0xfc, 0x33, 0x3c,
-	0x46, 0xd0, 0xff, 0xc1, 0x63, 0xd1, 0x8b, 0x47, 0x49, 0x0e, 0xf9, 0x37, 0x64, 0x7f, 0xe5, 0xc7,
-	0xea, 0xb6, 0x81, 0x5e, 0x42, 0xde, 0x9b, 0xcf, 0x7b, 0xef, 0xfb, 0xdd, 0x37, 0x0c, 0x6c, 0x70,
-	0x24, 0x74, 0x88, 0xfa, 0x03, 0xc4, 0x84, 0x8b, 0x65, 0x7f, 0xc8, 0x89, 0xd0, 0xee, 0xa8, 0xed,
-	0xea, 0xb1, 0x13, 0x84, 0x52, 0x4b, 0xa3, 0xba, 0x42, 0x38, 0x19, 0xe1, 0x8c, 0xda, 0xe6, 0x01,
-	0xe2, 0x4c, 0x48, 0x37, 0xfe, 0x4d, 0x58, 0xb3, 0xda, 0x97, 0x8a, 0x4b, 0xe5, 0x72, 0x45, 0xa3,
-	0x1e, 0x5c, 0xd1, 0xf4, 0xa0, 0x9e, 0x1c, 0xbc, 0x8b, 0x23, 0x37, 0x09, 0xd2, 0xa3, 0x0a, 0x95,
-	0x54, 0x26, 0xf9, 0xe8, 0x5f, 0x9a, 0xbd, 0x57, 0xa4, 0x2b, 0x40, 0x21, 0xe2, 0x59, 0xed, 0x83,
-	0x22, 0x6a, 0xa1, 0x33, 0xe6, 0xec, 0xaf, 0x00, 0xde, 0xf4, 0x14, 0x7d, 0x13, 0x60, 0xa4, 0xc9,
-	0xcb, 0xb8, 0x83, 0x71, 0x0c, 0x77, 0xd1, 0x50, 0x0f, 0x64, 0xc8, 0xf4, 0x59, 0x0d, 0x34, 0x40,
-	0x73, 0xf7, 0xa4, 0xf6, 0xf3, 0xdb, 0x61, 0x25, 0x15, 0xd7, 0xc3, 0x38, 0x24, 0x4a, 0xbd, 0xd2,
-	0x21, 0x13, 0xd4, 0x5f, 0xa2, 0x86, 0x03, 0xcb, 0x08, 0x73, 0x26, 0x6a, 0x5b, 0x97, 0xd4, 0x24,
-	0x58, 0xf7, 0xf8, 0xe3, 0x7c, 0xd2, 0x5a, 0xd6, 0x7f, 0x9a, 0x4f, 0x5a, 0x77, 0x99, 0x18, 0x11,
-	0xc1, 0x10, 0x77, 0xc7, 0x4b, 0xd5, 0x39, 0x7d, 0x76, 0x1d, 0x56, 0x73, 0x29, 0x9f, 0xa8, 0x40,
-	0x0a, 0x45, 0xec, 0xef, 0x00, 0xee, 0x7b, 0x8a, 0xf6, 0x30, 0x7e, 0x96, 0x56, 0x1b, 0x47, 0x70,
-	0x47, 0x11, 0x81, 0x49, 0x78, 0xa9, 0x95, 0x94, 0x33, 0x9e, 0xc0, 0xeb, 0xd9, 0xec, 0xd8, 0xca,
-	0x5e, 0xe7, 0x8e, 0x53, 0xb0, 0x6a, 0x27, 0x1b, 0xe3, 0x2f, 0x4a, 0xba, 0x9d, 0xc8, 0x56, 0xda,
-	0x2b, 0xf2, 0x64, 0x17, 0x78, 0x5a, 0x11, 0x69, 0xd7, 0xe0, 0xad, 0xf5, 0xcc, 0xc2, 0xd1, 0x17,
-	0x00, 0x0f, 0x3c, 0x45, 0x7d, 0xc2, 0xe5, 0x88, 0x5c, 0xc1, 0x54, 0x05, 0x96, 0x31, 0x11, 0x92,
-	0x27, 0xcb, 0xf1, 0x93, 0x20, 0xca, 0x32, 0x81, 0xc9, 0xb8, 0xb6, 0xdd, 0x00, 0xcd, 0x6b, 0x7e,
-	0x12, 0x74, 0x1f, 0xe7, 0x1c, 0xdc, 0x2f, 0x70, 0xb0, 0x2e, 0xca, 0xbe, 0x0d, 0xeb, 0xff, 0x24,
-	0x33, 0x1f, 0x9d, 0x5f, 0x5b, 0x70, 0xdb, 0x53, 0xd4, 0x78, 0x0f, 0x6f, 0xac, 0x5d, 0xb6, 0x66,
-	0xe1, 0xa7, 0xcd, 0xed, 0xd8, 0x3c, 0xda, 0x94, 0xcc, 0x66, 0x1a, 0x14, 0xee, 0xad, 0xde, 0x84,
-	0x87, 0x17, 0x35, 0x58, 0x01, 0x4d, 0x77, 0x43, 0x70, 0x31, 0x28, 0x80, 0xfb, 0xb9, 0x05, 0xb5,
-	0x2e, 0x6a, 0xb1, 0xce, 0x9a, 0x9d, 0xcd, 0xd9, 0x6c, 0xa2, 0x59, 0xfe, 0x30, 0x9f, 0xb4, 0xc0,
-	0xc9, 0xf3, 0x1f, 0x53, 0x0b, 0x9c, 0x4f, 0x2d, 0xf0, 0x67, 0x6a, 0x81, 0xcf, 0x33, 0xab, 0x74,
-	0x3e, 0xb3, 0x4a, 0xbf, 0x67, 0x56, 0xe9, 0x6d, 0x9b, 0x32, 0x3d, 0x18, 0x9e, 0x3a, 0x7d, 0xc9,
-	0x5d, 0xaf, 0xf7, 0xe2, 0xb5, 0xdf, 0x3b, 0x7c, 0x1a, 0x3f, 0x06, 0xff, 0xdb, 0xa5, 0x3e, 0x0b,
-	0x88, 0x3a, 0xdd, 0x89, 0x9f, 0x84, 0x47, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0xd9, 0x62, 0x7e,
-	0xf2, 0xfa, 0x04, 0x00, 0x00,
+	// 640 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x95, 0xcd, 0x6e, 0xd3, 0x4c,
+	0x14, 0x86, 0xeb, 0xfe, 0x7d, 0x5f, 0x4f, 0x4b, 0x51, 0xad, 0xd0, 0xa4, 0x46, 0xb2, 0x5a, 0x43,
+	0x4b, 0x15, 0xa9, 0x76, 0x1b, 0x44, 0x17, 0x91, 0x58, 0xa4, 0x20, 0xb1, 0x40, 0x46, 0xc8, 0xc0,
+	0x86, 0x0d, 0x9a, 0xc6, 0xa3, 0xa9, 0xa1, 0x33, 0x63, 0x79, 0x9c, 0x28, 0xdd, 0x21, 0x96, 0xac,
+	0xb8, 0x00, 0x2e, 0x80, 0x65, 0x90, 0x40, 0x88, 0x3b, 0x60, 0x59, 0xb1, 0x62, 0x89, 0x92, 0x45,
+	0x6e, 0x03, 0xf9, 0xdf, 0x09, 0x38, 0xb1, 0xc4, 0x82, 0x4d, 0xe4, 0x39, 0xf3, 0x9e, 0x73, 0xde,
+	0x67, 0xe6, 0xc4, 0x86, 0x6d, 0x8a, 0x98, 0xef, 0xa1, 0xf6, 0x19, 0x72, 0x98, 0x61, 0xf3, 0x76,
+	0x87, 0x62, 0xe6, 0x1b, 0xdd, 0x23, 0xc3, 0xef, 0xe9, 0xae, 0xc7, 0x7d, 0x2e, 0x57, 0x73, 0x0a,
+	0x3d, 0x51, 0xe8, 0xdd, 0x23, 0x65, 0x03, 0x51, 0x87, 0x71, 0x23, 0xfc, 0x8d, 0xb4, 0x4a, 0xb5,
+	0xcd, 0x05, 0xe5, 0xc2, 0xa0, 0x82, 0x04, 0x35, 0xa8, 0x20, 0xf1, 0xc6, 0x56, 0xb4, 0xf1, 0x22,
+	0x5c, 0x19, 0xd1, 0x22, 0xde, 0xaa, 0x10, 0x4e, 0x78, 0x14, 0x0f, 0x9e, 0xe2, 0xe8, 0xcd, 0x22,
+	0x5f, 0x2e, 0xf2, 0x10, 0x4d, 0x72, 0xf7, 0x8a, 0x54, 0xa9, 0xcf, 0x50, 0xa7, 0x7d, 0x91, 0x60,
+	0xcd, 0x14, 0xe4, 0x81, 0x87, 0x98, 0x6f, 0xf1, 0x73, 0x2c, 0xeb, 0xb0, 0x84, 0x6c, 0xea, 0xb0,
+	0x9a, 0xb4, 0x2d, 0xed, 0xaf, 0x9c, 0xd4, 0xbe, 0x7f, 0x3a, 0xa8, 0xc4, 0xae, 0x5a, 0xb6, 0xed,
+	0x61, 0x21, 0x9e, 0xf8, 0x9e, 0xc3, 0x88, 0x15, 0xc9, 0xe4, 0x06, 0xfc, 0x87, 0xa2, 0x78, 0x6d,
+	0x7e, 0x46, 0x46, 0x22, 0x94, 0x65, 0x58, 0xf4, 0xf8, 0x39, 0xae, 0x2d, 0x04, 0x09, 0x56, 0xf8,
+	0xdc, 0x34, 0xde, 0x8c, 0xfa, 0xf5, 0xa8, 0xe6, 0xdb, 0x51, 0xbf, 0xbe, 0xed, 0xb0, 0x2e, 0x66,
+	0x0e, 0xa2, 0x46, 0x2f, 0xb3, 0x9f, 0x37, 0xaa, 0x6d, 0x42, 0x25, 0xbf, 0xb6, 0xb0, 0x70, 0x39,
+	0x13, 0x58, 0xfb, 0x2a, 0xc1, 0x15, 0x53, 0x10, 0x0b, 0x77, 0xf9, 0x2b, 0xfc, 0x4f, 0x91, 0x0e,
+	0xc7, 0x91, 0x76, 0x0a, 0x90, 0x32, 0xa7, 0x5a, 0x15, 0xae, 0x8d, 0x05, 0x52, 0xa8, 0x8f, 0x12,
+	0x5c, 0x35, 0x05, 0x79, 0xe6, 0xda, 0xc8, 0xc7, 0x8f, 0xc3, 0x8b, 0x96, 0x8f, 0x61, 0x05, 0x75,
+	0xfc, 0x33, 0xee, 0x39, 0xfe, 0xc5, 0x4c, 0xb4, 0x4c, 0x9a, 0x1d, 0xc7, 0x7c, 0xa9, 0xe3, 0x68,
+	0x1e, 0x07, 0x18, 0x59, 0x7e, 0x80, 0x72, 0xa3, 0x00, 0x25, 0xef, 0x4f, 0xdb, 0x82, 0xea, 0x44,
+	0x28, 0xc5, 0xf9, 0x2c, 0xc1, 0xba, 0x29, 0x48, 0xcb, 0xb6, 0xef, 0xc7, 0xd9, 0xf2, 0x21, 0x2c,
+	0x0b, 0xcc, 0x6c, 0xec, 0xcd, 0x44, 0x89, 0x75, 0xf2, 0x5d, 0xf8, 0x3f, 0xe9, 0x1d, 0xa2, 0xac,
+	0x36, 0x76, 0xf4, 0x82, 0x7f, 0xa4, 0x9e, 0xb4, 0xb1, 0xd2, 0x94, 0x66, 0x23, 0xc0, 0x8a, 0x6b,
+	0x05, 0x4c, 0x5a, 0x01, 0x53, 0xce, 0xa4, 0x56, 0x83, 0xcd, 0xf1, 0x48, 0x4a, 0xf4, 0x41, 0x82,
+	0x8d, 0xf0, 0xea, 0x28, 0xef, 0xe2, 0xbf, 0x80, 0xaa, 0xc0, 0x92, 0x8d, 0x19, 0xa7, 0xd1, 0xe5,
+	0x58, 0xd1, 0x22, 0x88, 0x3a, 0xcc, 0xc6, 0xbd, 0x70, 0xbc, 0x16, 0xad, 0x68, 0xd1, 0xbc, 0x33,
+	0x41, 0xb0, 0x5b, 0x38, 0x60, 0x79, 0x53, 0xda, 0x75, 0xd8, 0xfa, 0x2d, 0x98, 0x70, 0x34, 0xde,
+	0x2f, 0xc2, 0x82, 0x29, 0x88, 0xfc, 0x12, 0xd6, 0xc6, 0x86, 0x6d, 0xbf, 0xf0, 0x68, 0x27, 0xee,
+	0x58, 0x39, 0x2c, 0xab, 0x4c, 0x7a, 0xca, 0x04, 0x56, 0xf3, 0x93, 0x70, 0x6b, 0x5a, 0x81, 0x9c,
+	0x50, 0x31, 0x4a, 0x0a, 0xd3, 0x46, 0x2e, 0xac, 0x4f, 0x5c, 0x50, 0x7d, 0x5a, 0x89, 0x71, 0xad,
+	0xd2, 0x28, 0xaf, 0x4d, 0x3b, 0x22, 0x58, 0xc9, 0x5e, 0xad, 0xbb, 0xd3, 0x0a, 0xa4, 0x32, 0xe5,
+	0xa0, 0x94, 0x2c, 0x6d, 0x61, 0x03, 0xe4, 0xde, 0x75, 0x7b, 0xd3, 0x4d, 0x26, 0x3a, 0x45, 0x2f,
+	0xa7, 0x4b, 0xba, 0x28, 0x4b, 0xaf, 0x47, 0xfd, 0xba, 0x74, 0xf2, 0xf0, 0xdb, 0x40, 0x95, 0x2e,
+	0x07, 0xaa, 0xf4, 0x73, 0xa0, 0x4a, 0xef, 0x86, 0xea, 0xdc, 0xe5, 0x50, 0x9d, 0xfb, 0x31, 0x54,
+	0xe7, 0x9e, 0x1f, 0x11, 0xc7, 0x3f, 0xeb, 0x9c, 0xea, 0x6d, 0x4e, 0x0d, 0xb3, 0xf5, 0xe8, 0xa9,
+	0xd5, 0x3a, 0xb8, 0x17, 0x7e, 0x7c, 0xfe, 0x34, 0x94, 0xfe, 0x85, 0x8b, 0xc5, 0xe9, 0x72, 0xf8,
+	0x09, 0xba, 0xfd, 0x2b, 0x00, 0x00, 0xff, 0xff, 0x21, 0x81, 0x67, 0x9f, 0x6a, 0x07, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -382,6 +593,10 @@ type MsgClient interface {
 	AddDocument(ctx context.Context, in *MsgAddDocument, opts ...grpc.CallOption) (*MsgAddDocumentResponse, error)
 	// RemoveDocument defines a method for removing a document from a token denom
 	RemoveDocument(ctx context.Context, in *MsgRemoveDocument, opts ...grpc.CallOption) (*MsgRemoveDocumentResponse, error)
+	// GrantRole defines a method for granting a role to an address
+	GrantRole(ctx context.Context, in *MsgGrantRole, opts ...grpc.CallOption) (*MsgGrantRoleResponse, error)
+	// RevokeRole defines a method for revoking a role from an address
+	RevokeRole(ctx context.Context, in *MsgRevokeRole, opts ...grpc.CallOption) (*MsgRevokeRoleResponse, error)
 }
 
 type msgClient struct {
@@ -419,6 +634,24 @@ func (c *msgClient) RemoveDocument(ctx context.Context, in *MsgRemoveDocument, o
 	return out, nil
 }
 
+func (c *msgClient) GrantRole(ctx context.Context, in *MsgGrantRole, opts ...grpc.CallOption) (*MsgGrantRoleResponse, error) {
+	out := new(MsgGrantRoleResponse)
+	err := c.cc.Invoke(ctx, "/mantrachain.document.v1.Msg/GrantRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RevokeRole(ctx context.Context, in *MsgRevokeRole, opts ...grpc.CallOption) (*MsgRevokeRoleResponse, error) {
+	out := new(MsgRevokeRoleResponse)
+	err := c.cc.Invoke(ctx, "/mantrachain.document.v1.Msg/RevokeRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// UpdateParams defines a (governance) operation for updating the module
@@ -428,6 +661,10 @@ type MsgServer interface {
 	AddDocument(context.Context, *MsgAddDocument) (*MsgAddDocumentResponse, error)
 	// RemoveDocument defines a method for removing a document from a token denom
 	RemoveDocument(context.Context, *MsgRemoveDocument) (*MsgRemoveDocumentResponse, error)
+	// GrantRole defines a method for granting a role to an address
+	GrantRole(context.Context, *MsgGrantRole) (*MsgGrantRoleResponse, error)
+	// RevokeRole defines a method for revoking a role from an address
+	RevokeRole(context.Context, *MsgRevokeRole) (*MsgRevokeRoleResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -442,6 +679,12 @@ func (*UnimplementedMsgServer) AddDocument(ctx context.Context, req *MsgAddDocum
 }
 func (*UnimplementedMsgServer) RemoveDocument(ctx context.Context, req *MsgRemoveDocument) (*MsgRemoveDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveDocument not implemented")
+}
+func (*UnimplementedMsgServer) GrantRole(ctx context.Context, req *MsgGrantRole) (*MsgGrantRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrantRole not implemented")
+}
+func (*UnimplementedMsgServer) RevokeRole(ctx context.Context, req *MsgRevokeRole) (*MsgRevokeRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeRole not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -502,6 +745,42 @@ func _Msg_RemoveDocument_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_GrantRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgGrantRole)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).GrantRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mantrachain.document.v1.Msg/GrantRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).GrantRole(ctx, req.(*MsgGrantRole))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RevokeRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRevokeRole)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RevokeRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mantrachain.document.v1.Msg/RevokeRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RevokeRole(ctx, req.(*MsgRevokeRole))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var Msg_serviceDesc = _Msg_serviceDesc
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "mantrachain.document.v1.Msg",
@@ -519,9 +798,151 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			MethodName: "RemoveDocument",
 			Handler:    _Msg_RemoveDocument_Handler,
 		},
+		{
+			MethodName: "GrantRole",
+			Handler:    _Msg_GrantRole_Handler,
+		},
+		{
+			MethodName: "RevokeRole",
+			Handler:    _Msg_RevokeRole_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "mantrachain/document/v1/tx.proto",
+}
+
+func (m *MsgGrantRole) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgGrantRole) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgGrantRole) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Role) > 0 {
+		i -= len(m.Role)
+		copy(dAtA[i:], m.Role)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Role)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Admin) > 0 {
+		i -= len(m.Admin)
+		copy(dAtA[i:], m.Admin)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Admin)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgGrantRoleResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgGrantRoleResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgGrantRoleResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRevokeRole) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeRole) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeRole) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Role) > 0 {
+		i -= len(m.Role)
+		copy(dAtA[i:], m.Role)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Role)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Admin) > 0 {
+		i -= len(m.Admin)
+		copy(dAtA[i:], m.Admin)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Admin)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRevokeRoleResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeRoleResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeRoleResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
 }
 
 func (m *MsgUpdateParams) Marshal() (dAtA []byte, err error) {
@@ -725,6 +1146,66 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *MsgGrantRole) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Admin)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Role)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgGrantRoleResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRevokeRole) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Admin)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Role)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRevokeRoleResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
 func (m *MsgUpdateParams) Size() (n int) {
 	if m == nil {
 		return 0
@@ -811,6 +1292,398 @@ func sovTx(x uint64) (n int) {
 }
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *MsgGrantRole) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgGrantRole: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgGrantRole: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Admin", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Admin = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Role", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Role = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgGrantRoleResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgGrantRoleResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgGrantRoleResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeRole) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeRole: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeRole: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Admin", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Admin = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Role", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Role = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeRoleResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeRoleResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeRoleResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *MsgUpdateParams) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)

@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"bytes"
-
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/store"
@@ -12,17 +10,21 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+const (
+	RoleAdmin  = "admin"
+	RoleEditor = "editor"
+)
+
 type (
 	Keeper struct {
-		cdc                codec.BinaryCodec
-		addressCodec       address.Codec
-		storeService       store.KVStoreService
-		tokenFactoryKeeper types.TokenFactoryKeeper
-
+		cdc              codec.BinaryCodec
+		addressCodec     address.Codec
+		storeService     store.KVStoreService
 		Schema           collections.Schema
 		Params           collections.Item[types.Params]
 		Documents        collections.Map[collections.Pair[string, uint64], types.Document]
 		DocumentCounters collections.Map[string, uint64]
+		Roles            collections.Map[string, string]
 	}
 )
 
@@ -30,15 +32,13 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	addressCodec address.Codec,
 	storeService store.KVStoreService,
-	tokenFactoryKeeper types.TokenFactoryKeeper,
 ) Keeper {
 	sb := collections.NewSchemaBuilder(storeService)
-
 	k := Keeper{
 		cdc:          cdc,
 		storeService: storeService,
-
-		Params: collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
+		addressCodec: addressCodec,
+		Params:       collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
 		Documents: collections.NewMap(
 			sb,
 			types.DocumentKeyPrefix,
@@ -53,6 +53,13 @@ func NewKeeper(
 			collections.StringKey,
 			collections.Uint64Value,
 		),
+		Roles: collections.NewMap(
+			sb,
+			collections.NewPrefix("roles"),
+			"roles",
+			collections.StringKey,
+			collections.StringValue,
+		),
 	}
 
 	schema, err := sb.Build()
@@ -60,64 +67,27 @@ func NewKeeper(
 		panic(err)
 	}
 	k.Schema = schema
-	k.tokenFactoryKeeper = tokenFactoryKeeper
-
 	return k
 }
 
 func (k Keeper) RemoveDocumentInner(ctx sdk.Context, sender sdk.AccAddress, denom string, index uint64) error {
-	tokenAdmin, err := k.tokenFactoryKeeper.GetAuthorityMetadata(ctx, denom)
-	if err != nil {
-		return err
+	senderStr := sender.String()
+	role, err := k.Roles.Get(ctx, senderStr)
+	if err != nil || (role != RoleAdmin && role != RoleEditor) {
+		return sdkerrors.ErrUnauthorized
 	}
-	tokenAdminAddress, err := k.addressCodec.StringToBytes(tokenAdmin.Admin)
-	if err != nil {
-		return err
-	}
-	if !bytes.Equal(tokenAdminAddress, sender) {
-		params, err := k.Params.Get(ctx)
-		if err != nil {
-			return err
-		}
-		paramsAdmin, err := k.addressCodec.StringToBytes(params.Admin)
-		if err != nil {
-			return err
-		}
-		if !bytes.Equal(paramsAdmin, sender) {
-			return sdkerrors.ErrUnauthorized
-		}
-	}
-
 	err = k.Documents.Remove(ctx, collections.Join(denom, index))
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
 func (k Keeper) AddDocumentInner(ctx sdk.Context, sender sdk.AccAddress, doc types.Document) error {
-	tokenAdmin, err := k.tokenFactoryKeeper.GetAuthorityMetadata(ctx, doc.Denom)
-	if err != nil {
-		return err
+	senderStr := sender.String()
+	role, err := k.Roles.Get(ctx, senderStr)
+	if err != nil || (role != RoleAdmin && role != RoleEditor) {
+		return sdkerrors.ErrUnauthorized
 	}
-	tokenAdminAddress, err := k.addressCodec.StringToBytes(tokenAdmin.Admin)
-	if err != nil {
-		return err
-	}
-	if !bytes.Equal(tokenAdminAddress, sender) {
-		params, err := k.Params.Get(ctx)
-		if err != nil {
-			return err
-		}
-		paramsAdmin, err := k.addressCodec.StringToBytes(params.Admin)
-		if err != nil {
-			return err
-		}
-		if !bytes.Equal(paramsAdmin, sender) {
-			return sdkerrors.ErrUnauthorized
-		}
-	}
-
 	return k.setDocument(ctx, doc)
 }
