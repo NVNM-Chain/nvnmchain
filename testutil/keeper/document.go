@@ -38,7 +38,6 @@ func DocumentKeeper(tb testing.TB) (keeper.Keeper, sdk.Context, address.Codec) {
 		cdc,
 		addressCodec,
 		runtime.NewKVStoreService(storeKey),
-		nil,
 	)
 
 	ctx := sdk.NewContext(stateStore, cmtproto.Header{}, false, log.NewNopLogger())
