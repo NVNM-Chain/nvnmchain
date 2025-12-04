@@ -753,22 +753,9 @@ func New(
 
 	app.IBCKeeper.SetRouter(ibcRouter)
 
-	// TODO: Configure EVM precompiles when needed
-	// corePrecompiles := evmd.NewAvailableStaticPrecompiles(
-	// 	app.StakingKeeper,
-	// 	app.DistrKeeper,
-	// 	app.BankKeeper,
-	// 	app.Erc20Keeper,
-	// 	app.TransferKeeper,
-	// 	app.IBCKeeper.ChannelKeeper,
-	// 	app.EVMKeeper,
-	// 	app.GovKeeper,
-	// 	app.SlashingKeeper,
-	// 	app.AppCodec(),
-	// )
-	// app.EVMKeeper.WithStaticPrecompiles(
-	// 	corePrecompiles,
-	// )
+	if err := app.configStaticPrecompiles(); err != nil {
+		panic(err)
+	}
 
 	storeProvider := app.IBCKeeper.ClientKeeper.GetStoreProvider()
 	tmLightClientModule := ibctm.NewLightClientModule(appCodec, storeProvider)

@@ -1,11 +1,15 @@
 package keeper
 
 import (
+	"bytes"
+
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/store"
 	"github.com/MANTRA-Chain/inveniam/x/document/types"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 type (
@@ -59,4 +63,61 @@ func NewKeeper(
 	k.tokenFactoryKeeper = tokenFactoryKeeper
 
 	return k
+}
+
+func (k Keeper) RemoveDocumentInner(ctx sdk.Context, sender sdk.AccAddress, denom string, index uint64) error {
+	tokenAdmin, err := k.tokenFactoryKeeper.GetAuthorityMetadata(ctx, denom)
+	if err != nil {
+		return err
+	}
+	tokenAdminAddress, err := k.addressCodec.StringToBytes(tokenAdmin.Admin)
+	if err != nil {
+		return err
+	}
+	if !bytes.Equal(tokenAdminAddress, sender) {
+		params, err := k.Params.Get(ctx)
+		if err != nil {
+			return err
+		}
+		paramsAdmin, err := k.addressCodec.StringToBytes(params.Admin)
+		if err != nil {
+			return err
+		}
+		if !bytes.Equal(paramsAdmin, sender) {
+			return sdkerrors.ErrUnauthorized
+		}
+	}
+
+	err = k.Documents.Remove(ctx, collections.Join(denom, index))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (k Keeper) AddDocumentInner(ctx sdk.Context, sender sdk.AccAddress, doc types.Document) error {
+	tokenAdmin, err := k.tokenFactoryKeeper.GetAuthorityMetadata(ctx, doc.Denom)
+	if err != nil {
+		return err
+	}
+	tokenAdminAddress, err := k.addressCodec.StringToBytes(tokenAdmin.Admin)
+	if err != nil {
+		return err
+	}
+	if !bytes.Equal(tokenAdminAddress, sender) {
+		params, err := k.Params.Get(ctx)
+		if err != nil {
+			return err
+		}
+		paramsAdmin, err := k.addressCodec.StringToBytes(params.Admin)
+		if err != nil {
+			return err
+		}
+		if !bytes.Equal(paramsAdmin, sender) {
+			return sdkerrors.ErrUnauthorized
+		}
+	}
+
+	return k.setDocument(ctx, doc)
 }
