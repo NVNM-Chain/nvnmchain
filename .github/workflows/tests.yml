@@ -89,7 +89,6 @@ jobs:
     name: E2E Nix Tests
     runs-on: ubuntu-latest-x64-xlarge
     timeout-minutes: 240
-    environment: ci
     strategy:
       matrix:
         tests: [ccv]
