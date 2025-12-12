@@ -113,6 +113,9 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	"cosmossdk.io/client/v2/autocli"
+	documentkeeper "github.com/MANTRA-Chain/inveniam/x/document/keeper"
+	document "github.com/MANTRA-Chain/inveniam/x/document/module"
+	documenttypes "github.com/MANTRA-Chain/inveniam/x/document/types"
 	chainante "github.com/cosmos/evm/ante"
 	evmaddress "github.com/cosmos/evm/encoding/address"
 	evmmempool "github.com/cosmos/evm/mempool"
@@ -220,6 +223,9 @@ var maccPerms = map[string][]string{
 	// Consumer
 	consumertypes.ConsumerRedistributeName:     nil,
 	consumertypes.ConsumerToSendToProviderName: nil,
+
+	// Inveniam Specific Modules
+	documenttypes.ModuleName: nil,
 }
 
 var Upgrades = []upgrades.Upgrade{v1rc2.Upgrade}
@@ -272,6 +278,9 @@ type App struct {
 	// MANTRAChain keepers
 	TokenFactoryKeeper tokenfactorykeeper.Keeper
 	TaxKeeper          taxkeeper.Keeper
+
+	// Inveniam keepers
+	DocumentKeeper documentkeeper.Keeper
 
 	// Cosmos EVM keepers
 	FeeMarketKeeper feemarketkeeper.Keeper
@@ -326,7 +335,7 @@ func New(
 		ratelimittypes.StoreKey,
 		tokenfactorytypes.StoreKey, taxtypes.StoreKey,
 		icacontrollertypes.StoreKey, icahosttypes.StoreKey,
-		consumertypes.StoreKey,
+		consumertypes.StoreKey, documenttypes.StoreKey,
 
 		// Cosmos EVM store keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey, erc20types.StoreKey,
@@ -490,9 +499,6 @@ func New(
 		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
 	)
 
-	// Setting the standalone staking keeper is only needed for standalone to consumer changeover chains
-	app.ConsumerKeeper.SetStandaloneStakingKeeper(app.StakingKeeper)
-
 	// consumer keeper satisfies the staking keeper interface
 	// of the slashing module
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
@@ -521,6 +527,12 @@ func New(
 		&app.BankKeeper,
 		&app.Erc20Keeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
+	app.DocumentKeeper = documentkeeper.NewKeeper(
+		appCodec,
+		app.AccountKeeper.AddressCodec(),
+		runtime.NewKVStoreService(keys[documenttypes.StoreKey]),
 	)
 
 	app.BankKeeper.BaseSendKeeper = app.BankKeeper.SetHooks(
@@ -723,22 +735,9 @@ func New(
 
 	app.IBCKeeper.SetRouter(ibcRouter)
 
-	// TODO: Configure EVM precompiles when needed
-	// corePrecompiles := evmd.NewAvailableStaticPrecompiles(
-	// 	app.StakingKeeper,
-	// 	app.DistrKeeper,
-	// 	app.BankKeeper,
-	// 	app.Erc20Keeper,
-	// 	app.TransferKeeper,
-	// 	app.IBCKeeper.ChannelKeeper,
-	// 	app.EVMKeeper,
-	// 	app.GovKeeper,
-	// 	app.SlashingKeeper,
-	// 	app.AppCodec(),
-	// )
-	// app.EVMKeeper.WithStaticPrecompiles(
-	// 	corePrecompiles,
-	// )
+	if err := app.configStaticPrecompiles(appCodec); err != nil {
+		panic(err)
+	}
 
 	storeProvider := app.IBCKeeper.ClientKeeper.GetStoreProvider()
 	tmLightClientModule := ibctm.NewLightClientModule(appCodec, storeProvider)
@@ -793,6 +792,9 @@ func New(
 		// mantrachain modules
 		tokenfactory.NewAppModule(appCodec, app.TokenFactoryKeeper),
 		tax.NewAppModule(appCodec, app.TaxKeeper),
+
+		// inveniam modules
+		document.NewAppModule(appCodec, app.DocumentKeeper),
 
 		// Cosmos EVM modules
 		vm.NewAppModule(app.EVMKeeper, app.AccountKeeper, app.BankKeeper, app.AccountKeeper.AddressCodec()),
@@ -916,6 +918,7 @@ func New(
 		tokenfactorytypes.ModuleName,
 		taxtypes.ModuleName,
 		consumertypes.ModuleName,
+		documenttypes.ModuleName,
 	}
 	app.ModuleManager.SetOrderInitGenesis(genesisModuleOrder...)
 	app.ModuleManager.SetOrderExportGenesis(genesisModuleOrder...)

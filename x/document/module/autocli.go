@@ -1,8 +1,8 @@
-package tax
+package document
 
 import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
-	types "github.com/MANTRA-Chain/inveniam/x/tax/types"
+	types "github.com/MANTRA-Chain/inveniam/x/document/types"
 )
 
 // AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
@@ -27,19 +27,25 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:       "update-params",
 					Skip:      false,
 					FlagOptions: map[string]*autocliv1.FlagOptions{
-						"mca_tax": {
-							Name:         "mca_tax",
-							Usage:        "mca tax for the allocation in decimal",
-							DefaultValue: "",
-						},
-						"mca_address": {
-							Name:         "mca_address",
-							Usage:        "mca address for the allocation",
+						"admin": {
+							Name:         "admin",
+							Usage:        "admin address for the setting all documents",
 							DefaultValue: "",
 						},
 					},
-					Short:   "Update the parameters of the tax module",
-					Example: "inveniamd tx tax update-params --mca_tax 0.4 --mca_address inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dc2p4pfz",
+					Short:   "Update the parameters of the document module",
+					Example: "inveniamd tx document update-params --admin inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dc2p4pfz",
+				},
+				{
+					RpcMethod: "AddDocument",
+					Use:       "add-document [path_to_document.json]",
+					Short:     "Adds a new document from a JSON file",
+					Example:   "inveniamd tx document add-document /path/to/your_document.json",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{
+							ProtoField: "document",
+						},
+					},
 				},
 			},
 		},
