@@ -16,7 +16,11 @@ message GenesisState {
 
   map<string, Document> documents = 2
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-    
+
   map<string, uint64> document_counters = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  // roles mapping: address -> role
+  map<string, string> roles = 4
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }

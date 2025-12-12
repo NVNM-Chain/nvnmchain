@@ -14,11 +14,15 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 	}
 
 	for key, genDoc := range genState.GetDocuments() {
-		_, key, err := k.Documents.KeyCodec().Decode([]byte(key))
+		_, key, err := k.DocumentsByDenom.KeyCodec().Decode([]byte(key))
 		if err != nil {
 			return err
 		}
-		err = k.Documents.Set(ctx, key, genDoc)
+		err = k.DocumentsByDenom.Set(ctx, key, genDoc)
+		if err != nil {
+			return err
+		}
+		err = k.DocumentsByChecksum.Set(ctx, genDoc.Checksum, genDoc)
 		if err != nil {
 			return err
 		}
@@ -42,7 +46,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (*types.GenesisState, error) {
 	}
 
 	genDocs := map[string]types.Document{}
-	iterator, err := k.Documents.Iterate(ctx, nil)
+	iterator, err := k.DocumentsByDenom.Iterate(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +62,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (*types.GenesisState, error) {
 			return nil, err
 		}
 		var keyBytes []byte
-		if _, err = k.Documents.KeyCodec().Encode(keyBytes, key); err != nil {
+		if _, err = k.DocumentsByDenom.KeyCodec().Encode(keyBytes, key); err != nil {
 			return nil, err
 		}
 		genDocs[string(keyBytes)] = doc

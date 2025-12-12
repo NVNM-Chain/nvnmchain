@@ -14,8 +14,9 @@ const (
 
 var (
 	ParamsKey                 = collections.NewPrefix(0)
-	DocumentKeyPrefix         = collections.NewPrefix(1)
-	DocumentCountersKeyPrefix = collections.NewPrefix(2)
+	DocumentByDenomKeyPrefix  = collections.NewPrefix(1)
+	DocumentByChecksumKey     = collections.NewPrefix(2)
+	DocumentCountersKeyPrefix = collections.NewPrefix(3)
 )
 
 func DocumentKey(documentId, denom string) []byte {
@@ -23,5 +24,5 @@ func DocumentKey(documentId, denom string) []byte {
 }
 
 func DocumentKeyByDenom(denom string) []byte {
-	return append(DocumentKeyPrefix, denom...)
+	return append(DocumentByDenomKeyPrefix, denom...)
 }
