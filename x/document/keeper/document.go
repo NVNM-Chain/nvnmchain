@@ -30,7 +30,10 @@ func (k Keeper) setDocument(ctx sdk.Context, doc types.Document) error {
 		}
 	}
 
-	if err := k.Documents.Set(ctx, collections.Join(doc.Denom, index), doc); err != nil {
+	if err := k.DocumentsByDenom.Set(ctx, collections.Join(doc.Denom, index), doc); err != nil {
+		return err
+	}
+	if err := k.DocumentsByChecksum.Set(ctx, doc.Checksum, doc); err != nil {
 		return err
 	}
 	return nil

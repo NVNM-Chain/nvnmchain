@@ -21,7 +21,14 @@ service Query {
   rpc Documents(QueryDocumentsRequest)
       returns (QueryDocumentsResponse) {
     option (google.api.http).get =
-        "/MANTRA-Chain/inveniam/document/{denom}/{index}";
+        "/MANTRA-Chain/inveniam/documents/{denom}/{index}";
+  }
+
+  // Document queries document by checksum.
+  rpc Document(QueryDocumentRequest)
+      returns (QueryDocumentResponse) {
+    option (google.api.http).get =
+        "/MANTRA-Chain/inveniam/document/{checksum}";
   }
 }
 
@@ -49,4 +56,15 @@ message QueryDocumentsResponse {
   repeated Document documents = 1;
   // pagination defines the pagination in the response.
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryDocumentRequest is request type for the Query/Document RPC method.
+message QueryDocumentRequest {
+  string checksum = 1;
+}
+
+// QueryDocumentResponse is response type for the Query/Document RPC method.
+message QueryDocumentResponse {
+  // documents is a document
+  Document documents = 1;
 } 

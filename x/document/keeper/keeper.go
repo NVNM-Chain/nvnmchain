@@ -17,14 +17,15 @@ const (
 
 type (
 	Keeper struct {
-		cdc              codec.BinaryCodec
-		addressCodec     address.Codec
-		storeService     store.KVStoreService
-		Schema           collections.Schema
-		Params           collections.Item[types.Params]
-		Documents        collections.Map[collections.Pair[string, uint64], types.Document]
-		DocumentCounters collections.Map[string, uint64]
-		Roles            collections.Map[string, string]
+		cdc                 codec.BinaryCodec
+		addressCodec        address.Codec
+		storeService        store.KVStoreService
+		Schema              collections.Schema
+		Params              collections.Item[types.Params]
+		DocumentsByDenom    collections.Map[collections.Pair[string, uint64], types.Document]
+		DocumentsByChecksum collections.Map[string, types.Document]
+		DocumentCounters    collections.Map[string, uint64]
+		Roles               collections.Map[string, string]
 	}
 )
 
@@ -39,11 +40,18 @@ func NewKeeper(
 		storeService: storeService,
 		addressCodec: addressCodec,
 		Params:       collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
-		Documents: collections.NewMap(
+		DocumentsByDenom: collections.NewMap(
 			sb,
-			types.DocumentKeyPrefix,
-			"documents",
+			types.DocumentByDenomKeyPrefix,
+			"documents_by_denom",
 			collections.PairKeyCodec(collections.StringKey, collections.Uint64Key),
+			codec.CollValue[types.Document](cdc),
+		),
+		DocumentsByChecksum: collections.NewMap(
+			sb,
+			types.DocumentByChecksumKey,
+			"documents_by_checksum",
+			collections.StringKey,
 			codec.CollValue[types.Document](cdc),
 		),
 		DocumentCounters: collections.NewMap(
@@ -76,8 +84,14 @@ func (k Keeper) RemoveDocumentInner(ctx sdk.Context, sender sdk.AccAddress, deno
 	if err != nil || (role != RoleAdmin && role != RoleEditor) {
 		return sdkerrors.ErrUnauthorized
 	}
-	err = k.Documents.Remove(ctx, collections.Join(denom, index))
+	doc, err := k.DocumentsByDenom.Get(ctx, collections.Join(denom, index))
 	if err != nil {
+		return err
+	}
+	if err = k.DocumentsByDenom.Remove(ctx, collections.Join(denom, index)); err != nil {
+		return err
+	}
+	if err = k.DocumentsByChecksum.Remove(ctx, doc.Checksum); err != nil {
 		return err
 	}
 	return nil
@@ -89,5 +103,8 @@ func (k Keeper) AddDocumentInner(ctx sdk.Context, sender sdk.AccAddress, doc typ
 	if err != nil || (role != RoleAdmin && role != RoleEditor) {
 		return sdkerrors.ErrUnauthorized
 	}
-	return k.setDocument(ctx, doc)
+	if err = k.setDocument(ctx, doc); err != nil {
+		return err
+	}
+	return nil
 }
