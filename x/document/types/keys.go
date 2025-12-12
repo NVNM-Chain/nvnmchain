@@ -14,7 +14,7 @@ const (
 
 var (
 	ParamsKey                 = collections.NewPrefix(0)
-	DocumentByDenomKeyPrefix = collections.NewPrefix(1)
+	DocumentByDenomKeyPrefix  = collections.NewPrefix(1)
 	DocumentByChecksumKey     = collections.NewPrefix(2)
 	DocumentCountersKeyPrefix = collections.NewPrefix(3)
 )
