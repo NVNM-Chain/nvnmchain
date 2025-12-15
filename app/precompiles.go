@@ -2,21 +2,21 @@ package app
 
 import (
 	"github.com/MANTRA-Chain/inveniam/x/document/precompile"
-	"github.com/cosmos/evm/evmd"
+	"github.com/cosmos/cosmos-sdk/codec"
+	precompiletypes "github.com/cosmos/evm/precompiles/types"
 )
 
-func (app *App) configStaticPrecompiles() error {
-	corePrecompiles := evmd.NewAvailableStaticPrecompiles(
+func (app *App) configStaticPrecompiles(appCodec codec.Codec) error {
+	corePrecompiles := precompiletypes.DefaultStaticPrecompiles(
 		*app.StakingKeeper,
 		app.DistrKeeper,
 		app.BankKeeper,
-		app.Erc20Keeper,
-		app.TransferKeeper,
+		&app.Erc20Keeper,
+		&app.TransferKeeper,
 		app.IBCKeeper.ChannelKeeper,
-		app.EVMKeeper,
 		app.GovKeeper,
 		app.SlashingKeeper,
-		app.AppCodec(),
+		appCodec,
 	)
 
 	docPrecompile, err := precompile.NewPrecompile(app.DocumentKeeper)

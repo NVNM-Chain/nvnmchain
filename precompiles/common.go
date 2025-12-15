@@ -58,7 +58,7 @@ func RunNativeAction(p cmn.Precompile, evm *vm.EVM, contract *vm.Contract, actio
 
 	// add precompileCall entry on the stateDB journal
 	// this allows to revert the changes within an evm tx
-	if err := stateDB.AddPrecompileFn(p.Address(), snapshot, events); err != nil {
+	if err := stateDB.AddPrecompileFn(snapshot, events); err != nil {
 		return nil, err
 	}
 

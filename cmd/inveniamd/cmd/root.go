@@ -33,8 +33,6 @@ func NewRootCmd() *cobra.Command {
 		nil,
 		false,
 		simtestutil.NewAppOptionsWithFlagHome(temp),
-		app.EVMChainID,
-		app.EvmAppOptions,
 	)
 
 	encodingConfig := params.EncodingConfig{
@@ -117,10 +115,5 @@ func NewRootCmd() *cobra.Command {
 	if err := autoCliOpts.EnhanceRootCommand(rootCmd); err != nil {
 		panic(err)
 	}
-
-	if err := app.EvmAppOptions(app.EVMChainID); err != nil {
-		panic(err)
-	}
-
 	return rootCmd
 }

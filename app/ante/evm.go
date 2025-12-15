@@ -2,17 +2,21 @@ package ante
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	chainante "github.com/cosmos/evm/ante"
 	evmante "github.com/cosmos/evm/ante/evm"
-	chainante "github.com/cosmos/evm/evmd/ante"
 )
 
-func newEVMAnteHandler(options HandlerOptions) sdk.AnteHandler {
+func newEVMAnteHandler(ctx sdk.Context, options HandlerOptions) sdk.AnteHandler {
+	evmParams := options.EvmOptions.EvmKeeper.GetParams(ctx)
+	feemarketParams := options.EvmOptions.FeeMarketKeeper.GetParams(ctx)
 	decorators := []sdk.AnteDecorator{
 		evmante.NewEVMMonoDecorator(
 			options.EvmOptions.AccountKeeper,
 			options.EvmOptions.FeeMarketKeeper,
 			options.EvmOptions.EvmKeeper,
 			options.EvmOptions.MaxTxGasWanted,
+			&evmParams,
+			&feemarketParams,
 		),
 	}
 	if options.EvmOptions.PendingTxListener != nil {

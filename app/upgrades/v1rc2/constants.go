@@ -1,0 +1,20 @@
+package v1rc2
+
+import (
+	"cosmossdk.io/store/types"
+	"github.com/MANTRA-Chain/inveniam/app/upgrades"
+)
+
+const (
+	// UpgradeName defines the on-chain upgrade name.
+	UpgradeName = "v1.0.0-rc2"
+)
+
+var Upgrade = upgrades.Upgrade{
+	UpgradeName:          UpgradeName,
+	CreateUpgradeHandler: CreateUpgradeHandler,
+	StoreUpgrades: types.StoreUpgrades{
+		Added:   []string{},
+		Deleted: []string{},
+	},
+}
