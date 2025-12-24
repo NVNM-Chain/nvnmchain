@@ -113,9 +113,9 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	"cosmossdk.io/client/v2/autocli"
-	documentkeeper "github.com/MANTRA-Chain/inveniam/x/document/keeper"
-	document "github.com/MANTRA-Chain/inveniam/x/document/module"
-	documenttypes "github.com/MANTRA-Chain/inveniam/x/document/types"
+	anchoringkeeper "github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
+	anchoring "github.com/MANTRA-Chain/inveniam/x/anchoring/module"
+	anchoringtypes "github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	chainante "github.com/cosmos/evm/ante"
 	evmaddress "github.com/cosmos/evm/encoding/address"
 	evmmempool "github.com/cosmos/evm/mempool"
@@ -225,7 +225,7 @@ var maccPerms = map[string][]string{
 	consumertypes.ConsumerToSendToProviderName: nil,
 
 	// Inveniam Specific Modules
-	documenttypes.ModuleName: nil,
+	anchoringtypes.ModuleName: nil,
 }
 
 var Upgrades = []upgrades.Upgrade{v1rc2.Upgrade}
@@ -280,7 +280,7 @@ type App struct {
 	TaxKeeper          taxkeeper.Keeper
 
 	// Inveniam keepers
-	DocumentKeeper documentkeeper.Keeper
+	AnchoringKeeper anchoringkeeper.Keeper
 
 	// Cosmos EVM keepers
 	FeeMarketKeeper feemarketkeeper.Keeper
@@ -335,7 +335,7 @@ func New(
 		ratelimittypes.StoreKey,
 		tokenfactorytypes.StoreKey, taxtypes.StoreKey,
 		icacontrollertypes.StoreKey, icahosttypes.StoreKey,
-		consumertypes.StoreKey, documenttypes.StoreKey,
+		consumertypes.StoreKey, anchoringtypes.StoreKey,
 
 		// Cosmos EVM store keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey, erc20types.StoreKey,
@@ -529,10 +529,10 @@ func New(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
-	app.DocumentKeeper = documentkeeper.NewKeeper(
+	app.AnchoringKeeper = anchoringkeeper.NewKeeper(
 		appCodec,
 		app.AccountKeeper.AddressCodec(),
-		runtime.NewKVStoreService(keys[documenttypes.StoreKey]),
+		runtime.NewKVStoreService(keys[anchoringtypes.StoreKey]),
 	)
 
 	app.BankKeeper.BaseSendKeeper = app.BankKeeper.SetHooks(
@@ -794,7 +794,7 @@ func New(
 		tax.NewAppModule(appCodec, app.TaxKeeper),
 
 		// inveniam modules
-		document.NewAppModule(appCodec, app.DocumentKeeper),
+		anchoring.NewAppModule(appCodec, app.AnchoringKeeper),
 
 		// Cosmos EVM modules
 		vm.NewAppModule(app.EVMKeeper, app.AccountKeeper, app.BankKeeper, app.AccountKeeper.AddressCodec()),
@@ -918,7 +918,7 @@ func New(
 		tokenfactorytypes.ModuleName,
 		taxtypes.ModuleName,
 		consumertypes.ModuleName,
-		documenttypes.ModuleName,
+		anchoringtypes.ModuleName,
 	}
 	app.ModuleManager.SetOrderInitGenesis(genesisModuleOrder...)
 	app.ModuleManager.SetOrderExportGenesis(genesisModuleOrder...)

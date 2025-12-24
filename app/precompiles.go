@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/MANTRA-Chain/inveniam/x/document/precompile"
+	"github.com/MANTRA-Chain/inveniam/x/anchoring/precompile"
 	"github.com/cosmos/cosmos-sdk/codec"
 	precompiletypes "github.com/cosmos/evm/precompiles/types"
 )
@@ -19,11 +19,11 @@ func (app *App) configStaticPrecompiles(appCodec codec.Codec) error {
 		appCodec,
 	)
 
-	docPrecompile, err := precompile.NewPrecompile(app.DocumentKeeper)
+	anchoringPrecompile, err := precompile.NewPrecompile(app.AnchoringKeeper)
 	if err != nil {
 		return err
 	}
-	corePrecompiles[docPrecompile.Address()] = docPrecompile
+	corePrecompiles[anchoringPrecompile.Address()] = anchoringPrecompile
 
 	app.EVMKeeper.WithStaticPrecompiles(
 		corePrecompiles,

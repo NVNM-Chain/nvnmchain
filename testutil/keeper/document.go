@@ -9,8 +9,8 @@ import (
 	"cosmossdk.io/store/metrics"
 	storetypes "cosmossdk.io/store/types"
 	_ "github.com/MANTRA-Chain/inveniam/app"
-	"github.com/MANTRA-Chain/inveniam/x/document/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/document/types"
+	"github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
+	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -21,7 +21,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func DocumentKeeper(tb testing.TB) (keeper.Keeper, sdk.Context, address.Codec) {
+func AnchoringKeeper(tb testing.TB) (keeper.Keeper, sdk.Context, address.Codec) {
 	tb.Helper()
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
 

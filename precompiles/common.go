@@ -174,7 +174,7 @@ func (p PageRequest) ToPageRequest() *query.PageRequest {
 }
 
 func FromPageResponse(pr *query.PageResponse) (p PageResponse) {
-	if pr != nil {
+	if pr == nil {
 		return
 	}
 
