@@ -4,6 +4,8 @@ import (
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/precompile"
 	"github.com/cosmos/cosmos-sdk/codec"
 	precompiletypes "github.com/cosmos/evm/precompiles/types"
+	evmtypes "github.com/cosmos/evm/x/vm/types"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func (app *App) configStaticPrecompiles(appCodec codec.Codec) error {
@@ -18,6 +20,10 @@ func (app *App) configStaticPrecompiles(appCodec codec.Codec) error {
 		app.SlashingKeeper,
 		appCodec,
 	)
+
+	// remove default staking and distribution precompiles
+	delete(corePrecompiles, common.HexToAddress(evmtypes.StakingPrecompileAddress))
+	delete(corePrecompiles, common.HexToAddress(evmtypes.DistributionPrecompileAddress))
 
 	anchoringPrecompile, err := precompile.NewPrecompile(app.AnchoringKeeper)
 	if err != nil {
