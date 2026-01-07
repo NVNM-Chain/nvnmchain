@@ -22,25 +22,36 @@ permissions:
 jobs:
   build:
     name: Build - ${{ matrix.platform.name }}
-    runs-on: ${{ matrix.platform.runner || 'chain-runner' }}
+    runs-on: ${{ matrix.platform.runner || 'ubuntu-latest' }}
     strategy:
       matrix:
         platform:
           - name: Linux x86_64
             ids: inveniamd-linux-amd64
-            runner: ubuntu-latest-x64-xlarge
+            runner: ubuntu-latest
             cross: false
-          - name: Linux aarch64
-            ids: inveniamd-linux-arm64
-            runner: ubuntu-latest-arm64-xlarge
-            docker-platform: linux/arm64
-            cross: false
+          # TODO: skip arm64 build for now as ubuntu-24.04-arm is not running on private repo
+          # - name: Linux aarch64
+          #   ids: inveniamd-linux-arm64
+          #   runner: ubuntu-24.04-arm
+          #   docker-platform: linux/arm64
+          #   cross: false
           - name: MacOS x86_64 and aarch64
             ids: inveniamd-darwin-amd64,inveniamd-darwin-arm64
-            runner: ubuntu-latest-x64-xlarge
+            runner: ubuntu-latest
             cross: true
 
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
       - uses: actions/setup-go@v5
         with:
           go-version: 1.23
@@ -75,8 +86,18 @@ jobs:
     if: github.event_name != 'pull_request'
     name: Create release
     needs: [build]
-    runs-on: chain-runner
+    runs-on: ubuntu-latest
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
       - name: Check out repository code
         uses: actions/checkout@v4
         with:
