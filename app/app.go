@@ -197,6 +197,8 @@ var (
 	NodeDir = ".inveniam"
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
+	// Authority address
+	Authority = "inveniam1wrapt0xsdp8u833fx0xlk5clru2gtts2qrceru"
 )
 
 // module account permissions
@@ -370,7 +372,7 @@ func New(
 	app.ConsensusParamsKeeper = consensusparamkeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[consensusparamtypes.StoreKey]),
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 		runtime.EventService{},
 	)
 	bApp.SetParamStore(&app.ConsensusParamsKeeper.ParamsStore)
@@ -382,14 +384,14 @@ func New(
 		maccPerms,
 		evmaddress.NewEvmCodec(sdk.GetConfig().GetBech32AccountAddrPrefix()),
 		sdk.GetConfig().GetBech32AccountAddrPrefix(),
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[banktypes.StoreKey]),
 		app.AccountKeeper,
 		BlockedAddresses(),
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 		logger,
 	)
 
@@ -398,7 +400,7 @@ func New(
 		runtime.NewKVStoreService(keys[stakingtypes.StoreKey]),
 		app.AccountKeeper,
 		&app.BankKeeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 		evmaddress.NewEvmCodec(sdk.GetConfig().GetBech32ValidatorAddrPrefix()),
 		evmaddress.NewEvmCodec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
 	)
@@ -410,7 +412,7 @@ func New(
 		app.AccountKeeper,
 		&app.BankKeeper,
 		minttypes.ModuleName,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	app.DistrKeeper = distrkeeper.NewKeeper(
@@ -420,7 +422,7 @@ func New(
 		&app.BankKeeper,
 		app.StakingKeeper,
 		consumertypes.ConsumerRedistributeName,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
@@ -428,7 +430,7 @@ func New(
 		legacyAmino,
 		runtime.NewKVStoreService(keys[slashingtypes.StoreKey]),
 		app.StakingKeeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, runtime.NewKVStoreService(keys[feegrant.StoreKey]), app.AccountKeeper)
@@ -436,7 +438,7 @@ func New(
 	app.CircuitKeeper = circuitkeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[circuittypes.StoreKey]),
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 		app.AccountKeeper.AddressCodec(),
 	)
 	app.SetCircuitBreaker(&app.CircuitKeeper)
@@ -454,7 +456,7 @@ func New(
 		appCodec,
 		homePath,
 		app.BaseApp,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	// register the staking hooks
@@ -478,7 +480,7 @@ func New(
 		runtime.NewKVStoreService(keys[ibcexported.StoreKey]),
 		nil,
 		app.UpgradeKeeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	// Create CCV consumer and modules
@@ -494,7 +496,7 @@ func New(
 		&app.TransferKeeper,
 		app.IBCKeeper,
 		minttypes.ModuleName,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ValidatorAddrPrefix()),
 		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
 	)
@@ -506,7 +508,7 @@ func New(
 		legacyAmino,
 		runtime.NewKVStoreService(keys[slashingtypes.StoreKey]),
 		&app.ConsumerKeeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	// register slashing module StakingHooks to the consumer keeper
@@ -526,7 +528,7 @@ func New(
 		app.AccountKeeper,
 		&app.BankKeeper,
 		&app.Erc20Keeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	app.AnchoringKeeper = anchoringkeeper.NewKeeper(
@@ -558,7 +560,7 @@ func New(
 		app.DistrKeeper,
 		app.MsgServiceRouter(),
 		govConfig,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	// Set legacy router for backwards compatibility with gov v1beta1
@@ -590,7 +592,7 @@ func New(
 		app.AccountKeeper,
 		bApp.MsgServiceRouter(),
 		bApp.GRPCQueryRouter(),
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	// Create RateLimit keeper
@@ -599,7 +601,7 @@ func New(
 		appCodec,
 		runtime.NewKVStoreService(keys[ratelimittypes.StoreKey]),
 		app.GetSubspace(ratelimittypes.ModuleName),
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 		app.BankKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		clientKeeper,
@@ -614,7 +616,7 @@ func New(
 		app.IBCKeeper.ChannelKeeper, // ICS4Wrapper
 		app.IBCKeeper.ChannelKeeper,
 		bApp.MsgServiceRouter(),
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 
 	app.NFTKeeper = nftkeeper.NewKeeper(
@@ -639,7 +641,7 @@ func New(
 	// Cosmos EVM keepers
 	app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
 		appCodec,
-		authtypes.NewModuleAddress(govtypes.ModuleName),
+		sdk.MustAccAddressFromBech32(Authority),
 		keys[feemarkettypes.StoreKey],
 		tkeys[feemarkettypes.TransientKey],
 	)
@@ -650,7 +652,7 @@ func New(
 	app.EVMKeeper = evmkeeper.NewKeeper(
 		appCodec, keys[evmtypes.StoreKey], tkeys[evmtypes.TransientKey],
 		keys,
-		authtypes.NewModuleAddress(govtypes.ModuleName),
+		sdk.MustAccAddressFromBech32(Authority),
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.StakingKeeper,
@@ -665,7 +667,7 @@ func New(
 	app.Erc20Keeper = erc20keeper.NewKeeper(
 		keys[erc20types.StoreKey],
 		appCodec,
-		authtypes.NewModuleAddress(govtypes.ModuleName),
+		sdk.MustAccAddressFromBech32(Authority),
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.EVMKeeper,
@@ -683,7 +685,7 @@ func New(
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.Erc20Keeper, // Add ERC20 Keeper for ERC20 transfers
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		Authority,
 	)
 	app.TransferKeeper.SetAddressCodec(evmaddress.NewEvmCodec(sdk.GetConfig().GetBech32AccountAddrPrefix()))
 
