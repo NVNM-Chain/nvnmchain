@@ -14,7 +14,7 @@ import (
 	"github.com/yihuang/go-abi"
 )
 
-//go:generate go run github.com/yihuang/go-abi/cmd -var=CommonABI -output common.abi.go
+//go:generate go run github.com/yihuang/go-abi/cmd -var=CommonABI -output common.abi.go -uint256
 var CommonABI = []string{
 	"struct Coin {string denom; uint256 amount;}",
 	"struct DecCoin {string denom; uint256 amount; uint8 precision;}",

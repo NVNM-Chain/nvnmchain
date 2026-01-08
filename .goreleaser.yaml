@@ -33,6 +33,7 @@ builds:
       - netgo
       - ledger
       - pebbledb
+      - uint256
 
   - id: inveniamd-darwin-arm64
     main: ./cmd/inveniamd/main.go
@@ -60,6 +61,7 @@ builds:
       - netgo
       - ledger
       - pebbledb
+      - uint256
 
   - id: inveniamd-linux-amd64
     main: ./cmd/inveniamd
@@ -90,6 +92,7 @@ builds:
       - muslc
       - osusergo
       - pebbledb
+      - uint256
 
   - id: inveniamd-linux-arm64
     main: ./cmd/inveniamd
@@ -120,6 +123,7 @@ builds:
       - muslc
       - osusergo
       - pebbledb
+      - uint256
 
 archives:
   - id: zipped

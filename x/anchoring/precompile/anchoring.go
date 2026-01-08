@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 )
 
-//go:generate go run github.com/yihuang/go-abi/cmd -var=HumanABI -output anchoring.abi.go --external-tuples PageRequest=cmn.PageRequest,PageResponse=cmn.PageResponse --imports cmn=github.com/MANTRA-Chain/inveniam/precompiles
+//go:generate go run github.com/yihuang/go-abi/cmd -var=HumanABI -output anchoring.abi.go --external-tuples PageRequest=cmn.PageRequest,PageResponse=cmn.PageResponse --imports cmn=github.com/MANTRA-Chain/inveniam/precompiles -uint256
 var HumanABI = []string{
 	"struct Record {string registry; string uri; string checksum; string checksumAlgo; string metadata; string timestamp; string status; uint64 recordId; uint64 index; bool isLatest}",
 	"struct Registry {uint64 id; string name; string description; string creator; string createdAt}",

@@ -45,7 +45,7 @@ GO_MODULE := $(shell cat go.mod | grep "module " | cut -d ' ' -f 2)
 ###                            Build Flags/Tags                             ###
 ###############################################################################
 
-build_tags = netgo
+build_tags = netgo uint256
 ifeq ($(LEDGER_ENABLED),true)
   ifeq ($(OS),Windows_NT)
     GCCEXE = $(shell where gcc.exe 2> NUL)

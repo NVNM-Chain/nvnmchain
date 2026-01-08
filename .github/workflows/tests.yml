@@ -143,7 +143,7 @@ jobs:
       - name: Run integration tests
         if: steps.changed-files.outputs.only_changed == 'false'
         working-directory: mantrachain-e2e
-        run: make test-e2e-nix-skip-mantrachaind-build
+        run: make test-e2e-nix
       - name: Tar debug files
         if: failure()
         working-directory: mantrachain-e2e

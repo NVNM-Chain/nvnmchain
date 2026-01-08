@@ -19,6 +19,7 @@ RUN apk add --no-cache \
 
 # Download go dependencies
 COPY go.mod go.sum ./
+ENV GOTOOLCHAIN=auto
 RUN --mount=type=cache,target=/nonroot/.cache/go-build \
     --mount=type=cache,target=/nonroot/go/pkg/mod \
     go mod download

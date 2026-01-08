@@ -36,23 +36,22 @@ builds:
       post:
         - ./scripts/ci-goreleaser/.goreleaser_hook.sh {{ .Arch }} {{ .Os }} {{ .ProjectName }}
 
-  # TODO: skip arm64 build for now as ubuntu-24.04-arm is not running on private repo
-  # - id: inveniamd-linux-arm64
-  #   main: ./scripts/ci-goreleaser/goreleaser.go
-  #   binary: inveniamd
-  #   goos:
-  #     - linux
-  #   goarch:
-  #     - arm64
-  #   hooks:
-  #     post:
-  #       - ./scripts/ci-goreleaser/.goreleaser_hook.sh {{ .Arch }} {{ .Os }} {{ .ProjectName }}
+  - id: inveniamd-linux-arm64
+    main: ./scripts/ci-goreleaser/goreleaser.go
+    binary: inveniamd
+    goos:
+      - linux
+    goarch:
+      - arm64
+    hooks:
+      post:
+        - ./scripts/ci-goreleaser/.goreleaser_hook.sh {{ .Arch }} {{ .Os }} {{ .ProjectName }}
 
 archives:
   - id: zipped
     builds:
       - inveniamd-linux-amd64
-      # - inveniamd-linux-arm64
+      - inveniamd-linux-arm64
       - inveniamd-darwin-amd64
       - inveniamd-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
@@ -62,8 +61,7 @@ archives:
   - id: binaries
     builds:
       - inveniamd-linux-amd64
-      # TODO: skip arm64 build for now as ubuntu-24.04-arm is not running on private repo
-      # - inveniamd-linux-arm64
+      - inveniamd-linux-arm64
       - inveniamd-darwin-amd64
       - inveniamd-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
