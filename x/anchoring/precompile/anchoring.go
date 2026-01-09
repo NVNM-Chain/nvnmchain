@@ -23,7 +23,7 @@ var HumanABI = []string{
 
 	"function addRegistry(string name, string description) returns (uint64 registryId)",
 	"function addRecord(Record record) returns ()",
-	"function updateRecordStatus(uint64 registryId, uint64 recordId, string checksum, uint64 index, string status) returns ()",
+	"function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status) returns ()",
 	"function records(string registry, string checksum, uint64 recordId, uint64 index, PageRequest pagination) returns (Record[] records, PageResponse pagination)",
 	"function registries(uint64 registryId, string name, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
 
@@ -170,7 +170,6 @@ func (p Precompile) UpdateRecordStatus(
 		Editor:     sender,
 		RegistryId: input.RegistryId,
 		RecordId:   input.RecordId,
-		Checksum:   input.Checksum,
 		Index:      input.Index,
 		Status:     input.Status,
 	}
