@@ -242,12 +242,13 @@ func TestInitGenesisEmpty(t *testing.T) {
 	// Export and verify empty state
 	exportedState, err := k.ExportGenesis(ctx)
 	require.NoError(t, err)
-	require.Len(t, exportedState.Registries, 0)
-	require.Len(t, exportedState.Records, 0)
+	require.Empty(t, exportedState.Registries)
+	require.Empty(t, exportedState.Records)
 }
 
 // encodeTripleKey encodes a triple key for testing genesis roles
 func encodeTripleKey(t *testing.T, key collections.Triple[uint64, string, string]) string {
+	t.Helper()
 	k, _, _ := keeper.AnchoringKeeper(t)
 	size := k.Roles.KeyCodec().Size(key)
 	buffer := make([]byte, size)

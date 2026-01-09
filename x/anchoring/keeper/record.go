@@ -39,12 +39,13 @@ func (k Keeper) AddRecord(ctx sdk.Context, sender sdk.AccAddress, record types.R
 
 	// update fields for new record
 	index, err := k.RecordIndices.Get(ctx, collections.Join(registryId, record.RecordId))
-	if errorsmod.IsOf(err, collections.ErrNotFound) {
+	switch {
+	case errorsmod.IsOf(err, collections.ErrNotFound):
 		index = 1
-	} else if err != nil {
+	case err != nil:
 		return err
-	} else {
-		index = index + 1
+	default:
+		index++
 	}
 	record.Index = index
 	if err := k.RecordIndices.Set(ctx, collections.Join(registryId, record.RecordId), index); err != nil {

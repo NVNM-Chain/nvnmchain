@@ -136,17 +136,6 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (*types.GenesisState, error) {
 	}, nil
 }
 
-// encodeRecordKey safely encodes a record key to bytes
-func encodeRecordKey(k Keeper, key collections.Triple[uint64, uint64, uint64]) ([]byte, error) {
-	size := k.Records.KeyCodec().Size(key)
-	buffer := make([]byte, size)
-	n, err := k.Records.KeyCodec().Encode(buffer, key)
-	if err != nil {
-		return nil, err
-	}
-	return buffer[:n], nil
-}
-
 // encodeRoleKey safely encodes a role key to bytes
 func encodeRoleKey(k Keeper, key collections.Triple[uint64, string, string]) ([]byte, error) {
 	size := k.Roles.KeyCodec().Size(key)

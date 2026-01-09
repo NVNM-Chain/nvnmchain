@@ -140,14 +140,14 @@ TEST_PACKAGES=./...
 TEST_TARGETS := test-unit test-e2e test-cover test-connect
 
 DIR=$(CURDIR)
-test-unit: ARGS=-timeout=5m -tags='norace'
+test-unit: ARGS=-timeout=5m -tags='norace uint256'
 test-unit: TEST_PACKAGES=$(PACKAGES_UNIT)
-test-e2e: ARGS=-timeout=35m -v
+test-e2e: ARGS=-timeout=35m -v -tags='uint256'
 test-e2e: TEST_PACKAGES=$(PACKAGES_E2E)
 test-e2e: build-image
-test-cover: ARGS=-timeout=30m -coverprofile=coverage.txt -covermode=atomic -tags='norace'
+test-cover: ARGS=-timeout=30m -coverprofile=coverage.txt -covermode=atomic -tags='norace uint256'
 test-cover: TEST_PACKAGES=$(PACKAGES_UNIT)
-test-connect: ARGS=-v -race
+test-connect: ARGS=-v -race -tags='uint256'
 test-connect: DIR=$(CURDIR)/tests/connect
 test-connect: build-image
 $(TEST_TARGETS): run-tests

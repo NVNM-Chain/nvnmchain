@@ -68,7 +68,7 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 				if registryId == req.RegistryId && record.Index == index {
 					return &record, nil
 				}
-				return nil, nil
+				return nil, nil //nolint:nilnil // filtered records are excluded by returning nil
 			})
 		if err != nil {
 			return nil, err
@@ -158,14 +158,15 @@ func (q queryServer) Registry(ctx context.Context, req *types.QueryRegistryReque
 	var id uint64
 	var err error
 
-	if req.Id != 0 {
+	switch {
+	case req.Id != 0:
 		id = req.Id
-	} else if req.Name != "" {
+	case req.Name != "":
 		id, err = q.k.RegistryIdByName.Get(sdkCtx, req.Name)
 		if err != nil {
 			return nil, err
 		}
-	} else {
+	default:
 		return nil, status.Error(codes.InvalidArgument, "either id or name must be provided")
 	}
 
