@@ -37,7 +37,7 @@ To get started with Inveniam, you'll need to set up your development environment
 
 ### Prerequisites
 
-- Go 1.23 or later
+- Go 1.24 or later
 
 ### Installation
 
