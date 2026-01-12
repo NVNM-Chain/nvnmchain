@@ -27,8 +27,8 @@ var (
 	RegistriesSelector = [4]byte{0x15, 0xae, 0x27, 0x0f}
 	// revokeRole(uint64,string,address,string)
 	RevokeRoleSelector = [4]byte{0xac, 0xd5, 0x8b, 0xc7}
-	// updateRecordStatus(uint64,uint64,string,uint64,string)
-	UpdateRecordStatusSelector = [4]byte{0x1d, 0xcc, 0xdf, 0x99}
+	// updateRecordStatus(uint64,uint64,uint64,string)
+	UpdateRecordStatusSelector = [4]byte{0x97, 0xb4, 0x0c, 0x25}
 )
 
 // Big endian integer versions of function selectors
@@ -39,7 +39,7 @@ const (
 	RecordsID            = 44806111
 	RegistriesID         = 363734799
 	RevokeRoleID         = 2899676103
-	UpdateRecordStatusID = 499965849
+	UpdateRecordStatusID = 2545159205
 )
 
 const RecordStaticSize = 320
@@ -1890,7 +1890,7 @@ type RevokeRoleReturn struct {
 
 var _ abi.Method = (*UpdateRecordStatusCall)(nil)
 
-const UpdateRecordStatusCallStaticSize = 160
+const UpdateRecordStatusCallStaticSize = 128
 
 var _ abi.Tuple = (*UpdateRecordStatusCall)(nil)
 
@@ -1898,7 +1898,6 @@ var _ abi.Tuple = (*UpdateRecordStatusCall)(nil)
 type UpdateRecordStatusCall struct {
 	RegistryId uint64
 	RecordId   uint64
-	Checksum   string
 	Index      uint64
 	Status     string
 }
@@ -1906,7 +1905,6 @@ type UpdateRecordStatusCall struct {
 // EncodedSize returns the total encoded size of UpdateRecordStatusCall
 func (t UpdateRecordStatusCall) EncodedSize() int {
 	dynamicSize := 0
-	dynamicSize += abi.SizeString(t.Checksum)
 	dynamicSize += abi.SizeString(t.Status)
 
 	return UpdateRecordStatusCallStaticSize + dynamicSize
@@ -1930,24 +1928,14 @@ func (value UpdateRecordStatusCall) EncodeTo(buf []byte) (int, error) {
 		return 0, err
 	}
 
-	// Field Checksum: string
-	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[64+24:64+32], uint64(dynamicOffset))
-	// Encode dynamic data
-	n, err = abi.EncodeString(value.Checksum, buf[dynamicOffset:])
-	if err != nil {
-		return 0, err
-	}
-	dynamicOffset += n
-
 	// Field Index: uint64
-	if _, err := abi.EncodeUint64(value.Index, buf[96:]); err != nil {
+	if _, err := abi.EncodeUint64(value.Index, buf[64:]); err != nil {
 		return 0, err
 	}
 
 	// Field Status: string
 	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[128+24:128+32], uint64(dynamicOffset))
+	binary.BigEndian.PutUint64(buf[96+24:96+32], uint64(dynamicOffset))
 	// Encode dynamic data
 	n, err = abi.EncodeString(value.Status, buf[dynamicOffset:])
 	if err != nil {
@@ -1969,7 +1957,7 @@ func (value UpdateRecordStatusCall) Encode() ([]byte, error) {
 
 // Decode decodes UpdateRecordStatusCall from ABI bytes in the provided buffer
 func (t *UpdateRecordStatusCall) Decode(data []byte) (int, error) {
-	if len(data) < 160 {
+	if len(data) < 128 {
 		return 0, io.ErrUnexpectedEOF
 	}
 	var (
@@ -1977,7 +1965,7 @@ func (t *UpdateRecordStatusCall) Decode(data []byte) (int, error) {
 		n      int
 		offset int
 	)
-	dynamicOffset := 160
+	dynamicOffset := 128
 	// Decode static field RegistryId: uint64
 	t.RegistryId, _, err = abi.DecodeUint64(data[0:])
 	if err != nil {
@@ -1988,29 +1976,14 @@ func (t *UpdateRecordStatusCall) Decode(data []byte) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	// Decode dynamic field Checksum
-	{
-		offset, err = abi.DecodeSize(data[64:])
-		if err != nil {
-			return 0, err
-		}
-		if offset != dynamicOffset {
-			return 0, abi.ErrInvalidOffsetForDynamicField
-		}
-		t.Checksum, n, err = abi.DecodeString(data[dynamicOffset:])
-		if err != nil {
-			return 0, err
-		}
-		dynamicOffset += n
-	}
 	// Decode static field Index: uint64
-	t.Index, _, err = abi.DecodeUint64(data[96:])
+	t.Index, _, err = abi.DecodeUint64(data[64:])
 	if err != nil {
 		return 0, err
 	}
 	// Decode dynamic field Status
 	{
-		offset, err = abi.DecodeSize(data[128:])
+		offset, err = abi.DecodeSize(data[96:])
 		if err != nil {
 			return 0, err
 		}
@@ -2055,14 +2028,12 @@ func (t UpdateRecordStatusCall) EncodeWithSelector() ([]byte, error) {
 func NewUpdateRecordStatusCall(
 	registryId uint64,
 	recordId uint64,
-	checksum string,
 	index uint64,
 	status string,
 ) *UpdateRecordStatusCall {
 	return &UpdateRecordStatusCall{
 		RegistryId: registryId,
 		RecordId:   recordId,
-		Checksum:   checksum,
 		Index:      index,
 		Status:     status,
 	}
