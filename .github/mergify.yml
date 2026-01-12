@@ -18,11 +18,11 @@ queue_rules:
     merge_method: squash
 
 pull_request_rules:
-  - name: backport patches to release/v1.0.x branch
+  - name: backport patches to release/v1.0.0-rcx branch
     conditions:
       - base=main
-      - label=A:backport/v1.0.x
+      - label=A:backport/v1.0.0-rcx
     actions:
       backport:
         branches:
-          - release/v1.0.x
+          - release/v1.0.0-rcx
