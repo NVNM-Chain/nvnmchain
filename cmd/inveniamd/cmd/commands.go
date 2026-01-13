@@ -89,6 +89,8 @@ func initRootCmd(
 }
 
 func addModuleInitFlags(startCmd *cobra.Command) {
+	startCmd.Flags().Bool("x-crisis-skip-assert-invariants", true, "[DEPRECATED] No longer used, x/crisis module was removed")
+	_ = startCmd.Flags().MarkHidden("x-crisis-skip-assert-invariants")
 }
 
 // genesisCommand builds genesis-related `inveniamd genesis` command. Users may provide application specific commands as a parameter

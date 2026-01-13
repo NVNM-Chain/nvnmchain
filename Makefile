@@ -123,7 +123,7 @@ build-arm:
 build-linux:
 	GOOS=linux GOARCH=$(if $(findstring aarch64,$(shell uname -m)) || $(findstring arm64,$(shell uname -m)),arm64,amd64) $(MAKE) build
 build-image:
-	docker build -f Dockerfile -t mantra-chain/inveniam .
+	docker build -f Dockerfile -t ghcr.io/mantra-chain/inveniam:local .
 
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) $(GO_MODULE)/cmd/inveniamd
@@ -134,16 +134,17 @@ $(BUILDDIR)/:
 ###                           Tests                            		        ###
 ###############################################################################
 
-PACKAGES_UNIT=$(shell go list ./... | grep -v -e '/tests/e2e' | grep -v '/simulation')
-PACKAGES_E2E=$(shell cd tests/e2e && go list ./... | grep '/e2e')
+PACKAGES_UNIT=$(shell go list ./... | grep -v -e '/tests/e2e' | grep -v '/tests/interchain' | grep -v '/simulation')
+PACKAGES_E2E=$(shell cd tests/interchain && go list ./... | grep -v '/chainsuite')
 TEST_PACKAGES=./...
 TEST_TARGETS := test-unit test-e2e test-cover test-connect
 
 DIR=$(CURDIR)
 test-unit: ARGS=-timeout=5m -tags='norace uint256'
 test-unit: TEST_PACKAGES=$(PACKAGES_UNIT)
-test-e2e: ARGS=-timeout=35m -v -tags='uint256'
+test-e2e: ARGS=-timeout=60m -v
 test-e2e: TEST_PACKAGES=$(PACKAGES_E2E)
+test-e2e: DIR=$(CURDIR)/tests/interchain
 test-e2e: build-image
 test-cover: ARGS=-timeout=30m -coverprofile=coverage.txt -covermode=atomic -tags='norace uint256'
 test-cover: TEST_PACKAGES=$(PACKAGES_UNIT)

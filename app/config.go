@@ -15,8 +15,9 @@ import (
 
 var (
 	EVMChainIDMap = map[string]uint64{
-		"inveniam-1":  58888, // mainnet Chain ID
-		"manveniam-1": 58887, // testnet Chain ID
+		"inveniam-1":            58888, // mainnet Chain ID
+		"manveniam-1":           58887, // testnet Chain ID
+		"inveniam-canary-net-1": 59888, // devnet Chain ID
 	}
 
 	EVMChainID uint64 = 58886 // default Chain ID

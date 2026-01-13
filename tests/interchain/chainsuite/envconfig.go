@@ -11,9 +11,12 @@ const prefix = "TEST"
 type Environment struct {
 	DockerRegistry        string `envconfig:"DOCKER_REGISTRY" default:"ghcr.io/mantra-chain"`
 	MantraImageName       string `envconfig:"MANTRA_IMAGE_NAME" default:"mantrachain"`
-	OldMantraImageVersion string `envconfig:"OLD_MANTRA_IMAGE_VERSION"`
+	OldMantraImageVersion string `envconfig:"OLD_MANTRA_IMAGE_VERSION" default:"v8.0.0-rc0"`
 	NewMantraImageVersion string `envconfig:"NEW_MANTRA_IMAGE_VERSION"`
 	UpgradeName           string `envconfig:"UPGRADE_NAME"`
+	// Consumer chain (inveniam) configuration
+	ConsumerImageName    string `envconfig:"CONSUMER_IMAGE_NAME" default:"inveniam"`
+	ConsumerImageVersion string `envconfig:"CONSUMER_IMAGE_VERSION" default:"local"`
 }
 
 func GetEnvironment() Environment {

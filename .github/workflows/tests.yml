@@ -73,12 +73,23 @@ jobs:
         working-directory: cosmos-sdk
 
   test-e2e:
-    name: E2E Tests
+    name: E2E Tests (Provider-Consumer)
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.24
+          go-version: 1.25
       - uses: actions/checkout@v4
       - name: Install tparse
         run: |

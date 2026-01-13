@@ -45,7 +45,7 @@ const (
 	txCommand        = "tx"
 	queryCommand     = "query"
 	keysCommand      = "keys"
-	inveniamHomePath = "/home/nonroot/.inveniamchain"
+	inveniamHomePath = "/home/nonroot/.inveniam"
 	anvnmDenom       = "anvnm"
 	initBalanceStr   = "100000000000000000anvnm"
 	minGasPrice      = "0.01"
@@ -390,16 +390,21 @@ func (s *IntegrationTestSuite) addGenesisVestingAndJailedAccounts(
 	bankGenState.Balances = banktypes.SanitizeGenesisBalances(bankGenState.Balances)
 
 	// update the denom metadata for the bank module
+	// The EVM module requires proper denom metadata with 18 decimals for the display denom
 	bankGenState.DenomMetadata = append(bankGenState.DenomMetadata, banktypes.Metadata{
-		Description: "An example stable token",
-		Display:     anvnmDenom,
+		Description: "The native staking token of the inveniam network",
+		Display:     "nvnm",
 		Base:        anvnmDenom,
-		Symbol:      anvnmDenom,
-		Name:        anvnmDenom,
+		Symbol:      "NVNM",
+		Name:        "nvnm",
 		DenomUnits: []*banktypes.DenomUnit{
 			{
 				Denom:    anvnmDenom,
 				Exponent: 0,
+			},
+			{
+				Denom:    "nvnm",
+				Exponent: 18,
 			},
 		},
 	})

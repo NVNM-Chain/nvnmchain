@@ -58,12 +58,16 @@ func (s *Suite) GetContext() context.Context {
 }
 
 func (s *Suite) UpgradeChain() {
-	GetLogger(s.GetContext()).Sugar().Infof("Upgrade %s from %s to %s", s.Env.UpgradeName, s.Env.OldMantraImageVersion, s.Env.NewMantraImageVersion)
+	newVersion := s.Env.NewMantraImageVersion
+	if newVersion == "" {
+		newVersion = "v8.0.0-rc0"
+	}
+	GetLogger(s.GetContext()).Sugar().Infof("Upgrade %s from %s to %s", s.Env.UpgradeName, s.Env.OldMantraImageVersion, newVersion)
 	if s.Env.UpgradeName == semver.Major(s.Env.OldMantraImageVersion) {
 		// Not an on-chain upgrade, just replace the image.
-		s.Require().NoError(s.Chain.ReplaceImagesAndRestart(s.GetContext(), s.Env.NewMantraImageVersion))
+		s.Require().NoError(s.Chain.ReplaceImagesAndRestart(s.GetContext(), newVersion))
 	} else {
-		s.Require().NoError(s.Chain.Upgrade(s.GetContext(), s.Env.UpgradeName, s.Env.NewMantraImageVersion))
+		s.Require().NoError(s.Chain.Upgrade(s.GetContext(), s.Env.UpgradeName, newVersion))
 	}
 	if s.Relayer != nil {
 		s.Require().NoError(s.Relayer.StopRelayer(s.GetContext(), GetRelayerExecReporter(s.GetContext())))

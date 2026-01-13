@@ -1,0 +1,105 @@
+package interchain_test
+
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	"cosmossdk.io/math"
+	sdkmath "cosmossdk.io/math"
+	clienttypes "github.com/cosmos/ibc-go/v10/modules/core/02-client/types"
+	providertypes "github.com/cosmos/interchain-security/v7/x/ccv/provider/types"
+
+	"github.com/MANTRA-Chain/inveniam/tests/interchain/chainsuite"
+)
+
+func msgCreateConsumer(
+	chainId string,
+	initParams *providertypes.ConsumerInitializationParameters,
+	powerParams *providertypes.PowerShapingParameters,
+	infractionParams *providertypes.InfractionParameters,
+	submiter string,
+) *providertypes.MsgCreateConsumer {
+	consumerMetadata := providertypes.ConsumerMetadata{
+		Name:        chainId,
+		Description: "Inveniam consumer chain",
+		Metadata:    "metadata",
+	}
+
+	return &providertypes.MsgCreateConsumer{
+		Submitter:                submiter,
+		ChainId:                  chainId,
+		Metadata:                 consumerMetadata,
+		InitializationParameters: initParams,
+		PowerShapingParameters:   powerParams,
+		InfractionParameters:     infractionParams,
+	}
+}
+
+func consumerInitParamsTemplate(spawnTime *time.Time) *providertypes.ConsumerInitializationParameters {
+	initParams := &providertypes.ConsumerInitializationParameters{
+		InitialHeight:                     clienttypes.NewHeight(1, 1),
+		GenesisHash:                       []byte("gen_hash"),
+		BinaryHash:                        []byte("bin_hash"),
+		UnbondingPeriod:                   1728000000000000,
+		CcvTimeoutPeriod:                  2419200000000000,
+		TransferTimeoutPeriod:             3600000000000,
+		ConsumerRedistributionFraction:    "0.75",
+		BlocksPerDistributionTransmission: chainsuite.BlocksPerDistribution,
+		HistoricalEntries:                 10000,
+		DistributionTransmissionChannel:   "",
+	}
+
+	if spawnTime != nil {
+		initParams.SpawnTime = *spawnTime
+	}
+
+	return initParams
+}
+
+func powerShapingParamsTemplate() *providertypes.PowerShapingParameters {
+	return &providertypes.PowerShapingParameters{
+		Top_N:              0,
+		ValidatorsPowerCap: 0,
+		ValidatorSetCap:    50,
+		Allowlist:          []string{},
+		Denylist:           []string{},
+		MinStake:           1000,
+		AllowInactiveVals:  true,
+	}
+}
+
+func infractionParamsTemplate() *providertypes.InfractionParameters {
+	return &providertypes.InfractionParameters{
+		DoubleSign: &providertypes.SlashJailParameters{
+			JailDuration:  1200 * time.Second,
+			SlashFraction: math.LegacyNewDecWithPrec(7, 2), // 0.07
+		},
+		Downtime: &providertypes.SlashJailParameters{
+			JailDuration:  2400 * time.Second,
+			SlashFraction: math.LegacyNewDecWithPrec(8, 2), // 0.08
+		},
+	}
+}
+
+func defaultInfractionParams() *providertypes.InfractionParameters {
+	return &providertypes.InfractionParameters{
+		DoubleSign: &providertypes.SlashJailParameters{
+			JailDuration:  time.Duration(1<<63 - 1),        // the largest value a time.Duration can hold
+			SlashFraction: math.LegacyNewDecWithPrec(5, 2), // 0.05
+		},
+		Downtime: &providertypes.SlashJailParameters{
+			JailDuration:  chainsuite.DowntimeJailDuration,
+			SlashFraction: math.LegacyNewDec(0), // no slashing for downtime on the consumer
+		},
+	}
+}
+
+func StrToSDKInt(s string) (sdkmath.Int, error) {
+	s, _, _ = strings.Cut(s, ".")
+	i, ok := sdkmath.NewIntFromString(s)
+	if !ok {
+		return sdkmath.Int{}, fmt.Errorf("s: %s", s)
+	}
+	return i, nil
+}
