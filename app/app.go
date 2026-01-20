@@ -203,7 +203,7 @@ var (
 
 // module account permissions
 var maccPerms = map[string][]string{
-	authtypes.FeeCollectorName:     {authtypes.Burner},
+	authtypes.FeeCollectorName:     nil,
 	distrtypes.ModuleName:          nil,
 	icatypes.ModuleName:            nil,
 	minttypes.ModuleName:           {authtypes.Minter},
@@ -411,7 +411,7 @@ func New(
 		app.StakingKeeper,
 		app.AccountKeeper,
 		&app.BankKeeper,
-		minttypes.ModuleName,
+		authtypes.FeeCollectorName,
 		Authority,
 	)
 
@@ -495,7 +495,7 @@ func New(
 		app.AccountKeeper,
 		&app.TransferKeeper,
 		app.IBCKeeper,
-		minttypes.ModuleName,
+		authtypes.FeeCollectorName,
 		Authority,
 		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ValidatorAddrPrefix()),
 		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
@@ -833,9 +833,10 @@ func New(
 	// CanWithdrawInvariant invariant.
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	app.ModuleManager.SetOrderBeginBlockers(
+		// distribute first to distribute rewards from ConsumerRedistributeName
+		// to governators and community pool
+		distrtypes.ModuleName,
 		minttypes.ModuleName,
-		// mca tax before distribution
-		taxtypes.ModuleName,
 
 		// IBC modules
 		ibcexported.ModuleName, ibctransfertypes.ModuleName,
@@ -844,7 +845,7 @@ func New(
 		erc20types.ModuleName, feemarkettypes.ModuleName,
 		evmtypes.ModuleName, // NOTE: EVM BeginBlocker must come after FeeMarket BeginBlocker
 
-		distrtypes.ModuleName,
+		taxtypes.ModuleName,
 		slashingtypes.ModuleName,
 		evidencetypes.ModuleName,
 		stakingtypes.ModuleName,
@@ -868,9 +869,9 @@ func New(
 		erc20types.ModuleName,
 		feemarkettypes.ModuleName,
 		feegrant.ModuleName,
-		// burn fees from fee collector
+		// tax before consumer to ensure tax is collected prior to
+		// sending funds to provider and sending to redistribute account
 		taxtypes.ModuleName,
-		// additional non simd modules
 		ibctransfertypes.ModuleName,
 		ibcexported.ModuleName,
 		icatypes.ModuleName,

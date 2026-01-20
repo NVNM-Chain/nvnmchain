@@ -7,10 +7,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// BeginBlocker sets the proposer for determining distribution during endblock
-// and distribute rewards for the previous block.
-func BeginBlocker(ctx sdk.Context, k keeper.Keeper) error {
-	defer telemetry.ModuleMeasureSince(types.ModuleName, telemetry.Now(), telemetry.MetricKeyBeginBlocker)
+// EndBlocker is called at the end of each block. It allocates the MCA tax to the MCA module account.
+func EndBlocker(ctx sdk.Context, k keeper.Keeper) error {
+	defer telemetry.ModuleMeasureSince(types.ModuleName, telemetry.Now(), telemetry.MetricKeyEndBlocker)
 
 	params, err := k.Params.Get(ctx)
 	if err != nil {
@@ -28,21 +27,6 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) error {
 			return err
 		}
 		if err := k.AllocateMcaTax(ctx, params.McaTax, McaAddress); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// BeginBlocker sets the proposer for determining distribution during endblock
-// and distribute rewards for the previous block.
-func EndBlocker(ctx sdk.Context, k keeper.Keeper) error {
-	defer telemetry.ModuleMeasureSince(types.ModuleName, telemetry.Now(), telemetry.MetricKeyEndBlocker)
-
-	// only empty fee collector if the block height is greater than 1
-	if ctx.BlockHeight() > 1 {
-		if err := k.EmptyFeeCollector(ctx); err != nil {
 			return err
 		}
 	}
