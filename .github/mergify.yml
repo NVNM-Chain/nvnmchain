@@ -26,3 +26,11 @@ pull_request_rules:
       backport:
         branches:
           - release/v1.0.0-rcx
+  - name: backport patches to sovereign branch
+    conditions:
+      - base=main
+      - label=A:backport/sovereign
+    actions:
+      backport:
+        branches:
+          - sovereign
