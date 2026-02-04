@@ -19,11 +19,11 @@ import (
 //go:generate go run github.com/yihuang/go-abi/cmd -var=HumanABI -output anchoring.abi.go --external-tuples PageRequest=cmn.PageRequest,PageResponse=cmn.PageResponse --imports cmn=github.com/MANTRA-Chain/inveniam/precompiles -uint256
 var HumanABI = []string{
 	"struct Record {string registry; string uri; string checksum; string checksumAlgo; string metadata; string timestamp; string status; uint64 recordId; uint64 index; bool isLatest}",
-	"struct Registry {uint64 id; string name; string description; string creator; string createdAt}",
+	"struct Registry {uint64 id; string name; string description; string creator; string createdAt; string metadata}",
 	"struct PageRequest { bytes key; uint64 offset; uint64 limit; bool countTotal; bool reverse; }",
 	"struct PageResponse { bytes nextKey; uint64 total; }",
 
-	"function addRegistry(string name, string description) returns (uint64 registryId)",
+	"function addRegistry(string name, string description, string metadata) returns (uint64 registryId)",
 	"function addRecord(Record record) returns ()",
 	"function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status) returns ()",
 	"function records(string registry, string checksum, uint64 recordId, uint64 index, PageRequest pagination) returns (Record[] records, PageResponse pagination)",
@@ -126,6 +126,7 @@ func (p Precompile) AddRegistry(
 		Name:        input.Name,
 		Description: input.Description,
 		Sender:      senderStr,
+		Metadata:    input.Metadata,
 	}
 	res, err := p.msgServer.AddRegistry(ctx, msg)
 	if err != nil {

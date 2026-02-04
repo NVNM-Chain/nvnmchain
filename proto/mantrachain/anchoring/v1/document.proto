@@ -22,6 +22,9 @@ message Registry {
 
   // Timestamp of creation
   string created_at = 5;
+
+  // Additional metadata associated with the registry in stringified JSON format.
+  string metadata = 6;
 }
 
 message Record {

@@ -32,7 +32,7 @@ The module defines several important types:
 
 1. `Params`: Module parameters (includes an `admin` address)
 2. `GenesisState`: Initial state of the module
-3. `Registry`: A registry of records (id, name, description, creator, created_at)
+3. `Registry`: A registry of records (id, name, description, creator, created_at, metadata)
 4. `Record`: An anchored record (registry, uri, checksum, checksum_algo, metadata, timestamp, status, record_id, index, is_latest)
 
 ### Messages and Queries
@@ -114,6 +114,7 @@ interface IAnchoringPrecompile {
 		string description;
 		string creator;
 		string createdAt;
+		string metadata;
 	}
 
 	struct PageRequest {
@@ -129,7 +130,7 @@ interface IAnchoringPrecompile {
 		uint64 total;
 	}
 
-	function addRegistry(string name, string description)
+	function addRegistry(string name, string description, string metadata)
 		external
 		returns (uint64 registryId);
 
@@ -160,7 +161,7 @@ interface IAnchoringPrecompile {
 Selectors are the first 4 bytes of `keccak256(<function signature>)` and are generated into `x/anchoring/precompile/anchoring.abi.go`.
 
 - `addRecord((string,string,string,string,string,string,string,uint64,uint64,bool))`: `0x9b7b7869`
-- `addRegistry(string,string)`: `0x90dee1b1`
+- `addRegistry(string,string,string)`: `0x318b38b1`
 - `grantRole(uint64,string,address,string)`: `0xb8fdd1a7`
 - `records(string,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`: `0x02abafdf`
 - `registries(uint64,string,(bytes,uint64,uint64,bool,bool))`: `0x15ae270f`
@@ -171,11 +172,11 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 
 #### addRegistry
 
-- Function signature (for `keccak256`): `addRegistry(string,string)`
-- Function selector: `0x90dee1b1`
-- Inputs: `(string name, string description)`
+- Function signature (for `keccak256`): `addRegistry(string,string,string)`
+- Function selector: `0x318b38b1`
+- Inputs: `(string name, string description, string metadata)`
 - Parameter encoding (Ethereum ABI):
-	- Call data = selector (4 bytes) + `abi.encode(name, description)`
+	- Call data = selector (4 bytes) + `abi.encode(name, description, metadata)`
 	- Each `string` is dynamic: head contains a 32-byte offset; tail contains `length (uint256)` + UTF-8 bytes + zero padding to a 32-byte boundary.
 - Return value encoding: returns `(uint64 registryId)` encoded as a single 32-byte word (left-padded).
 - Expected gas (rough): ~`80,000–250,000` EVM gas (depends on KV writes and string lengths)
@@ -183,7 +184,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 	- No RBAC permission check; effectively any EVM caller can create a registry as long as `name` is unique.
 - State mutations:
 	- Creates `registryId = RegistryCount + 1`
-	- Stores `Registries[registryId] = {id, name, description, creator, created_at}`
+	- Stores `Registries[registryId] = {id, name, description, creator, created_at, metadata}`
 	- Stores `RegistryIdByName[name] = registryId`
 	- Initializes RBAC: sets the registry admin role to be its own admin; adds the creator as a member of the registry admin role
 	- Initializes registry record counter; updates `RegistryCount`

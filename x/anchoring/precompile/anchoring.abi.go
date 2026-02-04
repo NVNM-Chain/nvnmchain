@@ -17,8 +17,8 @@ import (
 var (
 	// addRecord((string,string,string,string,string,string,string,uint64,uint64,bool))
 	AddRecordSelector = [4]byte{0x9b, 0x7b, 0x78, 0x69}
-	// addRegistry(string,string)
-	AddRegistrySelector = [4]byte{0x90, 0xde, 0xe1, 0xb1}
+	// addRegistry(string,string,string)
+	AddRegistrySelector = [4]byte{0x31, 0x8b, 0x38, 0xb1}
 	// grantRole(uint64,string,address,string)
 	GrantRoleSelector = [4]byte{0xb8, 0xfd, 0xd1, 0xa7}
 	// records(string,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))
@@ -34,7 +34,7 @@ var (
 // Big endian integer versions of function selectors
 const (
 	AddRecordID          = 2608560233
-	AddRegistryID        = 2430525873
+	AddRegistryID        = 831207601
 	GrantRoleID          = 3103642023
 	RecordsID            = 44806111
 	RegistriesID         = 363734799
@@ -313,7 +313,7 @@ func (t *Record) Decode(data []byte) (int, error) {
 	return dynamicOffset, nil
 }
 
-const RegistryStaticSize = 160
+const RegistryStaticSize = 192
 
 var _ abi.Tuple = (*Registry)(nil)
 
@@ -324,6 +324,7 @@ type Registry struct {
 	Description string
 	Creator     string
 	CreatedAt   string
+	Metadata    string
 }
 
 // EncodedSize returns the total encoded size of Registry
@@ -333,6 +334,7 @@ func (t Registry) EncodedSize() int {
 	dynamicSize += abi.SizeString(t.Description)
 	dynamicSize += abi.SizeString(t.Creator)
 	dynamicSize += abi.SizeString(t.CreatedAt)
+	dynamicSize += abi.SizeString(t.Metadata)
 
 	return RegistryStaticSize + dynamicSize
 }
@@ -390,6 +392,16 @@ func (value Registry) EncodeTo(buf []byte) (int, error) {
 	}
 	dynamicOffset += n
 
+	// Field Metadata: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[160+24:160+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Metadata, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
 	return dynamicOffset, nil
 }
 
@@ -404,7 +416,7 @@ func (value Registry) Encode() ([]byte, error) {
 
 // Decode decodes Registry from ABI bytes in the provided buffer
 func (t *Registry) Decode(data []byte) (int, error) {
-	if len(data) < 160 {
+	if len(data) < 192 {
 		return 0, io.ErrUnexpectedEOF
 	}
 	var (
@@ -412,7 +424,7 @@ func (t *Registry) Decode(data []byte) (int, error) {
 		n      int
 		offset int
 	)
-	dynamicOffset := 160
+	dynamicOffset := 192
 	// Decode static field Id: uint64
 	t.Id, _, err = abi.DecodeUint64(data[0:])
 	if err != nil {
@@ -478,6 +490,21 @@ func (t *Registry) Decode(data []byte) (int, error) {
 		}
 		dynamicOffset += n
 	}
+	// Decode dynamic field Metadata
+	{
+		offset, err = abi.DecodeSize(data[160:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Metadata, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
 	return dynamicOffset, nil
 }
 
@@ -506,7 +533,7 @@ func EncodeRecordSlice(value []Record, buf []byte) (int, error) {
 	return dynamicOffset + 32, nil
 }
 
-// EncodeRegistrySlice encodes (uint64,string,string,string,string)[] to ABI bytes
+// EncodeRegistrySlice encodes (uint64,string,string,string,string,string)[] to ABI bytes
 func EncodeRegistrySlice(value []Registry, buf []byte) (int, error) {
 	// Encode length
 	binary.BigEndian.PutUint64(buf[24:32], uint64(len(value)))
@@ -540,7 +567,7 @@ func SizeRecordSlice(value []Record) int {
 	return size
 }
 
-// SizeRegistrySlice returns the encoded size of (uint64,string,string,string,string)[]
+// SizeRegistrySlice returns the encoded size of (uint64,string,string,string,string,string)[]
 func SizeRegistrySlice(value []Registry) int {
 	size := 32 + 32*len(value) // length + offset pointers for dynamic elements
 	for _, elem := range value {
@@ -589,7 +616,7 @@ func DecodeRecordSlice(data []byte) ([]Record, int, error) {
 	return result, dynamicOffset + 32, nil
 }
 
-// DecodeRegistrySlice decodes (uint64,string,string,string,string)[] from ABI bytes
+// DecodeRegistrySlice decodes (uint64,string,string,string,string,string)[] from ABI bytes
 func DecodeRegistrySlice(data []byte) ([]Registry, int, error) {
 	// Decode length
 	if len(data) < 32 {
@@ -748,7 +775,7 @@ type AddRecordReturn struct {
 
 var _ abi.Method = (*AddRegistryCall)(nil)
 
-const AddRegistryCallStaticSize = 64
+const AddRegistryCallStaticSize = 96
 
 var _ abi.Tuple = (*AddRegistryCall)(nil)
 
@@ -756,6 +783,7 @@ var _ abi.Tuple = (*AddRegistryCall)(nil)
 type AddRegistryCall struct {
 	Name        string
 	Description string
+	Metadata    string
 }
 
 // EncodedSize returns the total encoded size of AddRegistryCall
@@ -763,6 +791,7 @@ func (t AddRegistryCall) EncodedSize() int {
 	dynamicSize := 0
 	dynamicSize += abi.SizeString(t.Name)
 	dynamicSize += abi.SizeString(t.Description)
+	dynamicSize += abi.SizeString(t.Metadata)
 
 	return AddRegistryCallStaticSize + dynamicSize
 }
@@ -795,6 +824,16 @@ func (value AddRegistryCall) EncodeTo(buf []byte) (int, error) {
 	}
 	dynamicOffset += n
 
+	// Field Metadata: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[64+24:64+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Metadata, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
 	return dynamicOffset, nil
 }
 
@@ -809,7 +848,7 @@ func (value AddRegistryCall) Encode() ([]byte, error) {
 
 // Decode decodes AddRegistryCall from ABI bytes in the provided buffer
 func (t *AddRegistryCall) Decode(data []byte) (int, error) {
-	if len(data) < 64 {
+	if len(data) < 96 {
 		return 0, io.ErrUnexpectedEOF
 	}
 	var (
@@ -817,7 +856,7 @@ func (t *AddRegistryCall) Decode(data []byte) (int, error) {
 		n      int
 		offset int
 	)
-	dynamicOffset := 64
+	dynamicOffset := 96
 	// Decode dynamic field Name
 	{
 		offset, err = abi.DecodeSize(data[0:])
@@ -843,6 +882,21 @@ func (t *AddRegistryCall) Decode(data []byte) (int, error) {
 			return 0, abi.ErrInvalidOffsetForDynamicField
 		}
 		t.Description, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	// Decode dynamic field Metadata
+	{
+		offset, err = abi.DecodeSize(data[64:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Metadata, n, err = abi.DecodeString(data[dynamicOffset:])
 		if err != nil {
 			return 0, err
 		}
@@ -880,10 +934,12 @@ func (t AddRegistryCall) EncodeWithSelector() ([]byte, error) {
 func NewAddRegistryCall(
 	name string,
 	description string,
+	metadata string,
 ) *AddRegistryCall {
 	return &AddRegistryCall{
 		Name:        name,
 		Description: description,
+		Metadata:    metadata,
 	}
 }
 
@@ -1640,7 +1696,7 @@ func (value RegistriesReturn) EncodeTo(buf []byte) (int, error) {
 		err error
 		n   int
 	)
-	// Field Registries: (uint64,string,string,string,string)[]
+	// Field Registries: (uint64,string,string,string,string,string)[]
 	// Encode offset pointer
 	binary.BigEndian.PutUint64(buf[0+24:0+32], uint64(dynamicOffset))
 	// Encode dynamic data

@@ -60,6 +60,8 @@ message MsgAddRegistry {
   string name = 2;
   // description of the registry
   string description = 3;
+  // metadata of the registry
+  string metadata = 4;
 }
 
 // MsgAddRegistryResponse defines the response structure for executing a

@@ -43,6 +43,7 @@ func (k msgServer) AddRegistry(goCtx context.Context, req *types.MsgAddRegistry)
 		Description: req.Description,
 		Creator:     req.Sender,
 		CreatedAt:   ctx.BlockTime().String(),
+		Metadata:    req.Metadata,
 	}
 	// Only admin or editor can add
 	if err := k.Keeper.Registries.Set(ctx, registryId, registry); err != nil {

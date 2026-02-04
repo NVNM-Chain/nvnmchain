@@ -43,5 +43,6 @@ func ToABIRegistry(reg types.Registry) Registry {
 		Description: reg.Description,
 		Creator:     reg.Creator,
 		CreatedAt:   reg.CreatedAt,
+		Metadata:    reg.Metadata,
 	}
 }
