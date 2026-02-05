@@ -5,6 +5,7 @@ import (
 
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
+	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -76,6 +77,16 @@ func (k *RBACKeeper) GrantRole(ctx sdk.Context, role Role, addr sdk.AccAddress, 
 	if !hasAdminRole {
 		return ErrMissingRole.Wrapf("account %s is missing role %s", granter.String(), common.Hash(adminRole).Hex())
 	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeGrantRole,
+			sdk.NewAttribute(types.AttributeKeyGrantee, addr.String()),
+			sdk.NewAttribute(types.AttributeKeyGranter, granter.String()),
+			sdk.NewAttribute(types.AttributeKeyRole, common.Hash(role).Hex()),
+		),
+	})
+
 	return k.RoleMembers.Set(ctx, collections.Join(role, addr), []byte{})
 }
 
@@ -91,5 +102,15 @@ func (k *RBACKeeper) RevokeRole(ctx sdk.Context, role Role, addr sdk.AccAddress,
 	if !hasAdminRole {
 		return ErrMissingRole.Wrapf("account %s is missing role %s", revoker.String(), common.Hash(adminRole).Hex())
 	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeRevokeRole,
+			sdk.NewAttribute(types.AttributeKeyRevokee, addr.String()),
+			sdk.NewAttribute(types.AttributeKeyRevoker, revoker.String()),
+			sdk.NewAttribute(types.AttributeKeyRole, common.Hash(role).Hex()),
+		),
+	})
+
 	return k.RoleMembers.Remove(ctx, collections.Join(role, addr))
 }

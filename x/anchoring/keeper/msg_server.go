@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 
-	"cosmossdk.io/collections"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/rbac"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -29,50 +28,15 @@ func isRecordRole(checksum string) bool {
 
 func (k msgServer) AddRegistry(goCtx context.Context, req *types.MsgAddRegistry) (*types.MsgAddRegistryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	if _, err := k.Keeper.RegistryIdByName.Get(ctx, req.Name); err == nil {
-		return nil, types.ErrRegistryExists
-	}
-	registryCount, err := k.RegistryCount.Get(ctx)
+	sender, err := k.addressCodec.StringToBytes(req.Sender)
 	if err != nil {
 		return nil, err
 	}
-	registryId := registryCount + 1
-	registry := types.Registry{
-		Id:          registryId,
-		Name:        req.Name,
-		Description: req.Description,
-		Creator:     req.Sender,
-		CreatedAt:   ctx.BlockTime().String(),
-		Metadata:    req.Metadata,
-	}
-	// Only admin or editor can add
-	if err := k.Keeper.Registries.Set(ctx, registryId, registry); err != nil {
-		return nil, err
-	}
-	if err := k.Keeper.RegistryIdByName.Set(ctx, req.Name, registryId); err != nil {
-		return nil, err
-	}
-
-	adminRole := k.Keeper.RegistryRole(registryId, RoleAdmin)
-	if err := k.Keeper.RBAC.SetRoleAdmin(ctx, adminRole, adminRole); err != nil {
-		return nil, err
-	}
-	creator, err := k.addressCodec.StringToBytes(req.Sender)
+	registryId, err := k.Keeper.AddRegistry(ctx, sender, req.Name, req.Description, req.Metadata)
 	if err != nil {
 		return nil, err
 	}
-	if err := k.Keeper.RBAC.RoleMembers.Set(ctx, collections.Join(adminRole, sdk.AccAddress(creator)), []byte{}); err != nil {
-		return nil, err
-	}
 
-	// set record count to zero
-	if err := k.Keeper.initializeRegistryRecordCounter(ctx, registryId); err != nil {
-		return nil, err
-	}
-	// update registry count
-	if err := k.RegistryCount.Set(ctx, registryId); err != nil {
-		return nil, err
-	}
 	return &types.MsgAddRegistryResponse{RegistryId: registryId}, nil
 }
 

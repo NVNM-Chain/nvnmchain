@@ -1,11 +1,74 @@
 package keeper
 
 import (
+	"fmt"
+
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
+
+func (k Keeper) AddRegistry(ctx sdk.Context, sender sdk.AccAddress, name, description, metadata string) (uint64, error) {
+	exists, err := k.RegistryIdByName.Has(ctx, name)
+	if err != nil {
+		return 0, err
+	}
+	if exists {
+		return 0, types.ErrRegistryExists
+	}
+	registryCount, err := k.RegistryCount.Get(ctx)
+	if err != nil {
+		return 0, err
+	}
+	registryId := registryCount + 1
+	registry := types.Registry{
+		Id:          registryId,
+		Name:        name,
+		Description: description,
+		Creator:     sender.String(),
+		CreatedAt:   ctx.BlockTime().String(),
+		Metadata:    metadata,
+	}
+	// Only admin or editor can add
+	if err := k.Registries.Set(ctx, registryId, registry); err != nil {
+		return 0, err
+	}
+	if err := k.RegistryIdByName.Set(ctx, name, registryId); err != nil {
+		return 0, err
+	}
+
+	adminRole := k.RegistryRole(registryId, RoleAdmin)
+	if err := k.RBAC.SetRoleAdmin(ctx, adminRole, adminRole); err != nil {
+		return 0, err
+	}
+	creator, err := k.addressCodec.StringToBytes(sender.String())
+	if err != nil {
+		return 0, err
+	}
+	if err := k.RBAC.RoleMembers.Set(ctx, collections.Join(adminRole, sdk.AccAddress(creator)), []byte{}); err != nil {
+		return 0, err
+	}
+
+	// set record count to zero
+	if err := k.initializeRegistryRecordCounter(ctx, registryId); err != nil {
+		return 0, err
+	}
+	// update registry count
+	if err := k.RegistryCount.Set(ctx, registryId); err != nil {
+		return 0, err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeAddRegistry,
+			sdk.NewAttribute(types.AttributeKeyRegistryId, fmt.Sprint(registryId)),
+			sdk.NewAttribute(types.AttributeKeyRegistryName, fmt.Sprint(name)),
+		),
+	})
+
+	return registryId, nil
+}
 
 func (k Keeper) AddRecord(ctx sdk.Context, sender sdk.AccAddress, record types.Record) error {
 	registryId, err := k.RegistryIdByName.Get(ctx, record.Registry)
@@ -75,6 +138,16 @@ func (k Keeper) AddRecord(ctx sdk.Context, sender sdk.AccAddress, record types.R
 		}
 	}
 
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeAddRecord,
+			sdk.NewAttribute(types.AttributeKeyRegistryId, fmt.Sprint(registryId)),
+			sdk.NewAttribute(types.AttributeKeyRecordId, fmt.Sprint(recordId)),
+			sdk.NewAttribute(types.AttributeKeyRecordIndex, fmt.Sprint(index)),
+			sdk.NewAttribute(types.AttributeKeyRecordChecksum, record.Checksum),
+		),
+	})
+
 	return nil
 }
 
@@ -92,5 +165,17 @@ func (k Keeper) UpdateRecordStatus(ctx sdk.Context, sender sdk.AccAddress, regis
 	if err := k.Records.Set(ctx, collections.Join3(registryId, recordId, index), record); err != nil {
 		return err
 	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeUpdateRecordStatus,
+			sdk.NewAttribute(types.AttributeKeyRegistryId, fmt.Sprint(registryId)),
+			sdk.NewAttribute(types.AttributeKeyRecordId, fmt.Sprint(recordId)),
+			sdk.NewAttribute(types.AttributeKeyRecordIndex, fmt.Sprint(index)),
+			sdk.NewAttribute(types.AttributeKeyRecordStatus, newStatus),
+			sdk.NewAttribute(types.AttributeKeyRecordChecksum, record.Checksum),
+		),
+	})
+
 	return nil
 }
