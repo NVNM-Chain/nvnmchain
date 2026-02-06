@@ -75,7 +75,7 @@ The `AddRegistry` function creates a new registry.
 
 ### AddRecord
 
-The `AddRecord` function adds a new record (and automatically versions it via `record_id` and `index`) under the registry indicated by `record.registry`.
+The `AddRecord` function adds a new record (and automatically versions it via `record_id` and `index`) under the registry indicated by `record.registry`. The `Msg/AddRecord` response returns the assigned `record_id`.
 
 ### UpdateRecordStatus
 
@@ -88,6 +88,22 @@ For more detailed information on the module's implementation and usage, please r
 The Anchoring module exposes an EVM precompile at:
 
 - Address: `0x0000000000000000000000000000000000000a00`
+
+### EVM Logs (Events)
+
+When called from the EVM, the precompile emits EVM logs for state-changing operations.
+
+- Topic0 is `keccak256(<event signature>)`.
+- Topic1 is the indexed caller address (`msg.sender`), padded to 32 bytes.
+- All remaining fields are ABI-encoded into the log data.
+
+Event signatures:
+
+- `AddRegistry(address,uint64,string)`
+- `AddRecord(address,uint64,uint64,uint64,string)`
+- `UpdateRecordStatus(address,uint64,uint64,uint64,string)`
+- `GrantRole(address,uint64,string,address,string)`
+- `RevokeRole(address,uint64,string,address,string)`
 
 ### Complete Human-Readable ABI
 
@@ -135,7 +151,8 @@ interface IAnchoringPrecompile {
 		returns (uint64 registryId);
 
 	function addRecord(Record record)
-		external;
+		external
+		returns (uint64 recordId);
 
 	function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status)
 		external;
@@ -189,7 +206,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 	- Initializes RBAC: sets the registry admin role to be its own admin; adds the creator as a member of the registry admin role
 	- Initializes registry record counter; updates `RegistryCount`
 - Events emitted:
-	- No anchoring-module-specific events are emitted in code; only generic Cosmos SDK tx events.
+	- EVM log: `AddRegistry(address,uint64,string)`
 
 #### addRecord
 
@@ -202,7 +219,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 	- Tuples are encoded like structs: offsets for dynamic fields (`string`s) plus 32-byte words for static fields (`uint64`, `bool`).
 	- `uint64` encodes as 32-byte left-padded; `bool` as `0`/`1` in a 32-byte word.
 	- Note: although `Record` includes `timestamp`, `recordId`, `index`, `isLatest`, the chain overwrites some of these on write.
-- Return value encoding: returns `()` (empty return data)
+- Return value encoding: returns `(uint64 recordId)` encoded as a single 32-byte word (left-padded).
 - Expected gas (rough): ~`120,000–450,000` EVM gas (depends on string sizes and whether this is a new checksum vs a new version)
 - Authorization checks:
 	- Caller must have `admin` or `editor` via one of:
@@ -220,7 +237,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 	- Updates indexes/mappings for `checksum ↔ recordId`
 	- If `index > 1`, marks the previous version `(index-1)` as `is_latest = false`
 - Events emitted:
-	- No anchoring-module-specific events are emitted in code; only generic Cosmos SDK tx events.
+	- EVM log: `AddRecord(address,uint64,uint64,uint64,string)`
 
 #### updateRecordStatus
 
@@ -239,7 +256,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 	- Sets `record.Status = status`
 	- Writes it back to `(registryId, recordId, index)`
 - Events emitted:
-	- No anchoring-module-specific events are emitted in code; only generic Cosmos SDK tx events.
+	- EVM log: `UpdateRecordStatus(address,uint64,uint64,uint64,string)`
 
 #### grantRole
 
@@ -261,7 +278,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 	- Sets/updates `RoleAdmins[role] = registryAdminRole`
 	- Adds `RoleMembers[(role, account)] = {}`
 - Events emitted:
-	- No anchoring-module-specific events are emitted in code; only generic Cosmos SDK tx events.
+	- EVM log: `GrantRole(address,uint64,string,address,string)`
 
 #### revokeRole
 
@@ -279,7 +296,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 	- Removes `RoleMembers[(role, account)]` for the computed role (registry- or checksum-scoped)
 	- Does not delete the role admin mapping.
 - Events emitted:
-	- No anchoring-module-specific events are emitted in code; only generic Cosmos SDK tx events.
+	- EVM log: `RevokeRole(address,uint64,string,address,string)`
 
 ### Read Operations (view)
 

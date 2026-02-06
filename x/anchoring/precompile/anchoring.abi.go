@@ -768,9 +768,105 @@ func NewAddRecordCall(
 	}
 }
 
-// AddRecordReturn represents the output arguments for addRecord function
+const AddRecordReturnStaticSize = 32
+
+var _ abi.Tuple = (*AddRecordReturn)(nil)
+var _ abi.PackedTuple = (*AddRecordReturn)(nil)
+
+// AddRecordReturn represents an ABI tuple
 type AddRecordReturn struct {
-	abi.EmptyTuple
+	RecordId uint64
+}
+
+// EncodedSize returns the total encoded size of AddRecordReturn
+func (t AddRecordReturn) EncodedSize() int {
+	dynamicSize := 0
+
+	return AddRecordReturnStaticSize + dynamicSize
+}
+
+// EncodeTo encodes AddRecordReturn to ABI bytes in the provided buffer
+func (value AddRecordReturn) EncodeTo(buf []byte) (int, error) {
+	// Encode tuple fields
+	dynamicOffset := AddRecordReturnStaticSize // Start dynamic data after static section
+	// Field RecordId: uint64
+	if _, err := abi.EncodeUint64(value.RecordId, buf[0:]); err != nil {
+		return 0, err
+	}
+
+	return dynamicOffset, nil
+}
+
+// Encode encodes AddRecordReturn to ABI bytes
+func (value AddRecordReturn) Encode() ([]byte, error) {
+	buf := make([]byte, value.EncodedSize())
+	if _, err := value.EncodeTo(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// Decode decodes AddRecordReturn from ABI bytes in the provided buffer
+func (t *AddRecordReturn) Decode(data []byte) (int, error) {
+	if len(data) < 32 {
+		return 0, io.ErrUnexpectedEOF
+	}
+	var (
+		err error
+	)
+	dynamicOffset := 32
+	// Decode static field RecordId: uint64
+	t.RecordId, _, err = abi.DecodeUint64(data[0:])
+	if err != nil {
+		return 0, err
+	}
+	return dynamicOffset, nil
+}
+
+// PackedEncodedSize returns the packed encoded size of AddRecordReturn
+func (t AddRecordReturn) PackedEncodedSize() int {
+	return 8
+}
+
+// PackedEncodeTo encodes AddRecordReturn to packed ABI bytes in the provided buffer
+func (value AddRecordReturn) PackedEncodeTo(buf []byte) (int, error) {
+	// Encode tuple fields sequentially (packed, no dynamic section)
+	var (
+		offset int
+		n      int
+		err    error
+	)
+	// Field RecordId: uint64
+	n, err = abi.PackedEncodeUint64(value.RecordId, buf[offset:])
+	if err != nil {
+		return 0, err
+	}
+	offset += n
+
+	return offset, nil
+}
+
+// PackedEncode encodes AddRecordReturn to packed ABI bytes
+func (value AddRecordReturn) PackedEncode() ([]byte, error) {
+	buf := make([]byte, value.PackedEncodedSize())
+	if _, err := value.PackedEncodeTo(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// PackedDecode decodes AddRecordReturn from packed ABI bytes
+func (t *AddRecordReturn) PackedDecode(data []byte) (int, error) {
+	if len(data) < 8 {
+		return 0, io.ErrUnexpectedEOF
+	}
+	var err error
+	// Decode field RecordId: uint64
+	t.RecordId, _, err = abi.PackedDecodeUint64(data[0:])
+	if err != nil {
+		return 0, err
+	}
+	return 8, nil
 }
 
 var _ abi.Method = (*AddRegistryCall)(nil)

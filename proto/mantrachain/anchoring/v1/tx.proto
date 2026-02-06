@@ -82,7 +82,9 @@ message MsgAddRecord {
 
 // MsgAddRecordResponse defines the response structure for executing a
 // MsgAddRecord message.
-message MsgAddRecordResponse {}
+message MsgAddRecordResponse {
+  uint64 record_id = 1;
+}
 
 // MsgUpdateRecordStatus is the Msg/UpdateRecordStatus request type.
 message MsgUpdateRecordStatus {

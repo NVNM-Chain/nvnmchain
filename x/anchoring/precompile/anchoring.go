@@ -24,7 +24,7 @@ var HumanABI = []string{
 	"struct PageResponse { bytes nextKey; uint64 total; }",
 
 	"function addRegistry(string name, string description, string metadata) returns (uint64 registryId)",
-	"function addRecord(Record record) returns ()",
+	"function addRecord(Record record) returns (uint64 recordId)",
 	"function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status) returns ()",
 	"function records(string registry, string checksum, uint64 recordId, uint64 index, PageRequest pagination) returns (Record[] records, PageResponse pagination)",
 	"function registries(uint64 registryId, string name, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
@@ -115,7 +115,7 @@ func (Precompile) IsTransactionID(methodID uint32) bool {
 func (p Precompile) AddRegistry(
 	ctx sdk.Context,
 	input AddRegistryCall,
-	_ vm.StateDB,
+	stateDB vm.StateDB,
 	contract *vm.Contract,
 ) (*AddRegistryReturn, error) {
 	senderStr, err := p.keeper.BytesToString(contract.Caller().Bytes())
@@ -132,13 +132,16 @@ func (p Precompile) AddRegistry(
 	if err != nil {
 		return nil, err
 	}
+	if err := p.emitAddRegistryEvent(ctx, stateDB, contract.Caller(), res.RegistryId, input.Name); err != nil {
+		return nil, err
+	}
 	return &AddRegistryReturn{RegistryId: res.RegistryId}, nil
 }
 
 func (p Precompile) AddRecord(
 	ctx sdk.Context,
 	input AddRecordCall,
-	_ vm.StateDB,
+	stateDB vm.StateDB,
 	contract *vm.Contract,
 ) (*AddRecordReturn, error) {
 	senderStr, err := p.keeper.BytesToString(contract.Caller().Bytes())
@@ -152,16 +155,24 @@ func (p Precompile) AddRecord(
 		Record: &doc,
 	}
 
-	if _, err := p.msgServer.AddRecord(ctx, msg); err != nil {
+	res, err := p.msgServer.AddRecord(ctx, msg)
+	if err != nil {
 		return nil, err
 	}
-	return &AddRecordReturn{}, nil
+	registryID, err := p.keeper.RegistryIdByName.Get(ctx, doc.Registry)
+	if err != nil {
+		return nil, err
+	}
+	if err := p.emitAddRecordEvent(ctx, stateDB, contract.Caller(), registryID, res.RecordId, doc.Checksum); err != nil {
+		return nil, err
+	}
+	return &AddRecordReturn{RecordId: res.RecordId}, nil
 }
 
 func (p Precompile) UpdateRecordStatus(
 	ctx sdk.Context,
 	input UpdateRecordStatusCall,
-	_ vm.StateDB,
+	stateDB vm.StateDB,
 	contract *vm.Contract,
 ) (*UpdateRecordStatusReturn, error) {
 	sender, err := p.keeper.BytesToString(contract.Caller().Bytes())
@@ -178,6 +189,9 @@ func (p Precompile) UpdateRecordStatus(
 	}
 
 	if _, err := p.msgServer.UpdateRecordStatus(ctx, msg); err != nil {
+		return nil, err
+	}
+	if err := p.emitUpdateRecordStatusEvent(ctx, stateDB, contract.Caller(), input.RegistryId, input.RecordId, input.Index, input.Status); err != nil {
 		return nil, err
 	}
 	return &UpdateRecordStatusReturn{}, nil
@@ -252,7 +266,7 @@ func (p Precompile) Registries(
 func (p Precompile) GrantRole(
 	ctx sdk.Context,
 	input GrantRoleCall,
-	_ vm.StateDB,
+	stateDB vm.StateDB,
 	contract *vm.Contract,
 ) (*GrantRoleReturn, error) {
 	admin, err := p.keeper.BytesToString(contract.Caller().Bytes())
@@ -276,6 +290,9 @@ func (p Precompile) GrantRole(
 	if _, err := p.msgServer.GrantRole(ctx, msg); err != nil {
 		return nil, err
 	}
+	if err := p.emitGrantRoleEvent(ctx, stateDB, contract.Caller(), input.RegistryId, input.Checksum, input.Account, input.Role); err != nil {
+		return nil, err
+	}
 	return &GrantRoleReturn{}, nil
 }
 
@@ -283,7 +300,7 @@ func (p Precompile) GrantRole(
 func (p Precompile) RevokeRole(
 	ctx sdk.Context,
 	input RevokeRoleCall,
-	_ vm.StateDB,
+	stateDB vm.StateDB,
 	contract *vm.Contract,
 ) (*RevokeRoleReturn, error) {
 	admin, err := p.keeper.BytesToString(contract.Caller().Bytes())
@@ -305,6 +322,9 @@ func (p Precompile) RevokeRole(
 	}
 
 	if _, err := p.msgServer.RevokeRole(ctx, msg); err != nil {
+		return nil, err
+	}
+	if err := p.emitRevokeRoleEvent(ctx, stateDB, contract.Caller(), input.RegistryId, input.Checksum, input.Account, input.Role); err != nil {
 		return nil, err
 	}
 	return &RevokeRoleReturn{}, nil

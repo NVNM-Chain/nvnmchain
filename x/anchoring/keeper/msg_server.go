@@ -47,10 +47,11 @@ func (k msgServer) AddRecord(goCtx context.Context, req *types.MsgAddRecord) (*t
 		return nil, err
 	}
 	// Only admin or editor can add
-	if err := k.Keeper.AddRecord(ctx, sender, *req.Record); err != nil {
+	recordId, err := k.Keeper.AddRecord(ctx, sender, *req.Record)
+	if err != nil {
 		return nil, err
 	}
-	return &types.MsgAddRecordResponse{}, nil
+	return &types.MsgAddRecordResponse{RecordId: recordId}, nil
 }
 
 func (k msgServer) UpdateRecordStatus(goCtx context.Context, req *types.MsgUpdateRecordStatus) (*types.MsgUpdateRecordStatusResponse, error) {
