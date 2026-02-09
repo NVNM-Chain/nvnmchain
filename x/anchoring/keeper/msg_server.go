@@ -41,6 +41,12 @@ func (k msgServer) AddRegistry(goCtx context.Context, req *types.MsgAddRegistry)
 }
 
 func (k msgServer) AddRecord(goCtx context.Context, req *types.MsgAddRecord) (*types.MsgAddRecordResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if req.Record == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("record cannot be nil")
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sender, err := k.addressCodec.StringToBytes(req.Sender)
 	if err != nil {

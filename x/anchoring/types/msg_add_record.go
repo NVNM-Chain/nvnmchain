@@ -15,6 +15,9 @@ func (msg MsgAddRecord) ValidateBasic() error {
 	if err != nil {
 		return fmt.Errorf("invalid sender address: %w", err)
 	}
+	if msg.Record == nil {
+		return fmt.Errorf("record cannot be nil")
+	}
 	if msg.Record.Checksum == "" {
 		return fmt.Errorf("checksum cannot be empty")
 	}
