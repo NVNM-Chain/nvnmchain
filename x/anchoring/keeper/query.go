@@ -84,18 +84,61 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 	}
 
 	if req.Checksum != "" && req.RegistryId == 0 {
-		// registryId => recordId
-		recordIds := make(map[uint64]uint64)
-		if err := q.k.RecordIdByChecksumAndRegistry.Walk(ctx, collections.NewPrefixedPairRange[string, uint64](req.Checksum),
+		// Paginate checksum-only queries to avoid unbounded work
+		const defaultLimit uint64 = 50
+		const maxLimit uint64 = 200
+
+		pageReq := req.Pagination
+		if pageReq == nil {
+			pageReq = &query.PageRequest{}
+		}
+		limit := pageReq.Limit
+		if limit == 0 {
+			limit = defaultLimit
+		}
+		if limit > maxLimit {
+			limit = maxLimit
+		}
+		offset := pageReq.Offset
+
+		var (
+			seen       uint64
+			selected   []collections.Pair[uint64, uint64] // (registryId, recordId)
+			totalCount uint64
+		)
+
+		walkErr := q.k.RecordIdByChecksumAndRegistry.Walk(
+			ctx,
+			collections.NewPrefixedPairRange[string, uint64](req.Checksum),
 			func(key collections.Pair[string, uint64], recordId uint64) (bool, error) {
-				recordIds[key.K2()] = recordId
+				if pageReq.CountTotal {
+					totalCount++
+				}
+				if seen < offset {
+					seen++
+					return false, nil
+				}
+				if uint64(len(selected)) < limit {
+					selected = append(selected, collections.Join(key.K2(), recordId))
+					seen++
+					return false, nil
+				}
+				// Stop when the page is full (unless counting total)
+				if !pageReq.CountTotal {
+					return true, nil
+				}
+				seen++
 				return false, nil
 			},
-		); err != nil {
-			return nil, err
+		)
+		if walkErr != nil {
+			return nil, walkErr
 		}
-		var records []*types.Record
-		for registryId, recordId := range recordIds {
+
+		records := make([]*types.Record, 0, len(selected))
+		for _, pair := range selected {
+			registryId := pair.K1()
+			recordId := pair.K2()
 			index, err := q.k.RecordIndices.Get(ctx, collections.Join(registryId, recordId))
 			if err != nil {
 				return nil, err
@@ -106,7 +149,12 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 			}
 			records = append(records, &record)
 		}
-		return &types.QueryRecordsResponse{Records: records}, nil
+
+		var pageRes *query.PageResponse
+		if req.Pagination != nil {
+			pageRes = &query.PageResponse{Total: totalCount}
+		}
+		return &types.QueryRecordsResponse{Records: records, Pagination: pageRes}, nil
 	}
 
 	return &types.QueryRecordsResponse{Records: nil, Pagination: nil}, nil
