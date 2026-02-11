@@ -30,7 +30,7 @@ func TestQueryRecords_ChecksumOnly_RespectsPagination(t *testing.T) {
 
 	require.NoError(t, k.RegistryCount.Set(ctx, 0))
 
-	adminStr := "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072"
+	adminStr := keepertest.TestSenderAddr
 	adminBz, err := addressCodec.StringToBytes(adminStr)
 	require.NoError(t, err)
 	admin := sdk.AccAddress(adminBz)

@@ -49,7 +49,7 @@ func TestMsgUpdateParams(t *testing.T) {
 			input: &types.MsgUpdateParams{
 				Authority:  "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
 				McaTax:     "",
-				McaAddress: "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072",
+				McaAddress: keepertest.TestSenderAddr,
 			},
 			expErr: false,
 		},
@@ -66,7 +66,7 @@ func TestMsgUpdateParams(t *testing.T) {
 		{
 			name: "update both",
 			input: &types.MsgUpdateParams{
-				Authority:  "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072",
+				Authority:  keepertest.TestSenderAddr,
 				McaTax:     "0.200000000000000000",
 				McaAddress: "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
 			},

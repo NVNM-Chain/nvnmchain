@@ -18,23 +18,8 @@ func (msg MsgAddRecord) ValidateBasic() error {
 	if msg.Record == nil {
 		return fmt.Errorf("record cannot be nil")
 	}
-	if msg.Record.Checksum == "" {
-		return fmt.Errorf("checksum cannot be empty")
-	}
-	if msg.Record.ChecksumAlgo == "" {
-		return fmt.Errorf("checksum algorithm cannot be empty")
-	}
-	if msg.Record.Uri == "" {
-		return fmt.Errorf("uri cannot be empty")
-	}
-	if msg.Record.Metadata == "" || msg.Record.Metadata == "{}" {
-		return fmt.Errorf("metadata cannot be empty")
-	}
-	if msg.Record.Status == "" {
-		return fmt.Errorf("status cannot be empty")
-	}
-	if msg.Record.Registry == "" {
-		return fmt.Errorf("registry cannot be empty")
+	if err := ValidateRecordForCreate(*msg.Record); err != nil {
+		return err
 	}
 	return nil
 }

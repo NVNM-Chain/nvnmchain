@@ -21,6 +21,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const TestSenderAddr = "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072"
+
 func AnchoringKeeper(tb testing.TB) (keeper.Keeper, sdk.Context, address.Codec) {
 	tb.Helper()
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
@@ -46,6 +48,40 @@ func AnchoringKeeper(tb testing.TB) (keeper.Keeper, sdk.Context, address.Codec) 
 	if err := k.Params.Set(ctx, types.DefaultParams()); err != nil {
 		tb.Fatalf("failed to set params: %v", err)
 	}
+	if err := k.RegistryCount.Set(ctx, 0); err != nil {
+		tb.Fatalf("failed to set registry count: %v", err)
+	}
 
 	return k, ctx, addressCodec
+}
+
+func MustCreateAnchoringRegistry(tb testing.TB, k keeper.Keeper, ctx sdk.Context, sender, name string) uint64 {
+	tb.Helper()
+	ms := keeper.NewMsgServerImpl(k)
+	res, err := ms.AddRegistry(ctx, &types.MsgAddRegistry{
+		Sender:      sender,
+		Name:        name,
+		Description: "test",
+		Metadata:    "{\"k\":\"v\"}",
+	})
+	require.NoError(tb, err)
+	return res.RegistryId
+}
+
+func MustAddAnchoringRecord(tb testing.TB, k keeper.Keeper, ctx sdk.Context, sender, registryName, checksum, checksumAlgo string) uint64 {
+	tb.Helper()
+	ms := keeper.NewMsgServerImpl(k)
+	res, err := ms.AddRecord(ctx, &types.MsgAddRecord{
+		Sender: sender,
+		Record: &types.Record{
+			Registry:     registryName,
+			Uri:          "ipfs://bafy...",
+			Checksum:     checksum,
+			ChecksumAlgo: checksumAlgo,
+			Metadata:     "{\"k\":\"v\"}",
+			Status:       "active",
+		},
+	})
+	require.NoError(tb, err)
+	return res.RecordId
 }

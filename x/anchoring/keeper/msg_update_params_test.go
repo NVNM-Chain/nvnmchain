@@ -38,7 +38,7 @@ func TestMsgUpdateParams(t *testing.T) {
 			name: "update mca address",
 			input: &types.MsgUpdateParams{
 				Authority: "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
-				Admin:     "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072",
+				Admin:     keepertest.TestSenderAddr,
 			},
 			expErr: false,
 		},

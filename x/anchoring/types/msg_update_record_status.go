@@ -18,8 +18,8 @@ func (msg MsgUpdateRecordStatus) ValidateBasic() error {
 	if msg.RecordId == 0 {
 		return fmt.Errorf("record ID cannot be zero")
 	}
-	if msg.Status == "" {
-		return fmt.Errorf("status cannot be empty")
+	if err := ValidateRecordStatus(msg.Status); err != nil {
+		return err
 	}
 	if msg.RegistryId == 0 {
 		return fmt.Errorf("registry ID cannot be zero")

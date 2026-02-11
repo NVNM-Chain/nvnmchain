@@ -7,6 +7,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func (k Keeper) AddRegistry(ctx sdk.Context, sender sdk.AccAddress, name, description, metadata string) (uint64, error) {
@@ -71,6 +72,10 @@ func (k Keeper) AddRegistry(ctx sdk.Context, sender sdk.AccAddress, name, descri
 }
 
 func (k Keeper) AddRecord(ctx sdk.Context, sender sdk.AccAddress, record types.Record) (uint64, error) {
+	if err := types.ValidateRecordForCreate(record); err != nil {
+		return 0, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
+
 	registryId, err := k.RegistryIdByName.Get(ctx, record.Registry)
 	if err != nil {
 		return 0, err
@@ -152,6 +157,10 @@ func (k Keeper) AddRecord(ctx sdk.Context, sender sdk.AccAddress, record types.R
 }
 
 func (k Keeper) UpdateRecordStatus(ctx sdk.Context, sender sdk.AccAddress, registryId, recordId, index uint64, newStatus string) error {
+	if err := types.ValidateRecordStatus(newStatus); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
+
 	// get the record
 	record, err := k.Records.Get(ctx, collections.Join3(registryId, recordId, index))
 	if err != nil {
