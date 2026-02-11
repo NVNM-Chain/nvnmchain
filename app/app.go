@@ -989,7 +989,9 @@ func New(
 	// app.setPostHandler()
 
 	// configure mempool
-	app.configureEVMMempool(appOpts, logger)
+	prepareProposalHandler, processProposalHandler := app.configureEVMMempool(appOpts, logger)
+	app.SetPrepareProposal(prepareProposalHandler)
+	app.SetProcessProposal(processProposalHandler)
 
 	// Register any on-chain upgrades.
 	app.setupUpgradeStoreLoaders()
