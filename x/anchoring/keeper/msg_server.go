@@ -140,6 +140,19 @@ func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (
 			continue
 		}
 
+		// Prevent revoking the last registry-level admin, which would permanently lock the registry.
+		if !isRecordRole(req.Checksum) && roleStr == RoleAdmin {
+			adminRole := k.Keeper.RegistryRole(req.RegistryId, RoleAdmin)
+			isSoleAdmin, err := k.Keeper.RBAC.IsSoleAdmin(ctx, adminRole)
+			if err != nil {
+				lastErr = err
+				continue
+			}
+			if isSoleAdmin {
+				return nil, sdkerrors.ErrInvalidRequest.Wrap("cannot revoke the last registry admin")
+			}
+		}
+
 		if err := k.Keeper.RBAC.RevokeRole(ctx, role, revokee, revoker); err != nil {
 			lastErr = err
 			continue

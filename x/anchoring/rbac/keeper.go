@@ -50,6 +50,22 @@ func (k *RBACKeeper) HasRole(ctx sdk.Context, role Role, addr sdk.AccAddress) (b
 	return k.RoleMembers.Has(ctx, collections.Join(role, addr))
 }
 
+// IsSoleAdmin returns true if the provided admin role has exactly one member.
+// It short-circuits early once two members are found.
+func (k *RBACKeeper) IsSoleAdmin(ctx sdk.Context, adminRole Role) (bool, error) {
+	var seen uint64
+	err := k.RoleMembers.Walk(ctx, collections.NewPrefixedPairRange[Role, sdk.AccAddress](adminRole),
+		func(_ collections.Pair[Role, sdk.AccAddress], _ []byte) (bool, error) {
+			seen++
+			return seen >= 2, nil
+		},
+	)
+	if err != nil {
+		return false, err
+	}
+	return seen == 1, nil
+}
+
 func (k *RBACKeeper) GetRoleAdmin(ctx sdk.Context, role Role) (Role, error) {
 	bz, err := k.RoleAdmins.Get(ctx, role)
 	if err != nil {
