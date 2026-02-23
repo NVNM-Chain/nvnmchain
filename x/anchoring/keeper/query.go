@@ -28,6 +28,64 @@ type queryServer struct {
 // of a document checksum
 func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest) (recordResponse *types.QueryRecordsResponse, err error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	const (
+		defaultLimit uint64 = 50
+		maxLimit     uint64 = 200
+	)
+
+	type paginator struct {
+		countTotal bool
+		offset     uint64
+		limit      uint64
+		seen       uint64
+		collected  uint64
+		total      uint64
+	}
+
+	newPaginator := func(pr *query.PageRequest, defaultLimit, maxLimit uint64) paginator {
+		pageReq := pr
+		if pageReq == nil {
+			pageReq = &query.PageRequest{}
+		}
+		limit := pageReq.Limit
+		if limit == 0 {
+			limit = defaultLimit
+		}
+		if limit > maxLimit {
+			limit = maxLimit
+		}
+		return paginator{
+			countTotal: pageReq.CountTotal,
+			offset:     pageReq.Offset,
+			limit:      limit,
+		}
+	}
+
+	step := func(p *paginator) (include bool, stop bool) {
+		if p.countTotal {
+			p.total++
+		}
+		if p.seen < p.offset {
+			p.seen++
+			return false, false
+		}
+		if p.collected < p.limit {
+			p.seen++
+			p.collected++
+			// Stop when the page is full (unless counting total)
+			if !p.countTotal && p.collected == p.limit {
+				return true, true
+			}
+			return true, false
+		}
+		if !p.countTotal {
+			return false, true
+		}
+		p.seen++
+		return false, false
+	}
+
 	if req.RecordId == 0 && req.Checksum != "" && req.RegistryId != 0 {
 		recordId, err := q.k.RecordIdByRegistryAndChecksum.Get(ctx, collections.Join(req.RegistryId, req.Checksum))
 		if err != nil {
@@ -55,80 +113,51 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 	}
 
 	if req.RegistryId != 0 && req.RecordId == 0 {
-		filteredRecords, pageRes, err := query.CollectionPaginate(ctx, q.k.Records, req.Pagination,
-			func(key collections.Triple[uint64, uint64, uint64], record types.Record) (*types.Record, error) {
-				registryId, err := q.k.RegistryIdByName.Get(sdkCtx, record.Registry)
-				if err != nil {
-					return nil, err
+		// Paginate within the registry instead of across all registries
+		p := newPaginator(req.Pagination, defaultLimit, maxLimit)
+		records := make([]*types.Record, 0, p.limit)
+
+		walkErr := q.k.RecordIndices.Walk(
+			ctx,
+			collections.NewPrefixedPairRange[uint64, uint64](req.RegistryId),
+			func(key collections.Pair[uint64, uint64], index uint64) (bool, error) {
+				include, stop := step(&p)
+				if include {
+					recordId := key.K2()
+					record, err := q.k.Records.Get(sdkCtx, collections.Join3(req.RegistryId, recordId, index))
+					if err != nil {
+						return true, err
+					}
+					records = append(records, &record)
 				}
-				index, err := q.k.RecordIndices.Get(ctx, collections.Join(registryId, record.RecordId))
-				if err != nil {
-					return nil, err
-				}
-				if registryId == req.RegistryId && record.Index == index {
-					return &record, nil
-				}
-				return nil, nil //nolint:nilnil // filtered records are excluded by returning nil
-			})
-		if err != nil {
-			return nil, err
+				return stop, nil
+			},
+		)
+		if walkErr != nil {
+			return nil, walkErr
 		}
-		// remove nil
-		var records []*types.Record
-		for _, record := range filteredRecords {
-			if record != nil {
-				records = append(records, record)
-			}
+
+		var pageRes *query.PageResponse
+		if req.Pagination != nil {
+			pageRes = &query.PageResponse{Total: p.total}
 		}
 		return &types.QueryRecordsResponse{Records: records, Pagination: pageRes}, nil
 	}
 
 	if req.Checksum != "" && req.RegistryId == 0 {
 		// Paginate checksum-only queries to avoid unbounded work
-		const defaultLimit uint64 = 50
-		const maxLimit uint64 = 200
-
-		pageReq := req.Pagination
-		if pageReq == nil {
-			pageReq = &query.PageRequest{}
-		}
-		limit := pageReq.Limit
-		if limit == 0 {
-			limit = defaultLimit
-		}
-		if limit > maxLimit {
-			limit = maxLimit
-		}
-		offset := pageReq.Offset
-
-		var (
-			seen       uint64
-			selected   []collections.Pair[uint64, uint64] // (registryId, recordId)
-			totalCount uint64
-		)
+		p := newPaginator(req.Pagination, defaultLimit, maxLimit)
+		selected := make([]collections.Pair[uint64, uint64], 0, p.limit) // (registryId, recordId)
 
 		walkErr := q.k.RecordIdByChecksumAndRegistry.Walk(
 			ctx,
 			collections.NewPrefixedPairRange[string, uint64](req.Checksum),
 			func(key collections.Pair[string, uint64], recordId uint64) (bool, error) {
-				if pageReq.CountTotal {
-					totalCount++
-				}
-				if seen < offset {
-					seen++
-					return false, nil
-				}
-				if uint64(len(selected)) < limit {
+				include, stop := step(&p)
+				if include {
 					selected = append(selected, collections.Join(key.K2(), recordId))
-					seen++
-					return false, nil
 				}
-				// Stop when the page is full (unless counting total)
-				if !pageReq.CountTotal {
-					return true, nil
-				}
-				seen++
-				return false, nil
+				return stop, nil
 			},
 		)
 		if walkErr != nil {
@@ -152,7 +181,7 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 
 		var pageRes *query.PageResponse
 		if req.Pagination != nil {
-			pageRes = &query.PageResponse{Total: totalCount}
+			pageRes = &query.PageResponse{Total: p.total}
 		}
 		return &types.QueryRecordsResponse{Records: records, Pagination: pageRes}, nil
 	}
