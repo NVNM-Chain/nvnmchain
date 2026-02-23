@@ -6,7 +6,7 @@ const (
 	MaxRecordChecksumLen     = 256
 	MaxRecordChecksumAlgoLen = 128
 	MaxRecordURILen          = 2048
-	MaxRecordMetadataLen     = 8192
+	MaxRecordMetadataLen     = 2048
 	MaxRecordStatusLen       = 64
 )
 
