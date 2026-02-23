@@ -2,7 +2,7 @@ module github.com/MANTRA-Chain/inveniam
 
 go 1.24.2
 
-toolchain go1.24.11
+toolchain go1.24.12
 
 replace (
 	cosmossdk.io/api => github.com/MANTRA-Chain/cosmos-sdk/api v0.7.3-0.20251121090924-851207a04dcd
