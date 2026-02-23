@@ -15,8 +15,8 @@ func (msg MsgAddRegistry) ValidateBasic() error {
 	if err != nil {
 		return fmt.Errorf("invalid sender address: %w", err)
 	}
-	if msg.Name == "" {
-		return fmt.Errorf("name cannot be empty")
+	if err := ValidateRegistryForCreate(msg.Name, msg.Description, msg.Metadata); err != nil {
+		return err
 	}
 
 	return nil

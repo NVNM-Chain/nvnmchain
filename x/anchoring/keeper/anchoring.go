@@ -11,6 +11,9 @@ import (
 )
 
 func (k Keeper) AddRegistry(ctx sdk.Context, sender sdk.AccAddress, name, description, metadata string) (uint64, error) {
+	if err := types.ValidateRegistryForCreate(name, description, metadata); err != nil {
+		return 0, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
 	exists, err := k.RegistryIdByName.Has(ctx, name)
 	if err != nil {
 		return 0, err
