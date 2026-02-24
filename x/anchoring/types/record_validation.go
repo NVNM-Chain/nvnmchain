@@ -3,7 +3,7 @@ package types
 import "fmt"
 
 const (
-	MaxRecordChecksumLen     = 256
+	MaxRecordChecksumLen     = 64
 	MaxRecordChecksumAlgoLen = 128
 	MaxRecordURILen          = 2048
 	MaxRecordMetadataLen     = 2048

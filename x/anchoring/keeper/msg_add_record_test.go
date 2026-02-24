@@ -86,6 +86,15 @@ func TestMsgAddRecord_ValidateBasic_NilRecord(t *testing.T) {
 			wantErrContains: "checksum algorithm cannot be empty",
 		},
 		{
+			name: "oversized checksum",
+			msg: func() types.MsgAddRecord {
+				record := validRecord()
+				record.Checksum = strings.Repeat("a", types.MaxRecordChecksumLen+1)
+				return types.MsgAddRecord{Sender: sender, Record: record}
+			}(),
+			wantErrContains: "checksum exceeds max length",
+		},
+		{
 			name: "empty uri",
 			msg: func() types.MsgAddRecord {
 				record := validRecord()
@@ -184,13 +193,36 @@ func TestMsgAddRecord_OversizedChecksumAlgo_RejectedByMsgServerPath(t *testing.T
 	require.Contains(t, err.Error(), "checksum algorithm exceeds max length")
 }
 
-func TestMsgAddRecord_OversizedMetadata_RejectedByMsgServerPath(t *testing.T) {
+func TestMsgAddRecord_OversizedChecksum_RejectedByMsgServerPath(t *testing.T) {
 	appparams.SetAddressPrefixes()
 	k, ctx, _ := keepertest.AnchoringKeeper(t)
 	ms := keeper.NewMsgServerImpl(k)
 	sender := keepertest.TestSenderAddr
 
 	// sender becomes admin and can add records
+	keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
+	tooLongChecksum := strings.Repeat("a", types.MaxRecordChecksumLen+1)
+	_, err := ms.AddRecord(ctx, &types.MsgAddRecord{
+		Sender: sender,
+		Record: &types.Record{
+			Registry:     "reg1",
+			Uri:          "ipfs://bafy...",
+			Checksum:     tooLongChecksum,
+			ChecksumAlgo: "sha256",
+			Metadata:     "{\"k\":\"v\"}",
+			Status:       "active",
+		},
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "checksum exceeds max length")
+}
+
+func TestMsgAddRecord_OversizedMetadata_RejectedByMsgServerPath(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, _ := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+	sender := keepertest.TestSenderAddr
+
 	keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
 
 	tooLongMetadata := strings.Repeat("a", types.MaxRecordMetadataLen+1)
