@@ -98,8 +98,6 @@ For more information on the architecture and design decisions, please refer to t
 
 Inveniam includes several custom modules:
 
-- `x/sanction`: Blacklisting of addresses to prevent transactions from sanctioned entities.
-- `x/tokenfactory`: Allows for the creation and management of new tokens (based on Neutron's implementation).
 - `x/tax`: Handles tax-related operations within the chain.
 
 For detailed information on each module, please refer to their respective README files in the `x/` directory.
