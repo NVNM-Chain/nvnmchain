@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// InitGenesis initializes the tokenfactory module's state from a provided genesis
+// InitGenesis initializes the anchoring module's state from a provided genesis
 // state.
 func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error {
 	err := k.Params.Set(ctx, genState.Params)
@@ -93,7 +93,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 	return nil
 }
 
-// ExportGenesis returns the tokenfactory module's exported genesis.
+// ExportGenesis returns the anchoring module's exported genesis.
 func (k Keeper) ExportGenesis(ctx sdk.Context) (*types.GenesisState, error) {
 	params, err := k.Params.Get(ctx)
 	if err != nil {

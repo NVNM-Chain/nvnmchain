@@ -9,7 +9,6 @@ import (
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/MANTRA-Chain/inveniam/app"
 	"github.com/MANTRA-Chain/inveniam/app/params"
-	tokenfactorytypes "github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -55,7 +54,6 @@ func init() {
 	distribtypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	ratelimittypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	feemarkettypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-	tokenfactorytypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 
 	cdc = encodingConfig.Codec
 	txConfig = encodingConfig.TxConfig

@@ -5,20 +5,19 @@ import "fmt"
 // PR reviewers must make sure all the following value are true
 const (
 	runBankTest                   = true
-	runEncodeTest                 = false
-	runEvidenceTest               = false
-	runGovTest                    = false
-	runIBCTest                    = false
-	runSlashingTest               = false
-	runStakingAndDistributionTest = false
-	runVestingTest                = false
-	runRestInterfacesTest         = false
-	runRateLimitTest              = false
-	runTokenfactoryTest           = false
+	runEncodeTest                 = true
+	runEvidenceTest               = true
+	runGovTest                    = true
+	runIBCTest                    = true
+	runSlashingTest               = true
+	runStakingAndDistributionTest = true
+	runVestingTest                = true
+	runRestInterfacesTest         = true
+	runRateLimitTest              = true
 )
 
 func (s *IntegrationTestSuite) CanTestOnSingleNode() bool {
-	return !runIBCTest && !runTokenfactoryTest && !runRateLimitTest
+	return !runIBCTest && !runRateLimitTest
 }
 
 func (s *IntegrationTestSuite) TestRestInterfaces() {
@@ -73,7 +72,6 @@ func (s *IntegrationTestSuite) TestIBC() {
 	// TODO: uncomment in future if we add PFM
 	// s.testMultihopIBCTokenTransfer()
 	// s.testFailedMultihopIBCTokenTransfer()
-	s.testICARegisterAccountAndSendTx()
 }
 
 func (s *IntegrationTestSuite) TestSlashing() {
@@ -113,15 +111,4 @@ func (s *IntegrationTestSuite) TestRateLimit() {
 	s.testIBCTransfer(false)
 	s.testResetRateLimit()
 	s.testRemoveRateLimit()
-}
-
-func (s *IntegrationTestSuite) TestTokenfactory() {
-	if !runTokenfactoryTest {
-		s.T().Skip()
-	}
-	s.testTokenfactoryCreate()
-	s.testTokenfactoryAdmin()
-	s.testTokenfactorySetMetadata()
-	s.testTokenfactoryMint()
-	s.testTokenfactoryBurn()
 }
