@@ -26,6 +26,14 @@ func isRecordRole(checksum string) bool {
 	return checksum != ""
 }
 
+func (k msgServer) isModuleAdmin(ctx sdk.Context, addr string) (bool, error) {
+	params, err := k.Keeper.Params.Get(ctx)
+	if err != nil {
+		return false, err
+	}
+	return params.Admin == addr, nil
+}
+
 func (k msgServer) AddRegistry(goCtx context.Context, req *types.MsgAddRegistry) (*types.MsgAddRegistryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sender, err := k.addressCodec.StringToBytes(req.Sender)
@@ -98,6 +106,20 @@ func (k msgServer) GrantRole(goCtx context.Context, req *types.MsgGrantRole) (*t
 		return nil, err
 	}
 
+	// Break-glass recovery: module admin can grant registry-level admin directly
+	if !isRecordRole(req.Checksum) && req.Role == RoleAdmin {
+		isModuleAdmin, err := k.isModuleAdmin(ctx, req.Admin)
+		if err != nil {
+			return nil, err
+		}
+		if isModuleAdmin {
+			if err := k.Keeper.RBAC.GrantRoleUnchecked(ctx, role, grantee, granter); err != nil {
+				return nil, err
+			}
+			return &types.MsgGrantRoleResponse{}, nil
+		}
+	}
+
 	if err := k.Keeper.RBAC.GrantRole(ctx, role, grantee, granter); err != nil {
 		return nil, err
 	}
@@ -148,8 +170,22 @@ func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (
 				lastErr = err
 				continue
 			}
+			isModuleAdmin, err := k.isModuleAdmin(ctx, req.Admin)
+			if err != nil {
+				lastErr = err
+				continue
+			}
 			if isSoleAdmin {
-				return nil, sdkerrors.ErrInvalidRequest.Wrap("cannot revoke the last registry admin")
+				if !isModuleAdmin {
+					return nil, sdkerrors.ErrInvalidRequest.Wrap("cannot revoke the last registry admin")
+				}
+
+				if err := k.Keeper.RBAC.RevokeRoleUnchecked(ctx, role, revokee, revoker); err != nil {
+					lastErr = err
+					continue
+				}
+
+				return &types.MsgRevokeRoleResponse{}, nil
 			}
 		}
 

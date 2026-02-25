@@ -94,6 +94,10 @@ func (k *RBACKeeper) GrantRole(ctx sdk.Context, role Role, addr sdk.AccAddress, 
 		return ErrMissingRole.Wrapf("account %s is missing role %s", granter.String(), common.Hash(adminRole).Hex())
 	}
 
+	return k.GrantRoleUnchecked(ctx, role, addr, granter)
+}
+
+func (k *RBACKeeper) GrantRoleUnchecked(ctx sdk.Context, role Role, addr sdk.AccAddress, granter sdk.AccAddress) error {
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeGrantRole,
@@ -118,7 +122,10 @@ func (k *RBACKeeper) RevokeRole(ctx sdk.Context, role Role, addr sdk.AccAddress,
 	if !hasAdminRole {
 		return ErrMissingRole.Wrapf("account %s is missing role %s", revoker.String(), common.Hash(adminRole).Hex())
 	}
+	return k.RevokeRoleUnchecked(ctx, role, addr, revoker)
+}
 
+func (k *RBACKeeper) RevokeRoleUnchecked(ctx sdk.Context, role Role, addr sdk.AccAddress, revoker sdk.AccAddress) error {
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeRevokeRole,

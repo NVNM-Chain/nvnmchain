@@ -3,36 +3,45 @@ package keeper_test
 import (
 	"testing"
 
+	"cosmossdk.io/core/address"
 	appparams "github.com/MANTRA-Chain/inveniam/app/params"
 	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
+
+var (
+	registryAdminAddr = keepertest.TestSenderAddr
+	moduleAdminAddr   = types.DefaultParams().Admin
+)
+
+func hasRegistryAdminRole(t *testing.T, k keeper.Keeper, ctx sdk.Context, addressCodec address.Codec, registryID uint64, addr string) bool {
+	t.Helper()
+	addrBz, err := addressCodec.StringToBytes(addr)
+	require.NoError(t, err)
+	hasRole, err := k.RBAC.HasRole(ctx, k.RegistryRole(registryID, keeper.RoleAdmin), addrBz)
+	require.NoError(t, err)
+	return hasRole
+}
 
 func TestMsgRevokeRole_DisallowRevokingLastRegistryAdmin(t *testing.T) {
 	appparams.SetAddressPrefixes()
 	k, ctx, _ := keepertest.AnchoringKeeper(t)
 	ms := keeper.NewMsgServerImpl(k)
+	var err error
 
-	require.NoError(t, k.RegistryCount.Set(ctx, 0))
+	admin1 := registryAdminAddr
+	admin2 := moduleAdminAddr
 
-	admin1 := "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072"
-	admin2 := "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"
-
-	addRegRes, err := ms.AddRegistry(ctx, &types.MsgAddRegistry{
-		Sender:      admin1,
-		Name:        "reg-last-admin",
-		Description: "",
-		Metadata:    "{}",
-	})
-	require.NoError(t, err)
+	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, admin1, "reg-last-admin")
 
 	// Sole admin cannot revoke their own admin role (would leave 0 admins).
 	_, err = ms.RevokeRole(ctx, &types.MsgRevokeRole{
 		Admin:      admin1,
 		Address:    admin1,
-		RegistryId: addRegRes.RegistryId,
+		RegistryId: registryID,
 		Checksum:   "",
 		Role:       keeper.RoleAdmin,
 	})
@@ -43,7 +52,7 @@ func TestMsgRevokeRole_DisallowRevokingLastRegistryAdmin(t *testing.T) {
 	_, err = ms.GrantRole(ctx, &types.MsgGrantRole{
 		Admin:      admin1,
 		Address:    admin2,
-		RegistryId: addRegRes.RegistryId,
+		RegistryId: registryID,
 		Checksum:   "",
 		Role:       keeper.RoleAdmin,
 	})
@@ -52,9 +61,38 @@ func TestMsgRevokeRole_DisallowRevokingLastRegistryAdmin(t *testing.T) {
 	_, err = ms.RevokeRole(ctx, &types.MsgRevokeRole{
 		Admin:      admin1,
 		Address:    admin1,
-		RegistryId: addRegRes.RegistryId,
+		RegistryId: registryID,
 		Checksum:   "",
 		Role:       keeper.RoleAdmin,
 	})
 	require.NoError(t, err)
+}
+
+func TestMsgRevokeRole_AllowModuleAdminEmergencyLastAdminRevokeAndRecovery(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, addressCodec := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+	var err error
+	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-emergency-admin-recovery")
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
+
+	_, err = ms.RevokeRole(ctx, &types.MsgRevokeRole{
+		Admin:      moduleAdminAddr,
+		Address:    registryAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.NoError(t, err)
+	require.False(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
+
+	_, err = ms.GrantRole(ctx, &types.MsgGrantRole{
+		Admin:      moduleAdminAddr,
+		Address:    moduleAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.NoError(t, err)
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
 }
