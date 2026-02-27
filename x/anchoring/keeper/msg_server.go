@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/collections"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/rbac"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,8 +23,8 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 var _ types.MsgServer = msgServer{}
 
 // isRecordRole returns true if the checksum indicates a record-specific role
-func isRecordRole(checksum string) bool {
-	return checksum != ""
+func isRecordRole(registryId uint64, checksum string) bool {
+	return registryId != 0 && checksum != ""
 }
 
 func (k msgServer) isModuleAdmin(ctx sdk.Context, addr string) (bool, error) {
@@ -32,6 +33,33 @@ func (k msgServer) isModuleAdmin(ctx sdk.Context, addr string) (bool, error) {
 		return false, err
 	}
 	return params.Admin == addr, nil
+}
+
+func (k msgServer) ensureRoleScopeExists(ctx sdk.Context, registryId uint64, checksum string) error {
+	hasRegistry, err := k.Keeper.Registries.Has(ctx, registryId)
+	if err != nil {
+		return err
+	}
+	if !hasRegistry {
+		return sdkerrors.ErrNotFound.Wrapf("registry %d does not exist", registryId)
+	}
+	if isRecordRole(registryId, checksum) {
+		hasChecksum, err := k.Keeper.RecordIdByChecksumAndRegistry.Has(ctx, collections.Join(checksum, registryId))
+		if err != nil {
+			return err
+		}
+		if !hasChecksum {
+			return sdkerrors.ErrNotFound.Wrapf("record with checksum %s does not exist in registry %d", checksum, registryId)
+		}
+	}
+	return nil
+}
+
+func (k msgServer) scopedRole(registryId uint64, checksum, role string) rbac.Role {
+	if isRecordRole(registryId, checksum) {
+		return k.Keeper.RecordRole(checksum, role)
+	}
+	return k.Keeper.RegistryRole(registryId, role)
 }
 
 func (k msgServer) AddRegistry(goCtx context.Context, req *types.MsgAddRegistry) (*types.MsgAddRegistryResponse, error) {
@@ -95,19 +123,20 @@ func (k msgServer) GrantRole(goCtx context.Context, req *types.MsgGrantRole) (*t
 
 	var role rbac.Role
 	var adminRole rbac.Role
+	isRecordScoped := isRecordRole(req.RegistryId, req.Checksum)
 
-	if isRecordRole(req.Checksum) {
-		role = k.Keeper.RecordRole(req.Checksum, req.Role)
-	} else {
-		role = k.Keeper.RegistryRole(req.RegistryId, req.Role)
+	if err := k.ensureRoleScopeExists(ctx, req.RegistryId, req.Checksum); err != nil {
+		return nil, err
 	}
+
+	role = k.scopedRole(req.RegistryId, req.Checksum, req.Role)
 	adminRole = k.Keeper.RegistryRole(req.RegistryId, RoleAdmin)
 	if err := k.Keeper.RBAC.SetRoleAdmin(ctx, role, adminRole); err != nil {
 		return nil, err
 	}
 
 	// Break-glass recovery: module admin can grant registry-level admin directly
-	if !isRecordRole(req.Checksum) && req.Role == RoleAdmin {
+	if !isRecordScoped && req.Role == RoleAdmin {
 		isModuleAdmin, err := k.isModuleAdmin(ctx, req.Admin)
 		if err != nil {
 			return nil, err
@@ -139,6 +168,11 @@ func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (
 		return nil, err
 	}
 
+	if err := k.ensureRoleScopeExists(ctx, req.RegistryId, req.Checksum); err != nil {
+		return nil, err
+	}
+	isRecordScoped := isRecordRole(req.RegistryId, req.Checksum)
+
 	// revoke common roles (editor, then admin) when no specific role provided
 	rolesToTry := []string{req.Role}
 	if req.Role == "" {
@@ -147,12 +181,7 @@ func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (
 
 	var lastErr error
 	for _, roleStr := range rolesToTry {
-		var role rbac.Role
-		if isRecordRole(req.Checksum) {
-			role = k.Keeper.RecordRole(req.Checksum, roleStr)
-		} else {
-			role = k.Keeper.RegistryRole(req.RegistryId, roleStr)
-		}
+		role := k.scopedRole(req.RegistryId, req.Checksum, roleStr)
 		hasRole, err := k.Keeper.RBAC.HasRole(ctx, role, revokee)
 		if err != nil {
 			lastErr = err
@@ -163,7 +192,7 @@ func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (
 		}
 
 		// Prevent revoking the last registry-level admin, which would permanently lock the registry.
-		if !isRecordRole(req.Checksum) && roleStr == RoleAdmin {
+		if !isRecordScoped && roleStr == RoleAdmin {
 			adminRole := k.Keeper.RegistryRole(req.RegistryId, RoleAdmin)
 			isSoleAdmin, err := k.Keeper.RBAC.IsSoleAdmin(ctx, adminRole)
 			if err != nil {
