@@ -3,6 +3,7 @@
 package precompile
 
 import (
+	"errors"
 	"fmt"
 
 	cmn "github.com/cosmos/evm/precompiles/common"
@@ -12,7 +13,10 @@ import (
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	evmtypes "github.com/cosmos/evm/x/vm/types"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	gethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
 )
 
@@ -86,9 +90,26 @@ func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Co
 		return nil, err
 	}
 
+	if p.IsTransactionID(methodID) {
+		if err := p.ensureEOACaller(stateDB, contract, p.methodName(methodID)); err != nil {
+			return encodeRevertReason(core.ErrSenderNoEOA.Error()), vm.ErrExecutionReverted
+		}
+	}
+
+	handleExecutionErr := func(err error) ([]byte, error) {
+		if errors.Is(err, core.ErrSenderNoEOA) {
+			return encodeRevertReason(core.ErrSenderNoEOA.Error()), vm.ErrExecutionReverted
+		}
+		return nil, err
+	}
+
 	switch methodID {
 	case AddRegistryID:
-		return invcmn.RunWithStateDB(ctx, p.AddRegistry, input, stateDB, contract)
+		bz, err := invcmn.RunWithStateDB(ctx, p.AddRegistry, input, stateDB, contract)
+		if err != nil {
+			return handleExecutionErr(err)
+		}
+		return bz, nil
 	case AddRecordID:
 		return invcmn.RunWithStateDB(ctx, p.AddRecord, input, stateDB, contract)
 	case UpdateRecordStatusID:
@@ -98,9 +119,17 @@ func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Co
 	case RegistriesID:
 		return invcmn.Run(ctx, p.Registries, input)
 	case GrantRoleID:
-		return invcmn.RunWithStateDB(ctx, p.GrantRole, input, stateDB, contract)
+		bz, err := invcmn.RunWithStateDB(ctx, p.GrantRole, input, stateDB, contract)
+		if err != nil {
+			return handleExecutionErr(err)
+		}
+		return bz, nil
 	case RevokeRoleID:
-		return invcmn.RunWithStateDB(ctx, p.RevokeRole, input, stateDB, contract)
+		bz, err := invcmn.RunWithStateDB(ctx, p.RevokeRole, input, stateDB, contract)
+		if err != nil {
+			return handleExecutionErr(err)
+		}
+		return bz, nil
 	}
 
 	return nil, fmt.Errorf(invcmn.ErrUnknownMethodID, methodID)
@@ -110,6 +139,50 @@ func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Co
 // It returns true for state-modifying methods.
 func (Precompile) IsTransactionID(methodID uint32) bool {
 	return methodID == AddRegistryID || methodID == AddRecordID || methodID == UpdateRecordStatusID || methodID == GrantRoleID || methodID == RevokeRoleID
+}
+
+func isEOACode(code []byte) bool {
+	if len(code) == 0 {
+		return true
+	}
+	_, delegated := gethtypes.ParseDelegation(code)
+	return delegated
+}
+
+func (Precompile) methodName(methodID uint32) string {
+	switch methodID {
+	case AddRegistryID:
+		return "addRegistry"
+	case AddRecordID:
+		return "addRecord"
+	case UpdateRecordStatusID:
+		return "updateRecordStatus"
+	case GrantRoleID:
+		return "grantRole"
+	case RevokeRoleID:
+		return "revokeRole"
+	default:
+		return ""
+	}
+}
+
+func encodeRevertReason(reason string) []byte {
+	bz, err := evmtypes.RevertReasonBytes(reason)
+	if err != nil {
+		return nil
+	}
+	return bz
+}
+
+func (Precompile) ensureEOACaller(stateDB vm.StateDB, contract *vm.Contract, method string) error {
+	if stateDB == nil || contract == nil {
+		return fmt.Errorf("%w: method %s", core.ErrSenderNoEOA, method)
+	}
+	code := stateDB.GetCode(contract.Caller())
+	if !isEOACode(code) {
+		return fmt.Errorf("%w: address %v, len(code): %d, method: %s", core.ErrSenderNoEOA, contract.Caller().Hex(), len(code), method)
+	}
+	return nil
 }
 
 func (p Precompile) AddRegistry(
