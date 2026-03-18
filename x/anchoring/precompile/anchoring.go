@@ -13,6 +13,7 @@ import (
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/evm/precompiles/erc20"
 	evmtypes "github.com/cosmos/evm/x/vm/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
@@ -85,9 +86,17 @@ func (p Precompile) Run(evm *vm.EVM, contract *vm.Contract, readOnly bool) (bz [
 }
 
 func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Contract, readOnly bool) ([]byte, error) {
+	if contract == nil {
+		return nil, fmt.Errorf("contract is nil")
+	}
+
 	methodID, input, err := invcmn.ParseMethod(contract.Input, readOnly, p.IsTransactionID)
 	if err != nil {
 		return nil, err
+	}
+
+	if err := p.ensureNoValue(contract); err != nil {
+		return encodeRevertReason(err.Error()), vm.ErrExecutionReverted
 	}
 
 	if p.IsTransactionID(methodID) {
@@ -181,6 +190,16 @@ func (Precompile) ensureEOACaller(stateDB vm.StateDB, contract *vm.Contract, met
 	code := stateDB.GetCode(contract.Caller())
 	if !isEOACode(code) {
 		return fmt.Errorf("%w: address %v, len(code): %d, method: %s", core.ErrSenderNoEOA, contract.Caller().Hex(), len(code), method)
+	}
+	return nil
+}
+
+func (Precompile) ensureNoValue(contract *vm.Contract) error {
+	if contract == nil {
+		return fmt.Errorf("nil contract")
+	}
+	if value := contract.Value(); value != nil && value.Sign() == 1 {
+		return fmt.Errorf(erc20.ErrCannotReceiveFunds, value.String())
 	}
 	return nil
 }

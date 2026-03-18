@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	gethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/holiman/uint256"
 	"github.com/stretchr/testify/require"
 )
 
@@ -95,5 +96,48 @@ func TestEnsureEOACaller(t *testing.T) {
 				require.NoError(t, err)
 			})
 		}
+	}
+}
+
+func TestEnsureNoValue(t *testing.T) {
+	p := Precompile{}
+	caller := common.HexToAddress("0x00000000000000000000000000000000000000d1")
+
+	testCases := []struct {
+		name      string
+		contract  *vm.Contract
+		wantError bool
+	}{
+		{
+			name:      "nil contract rejected",
+			contract:  nil,
+			wantError: true,
+		},
+		{
+			name:      "zero value allowed",
+			contract:  vm.NewContract(caller, AnchoringPrecompileAddress, uint256.NewInt(0), 0, nil),
+			wantError: false,
+		},
+		{
+			name:      "non-zero value rejected",
+			contract:  vm.NewContract(caller, AnchoringPrecompileAddress, uint256.NewInt(1), 0, nil),
+			wantError: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := p.ensureNoValue(tc.contract)
+			if tc.wantError {
+				require.Error(t, err)
+				if tc.contract == nil {
+					require.Contains(t, err.Error(), "nil contract")
+					return
+				}
+				require.Contains(t, err.Error(), "cannot receive funds")
+				return
+			}
+			require.NoError(t, err)
+		})
 	}
 }
