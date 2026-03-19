@@ -78,7 +78,8 @@ func (s *IntegrationTestSuite) fundCommunityPool() {
 			s.Require().NoErrorf(err, "Error getting balance: %s", afterDistUomBalance)
 
 			// check if the balance is increased by the tokenAmount
-			return beforeDistUomBalance.Add(tokenAmount).IsEqual(afterDistUomBalance)
+			expectedDistUomBalance := beforeDistUomBalance.Add(tokenAmount)
+			return expectedDistUomBalance.Equal(afterDistUomBalance)
 		},
 		15*time.Second,
 		5*time.Second,
