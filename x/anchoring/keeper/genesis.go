@@ -51,6 +51,16 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 		if err != nil {
 			return err
 		}
+
+		recordKey := collections.Join3(registryId, record.RecordId, record.Index)
+		hasRecord, err := k.Records.Has(ctx, recordKey)
+		if err != nil {
+			return err
+		}
+		if hasRecord {
+			return errorsmod.Wrapf(types.ErrDuplicateRecordKey, "duplicate record key (registry_id=%d, record_id=%d, index=%d)", registryId, record.RecordId, record.Index)
+		}
+
 		index, err := k.RecordIndices.Get(ctx, collections.Join(registryId, record.RecordId))
 		if errorsmod.IsOf(err, collections.ErrNotFound) || record.Index > index {
 			if err := k.RecordIndices.Set(ctx, collections.Join(registryId, record.RecordId), record.Index); err != nil {
@@ -59,7 +69,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 		} else if err != nil {
 			return err
 		}
-		if err := k.Records.Set(ctx, collections.Join3(registryId, record.RecordId, record.Index), record); err != nil {
+		if err := k.Records.Set(ctx, recordKey, record); err != nil {
 			return err
 		}
 		if err := k.RecordIdByRegistryAndChecksum.Set(ctx, collections.Join(registryId, record.Checksum), record.RecordId); err != nil {

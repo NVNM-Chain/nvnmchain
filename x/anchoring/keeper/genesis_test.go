@@ -17,60 +17,12 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 		Admin: "cosmos1x0dqq9v6chqeholder",
 	}
 
-	registryOne := types.Registry{
-		Id:          1,
-		Name:        "kyc_registry",
-		Description: "KYC document registry",
-		Creator:     "cosmos1creator1",
-		CreatedAt:   "2024-01-01T00:00:00Z",
-	}
+	registryOne := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
+	registryTwo := testRegistry(2, "aml_registry", "AML document registry", "cosmos1creator2", "2024-01-02T00:00:00Z")
 
-	registryTwo := types.Registry{
-		Id:          2,
-		Name:        "aml_registry",
-		Description: "AML document registry",
-		Creator:     "cosmos1creator2",
-		CreatedAt:   "2024-01-02T00:00:00Z",
-	}
-
-	recordOne := types.Record{
-		Registry:     "kyc_registry",
-		Uri:          "ipfs://QmExample1",
-		Checksum:     "sha256hash001",
-		ChecksumAlgo: "SHA-256",
-		Metadata:     `{"document":"kyc_document_001","figi":"BBG000B9M9V0","individualId":"individual_001"}`,
-		Timestamp:    "2024-01-01T10:00:00Z",
-		Status:       "active",
-		RecordId:     1,
-		Index:        1,
-		IsLatest:     true,
-	}
-
-	recordTwo := types.Record{
-		Registry:     "kyc_registry",
-		Uri:          "ipfs://QmExample2",
-		Checksum:     "sha256hash002",
-		ChecksumAlgo: "SHA-256",
-		Metadata:     `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`,
-		Timestamp:    "2024-01-01T11:00:00Z",
-		Status:       "active",
-		RecordId:     2,
-		Index:        1,
-		IsLatest:     true,
-	}
-
-	recordThree := types.Record{
-		Registry:     "aml_registry",
-		Uri:          "ipfs://QmExample3",
-		Checksum:     "sha256hash003",
-		ChecksumAlgo: "SHA-256",
-		Metadata:     `{"document":"aml_document_001","figi":"BBG000B9M9V2","individualId":"individual_003"}`,
-		Timestamp:    "2024-01-02T10:00:00Z",
-		Status:       "active",
-		RecordId:     1,
-		Index:        1,
-		IsLatest:     true,
-	}
+	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001","figi":"BBG000B9M9V0","individualId":"individual_001"}`, "2024-01-01T10:00:00Z", 1)
+	recordTwo := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash002", `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`, "2024-01-01T11:00:00Z", 2)
+	recordThree := testRecord("aml_registry", "ipfs://QmExample3", "sha256hash003", `{"document":"aml_document_001","figi":"BBG000B9M9V2","individualId":"individual_003"}`, "2024-01-02T10:00:00Z", 1)
 
 	// Prepare encoded role keys
 	// Registry-level admin role for creator1
@@ -244,6 +196,55 @@ func TestInitGenesisEmpty(t *testing.T) {
 	require.NoError(t, err)
 	require.Empty(t, exportedState.Registries)
 	require.Empty(t, exportedState.Records)
+}
+
+func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
+	k, ctx, _ := keeper.AnchoringKeeper(t)
+	registry := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
+	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001"}`, "2024-01-01T10:00:00Z", 1)
+	recordDuplicateKey := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash999", `{"document":"kyc_document_999"}`, "2024-01-01T11:00:00Z", 1)
+
+	genState := types.GenesisState{
+		Params: types.Params{
+			Admin: "cosmos1x0dqq9v6chqeholder",
+		},
+		Registries: map[uint64]types.Registry{
+			1: registry,
+		},
+		Records: []types.Record{recordOne, recordDuplicateKey},
+		Roles:   map[string]string{},
+	}
+
+	err := k.InitGenesis(ctx, genState)
+	require.ErrorIs(t, err, types.ErrDuplicateRecordKey)
+	require.Contains(t, err.Error(), "registry_id=1")
+	require.Contains(t, err.Error(), "record_id=1")
+	require.Contains(t, err.Error(), "index=1")
+}
+
+func testRegistry(id uint64, name, description, creator, createdAt string) types.Registry {
+	return types.Registry{
+		Id:          id,
+		Name:        name,
+		Description: description,
+		Creator:     creator,
+		CreatedAt:   createdAt,
+	}
+}
+
+func testRecord(registry, uri, checksum, metadata, timestamp string, recordID uint64) types.Record {
+	return types.Record{
+		Registry:     registry,
+		Uri:          uri,
+		Checksum:     checksum,
+		ChecksumAlgo: "SHA-256",
+		Metadata:     metadata,
+		Timestamp:    timestamp,
+		Status:       "active",
+		RecordId:     recordID,
+		Index:        1,
+		IsLatest:     true,
+	}
 }
 
 // encodeTripleKey encodes a triple key for testing genesis roles
