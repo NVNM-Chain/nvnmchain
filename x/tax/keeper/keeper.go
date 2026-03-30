@@ -74,6 +74,10 @@ func (k Keeper) AllocateMcaTax(ctx context.Context, mcaTax math.LegacyDec, mcaAd
 	feesCollectedInt := k.bankKeeper.GetAllBalances(ctx, feeCollector.GetAddress())
 	feesCollected := sdk.NewDecCoinsFromCoins(feesCollectedInt...)
 
+	if mcaTax.IsNegative() || mcaTax.GT(types.MaxMcaTax) {
+		return fmt.Errorf("invalid MCA tax: %s", mcaTax.String())
+	}
+
 	mcaTaxAllocation, _ := feesCollected.MulDec(mcaTax).TruncateDecimal()
 
 	// transfer allocated mca tax to the specified account
