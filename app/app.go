@@ -112,6 +112,7 @@ import (
 	"cosmossdk.io/client/v2/autocli"
 	anchoringkeeper "github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
 	anchoring "github.com/MANTRA-Chain/inveniam/x/anchoring/module"
+	anchoringprecompile "github.com/MANTRA-Chain/inveniam/x/anchoring/precompile"
 	anchoringtypes "github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	chainante "github.com/cosmos/evm/ante"
 	evmaddress "github.com/cosmos/evm/encoding/address"
@@ -1332,12 +1333,14 @@ func BlockedAddresses() map[string]bool {
 	delete(blockedAddrs, authtypes.NewModuleAddress(
 		consumertypes.ConsumerToSendToProviderName).String())
 
-	blockedPrecompilesHex := evmtypes.AvailableStaticPrecompiles
-	for _, addr := range corevm.PrecompiledAddressesPrague {
-		blockedPrecompilesHex = append(blockedPrecompilesHex, addr.Hex())
+	for _, precompile := range evmtypes.AvailableStaticPrecompiles {
+		blockedAddrs[cosmosevmutils.Bech32StringFromHexAddress(precompile)] = true
 	}
 
-	for _, precompile := range blockedPrecompilesHex {
+	blockedAddrs[cosmosevmutils.Bech32StringFromHexAddress(anchoringprecompile.AnchoringPrecompileAddress.Hex())] = true
+
+	for _, addr := range corevm.PrecompiledAddressesPrague {
+		precompile := addr.Hex()
 		blockedAddrs[cosmosevmutils.Bech32StringFromHexAddress(precompile)] = true
 	}
 
