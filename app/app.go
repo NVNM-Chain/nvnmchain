@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -137,6 +138,8 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v10/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v10/modules/core"
 	ibcclienttypes "github.com/cosmos/ibc-go/v10/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v10/modules/core/04-channel/types"
+	channelv2types "github.com/cosmos/ibc-go/v10/modules/core/04-channel/v2/types"
 	porttypes "github.com/cosmos/ibc-go/v10/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v10/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v10/modules/core/keeper"
@@ -375,6 +378,7 @@ func New(
 		Authority,
 		logger,
 	)
+	app.BankKeeper.AppendSendRestriction(app.blockUserSendsToCCVRewardsBuffer)
 
 	app.StakingKeeper = stakingkeeper.NewKeeper(
 		appCodec,
@@ -1244,6 +1248,55 @@ func (app *App) setupUpgradeHandlers() {
 			),
 		)
 	}
+}
+
+func (app *App) blockUserSendsToCCVRewardsBuffer(
+	ctx context.Context,
+	fromAddr, toAddr sdk.AccAddress,
+	_ sdk.Coins,
+) (sdk.AccAddress, error) {
+	if !toAddr.Equals(authtypes.NewModuleAddress(consumertypes.ConsumerToSendToProviderName)) {
+		return toAddr, nil
+	}
+	if fromAddr.Equals(authtypes.NewModuleAddress(authtypes.FeeCollectorName)) {
+		return toAddr, nil
+	}
+	if app.isIBCRefundTx(ctx, fromAddr) {
+		return toAddr, nil
+	}
+	return nil, fmt.Errorf("sending to %s is restricted", consumertypes.ConsumerToSendToProviderName)
+}
+
+func (app *App) isIBCRefundTx(ctx context.Context, fromAddr sdk.AccAddress) bool {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	txBytes := sdkCtx.TxBytes()
+	if len(txBytes) == 0 {
+		return fromAddr.Equals(authtypes.NewModuleAddress(ibctransfertypes.ModuleName))
+	}
+	tx, err := app.txConfig.TxDecoder()(txBytes)
+	if err != nil {
+		return false
+	}
+	msgs := tx.GetMsgs()
+	if len(msgs) == 0 {
+		return false
+	}
+	hasRefund := false
+	for _, msg := range msgs {
+		switch msg.(type) {
+		case *channeltypes.MsgTimeout, *channeltypes.MsgTimeoutOnClose, *channeltypes.MsgAcknowledgement:
+			hasRefund = true
+		case *channelv2types.MsgTimeout, *channelv2types.MsgAcknowledgement:
+			hasRefund = true
+		case *ibcclienttypes.MsgUpdateClient:
+			continue
+		case *channeltypes.MsgRecvPacket, *channelv2types.MsgRecvPacket:
+			return false
+		default:
+			return false
+		}
+	}
+	return hasRefund
 }
 
 // GetMaccPerms returns a copy of the module account permissions
