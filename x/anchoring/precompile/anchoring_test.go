@@ -56,30 +56,51 @@ func TestEnsureEOACaller(t *testing.T) {
 	p := Precompile{}
 	callerContractCode := common.HexToAddress("0x00000000000000000000000000000000000000b1")
 	callerDelegationCode := common.HexToAddress("0x00000000000000000000000000000000000000b2")
+	callerConstructorCtx := common.HexToAddress("0x00000000000000000000000000000000000000b3")
+	originEOA := common.HexToAddress("0x00000000000000000000000000000000000000e1")
 	methods := []string{"addRegistry", "addRecord", "updateRecordStatus", "grantRole", "revokeRole"}
 
 	testCases := []struct {
 		name      string
 		stateDB   vm.StateDB
 		contract  *vm.Contract
+		txOrigin  common.Address
 		wantError bool
 	}{
 		{
 			name:      "nil inputs",
 			stateDB:   nil,
 			contract:  nil,
+			txOrigin:  common.Address{},
 			wantError: true,
 		},
 		{
 			name:      "contract code rejected",
 			stateDB:   stateDBWithCode{code: []byte{0x60, 0x00, 0x60, 0x00, 0x56}},
 			contract:  vm.NewContract(callerContractCode, common.Address{}, nil, 0, nil),
+			txOrigin:  callerContractCode,
 			wantError: true,
 		},
 		{
 			name:      "delegation code allowed",
 			stateDB:   stateDBWithCode{code: gethtypes.AddressToDelegation(common.HexToAddress("0x00000000000000000000000000000000000000c1"))},
 			contract:  vm.NewContract(callerDelegationCode, common.Address{}, nil, 0, nil),
+			txOrigin:  callerDelegationCode,
+			wantError: false,
+		},
+		{
+			name: "empty code rejected when caller != tx origin (constructor bypass blocked)",
+			// Constructor execution has no runtime code persisted yet for the caller address.
+			stateDB:   stateDBWithCode{code: nil},
+			contract:  vm.NewContract(callerConstructorCtx, common.Address{}, nil, 0, nil),
+			txOrigin:  originEOA,
+			wantError: true,
+		},
+		{
+			name:      "empty code allowed when caller == tx origin",
+			stateDB:   stateDBWithCode{code: nil},
+			contract:  vm.NewContract(originEOA, common.Address{}, nil, 0, nil),
+			txOrigin:  originEOA,
 			wantError: false,
 		},
 	}
@@ -87,7 +108,7 @@ func TestEnsureEOACaller(t *testing.T) {
 	for _, method := range methods {
 		for _, tc := range testCases {
 			t.Run(method+"/"+tc.name, func(t *testing.T) {
-				err := p.ensureEOACaller(tc.stateDB, tc.contract, method)
+				err := p.ensureEOACaller(tc.stateDB, tc.contract, method, tc.txOrigin)
 				if tc.wantError {
 					require.Error(t, err)
 					require.ErrorIs(t, err, core.ErrSenderNoEOA)

@@ -81,11 +81,11 @@ func (p Precompile) RequiredGas(input []byte) uint64 {
 
 func (p Precompile) Run(evm *vm.EVM, contract *vm.Contract, readOnly bool) (bz []byte, err error) {
 	return invcmn.RunNativeAction(p.Precompile, evm, contract, func(ctx sdk.Context) ([]byte, error) {
-		return p.Execute(ctx, evm.StateDB, contract, readOnly)
+		return p.Execute(ctx, evm.StateDB, contract, readOnly, evm.TxContext.Origin)
 	})
 }
 
-func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Contract, readOnly bool) ([]byte, error) {
+func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Contract, readOnly bool, txOrigin common.Address) ([]byte, error) {
 	if contract == nil {
 		return nil, fmt.Errorf("contract is nil")
 	}
@@ -100,7 +100,7 @@ func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Co
 	}
 
 	if p.IsTransactionID(methodID) {
-		if err := p.ensureEOACaller(stateDB, contract, p.methodName(methodID)); err != nil {
+		if err := p.ensureEOACaller(stateDB, contract, p.methodName(methodID), txOrigin); err != nil {
 			return encodeRevertReason(core.ErrSenderNoEOA.Error()), vm.ErrExecutionReverted
 		}
 	}
@@ -183,13 +183,16 @@ func encodeRevertReason(reason string) []byte {
 	return bz
 }
 
-func (Precompile) ensureEOACaller(stateDB vm.StateDB, contract *vm.Contract, method string) error {
+func (Precompile) ensureEOACaller(stateDB vm.StateDB, contract *vm.Contract, method string, txOrigin common.Address) error {
 	if stateDB == nil || contract == nil {
 		return fmt.Errorf("%w: method %s", core.ErrSenderNoEOA, method)
 	}
 	code := stateDB.GetCode(contract.Caller())
 	if !isEOACode(code) {
 		return fmt.Errorf("%w: address %v, len(code): %d, method: %s", core.ErrSenderNoEOA, contract.Caller().Hex(), len(code), method)
+	}
+	if contract.Caller() != txOrigin {
+		return fmt.Errorf("%w: caller %v != tx.origin %v, method: %s", core.ErrSenderNoEOA, contract.Caller().Hex(), txOrigin.Hex(), method)
 	}
 	return nil
 }
