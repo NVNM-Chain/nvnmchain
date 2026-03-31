@@ -632,7 +632,7 @@ func New(
 		appCodec,
 		runtime.NewKVStoreService(keys[ibctransfertypes.StoreKey]),
 		nil,
-		app.RateLimitKeeper, // ISC4 Wrapper: RateLimit IBC middleware
+		app.IBCKeeper.ChannelKeeper, // ICS4Wrapper: overridden after transfer stack is built via WithICS4Wrapper
 		app.IBCKeeper.ChannelKeeper,
 		bApp.MsgServiceRouter(),
 		app.AccountKeeper,
@@ -644,17 +644,20 @@ func New(
 	/*
 		Create Transfer Stack
 
-		transfer stack contains (from bottom to top):
-			- IBC ratelimit
-			- IBC Callbacks Middleware (with EVM ContractKeeper)
-			- ERC-20 Middleware
+		transfer stack (outermost to innermost, i.e. call-entry order for RecvPacket):
+			- IBC RateLimit middleware
+			- IBC Callbacks middleware (with EVM ContractKeeper)
+			- ERC-20 middleware
 			- IBC Transfer
 
 		SendPacket, since it is originating from the application to core IBC:
 			transfer.SendTransfer -> ratelimit.SendPacket -> channel.SendPacket
+			(ICS4Wrapper chain wired via WithICS4Wrapper after stack is built below)
 
-		RecvPacket, message that originates from core IBC and goes down to app, the flow is the other way
-			channel.RecvPacket -> ratelimit.OnRecvPacket -> callbacks.OnRecvPacket -> erc20.OnRecvPacket -> transfer.OnRecvPacket
+		RecvPacket, actual logic execution order (note: ratelimit runs its check BEFORE calling next;
+		callbacks and erc20 call next before their own logic):
+			channel.RecvPacket -> ratelimit.OnRecvPacket (guard, aborts if exceeded) -> transfer.OnRecvPacket
+			-> erc20.OnRecvPacket -> callbacks.OnRecvPacket
 	*/
 
 	// create IBC module from top to bottom of stack
@@ -670,6 +673,9 @@ func New(
 	)
 	transferStack = ibccallbacks.NewIBCMiddleware(transferStack, app.IBCKeeper.ChannelKeeper, app.CallbackKeeper, maxCallbackGas)
 	transferStack = ratelimit.NewIBCMiddleware(app.RateLimitKeeper, transferStack)
+
+	// Wire the ICS4Wrapper send path: transfer -> ratelimit -> channel.
+	app.TransferKeeper.WithICS4Wrapper(app.RateLimitKeeper)
 
 	// Create static IBC router, add app routes, then set and seal it
 	ibcRouter := porttypes.NewRouter().
