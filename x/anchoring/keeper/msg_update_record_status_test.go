@@ -9,6 +9,7 @@ import (
 	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
 
@@ -127,4 +128,69 @@ func TestMsgUpdateRecordStatus_MsgServer_Cases(t *testing.T) {
 			require.Equal(t, tc.wantStatus, record.Status)
 		})
 	}
+}
+
+func TestMsgUpdateRecordStatus_RecordRoleDoesNotBleedAcrossRegistries(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, _ := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+
+	const (
+		checksum       = "same-checksum"
+		victimRegistry = "victim-reg"
+		attackerReg    = "attacker-reg"
+	)
+
+	victimAdmin := keepertest.TestSenderAddr
+	attacker := types.DefaultParams().Admin
+	victimRegistryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, victimAdmin, victimRegistry)
+	victimRecordID := keepertest.MustAddAnchoringRecord(t, k, ctx, victimAdmin, victimRegistry, checksum, "sha256")
+
+	updateVictimStatus := func(status string) error {
+		_, err := ms.UpdateRecordStatus(ctx, &types.MsgUpdateRecordStatus{
+			Editor:     attacker,
+			RegistryId: victimRegistryID,
+			RecordId:   victimRecordID,
+			Index:      1,
+			Status:     status,
+		})
+		return err
+	}
+
+	assertUnauthorized := func(err error) {
+		require.Error(t, err)
+		require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	}
+
+	// Sanity: attacker cannot mutate victim status before any role assignment.
+	assertUnauthorized(updateVictimStatus("unauthorized-pre"))
+
+	attackerRegistryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, attacker, attackerReg)
+	keepertest.MustAddAnchoringRecord(t, k, ctx, attacker, attackerReg, checksum, "sha256")
+
+	// Attacker can grant themselves record-level editor in attacker registry.
+	_, err := ms.GrantRole(ctx, &types.MsgGrantRole{
+		Admin:      attacker,
+		Address:    attacker,
+		RegistryId: attackerRegistryID,
+		Checksum:   checksum,
+		Role:       keeper.RoleEditor,
+	})
+	require.NoError(t, err)
+
+	// Regression check: role from attacker registry must not authorize victim registry mutation.
+	assertUnauthorized(updateVictimStatus("tampered-by-attacker"))
+
+	victimRecord, err := k.Records.Get(ctx, collections.Join3(victimRegistryID, victimRecordID, uint64(1)))
+	require.NoError(t, err)
+	require.Equal(t, "active", victimRecord.Status)
+}
+
+func TestRecordRole_NoAliasWhenChecksumAndRoleContainColons(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, _, _ := keepertest.AnchoringKeeper(t)
+	registryID := uint64(42)
+	roleA := k.RecordRole(registryID, "a:b", "c")
+	roleB := k.RecordRole(registryID, "a", "b:c")
+	require.NotEqual(t, roleA, roleB)
 }

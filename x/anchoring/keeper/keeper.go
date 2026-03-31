@@ -144,13 +144,14 @@ func (k Keeper) initializeRegistryRecordCounter(ctx sdk.Context, registryId uint
 	return k.RecordsCountByRegistry.Set(ctx, registryId, 0)
 }
 
-// checkRecordRoles checks if sender has any of the specified roles at the record level
-func (k Keeper) checkRecordRoles(ctx sdk.Context, sender sdk.AccAddress, checksum string, roles []string) (bool, error) {
+// checkRecordRoles checks if sender has any of the specified roles at the record level.
+// Record-level roles are scoped by registry and checksum.
+func (k Keeper) checkRecordRoles(ctx sdk.Context, sender sdk.AccAddress, registryId uint64, checksum string, roles []string) (bool, error) {
 	if checksum == "" || len(roles) == 0 {
 		return false, nil
 	}
 	for _, roleStr := range roles {
-		recordRole := k.RecordRole(checksum, roleStr)
+		recordRole := k.RecordRole(registryId, checksum, roleStr)
 		hasRole, err := k.RBAC.HasRole(ctx, recordRole, sender)
 		if err != nil {
 			return false, err
@@ -199,7 +200,7 @@ func (k Keeper) checkGlobalRoles(ctx sdk.Context, sender sdk.AccAddress, roles [
 }
 
 func (k Keeper) checkPermission(ctx sdk.Context, sender sdk.AccAddress, registryId uint64, checksum string, requiredRoles []string) error {
-	hasRecordRole, err := k.checkRecordRoles(ctx, sender, checksum, requiredRoles)
+	hasRecordRole, err := k.checkRecordRoles(ctx, sender, registryId, checksum, requiredRoles)
 	if err != nil {
 		return err
 	}
@@ -226,9 +227,10 @@ func (k Keeper) checkPermission(ctx sdk.Context, sender sdk.AccAddress, registry
 	return sdkerrors.ErrUnauthorized
 }
 
-// RecordRole creates a role identifier for a specific record: hash(checksum, role)
-func (k Keeper) RecordRole(checksum string, role string) rbac.Role {
-	return rbac.NewRoleHash(fmt.Sprintf("%s:%s", checksum, role))
+// RecordRole creates a role identifier for a specific record.
+// User-controlled fields are hex-encoded to keep separators unambiguous.
+func (k Keeper) RecordRole(registryId uint64, checksum string, role string) rbac.Role {
+	return rbac.NewRoleHash(fmt.Sprintf("record:%d:%x:%x", registryId, checksum, role))
 }
 
 // RegistryRole creates a role identifier for a registry: hash("registry:id", role)

@@ -57,7 +57,7 @@ func (k msgServer) ensureRoleScopeExists(ctx sdk.Context, registryId uint64, che
 
 func (k msgServer) scopedRole(registryId uint64, checksum, role string) rbac.Role {
 	if isRecordRole(registryId, checksum) {
-		return k.Keeper.RecordRole(checksum, role)
+		return k.Keeper.RecordRole(registryId, checksum, role)
 	}
 	return k.Keeper.RegistryRole(registryId, role)
 }
