@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"strings"
 	"testing"
 
 	"cosmossdk.io/collections"
@@ -220,6 +221,35 @@ func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
 	require.Contains(t, err.Error(), "registry_id=1")
 	require.Contains(t, err.Error(), "record_id=1")
 	require.Contains(t, err.Error(), "index=1")
+}
+
+func TestInitGenesisRejectsOversizedRecordFields(t *testing.T) {
+	k, ctx, _ := keeper.AnchoringKeeper(t)
+
+	registry := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
+	record := testRecord(
+		"kyc_registry",
+		"ipfs://QmExample1",
+		"sha256hash001",
+		strings.Repeat("a", types.MaxRecordMetadataLen+1),
+		"2024-01-01T10:00:00Z",
+		1,
+	)
+
+	genState := types.GenesisState{
+		Params: types.Params{
+			Admin: "cosmos1x0dqq9v6chqeholder",
+		},
+		Registries: map[uint64]types.Registry{
+			1: registry,
+		},
+		Records: []types.Record{record},
+		Roles:   map[string]string{},
+	}
+
+	err := k.InitGenesis(ctx, genState)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "metadata exceeds max length")
 }
 
 func testRegistry(id uint64, name, description, creator, createdAt string) types.Registry {

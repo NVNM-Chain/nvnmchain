@@ -80,8 +80,8 @@ func (k msgServer) AddRecord(goCtx context.Context, req *types.MsgAddRecord) (*t
 	if req == nil {
 		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
 	}
-	if req.Record == nil {
-		return nil, sdkerrors.ErrInvalidRequest.Wrap("record cannot be nil")
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sender, err := k.addressCodec.StringToBytes(req.Sender)
@@ -97,6 +97,12 @@ func (k msgServer) AddRecord(goCtx context.Context, req *types.MsgAddRecord) (*t
 }
 
 func (k msgServer) UpdateRecordStatus(goCtx context.Context, req *types.MsgUpdateRecordStatus) (*types.MsgUpdateRecordStatusResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sender, err := k.addressCodec.StringToBytes(req.Editor)
 	if err != nil {

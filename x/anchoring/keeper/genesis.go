@@ -46,7 +46,11 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 		return err
 	}
 
-	for _, record := range genState.Records {
+	for i, record := range genState.Records {
+		if err := types.ValidateRecordForCreate(record); err != nil {
+			return errorsmod.Wrapf(err, "invalid genesis record (registry=%s, record_id=%d, index=%d, checksum=%s, position=%d)", record.Registry, record.RecordId, record.Index, record.Checksum, i)
+		}
+
 		registryId, err := k.RegistryIdByName.Get(ctx, record.Registry)
 		if err != nil {
 			return err

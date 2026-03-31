@@ -76,6 +76,16 @@ func TestMsgUpdateRecordStatus_ValidateBasic_OversizedStatus(t *testing.T) {
 	}
 }
 
+func TestMsgUpdateRecordStatus_NilRequest(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, _ := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+
+	_, err := ms.UpdateRecordStatus(ctx, nil)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "empty request")
+}
+
 func TestMsgUpdateRecordStatus_MsgServer_Cases(t *testing.T) {
 	appparams.SetAddressPrefixes()
 	k, ctx, _ := keepertest.AnchoringKeeper(t)
