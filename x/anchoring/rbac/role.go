@@ -1,11 +1,15 @@
 package rbac
 
 import (
+	"fmt"
+
 	"cosmossdk.io/collections"
 	"cosmossdk.io/collections/codec"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 )
+
+const RoleSize = common.HashLength
 
 type Role common.Hash
 
@@ -42,7 +46,7 @@ func (RoleCodec) Decode(buffer []byte) (int, Role, error) {
 }
 
 func (RoleCodec) Size(key Role) int {
-	return 32
+	return RoleSize
 }
 
 func (RoleCodec) EncodeJSON(value Role) ([]byte, error) {
@@ -74,9 +78,12 @@ func (k RoleCodec) EncodeNonTerminal(buffer []byte, key Role) (int, error) {
 }
 
 func (k RoleCodec) DecodeNonTerminal(buffer []byte) (int, Role, error) {
-	return k.Decode(buffer)
+	if len(buffer) < RoleSize {
+		return 0, Role{}, fmt.Errorf("buffer too small for non-terminal role decode: need %d, got %d", RoleSize, len(buffer))
+	}
+	return k.Decode(buffer[:RoleSize])
 }
 
 func (RoleCodec) SizeNonTerminal(key Role) int {
-	return 32
+	return RoleSize
 }
