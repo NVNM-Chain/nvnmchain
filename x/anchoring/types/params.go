@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// Declare defaults for MCA tax and MCA address
+// Declare defaults for tax and tax address
 const DefaultAdminAddress = "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"
 
 // NewParams creates a new Params instance.

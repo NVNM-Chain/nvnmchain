@@ -35,7 +35,7 @@ func TestMsgUpdateParams(t *testing.T) {
 			expErrMsg: "invalid authority",
 		},
 		{
-			name: "update mca address",
+			name: "update tax address",
 			input: &types.MsgUpdateParams{
 				Authority: "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
 				Admin:     keepertest.TestSenderAddr,

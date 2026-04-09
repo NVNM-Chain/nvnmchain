@@ -36,37 +36,37 @@ func TestMsgUpdateParams(t *testing.T) {
 			name: "invalid authority",
 			input: &types.MsgUpdateParams{
 				Authority:  "invalid",
-				McaTax:     "",
-				McaAddress: "",
+				Tax:        "",
+				TaxAddress: "",
 			},
 			expErr:    true,
 			expErrMsg: "invalid authority",
 		},
 		{
-			name: "update mca tax",
+			name: "update tax",
 			input: &types.MsgUpdateParams{
 				Authority:  "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
-				McaTax:     "0.200000000000000000",
-				McaAddress: "",
+				Tax:        "0.200000000000000000",
+				TaxAddress: "",
 			},
 			expErr: false,
 		},
 		{
-			name: "blocked mca address",
+			name: "blocked tax address",
 			input: &types.MsgUpdateParams{
 				Authority:  "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
-				McaTax:     "",
-				McaAddress: blockedAddr,
+				Tax:        "",
+				TaxAddress: blockedAddr,
 			},
 			expErr:    true,
 			expErrMsg: "is blocked",
 		},
 		{
-			name: "update mca address",
+			name: "update tax address",
 			input: &types.MsgUpdateParams{
 				Authority:  "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
-				McaTax:     "",
-				McaAddress: keepertest.TestSenderAddr,
+				Tax:        "",
+				TaxAddress: keepertest.TestSenderAddr,
 			},
 			expErr: false,
 		},
@@ -74,18 +74,18 @@ func TestMsgUpdateParams(t *testing.T) {
 			name: "old authority address no longer work",
 			input: &types.MsgUpdateParams{
 				Authority:  "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
-				McaTax:     "",
-				McaAddress: "",
+				Tax:        "",
+				TaxAddress: "",
 			},
 			expErr:    true,
-			expErrMsg: "invalid sender; expected mcaAddress",
+			expErrMsg: "invalid sender; expected taxAddress",
 		},
 		{
 			name: "update both",
 			input: &types.MsgUpdateParams{
 				Authority:  keepertest.TestSenderAddr,
-				McaTax:     "0.200000000000000000",
-				McaAddress: "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
+				Tax:        "0.200000000000000000",
+				TaxAddress: "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
 			},
 			expErr: false,
 		},
@@ -102,11 +102,11 @@ func TestMsgUpdateParams(t *testing.T) {
 				require.NoError(t, err)
 				params, err := k.Params.Get(ctx)
 				require.NoError(t, err)
-				if tc.input.McaTax != "" {
-					require.Equal(t, tc.input.McaTax, params.McaTax.String())
+				if tc.input.Tax != "" {
+					require.Equal(t, tc.input.Tax, params.Tax.String())
 				}
-				if tc.input.McaAddress != "" {
-					require.Equal(t, tc.input.McaAddress, params.McaAddress)
+				if tc.input.TaxAddress != "" {
+					require.Equal(t, tc.input.TaxAddress, params.TaxAddress)
 				}
 			}
 		})

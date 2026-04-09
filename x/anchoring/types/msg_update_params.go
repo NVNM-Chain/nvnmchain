@@ -18,7 +18,7 @@ func (msg MsgUpdateParams) ValidateBasic() error {
 		return fmt.Errorf("invalid Authority address: %w", err)
 	}
 
-	// Validate McaAddress
+	// Validate TaxAddress
 	if msg.Admin != "" {
 		_, err = sdk.AccAddressFromBech32(msg.Admin)
 		if err != nil {

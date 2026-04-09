@@ -24,6 +24,6 @@ func (q queryServer) Params(ctx context.Context, req *types.QueryParamsRequest) 
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 	// set the max tax rate to the hardcoded value
-	params.MaxMcaTax = types.MaxMcaTax
+	params.MaxTax = types.MaxTax
 	return &types.QueryParamsResponse{Params: params}, nil
 }

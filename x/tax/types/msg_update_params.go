@@ -19,28 +19,28 @@ func (msg MsgUpdateParams) ValidateBasic() error {
 		return fmt.Errorf("invalid Authority address: %w", err)
 	}
 
-	// Validate McaTax
-	if msg.McaTax != "" {
-		mcaTax, err := math.LegacyNewDecFromStr(msg.McaTax)
+	// Validate Tax
+	if msg.Tax != "" {
+		tax, err := math.LegacyNewDecFromStr(msg.Tax)
 		if err != nil {
-			return fmt.Errorf("invalid mca tax: %w", err)
+			return fmt.Errorf("invalid tax: %w", err)
 		}
-		if mcaTax.IsNegative() {
-			return fmt.Errorf("mca tax cannot be negative")
+		if tax.IsNegative() {
+			return fmt.Errorf("tax cannot be negative")
 		}
-		if mcaTax.GT(MaxMcaTax) {
-			return fmt.Errorf("mca tax %s cannot exceed maximum of %s", mcaTax, MaxMcaTax)
+		if tax.GT(MaxTax) {
+			return fmt.Errorf("tax %s cannot exceed maximum of %s", tax, MaxTax)
 		}
 	}
 
-	// Validate McaAddress
-	if msg.McaAddress != "" {
-		_, err = sdk.AccAddressFromBech32(msg.McaAddress)
+	// Validate Tax Address
+	if msg.TaxAddress != "" {
+		_, err = sdk.AccAddressFromBech32(msg.TaxAddress)
 		if err != nil {
-			return fmt.Errorf("invalid mca address: %w", err)
+			return fmt.Errorf("invalid tax address: %w", err)
 		}
-		if !strings.HasPrefix(msg.McaAddress, "nvnm") {
-			return fmt.Errorf("mca address must have 'nvnm' prefix")
+		if !strings.HasPrefix(msg.TaxAddress, "nvnm") {
+			return fmt.Errorf("tax address must have 'nvnm' prefix")
 		}
 	}
 

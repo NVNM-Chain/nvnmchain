@@ -19,8 +19,8 @@ func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams)
 		return nil, err
 	}
 
-	if req.Authority != params.McaAddress {
-		return nil, errorsmod.Wrapf(types.ErrInvalidSigner, "invalid sender; expected mcaAddress %s, got %s", params.McaAddress, req.Authority)
+	if req.Authority != params.TaxAddress {
+		return nil, errorsmod.Wrapf(types.ErrInvalidSigner, "invalid sender; expected taxAddress %s, got %s", params.TaxAddress, req.Authority)
 	}
 
 	updateParams, err := k.Params.Get(ctx)
@@ -28,26 +28,26 @@ func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams)
 		return nil, err
 	}
 
-	if req.McaTax != "" {
-		updateParams.McaTax, err = math.LegacyNewDecFromStr(req.McaTax)
+	if req.Tax != "" {
+		updateParams.Tax, err = math.LegacyNewDecFromStr(req.Tax)
 		if err != nil {
 			return nil, err
 		}
-		// Check against MaxMcaTax
-		if updateParams.McaTax.GT(types.MaxMcaTax) {
-			return nil, fmt.Errorf("mca tax %s cannot exceed maximum of %s", updateParams.McaTax, types.MaxMcaTax)
+		// Check against MaxTax
+		if updateParams.Tax.GT(types.MaxTax) {
+			return nil, fmt.Errorf("tax %s cannot exceed maximum of %s", updateParams.Tax, types.MaxTax)
 		}
 	}
 
-	if req.McaAddress != "" {
-		mcaAddr, err := k.addressCodec.StringToBytes(req.McaAddress)
+	if req.TaxAddress != "" {
+		taxAddr, err := k.addressCodec.StringToBytes(req.TaxAddress)
 		if err != nil {
-			return nil, errorsmod.Wrap(err, "invalid mca address")
+			return nil, errorsmod.Wrap(err, "invalid tax address")
 		}
-		if k.bankKeeper.BlockedAddr(mcaAddr) {
-			return nil, fmt.Errorf("mca address %s is blocked", req.McaAddress)
+		if k.bankKeeper.BlockedAddr(taxAddr) {
+			return nil, fmt.Errorf("tax address %s is blocked", req.TaxAddress)
 		}
-		updateParams.McaAddress = req.McaAddress
+		updateParams.TaxAddress = req.Tax
 	}
 
 	if err := updateParams.Validate(); err != nil {

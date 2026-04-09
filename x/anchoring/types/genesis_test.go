@@ -42,7 +42,7 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid: false,
 		},
 		{
-			desc: "mca address with wrong prefix is invalid",
+			desc: "tax address with wrong prefix is invalid",
 			genState: &types.GenesisState{
 				Params: types.NewParams("cosmos1qypqxpq9qcrsszg2pvxq6rs0zqg3yyc5lzutu9"),
 			},

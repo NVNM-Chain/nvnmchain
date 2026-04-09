@@ -23,14 +23,14 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "negative proportion is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("-0.5", types.DefaultMcaAddress),
+				Params: types.NewParams("-0.5", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
 			desc: "invalid bech32 address",
 			genState: &types.GenesisState{
-				Params: types.NewParams(types.DefaultMcaTax, "nvnm1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx073"),
+				Params: types.NewParams(types.DefaultTax, "nvnm1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx073"),
 			},
 			valid: false,
 		},
@@ -42,44 +42,44 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid: true,
 		},
 		{
-			desc: "mca tax greater than 1 is invalid",
+			desc: "tax greater than 1 is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("1.5", types.DefaultMcaAddress),
+				Params: types.NewParams("1.5", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
-			desc: "empty mca address is invalid",
+			desc: "empty tax address is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams(types.DefaultMcaTax, ""),
+				Params: types.NewParams(types.DefaultTax, ""),
 			},
 			valid: false,
 		},
 		{
-			desc: "mca tax of 0.5 is invalid",
+			desc: "tax of 0.5 is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("0.5", types.DefaultMcaAddress),
+				Params: types.NewParams("0.5", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
-			desc: "mca tax of 0 is valid",
+			desc: "tax of 0 is valid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("0", types.DefaultMcaAddress),
+				Params: types.NewParams("0", types.DefaultTaxAddress),
 			},
 			valid: true,
 		},
 		{
-			desc: "mca tax of 1 is invalid",
+			desc: "tax of 1 is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("1", types.DefaultMcaAddress),
+				Params: types.NewParams("1", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
-			desc: "mca address with wrong prefix is invalid",
+			desc: "tax address with wrong prefix is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams(types.DefaultMcaTax, "cosmos1qypqxpq9qcrsszg2pvxq6rs0zqg3yyc5lzutu9"),
+				Params: types.NewParams(types.DefaultTax, "cosmos1qypqxpq9qcrsszg2pvxq6rs0zqg3yyc5lzutu9"),
 			},
 			valid: false,
 		},

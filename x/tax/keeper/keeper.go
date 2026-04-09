@@ -69,19 +69,19 @@ func (k Keeper) Logger() log.Logger {
 	return k.logger.With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-func (k Keeper) AllocateMcaTax(ctx context.Context, mcaTax math.LegacyDec, mcaAddress sdk.AccAddress) error {
+func (k Keeper) AllocateTax(ctx context.Context, tax math.LegacyDec, taxAddress sdk.AccAddress) error {
 	feeCollector := k.authKeeper.GetModuleAccount(ctx, k.feeCollectorName)
 	feesCollectedInt := k.bankKeeper.GetAllBalances(ctx, feeCollector.GetAddress())
 	feesCollected := sdk.NewDecCoinsFromCoins(feesCollectedInt...)
 
-	if mcaTax.IsNegative() || mcaTax.GT(types.MaxMcaTax) {
-		return fmt.Errorf("invalid MCA tax: %s", mcaTax.String())
+	if tax.IsNegative() || tax.GT(types.MaxTax) {
+		return fmt.Errorf("invalid tax: %s", tax.String())
 	}
 
-	mcaTaxAllocation, _ := feesCollected.MulDec(mcaTax).TruncateDecimal()
+	taxAllocation, _ := feesCollected.MulDec(tax).TruncateDecimal()
 
-	// transfer allocated mca tax to the specified account
-	err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, k.feeCollectorName, mcaAddress, mcaTaxAllocation)
+	// transfer allocated tax to the specified account
+	err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, k.feeCollectorName, taxAddress, taxAllocation)
 	if err != nil {
 		return err
 	}
@@ -89,9 +89,9 @@ func (k Keeper) AllocateMcaTax(ctx context.Context, mcaTax math.LegacyDec, mcaAd
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	sdkCtx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypeMcaTaxAmount,
-			sdk.NewAttribute(sdk.AttributeKeyAmount, mcaTaxAllocation.String()),
-			sdk.NewAttribute(types.AttributeKeyRecipient, mcaAddress.String()),
+			types.EventTypeTaxAmount,
+			sdk.NewAttribute(sdk.AttributeKeyAmount, taxAllocation.String()),
+			sdk.NewAttribute(types.AttributeKeyRecipient, taxAddress.String()),
 		),
 	)
 	return nil

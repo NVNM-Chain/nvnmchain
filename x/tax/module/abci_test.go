@@ -14,10 +14,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestEndBlocker_InvalidMcaAddress(t *testing.T) {
+func TestEndBlocker_InvalidTaxAddress(t *testing.T) {
 	appparams.SetAddressPrefixes()
 
-	// feeCollectorAccount is used by AllocateMcaTax to look up the fee collector module account.
+	// feeCollectorAccount is used by AllocateTax to look up the fee collector module account.
 	blockedAddr := authtypes.NewModuleAddress("distribution").String()
 	feeCollectorAccount := authtypes.NewEmptyModuleAccount(authtypes.FeeCollectorName)
 	feeCollectorCoins := sdk.NewCoins(sdk.NewInt64Coin("uom", 1_000_000))
@@ -33,50 +33,50 @@ func TestEndBlocker_InvalidMcaAddress(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		mcaAddress  string
-		mcaTax      string
+		taxAddress  string
+		tax         string
 		blockHeight int64
 		expErr      bool
 	}{
 		{
-			name:        "invalid bech32 mca address returns error",
-			mcaAddress:  "not_a_valid_address",
-			mcaTax:      "0.1",
+			name:        "invalid bech32 tax address returns error",
+			taxAddress:  "not_a_valid_address",
+			tax:         "0.1",
 			blockHeight: 2,
 			expErr:      true,
 		},
 		{
-			name:        "empty mca address returns error",
-			mcaAddress:  "",
-			mcaTax:      "0.1",
+			name:        "empty tax address returns error",
+			taxAddress:  "",
+			tax:         "0.1",
 			blockHeight: 2,
 			expErr:      true,
 		},
 		{
 			name:        "invalid address skipped when tax is zero",
-			mcaAddress:  "not_a_valid_address",
-			mcaTax:      "0",
+			taxAddress:  "not_a_valid_address",
+			tax:         "0",
 			blockHeight: 2,
 			expErr:      false,
 		},
 		{
 			name:        "invalid address skipped at block height 1",
-			mcaAddress:  "not_a_valid_address",
-			mcaTax:      "0.1",
+			taxAddress:  "not_a_valid_address",
+			tax:         "0.1",
 			blockHeight: 1,
 			expErr:      false,
 		},
 		{
-			name:        "blocked mca address returns error",
-			mcaAddress:  blockedAddr,
-			mcaTax:      "0.1",
+			name:        "blocked tax address returns error",
+			taxAddress:  blockedAddr,
+			tax:         "0.1",
 			blockHeight: 2,
 			expErr:      true,
 		},
 		{
 			name:        "valid address succeeds",
-			mcaAddress:  keepertest.TestSenderAddr,
-			mcaTax:      "0.1",
+			taxAddress:  keepertest.TestSenderAddr,
+			tax:         "0.1",
 			blockHeight: 2,
 			expErr:      false,
 		},
@@ -88,9 +88,9 @@ func TestEndBlocker_InvalidMcaAddress(t *testing.T) {
 			ctx = ctx.WithBlockHeader(cmtproto.Header{Height: tc.blockHeight})
 
 			params := types.Params{
-				McaAddress: tc.mcaAddress,
-				McaTax:     math.LegacyMustNewDecFromStr(tc.mcaTax),
-				MaxMcaTax:  math.LegacyMustNewDecFromStr("0.4"),
+				TaxAddress: tc.taxAddress,
+				Tax:        math.LegacyMustNewDecFromStr(tc.tax),
+				MaxTax:     math.LegacyMustNewDecFromStr("0.4"),
 			}
 			require.NoError(t, k.Params.Set(ctx, params))
 
