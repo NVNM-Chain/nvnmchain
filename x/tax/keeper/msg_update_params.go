@@ -47,7 +47,7 @@ func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams)
 		if k.bankKeeper.BlockedAddr(taxAddr) {
 			return nil, fmt.Errorf("tax address %s is blocked", req.TaxAddress)
 		}
-		updateParams.TaxAddress = req.Tax
+		updateParams.TaxAddress = req.TaxAddress
 	}
 
 	if err := updateParams.Validate(); err != nil {
