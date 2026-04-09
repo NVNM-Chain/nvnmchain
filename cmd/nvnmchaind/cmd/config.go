@@ -3,7 +3,7 @@ package cmd
 import (
 	"time"
 
-	"github.com/MANTRA-Chain/inveniam/app"
+	"github.com/MANTRA-Chain/nvnmchain/app"
 	cmtcfg "github.com/cometbft/cometbft/config"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	cosmosevmserverconfig "github.com/cosmos/evm/server/config"

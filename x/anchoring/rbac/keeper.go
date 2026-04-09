@@ -5,7 +5,7 @@ import (
 
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 )

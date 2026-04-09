@@ -8,7 +8,7 @@ import "gogoproto/gogo.proto";
 import "mantrachain/anchoring/v1/params.proto";
 import "mantrachain/anchoring/v1/document.proto";
 
-option go_package = "github.com/MANTRA-Chain/inveniam/x/anchoring/types";
+option go_package = "github.com/MANTRA-Chain/nvnmchain/x/anchoring/types";
 
 // Msg defines the Msg service.
 service Msg {
@@ -38,7 +38,7 @@ service Msg {
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
-  option (amino.name) = "inveniam/x/anchoring/MsgUpdateParams";
+  option (amino.name) = "nvnmchain/x/anchoring/MsgUpdateParams";
   option (cosmos.msg.v1.signer) = "authority";
 
   // authority is the address that controls the module parameters.
@@ -52,7 +52,7 @@ message MsgUpdateParamsResponse {}
 
 // MsgAddRegistry is the Msg/AddRegistry request type.
 message MsgAddRegistry {
-  option (amino.name) = "inveniam/x/anchoring/MsgAddRegistry";
+  option (amino.name) = "nvnmchain/x/anchoring/MsgAddRegistry";
   option (cosmos.msg.v1.signer) = "sender";
   // sender is the address that creates the registry.
   string sender = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
@@ -72,7 +72,7 @@ message MsgAddRegistryResponse {
 
 // MsgAddRecord is the Msg/AddRecord request type.
 message MsgAddRecord {
-  option (amino.name) = "inveniam/x/anchoring/MsgAddRecord";
+  option (amino.name) = "nvnmchain/x/anchoring/MsgAddRecord";
   option (cosmos.msg.v1.signer) = "sender";
 
   // sender is the address that sends the document addition request.
@@ -88,7 +88,7 @@ message MsgAddRecordResponse {
 
 // MsgUpdateRecordStatus is the Msg/UpdateRecordStatus request type.
 message MsgUpdateRecordStatus {
-  option (amino.name) = "inveniam/x/anchoring/MsgUpdateRecordStatus";
+  option (amino.name) = "nvnmchain/x/anchoring/MsgUpdateRecordStatus";
   option (cosmos.msg.v1.signer) = "editor";
   // editor is the address that updates the record status.
   string editor = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
@@ -108,7 +108,7 @@ message MsgUpdateRecordStatusResponse {}
 
 // MsgGrantRole is the Msg/GrantRole request type.
 message MsgGrantRole {
-  option (amino.name) = "inveniam/x/anchoring/MsgGrantRole";
+  option (amino.name) = "nvnmchain/x/anchoring/MsgGrantRole";
   option (cosmos.msg.v1.signer) = "admin";
 
   // admin is the address that grants the role.
@@ -127,7 +127,7 @@ message MsgGrantRoleResponse {}
 
 // MsgRevokeRole is the Msg/RevokeRole request type.
 message MsgRevokeRole {
-  option (amino.name) = "inveniam/x/anchoring/MsgRevokeRole";
+  option (amino.name) = "nvnmchain/x/anchoring/MsgRevokeRole";
   option (cosmos.msg.v1.signer) = "admin";
 
   // admin is the address that revokes the role.

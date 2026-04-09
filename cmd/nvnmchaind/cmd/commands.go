@@ -7,7 +7,7 @@ import (
 
 	"cosmossdk.io/log"
 	confixcmd "cosmossdk.io/tools/confix/cmd"
-	"github.com/MANTRA-Chain/inveniam/app"
+	"github.com/MANTRA-Chain/nvnmchain/app"
 	cmtcli "github.com/cometbft/cometbft/libs/cli"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -93,7 +93,7 @@ func addModuleInitFlags(startCmd *cobra.Command) {
 	_ = startCmd.Flags().MarkHidden("x-crisis-skip-assert-invariants")
 }
 
-// genesisCommand builds genesis-related `inveniamd genesis` command. Users may provide application specific commands as a parameter
+// genesisCommand builds genesis-related `nvnmchaind genesis` command. Users may provide application specific commands as a parameter
 func genesisCommand(txConfig client.TxConfig, basicManager module.BasicManager, cmds ...*cobra.Command) *cobra.Command {
 	cmd := genutilcli.Commands(txConfig, basicManager, app.DefaultNodeHome)
 
@@ -174,7 +174,7 @@ func newApp(
 	)
 }
 
-// appExport creates a new inveniam app (optionally at a given height) and exports state.
+// appExport creates a new nvnmchain app (optionally at a given height) and exports state.
 func appExport(
 	logger log.Logger,
 	db dbm.DB,
@@ -185,7 +185,7 @@ func appExport(
 	appOpts servertypes.AppOptions,
 	modulesToExport []string,
 ) (servertypes.ExportedApp, error) {
-	var inveniamApp *app.App
+	var nvnmchainApp *app.App
 	// this check is necessary as we use the flag in x/upgrade.
 	// we can exit more gracefully by checking the flag here.
 	homePath, ok := appOpts.Get(flags.FlagHome).(string)
@@ -202,7 +202,7 @@ func appExport(
 	viperAppOpts.Set(server.FlagInvCheckPeriod, 1)
 	appOpts = viperAppOpts
 
-	inveniamApp = app.New(
+	nvnmchainApp = app.New(
 		logger,
 		db,
 		traceStore,
@@ -211,16 +211,16 @@ func appExport(
 	)
 
 	if height != -1 {
-		if err := inveniamApp.LoadHeight(height); err != nil {
+		if err := nvnmchainApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	}
 
-	return inveniamApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
+	return nvnmchainApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
 }
 
 var tempDir = func() string {
-	dir, err := os.MkdirTemp("", "inveniam")
+	dir, err := os.MkdirTemp("", "nvnmchain")
 	if err != nil {
 		panic("failed to create temp dir: " + err.Error())
 	}

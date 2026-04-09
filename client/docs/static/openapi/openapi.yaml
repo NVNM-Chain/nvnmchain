@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Inveniam - gRPC Gateway docs
+  title: NVNMChain - gRPC Gateway docs
   description: A REST interface for state queries, legacy transactions
   version: 1.0.0
 paths:
@@ -3248,7 +3248,7 @@ paths:
                           format: byte
       tags:
         - Query
-  /MANTRA-Chain/inveniam/tax/v1/params:
+  /MANTRA-Chain/nvnmchain/tax/v1/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: TaxParams

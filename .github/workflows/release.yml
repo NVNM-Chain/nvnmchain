@@ -27,16 +27,16 @@ jobs:
       matrix:
         platform:
           - name: Linux x86_64
-            ids: inveniamd-linux-amd64
+            ids: nvnmchaind-linux-amd64
             runner: ubuntu-latest
             cross: false
           - name: Linux aarch64
-            ids: inveniamd-linux-arm64
+            ids: nvnmchaind-linux-arm64
             runner: ubuntu-arm64-2cores
             docker-platform: linux/arm64
             cross: false
           - name: MacOS x86_64 and aarch64
-            ids: inveniamd-darwin-amd64,inveniamd-darwin-arm64
+            ids: nvnmchaind-darwin-amd64,nvnmchaind-darwin-arm64
             runner: ubuntu-latest
             cross: true
 

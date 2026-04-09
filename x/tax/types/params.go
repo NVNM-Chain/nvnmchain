@@ -11,7 +11,7 @@ import (
 // Declare defaults for MCA tax and MCA address
 var (
 	DefaultMcaTax     = "0.4"
-	DefaultMcaAddress = "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"
+	DefaultMcaAddress = "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"
 	MaxMcaTax         = math.LegacyMustNewDecFromStr("0.4") // 40 %
 )
 
@@ -86,8 +86,8 @@ func ValidateMcaAddress(address string) error {
 	if err != nil {
 		return fmt.Errorf("invalid mca address: %w", err)
 	}
-	if !strings.HasPrefix(address, "inveniam") {
-		return fmt.Errorf("mca address must have 'inveniam' prefix")
+	if !strings.HasPrefix(address, "nvnm") {
+		return fmt.Errorf("mca address must have 'nvnm' prefix")
 	}
 	return nil
 }

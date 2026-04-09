@@ -1,11 +1,11 @@
-module github.com/MANTRA-Chain/inveniam/tests/interchain
+module github.com/MANTRA-Chain/nvnmchain/tests/interchain
 
 go 1.25.0
 
 toolchain go1.25.5
 
 replace (
-	// Align with main inveniam project dependencies
+	// Align with main nvnmchain project dependencies
 	cosmossdk.io/core => cosmossdk.io/core v0.11.3
 	github.com/ChainSafe/go-schnorrkel => github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d
 	github.com/ChainSafe/go-schnorrkel/1 => github.com/ChainSafe/go-schnorrkel v1.0.0
@@ -87,8 +87,8 @@ require (
 	github.com/btcsuite/btcd v0.22.1 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.5 // indirect
 	github.com/bytedance/gopkg v0.1.3 // indirect
-	github.com/bytedance/sonic v1.14.2 // indirect
-	github.com/bytedance/sonic/loader v0.4.0 // indirect
+	github.com/bytedance/sonic v1.15.0 // indirect
+	github.com/bytedance/sonic/loader v0.5.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect

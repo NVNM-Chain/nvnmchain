@@ -382,13 +382,13 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"MANTRA-Chain", "inveniam", "anchoring", "v1", "params"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"MANTRA-Chain", "nvnmchain", "anchoring", "v1", "params"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Records_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"MANTRA-Chain", "inveniam", "anchoring", "v1", "records"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Records_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"MANTRA-Chain", "nvnmchain", "anchoring", "v1", "records"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Registries_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"MANTRA-Chain", "inveniam", "anchoring", "v1", "registries"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Registries_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"MANTRA-Chain", "nvnmchain", "anchoring", "v1", "registries"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Registry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"MANTRA-Chain", "inveniam", "anchoring", "v1", "registry"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Registry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"MANTRA-Chain", "nvnmchain", "anchoring", "v1", "registry"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

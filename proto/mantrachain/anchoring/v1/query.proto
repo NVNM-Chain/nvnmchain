@@ -8,30 +8,30 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "mantrachain/anchoring/v1/params.proto";
 import "mantrachain/anchoring/v1/document.proto";
 
-option go_package = "github.com/MANTRA-Chain/inveniam/x/anchoring/types";
+option go_package = "github.com/MANTRA-Chain/nvnmchain/x/anchoring/types";
 
 // Query defines the gRPC querier service.
 service Query {
   // Parameters queries the parameters of the module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/MANTRA-Chain/inveniam/anchoring/v1/params";
+    option (google.api.http).get = "/MANTRA-Chain/nvnmchain/anchoring/v1/params";
   }
 
   // Records queries documents based on filters
   rpc Records(QueryRecordsRequest) returns (QueryRecordsResponse) {
-    option (google.api.http).get = "/MANTRA-Chain/inveniam/anchoring/v1/records";
+    option (google.api.http).get = "/MANTRA-Chain/nvnmchain/anchoring/v1/records";
   }
 
   // Registries queries all registries with pagination
   rpc Registries(QueryRegistriesRequest) returns (QueryRegistriesResponse) {
     option (google.api.http).get =
-        "/MANTRA-Chain/inveniam/anchoring/v1/registries";
+        "/MANTRA-Chain/nvnmchain/anchoring/v1/registries";
   }
 
   // Registry queries a specific registry by id or name
   rpc Registry(QueryRegistryRequest) returns (QueryRegistryResponse) {
     option (google.api.http).get =
-        "/MANTRA-Chain/inveniam/anchoring/v1/registry";
+        "/MANTRA-Chain/nvnmchain/anchoring/v1/registry";
   }
 }
 

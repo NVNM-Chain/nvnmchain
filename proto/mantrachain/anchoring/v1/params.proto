@@ -5,11 +5,11 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/MANTRA-Chain/inveniam/x/anchoring/types";
+option go_package = "github.com/MANTRA-Chain/nvnmchain/x/anchoring/types";
 
 // Params defines the parameters for the module.
 message Params {
-  option (amino.name) = "inveniam/x/anchoring/Params";
+  option (amino.name) = "nvnmchain/x/anchoring/Params";
   option (gogoproto.equal) = true;
 
   string admin = 1 [

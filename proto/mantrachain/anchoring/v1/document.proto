@@ -5,7 +5,7 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "mantrachain/anchoring/v1/params.proto";
 
-option go_package = "github.com/MANTRA-Chain/inveniam/x/anchoring/types";
+option go_package = "github.com/MANTRA-Chain/nvnmchain/x/anchoring/types";
 
 message Registry {
   // Unique ID (auto-incrementing uint64 is standard for Cosmos collections)

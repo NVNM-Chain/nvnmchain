@@ -4,8 +4,8 @@ import (
 	"os"
 
 	"cosmossdk.io/log"
-	"github.com/MANTRA-Chain/inveniam/app"
-	"github.com/MANTRA-Chain/inveniam/app/params"
+	"github.com/MANTRA-Chain/nvnmchain/app"
+	"github.com/MANTRA-Chain/nvnmchain/app/params"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/client"
 	clientcfg "github.com/cosmos/cosmos-sdk/client/config"
@@ -51,13 +51,13 @@ func NewRootCmd() *cobra.Command {
 		WithAccountRetriever(authtypes.AccountRetriever{}).
 		WithBroadcastMode(flags.BroadcastSync).
 		WithHomeDir(app.DefaultNodeHome).
-		WithViper("INVENIAM").
+		WithViper("nvnm").
 		WithKeyringOptions(hd.EthSecp256k1Option()).
 		WithLedgerHasProtobuf(true)
 
 	rootCmd := &cobra.Command{
 		Use:           version.AppName,
-		Short:         "Inveniam Daemon (server)",
+		Short:         "NVNMChain Daemon (server)",
 		SilenceErrors: true,
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs

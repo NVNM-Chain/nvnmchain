@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"cosmossdk.io/collections"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/rbac"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/rbac"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )

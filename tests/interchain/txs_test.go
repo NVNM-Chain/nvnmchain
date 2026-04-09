@@ -11,7 +11,7 @@ import (
 
 	sdkmath "cosmossdk.io/math"
 
-	"github.com/MANTRA-Chain/inveniam/tests/interchain/chainsuite"
+	"github.com/MANTRA-Chain/nvnmchain/tests/interchain/chainsuite"
 )
 
 const txAmount = 1_000_000_000

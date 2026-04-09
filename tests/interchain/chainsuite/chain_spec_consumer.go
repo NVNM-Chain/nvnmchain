@@ -17,7 +17,7 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 )
 
-// GetConsumerSpec returns the chain spec for the consumer chain (inveniam)
+// GetConsumerSpec returns the chain spec for the consumer chain (nvnmchain)
 func GetConsumerSpec(ctx context.Context, env Environment, providerChain *Chain, proposalMsg *providertypes.MsgCreateConsumer) *interchaintest.ChainSpec {
 	fullNodes := 0
 	validators := 1
@@ -29,7 +29,7 @@ func GetConsumerSpec(ctx context.Context, env Environment, providerChain *Chain,
 		NumValidators: &validators,
 		ChainConfig: ibc.ChainConfig{
 			ChainID:        ConsumerChainID,
-			Name:           "inveniam",
+			Name:           "nvnmchain",
 			Bin:            ConsumerBin,
 			Denom:          Uom,
 			CoinDecimals:   &coinDecimals,
@@ -129,7 +129,7 @@ func ConsumerModifiedGenesis() []cosmos.GenesisKV {
 					"base":        Uom,
 					"display":     HumanCoinUnit,
 					"symbol":      strings.ToUpper(HumanCoinUnit),
-					"description": "The native staking token of the inveniam network",
+					"description": "The native staking token of the nvnmchain network",
 					"denom_units": []map[string]interface{}{
 						{
 							"denom":    Uom,

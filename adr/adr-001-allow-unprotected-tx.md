@@ -1,4 +1,4 @@
-# ADR 006: Allow Unprotected Transactions
+# ADR 001: Allow Unprotected Transactions
 
 ## Status
 

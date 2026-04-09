@@ -73,12 +73,12 @@ const (
 	ProviderGovModuleAddress = "mantra10d07y265gmmuvt4z0w9aw880jnsr700jz4h7cr"
 
 	// Consumer chain constants
-	ConsumerBin = "inveniamd"
-	// Chain ID must be in EVMChainIDMap (inveniam-1, manveniam-1, inveniam-canary-net-1)
+	ConsumerBin = "nvnmchaind"
+	// Chain ID must be in EVMChainIDMap (nvnmchain-1, nvnmchain-1, nvnmchain-canary-net-1)
 	// or parseable as <name>_<EIP155>-<epoch> format for EVM compatibility
-	ConsumerChainID          = "manveniam-1"
-	ConsumerBech32Prefix     = "inveniam"
-	ConsumerGovModuleAddress = "inveniam10d07y265gmmuvt4z0w9aw880jnsr700jdl2ath"
+	ConsumerChainID          = "nvnmchain-1"
+	ConsumerBech32Prefix     = "nvnm"
+	ConsumerGovModuleAddress = "nvnm10d07y265gmmuvt4z0w9aw880jnsr700jeyeqjy"
 
 	// Test wallet constants
 	// Only create 2 test wallets since that's all the tests need
@@ -92,12 +92,12 @@ const (
 
 	// Address derived with coin-type 118 (Cosmos standard path m/44'/118'/0'/0/0)
 	// Used by interchaintest's BuildWallet and standard Cosmos operations
-	TestAccountAddress = "inveniam10sds9dt423w57fpy8s3fhjd9autynv6xg52prm"
+	TestAccountAddress = "nvnm10sds9dt423w57fpy8s3fhjd9autynv6xfsk0vp"
 
 	// Address for EVM compatibility - derived from EVM address bytes
 	// EVM address 0x9858EfFD232B4033E47d90003D41EC34EcaEda94 corresponds to this Cosmos address
 	// This is the address that eth_getBalance will query in the bank module
-	TestAccountAddressEVM = "inveniam1npvwllfr9dqr8erajqqr6s0vxnk2ak55tjyq5h"
+	TestAccountAddressEVM = "nvnm1npvwllfr9dqr8erajqqr6s0vxnk2ak552kcwmd"
 
 	// TestAccountFunds is 5e18 (5 tokens) - enough for many test transactions
 	// With gas prices of 1e9 and typical tx gas of 200k with 2x adjustment, each tx costs ~4e14

@@ -15,4 +15,4 @@ build
 exclusive.lock
 coverage.txt
 mise.toml
-.inveniamsinglenodetest
+.nvnmchainsinglenodetest

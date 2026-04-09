@@ -5,11 +5,11 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/MANTRA-Chain/inveniam/x/tax/types";
+option go_package = "github.com/MANTRA-Chain/nvnmchain/x/tax/types";
 
 // Params defines the parameters for the module.
 message Params {
-  option (amino.name) = "inveniam/x/tax/Params";
+  option (amino.name) = "nvnmchain/x/tax/Params";
   option (gogoproto.equal) = true;
 
   string mca_tax = 1 [

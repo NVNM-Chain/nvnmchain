@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 import "mantrachain/anchoring/v1/params.proto";
 import "mantrachain/anchoring/v1/document.proto";
 
-option go_package = "github.com/MANTRA-Chain/inveniam/x/anchoring/types";
+option go_package = "github.com/MANTRA-Chain/nvnmchain/x/anchoring/types";
 
 // GenesisState defines the document module's genesis state.
 message GenesisState {

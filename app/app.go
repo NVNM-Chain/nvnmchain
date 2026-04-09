@@ -42,13 +42,13 @@ import (
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	sdkmempool "github.com/cosmos/cosmos-sdk/types/mempool"
 
-	"github.com/MANTRA-Chain/inveniam/app/ante"
-	"github.com/MANTRA-Chain/inveniam/app/upgrades"
-	_ "github.com/MANTRA-Chain/inveniam/client/docs/statik"
-	"github.com/MANTRA-Chain/inveniam/client/docs/swagger"
-	taxkeeper "github.com/MANTRA-Chain/inveniam/x/tax/keeper"
-	tax "github.com/MANTRA-Chain/inveniam/x/tax/module"
-	taxtypes "github.com/MANTRA-Chain/inveniam/x/tax/types"
+	"github.com/MANTRA-Chain/nvnmchain/app/ante"
+	"github.com/MANTRA-Chain/nvnmchain/app/upgrades"
+	_ "github.com/MANTRA-Chain/nvnmchain/client/docs/statik"
+	"github.com/MANTRA-Chain/nvnmchain/client/docs/swagger"
+	taxkeeper "github.com/MANTRA-Chain/nvnmchain/x/tax/keeper"
+	tax "github.com/MANTRA-Chain/nvnmchain/x/tax/module"
+	taxtypes "github.com/MANTRA-Chain/nvnmchain/x/tax/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -110,10 +110,10 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	"cosmossdk.io/client/v2/autocli"
-	anchoringkeeper "github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
-	anchoring "github.com/MANTRA-Chain/inveniam/x/anchoring/module"
-	anchoringprecompile "github.com/MANTRA-Chain/inveniam/x/anchoring/precompile"
-	anchoringtypes "github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	anchoringkeeper "github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
+	anchoring "github.com/MANTRA-Chain/nvnmchain/x/anchoring/module"
+	anchoringprecompile "github.com/MANTRA-Chain/nvnmchain/x/anchoring/precompile"
+	anchoringtypes "github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
 	chainante "github.com/cosmos/evm/ante"
 	evmaddress "github.com/cosmos/evm/encoding/address"
 	evmmempool "github.com/cosmos/evm/mempool"
@@ -167,7 +167,7 @@ func init() {
 	sdk.DefaultPowerReduction = cosmosevmutils.AttoPowerReduction
 	stakingtypes.DefaultMinCommissionRate = math.LegacyZeroDec()
 
-	// DefaultNodeHome default home directories for inveniamd
+	// DefaultNodeHome default home directories for nvnmchaind
 	var err error
 	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(NodeDir)
 	if err != nil {
@@ -185,11 +185,11 @@ const (
 
 // We pull these out so we can set them with LDFLAGS in the Makefile
 var (
-	NodeDir = ".inveniam"
+	NodeDir = ".nvnmchain"
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
 	// Authority address
-	Authority = "inveniam1wrapt0xsdp8u833fx0xlk5clru2gtts2qrceru"
+	Authority = "nvnm1wrapt0xsdp8u833fx0xlk5clru2gtts2p8yhvx"
 )
 
 // module account permissions
@@ -215,7 +215,7 @@ var maccPerms = map[string][]string{
 	consumertypes.ConsumerRedistributeName:     nil,
 	consumertypes.ConsumerToSendToProviderName: nil,
 
-	// Inveniam Specific Modules
+	// NVNMChain Specific Modules
 	anchoringtypes.ModuleName: nil,
 }
 
@@ -267,7 +267,7 @@ type App struct {
 	// MANTRAChain keepers
 	TaxKeeper taxkeeper.Keeper
 
-	// Inveniam keepers
+	// NVNMChain keepers
 	AnchoringKeeper anchoringkeeper.Keeper
 
 	// Cosmos EVM keepers
@@ -740,7 +740,7 @@ func New(
 		// mantrachain modules
 		tax.NewAppModule(appCodec, app.TaxKeeper),
 
-		// inveniam modules
+		// nvnmchain modules
 		anchoring.NewAppModule(appCodec, app.AnchoringKeeper),
 
 		// Cosmos EVM modules
@@ -915,7 +915,7 @@ func New(
 
 	// must be before Loading version
 	// requires the snapshot store to be created and registered as a BaseAppOption
-	// see cmd/inveniamd/root.go: 206 - 214 approx
+	// see cmd/nvnmchaind/root.go: 206 - 214 approx
 	if manager := app.SnapshotManager(); manager != nil {
 		err := manager.RegisterExtensions()
 		if err != nil {

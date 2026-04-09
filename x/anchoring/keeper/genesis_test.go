@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"cosmossdk.io/collections"
-	"github.com/MANTRA-Chain/inveniam/testutil/keeper"
-	"github.com/MANTRA-Chain/inveniam/testutil/sample"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/rbac"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
+	"github.com/MANTRA-Chain/nvnmchain/testutil/sample"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/rbac"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )

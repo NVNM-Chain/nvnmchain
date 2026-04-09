@@ -1,12 +1,12 @@
-# Inveniam
-- name: inveniam
+# Nvnmchain
+- name: nvnmchain
   github-organization: MANTRA-Chain
-  github-repo: inveniam
+  github-repo: nvnmchain
   dockerfile: cosmos
   build-target: |
     LEDGER_ENABLED=true BUILD_TAGS='muslc osusergo' LINK_STATICALLY=true make build
   binaries:
-    - build/inveniamd
+    - build/nvnmchaind
   platforms:
     - linux/amd64
     - linux/arm64

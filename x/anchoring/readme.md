@@ -362,7 +362,7 @@ Example output (mapped to `Registry` field names):
 		"id": 4,
 		"name": "query-specific-reg",
 		"description": "query-specific-reg",
-		"creator": "inveniam1x7x9pkfxf33l87ftspk5aetwnkr0lvlvyde8p7",
+		"creator": "nvnm1x7x9pkfxf33l87ftspk5aetwnkr0lvlv9f9fwy",
 		"createdAt": "2026-01-30 05:40:15.090584 +0000 UTC"
 	}
 ]

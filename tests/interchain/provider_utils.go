@@ -10,7 +10,7 @@ import (
 	clienttypes "github.com/cosmos/ibc-go/v10/modules/core/02-client/types"
 	providertypes "github.com/cosmos/interchain-security/v7/x/ccv/provider/types"
 
-	"github.com/MANTRA-Chain/inveniam/tests/interchain/chainsuite"
+	"github.com/MANTRA-Chain/nvnmchain/tests/interchain/chainsuite"
 )
 
 func msgCreateConsumer(

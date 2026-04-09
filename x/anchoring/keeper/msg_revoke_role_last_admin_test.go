@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"cosmossdk.io/core/address"
-	appparams "github.com/MANTRA-Chain/inveniam/app/params"
-	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
+	keepertest "github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )

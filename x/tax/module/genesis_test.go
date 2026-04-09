@@ -3,11 +3,11 @@ package tax_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/inveniam/app/params"
-	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
-	"github.com/MANTRA-Chain/inveniam/testutil/nullify"
-	tax "github.com/MANTRA-Chain/inveniam/x/tax/module"
-	"github.com/MANTRA-Chain/inveniam/x/tax/types"
+	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
+	keepertest "github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
+	"github.com/MANTRA-Chain/nvnmchain/testutil/nullify"
+	tax "github.com/MANTRA-Chain/nvnmchain/x/tax/module"
+	"github.com/MANTRA-Chain/nvnmchain/x/tax/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -42,7 +42,7 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
-				Params: types.NewParams("0.1", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"),
+				Params: types.NewParams("0.1", "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"),
 			},
 			valid: true,
 		},
@@ -100,7 +100,7 @@ func TestParams_Validate(t *testing.T) {
 		},
 		{
 			name:    "valid params",
-			params:  types.NewParams("0.1", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"),
+			params:  types.NewParams("0.1", "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"),
 			wantErr: false,
 		},
 		{
@@ -115,7 +115,7 @@ func TestParams_Validate(t *testing.T) {
 		},
 		{
 			name:    "mca tax too high",
-			params:  types.NewParams("1.1", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"),
+			params:  types.NewParams("1.1", "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"),
 			wantErr: true,
 		},
 	}
@@ -161,7 +161,7 @@ func TestParams_ValidateMcaAddress(t *testing.T) {
 		address string
 		wantErr bool
 	}{
-		{"valid address", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8", false},
+		{"valid address", "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca", false},
 		{"empty address", "", true},
 		{"invalid bech32", "invalid_address", true},
 		{"wrong prefix", "cosmos1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnrql8a", true},

@@ -3,10 +3,10 @@ package keeper_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/inveniam/app/params"
-	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
+	keepertest "github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -37,7 +37,7 @@ func TestMsgUpdateParams(t *testing.T) {
 		{
 			name: "update mca address",
 			input: &types.MsgUpdateParams{
-				Authority: "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
+				Authority: "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
 				Admin:     keepertest.TestSenderAddr,
 			},
 			expErr: false,
@@ -45,7 +45,7 @@ func TestMsgUpdateParams(t *testing.T) {
 		{
 			name: "old authority address no longer work",
 			input: &types.MsgUpdateParams{
-				Authority: "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
+				Authority: "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
 				Admin:     "",
 			},
 			expErr:    true,

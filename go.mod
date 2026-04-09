@@ -1,4 +1,4 @@
-module github.com/MANTRA-Chain/inveniam
+module github.com/MANTRA-Chain/nvnmchain
 
 go 1.24.2
 

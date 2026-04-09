@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/precompile"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/precompile"
 	"github.com/cosmos/cosmos-sdk/codec"
 	precompiletypes "github.com/cosmos/evm/precompiles/types"
 	evmtypes "github.com/cosmos/evm/x/vm/types"

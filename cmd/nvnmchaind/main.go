@@ -5,8 +5,8 @@ import (
 	"os"
 
 	clienthelpers "cosmossdk.io/client/v2/helpers"
-	"github.com/MANTRA-Chain/inveniam/app"
-	"github.com/MANTRA-Chain/inveniam/cmd/inveniamd/cmd"
+	"github.com/MANTRA-Chain/nvnmchain/app"
+	"github.com/MANTRA-Chain/nvnmchain/cmd/nvnmchaind/cmd"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	evmcfg "github.com/cosmos/evm/config"
@@ -30,7 +30,7 @@ const (
 )
 
 var (
-	Bech32Prefix = "inveniam"
+	Bech32Prefix = "nvnm"
 	// Bech32PrefixAccPub defines the Bech32 prefix of an account's public key.
 	Bech32PrefixAccPub = Bech32Prefix + "pub"
 	// Bech32PrefixValAddr defines the Bech32 prefix of a validator's operator address.

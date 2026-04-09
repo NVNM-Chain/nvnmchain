@@ -24,8 +24,8 @@ func (msg MsgUpdateParams) ValidateBasic() error {
 		if err != nil {
 			return fmt.Errorf("invalid admin address: %w", err)
 		}
-		if !strings.HasPrefix(msg.Admin, "inveniam") {
-			return fmt.Errorf("admin address must have 'inveniam' prefix")
+		if !strings.HasPrefix(msg.Admin, "nvnm") {
+			return fmt.Errorf("admin address must have 'nvnm' prefix")
 		}
 	}
 

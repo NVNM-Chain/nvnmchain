@@ -10,7 +10,7 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/MANTRA-Chain/inveniam/tests/interchain/chainsuite"
+	"github.com/MANTRA-Chain/nvnmchain/tests/interchain/chainsuite"
 )
 
 // ProviderConsumerSuite is the test suite for provider-consumer chain interactions
@@ -38,7 +38,7 @@ func (s *ProviderConsumerSuite) SetupSuite() {
 	s.Require().NoError(err)
 	s.Relayer = relayer
 
-	// Create consumer chain (inveniam) via ICS
+	// Create consumer chain (nvnmchain) via ICS
 	spawnTime := time.Now().Add(time.Hour)
 	initParams := consumerInitParamsTemplate(&spawnTime)
 	initParams.InitialHeight = clienttypes.Height{

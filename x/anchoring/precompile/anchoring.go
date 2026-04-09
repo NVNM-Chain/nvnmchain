@@ -9,9 +9,9 @@ import (
 	cmn "github.com/cosmos/evm/precompiles/common"
 
 	storetypes "cosmossdk.io/store/types"
-	invcmn "github.com/MANTRA-Chain/inveniam/precompiles"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	invcmn "github.com/MANTRA-Chain/nvnmchain/precompiles"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
+	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/evm/precompiles/erc20"
 	evmtypes "github.com/cosmos/evm/x/vm/types"
@@ -21,7 +21,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 )
 
-//go:generate go run github.com/yihuang/go-abi/cmd -var=HumanABI -output anchoring.abi.go --external-tuples PageRequest=cmn.PageRequest,PageResponse=cmn.PageResponse --imports cmn=github.com/MANTRA-Chain/inveniam/precompiles -uint256
+//go:generate go run github.com/yihuang/go-abi/cmd -var=HumanABI -output anchoring.abi.go --external-tuples PageRequest=cmn.PageRequest,PageResponse=cmn.PageResponse --imports cmn=github.com/MANTRA-Chain/nvnmchain/precompiles -uint256
 var HumanABI = []string{
 	"struct Record {string registry; string uri; string checksum; string checksumAlgo; string metadata; string timestamp; string status; uint64 recordId; uint64 index; bool isLatest}",
 	"struct Registry {uint64 id; string name; string description; string creator; string createdAt; string metadata}",
