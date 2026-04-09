@@ -5,6 +5,7 @@ package precompile
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	gethtypes "github.com/ethereum/go-ethereum/core/types"
@@ -15,11 +16,14 @@ import (
 
 type stateDBWithCode struct {
 	vm.StateDB
-	code []byte
+	codes map[common.Address][]byte
 }
 
-func (s stateDBWithCode) GetCode(common.Address) []byte {
-	return s.code
+func (s stateDBWithCode) GetCode(addr common.Address) []byte {
+	if code, ok := s.codes[addr]; ok {
+		return code
+	}
+	return nil
 }
 
 func TestIsEOACode(t *testing.T) {
@@ -76,14 +80,14 @@ func TestEnsureEOACaller(t *testing.T) {
 		},
 		{
 			name:      "contract code rejected",
-			stateDB:   stateDBWithCode{code: []byte{0x60, 0x00, 0x60, 0x00, 0x56}},
+			stateDB:   stateDBWithCode{codes: map[common.Address][]byte{callerContractCode: {0x60, 0x00, 0x60, 0x00, 0x56}}},
 			contract:  vm.NewContract(callerContractCode, common.Address{}, nil, 0, nil),
 			txOrigin:  callerContractCode,
 			wantError: true,
 		},
 		{
 			name:      "delegation code allowed",
-			stateDB:   stateDBWithCode{code: gethtypes.AddressToDelegation(common.HexToAddress("0x00000000000000000000000000000000000000c1"))},
+			stateDB:   stateDBWithCode{codes: map[common.Address][]byte{callerDelegationCode: gethtypes.AddressToDelegation(common.HexToAddress("0x00000000000000000000000000000000000000c1"))}},
 			contract:  vm.NewContract(callerDelegationCode, common.Address{}, nil, 0, nil),
 			txOrigin:  callerDelegationCode,
 			wantError: false,
@@ -91,17 +95,24 @@ func TestEnsureEOACaller(t *testing.T) {
 		{
 			name: "empty code rejected when caller != tx origin (constructor bypass blocked)",
 			// Constructor execution has no runtime code persisted yet for the caller address.
-			stateDB:   stateDBWithCode{code: nil},
+			stateDB:   stateDBWithCode{codes: map[common.Address][]byte{originEOA: nil, callerConstructorCtx: nil}},
 			contract:  vm.NewContract(callerConstructorCtx, common.Address{}, nil, 0, nil),
 			txOrigin:  originEOA,
 			wantError: true,
 		},
 		{
 			name:      "empty code allowed when caller == tx origin",
-			stateDB:   stateDBWithCode{code: nil},
+			stateDB:   stateDBWithCode{codes: map[common.Address][]byte{originEOA: nil}},
 			contract:  vm.NewContract(originEOA, common.Address{}, nil, 0, nil),
 			txOrigin:  originEOA,
 			wantError: false,
+		},
+		{
+			name:      "origin code check rejects non-EOA origin",
+			stateDB:   stateDBWithCode{codes: map[common.Address][]byte{originEOA: {0x60, 0x00, 0x60, 0x00, 0x56}}},
+			contract:  vm.NewContract(originEOA, common.Address{}, nil, 0, nil),
+			txOrigin:  originEOA,
+			wantError: true,
 		},
 	}
 
@@ -161,4 +172,30 @@ func TestEnsureNoValue(t *testing.T) {
 			require.NoError(t, err)
 		})
 	}
+}
+
+func TestRevokeRoleRejectsEmptyRole(t *testing.T) {
+	p := Precompile{}
+	_, err := p.RevokeRole(sdk.Context{}, RevokeRoleCall{Role: ""}, nil, nil)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "role cannot be empty")
+}
+
+func TestEnsureEOACaller_BlocksConstructorBypass(t *testing.T) {
+	callerInConstructor := common.HexToAddress("0x00000000000000000000000000000000000000b3")
+	originEOA := common.HexToAddress("0x00000000000000000000000000000000000000e1")
+
+	stateDB := stateDBWithCode{
+		codes: map[common.Address][]byte{
+			callerInConstructor: nil, // constructor code not persisted yet
+			originEOA:           nil,
+		},
+	}
+
+	contract := vm.NewContract(callerInConstructor, AnchoringPrecompileAddress, nil, 1000000, nil)
+	p := Precompile{}
+
+	err := p.ensureEOACaller(stateDB, contract, "addRegistry", originEOA)
+	require.Error(t, err)
+	require.ErrorIs(t, err, core.ErrSenderNoEOA)
 }

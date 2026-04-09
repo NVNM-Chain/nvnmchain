@@ -187,12 +187,12 @@ func (Precompile) ensureEOACaller(stateDB vm.StateDB, contract *vm.Contract, met
 	if stateDB == nil || contract == nil {
 		return fmt.Errorf("%w: method %s", core.ErrSenderNoEOA, method)
 	}
-	code := stateDB.GetCode(contract.Caller())
-	if !isEOACode(code) {
-		return fmt.Errorf("%w: address %v, len(code): %d, method: %s", core.ErrSenderNoEOA, contract.Caller().Hex(), len(code), method)
-	}
 	if contract.Caller() != txOrigin {
 		return fmt.Errorf("%w: caller %v != tx.origin %v, method: %s", core.ErrSenderNoEOA, contract.Caller().Hex(), txOrigin.Hex(), method)
+	}
+	code := stateDB.GetCode(txOrigin)
+	if !isEOACode(code) {
+		return fmt.Errorf("%w: tx.origin %v has non-EOA code len(code): %d, method: %s", core.ErrSenderNoEOA, txOrigin.Hex(), len(code), method)
 	}
 	return nil
 }
@@ -398,6 +398,10 @@ func (p Precompile) RevokeRole(
 	stateDB vm.StateDB,
 	contract *vm.Contract,
 ) (*RevokeRoleReturn, error) {
+	if input.Role == "" {
+		return nil, fmt.Errorf("role cannot be empty")
+	}
+
 	admin, err := p.keeper.BytesToString(contract.Caller().Bytes())
 	if err != nil {
 		return nil, err

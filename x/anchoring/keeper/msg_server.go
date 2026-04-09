@@ -164,6 +164,13 @@ func (k msgServer) GrantRole(goCtx context.Context, req *types.MsgGrantRole) (*t
 
 // RevokeRole allows an admin to remove a role from an address
 func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (*types.MsgRevokeRoleResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	revoker, err := k.addressCodec.StringToBytes(req.Admin)
 	if err != nil {
@@ -179,65 +186,50 @@ func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (
 	}
 	isRecordScoped := isRecordRole(req.RegistryId, req.Checksum)
 
-	// revoke common roles (editor, then admin) when no specific role provided
-	rolesToTry := []string{req.Role}
-	if req.Role == "" {
-		rolesToTry = []string{RoleEditor, RoleAdmin}
+	type roleRevokeTarget struct {
+		name      string
+		unchecked bool
 	}
 
-	var lastErr error
-	for _, roleStr := range rolesToTry {
-		role := k.scopedRole(req.RegistryId, req.Checksum, roleStr)
-		hasRole, err := k.Keeper.RBAC.HasRole(ctx, role, revokee)
+	role := k.scopedRole(req.RegistryId, req.Checksum, req.Role)
+	hasRole, err := k.Keeper.RBAC.HasRole(ctx, role, revokee)
+	if err != nil {
+		return nil, err
+	}
+	if !hasRole {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("address does not have the specified role")
+	}
+
+	// Prevent revoking the last registry-level admin, which would permanently lock the registry.
+	target := roleRevokeTarget{name: req.Role}
+	if !isRecordScoped && req.Role == RoleAdmin {
+		adminRole := k.Keeper.RegistryRole(req.RegistryId, RoleAdmin)
+		isSoleAdmin, err := k.Keeper.RBAC.IsSoleAdmin(ctx, adminRole)
 		if err != nil {
-			lastErr = err
-			continue
+			return nil, err
 		}
-		if !hasRole {
-			continue
+		isModuleAdmin, err := k.isModuleAdmin(ctx, req.Admin)
+		if err != nil {
+			return nil, err
 		}
-
-		// Prevent revoking the last registry-level admin, which would permanently lock the registry.
-		if !isRecordScoped && roleStr == RoleAdmin {
-			adminRole := k.Keeper.RegistryRole(req.RegistryId, RoleAdmin)
-			isSoleAdmin, err := k.Keeper.RBAC.IsSoleAdmin(ctx, adminRole)
-			if err != nil {
-				lastErr = err
-				continue
+		if isSoleAdmin {
+			if !isModuleAdmin {
+				return nil, sdkerrors.ErrInvalidRequest.Wrap("cannot revoke the last registry admin")
 			}
-			isModuleAdmin, err := k.isModuleAdmin(ctx, req.Admin)
-			if err != nil {
-				lastErr = err
-				continue
-			}
-			if isSoleAdmin {
-				if !isModuleAdmin {
-					return nil, sdkerrors.ErrInvalidRequest.Wrap("cannot revoke the last registry admin")
-				}
-
-				if err := k.Keeper.RBAC.RevokeRoleUnchecked(ctx, role, revokee, revoker); err != nil {
-					lastErr = err
-					continue
-				}
-
-				return &types.MsgRevokeRoleResponse{}, nil
-			}
+			target.unchecked = true
 		}
+	}
 
-		if err := k.Keeper.RBAC.RevokeRole(ctx, role, revokee, revoker); err != nil {
-			lastErr = err
-			continue
+	role = k.scopedRole(req.RegistryId, req.Checksum, target.name)
+	if target.unchecked {
+		if err := k.Keeper.RBAC.RevokeRoleUnchecked(ctx, role, revokee, revoker); err != nil {
+			return nil, err
 		}
-
 		return &types.MsgRevokeRoleResponse{}, nil
 	}
 
-	if req.Role == "" && lastErr == nil {
-		return nil, sdkerrors.ErrInvalidRequest.Wrap("address has no roles to revoke")
-	}
-
-	if lastErr != nil {
-		return nil, lastErr
+	if err := k.Keeper.RBAC.RevokeRole(ctx, role, revokee, revoker); err != nil {
+		return nil, err
 	}
 
 	return &types.MsgRevokeRoleResponse{}, nil

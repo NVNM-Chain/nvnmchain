@@ -26,6 +26,15 @@ func hasRegistryAdminRole(t *testing.T, k keeper.Keeper, ctx sdk.Context, addres
 	return hasRole
 }
 
+func hasRegistryEditorRole(t *testing.T, k keeper.Keeper, ctx sdk.Context, addressCodec address.Codec, registryID uint64, addr string) bool {
+	t.Helper()
+	addrBz, err := addressCodec.StringToBytes(addr)
+	require.NoError(t, err)
+	hasRole, err := k.RBAC.HasRole(ctx, k.RegistryRole(registryID, keeper.RoleEditor), addrBz)
+	require.NoError(t, err)
+	return hasRole
+}
+
 func TestMsgRevokeRole_DisallowRevokingLastRegistryAdmin(t *testing.T) {
 	appparams.SetAddressPrefixes()
 	k, ctx, _ := keepertest.AnchoringKeeper(t)
@@ -94,6 +103,48 @@ func TestMsgRevokeRole_AllowModuleAdminEmergencyLastAdminRevokeAndRecovery(t *te
 		Role:       keeper.RoleAdmin,
 	})
 	require.NoError(t, err)
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+}
+
+func TestMsgRevokeRole_EmptyRoleRejected(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, addressCodec := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+
+	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-revoke-all-roles")
+
+	_, err := ms.GrantRole(ctx, &types.MsgGrantRole{
+		Admin:      registryAdminAddr,
+		Address:    moduleAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleEditor,
+	})
+	require.NoError(t, err)
+
+	_, err = ms.GrantRole(ctx, &types.MsgGrantRole{
+		Admin:      registryAdminAddr,
+		Address:    moduleAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.NoError(t, err)
+
+	require.True(t, hasRegistryEditorRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+
+	_, err = ms.RevokeRole(ctx, &types.MsgRevokeRole{
+		Admin:      registryAdminAddr,
+		Address:    moduleAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       "",
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "role cannot be empty")
+
+	require.True(t, hasRegistryEditorRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
 	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
 }
 
