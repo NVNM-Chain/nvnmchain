@@ -7,12 +7,19 @@ import (
 	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
 	"github.com/MANTRA-Chain/inveniam/x/tax/keeper"
 	"github.com/MANTRA-Chain/inveniam/x/tax/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMsgUpdateParams(t *testing.T) {
 	appparams.SetAddressPrefixes()
-	k, ctx, _ := keepertest.TaxKeeper(t)
+
+	// a valid inveniam address that is marked as blocked (e.g. a module account address)
+	blockedAddr := authtypes.NewModuleAddress("distribution").String()
+	bk := &keepertest.MockBankKeeper{
+		BlockedAddrs: map[string]bool{blockedAddr: true},
+	}
+	k, ctx, _ := keepertest.TaxKeeperWithBankKeeper(t, bk)
 	ms := keeper.NewMsgServerImpl(k)
 
 	params := types.DefaultParams()
@@ -43,6 +50,16 @@ func TestMsgUpdateParams(t *testing.T) {
 				McaAddress: "",
 			},
 			expErr: false,
+		},
+		{
+			name: "blocked mca address",
+			input: &types.MsgUpdateParams{
+				Authority:  "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
+				McaTax:     "",
+				McaAddress: blockedAddr,
+			},
+			expErr:    true,
+			expErrMsg: "is blocked",
 		},
 		{
 			name: "update mca address",

@@ -40,6 +40,13 @@ func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams)
 	}
 
 	if req.McaAddress != "" {
+		mcaAddr, err := k.addressCodec.StringToBytes(req.McaAddress)
+		if err != nil {
+			return nil, errorsmod.Wrap(err, "invalid mca address")
+		}
+		if k.bankKeeper.BlockedAddr(mcaAddr) {
+			return nil, fmt.Errorf("mca address %s is blocked", req.McaAddress)
+		}
 		updateParams.McaAddress = req.McaAddress
 	}
 
