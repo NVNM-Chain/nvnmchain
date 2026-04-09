@@ -3,6 +3,7 @@ package keeper
 import (
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
+	"github.com/MANTRA-Chain/inveniam/x/anchoring/rbac"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -104,6 +105,26 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 		}
 	}
 
+	for keyStr, adminRole := range genState.RoleAdmins {
+		_, key, err := k.RBAC.RoleAdmins.KeyCodec().Decode([]byte(keyStr))
+		if err != nil {
+			return err
+		}
+		if err := k.RBAC.RoleAdmins.Set(ctx, key, adminRole); err != nil {
+			return err
+		}
+	}
+
+	for keyStr, marker := range genState.RoleMembers {
+		_, key, err := k.RBAC.RoleMembers.KeyCodec().Decode([]byte(keyStr))
+		if err != nil {
+			return err
+		}
+		if err := k.RBAC.RoleMembers.Set(ctx, key, marker); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -142,11 +163,37 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (*types.GenesisState, error) {
 		return nil, err
 	}
 
+	genRoleAdmins := map[string][]byte{}
+	if err := k.RBAC.RoleAdmins.Walk(ctx, nil, func(key rbac.Role, adminRole []byte) (stop bool, err error) {
+		keyBytes, err := encodeRBACRoleAdminKey(k, key)
+		if err != nil {
+			return true, err
+		}
+		genRoleAdmins[string(keyBytes)] = adminRole
+		return false, nil
+	}); err != nil {
+		return nil, err
+	}
+
+	genRoleMembers := map[string][]byte{}
+	if err := k.RBAC.RoleMembers.Walk(ctx, nil, func(key collections.Pair[rbac.Role, sdk.AccAddress], marker []byte) (stop bool, err error) {
+		keyBytes, err := encodeRBACRoleMemberKey(k, key)
+		if err != nil {
+			return true, err
+		}
+		genRoleMembers[string(keyBytes)] = marker
+		return false, nil
+	}); err != nil {
+		return nil, err
+	}
+
 	return &types.GenesisState{
-		Params:     params,
-		Registries: genRegistries,
-		Records:    genRecords,
-		Roles:      genRoles,
+		Params:      params,
+		Registries:  genRegistries,
+		Records:     genRecords,
+		Roles:       genRoles,
+		RoleAdmins:  genRoleAdmins,
+		RoleMembers: genRoleMembers,
 	}, nil
 }
 
@@ -155,6 +202,28 @@ func encodeRoleKey(k Keeper, key collections.Triple[uint64, string, string]) ([]
 	size := k.Roles.KeyCodec().Size(key)
 	buffer := make([]byte, size)
 	n, err := k.Roles.KeyCodec().Encode(buffer, key)
+	if err != nil {
+		return nil, err
+	}
+	return buffer[:n], nil
+}
+
+// encodeRBACRoleAdminKey safely encodes an RBAC role-admin key to bytes.
+func encodeRBACRoleAdminKey(k Keeper, key rbac.Role) ([]byte, error) {
+	size := k.RBAC.RoleAdmins.KeyCodec().Size(key)
+	buffer := make([]byte, size)
+	n, err := k.RBAC.RoleAdmins.KeyCodec().Encode(buffer, key)
+	if err != nil {
+		return nil, err
+	}
+	return buffer[:n], nil
+}
+
+// encodeRBACRoleMemberKey safely encodes an RBAC role-member key to bytes.
+func encodeRBACRoleMemberKey(k Keeper, key collections.Pair[rbac.Role, sdk.AccAddress]) ([]byte, error) {
+	size := k.RBAC.RoleMembers.KeyCodec().Size(key)
+	buffer := make([]byte, size)
+	n, err := k.RBAC.RoleMembers.KeyCodec().Encode(buffer, key)
 	if err != nil {
 		return nil, err
 	}

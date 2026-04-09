@@ -6,7 +6,10 @@ import (
 
 	"cosmossdk.io/collections"
 	"github.com/MANTRA-Chain/inveniam/testutil/keeper"
+	"github.com/MANTRA-Chain/inveniam/testutil/sample"
+	"github.com/MANTRA-Chain/inveniam/x/anchoring/rbac"
 	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -42,6 +45,19 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	registryEditorKey := collections.Join3(uint64(1), "cosmos1user2", "")
 	registryEditorKeyBytes := encodeTripleKey(t, registryEditorKey)
 
+	adminRole := k.RegistryRole(1, "admin")
+	adminRoleKeyBytes := encodeRBACRoleAdminKey(t, adminRole)
+
+	memberAddr1, err := sdk.AccAddressFromBech32(sample.AccAddress())
+	require.NoError(t, err)
+	rbacMemberKey1 := collections.Join(adminRole, memberAddr1)
+	rbacMemberKeyBytes1 := encodeRBACRoleMemberKey(t, rbacMemberKey1)
+
+	memberAddr2, err := sdk.AccAddressFromBech32(sample.AccAddress())
+	require.NoError(t, err)
+	rbacMemberKey2 := collections.Join(adminRole, memberAddr2)
+	rbacMemberKeyBytes2 := encodeRBACRoleMemberKey(t, rbacMemberKey2)
+
 	genState := types.GenesisState{
 		Params: params,
 		Registries: map[uint64]types.Registry{
@@ -55,10 +71,17 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 			docEditorKeyBytes:      "editor",
 			registryEditorKeyBytes: "editor",
 		},
+		RoleAdmins: map[string][]byte{
+			adminRoleKeyBytes: adminRole.Bytes(),
+		},
+		RoleMembers: map[string][]byte{
+			rbacMemberKeyBytes1: {},
+			rbacMemberKeyBytes2: {},
+		},
 	}
 
 	// Test InitGenesis
-	err := k.InitGenesis(ctx, genState)
+	err = k.InitGenesis(ctx, genState)
 	require.NoError(t, err)
 
 	// Verify params were set
@@ -142,6 +165,18 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "editor", registryEditorRole)
 
+	storedAdminRole, err := k.RBAC.RoleAdmins.Get(ctx, adminRole)
+	require.NoError(t, err)
+	require.Equal(t, adminRole.Bytes(), storedAdminRole)
+
+	hasMember1, err := k.RBAC.RoleMembers.Has(ctx, rbacMemberKey1)
+	require.NoError(t, err)
+	require.True(t, hasMember1)
+
+	hasMember2, err := k.RBAC.RoleMembers.Has(ctx, rbacMemberKey2)
+	require.NoError(t, err)
+	require.True(t, hasMember2)
+
 	// Test ExportGenesis
 	exportedState, err := k.ExportGenesis(ctx)
 	require.NoError(t, err)
@@ -150,6 +185,8 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	require.Equal(t, params.Admin, exportedState.Params.Admin)
 	require.Len(t, exportedState.Registries, 2)
 	require.Len(t, exportedState.Records, 3)
+	require.Len(t, exportedState.RoleAdmins, 1)
+	require.Len(t, exportedState.RoleMembers, 2)
 
 	// Verify exported registries
 	require.Equal(t, registryOne.Name, exportedState.Registries[1].Name)
@@ -164,6 +201,13 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	require.True(t, recordMetadata[recordOne.Metadata])
 	require.True(t, recordMetadata[recordTwo.Metadata])
 	require.True(t, recordMetadata[recordThree.Metadata])
+
+	require.Equal(t, adminRole.Bytes(), exportedState.RoleAdmins[adminRoleKeyBytes])
+
+	_, ok := exportedState.RoleMembers[rbacMemberKeyBytes1]
+	require.True(t, ok)
+	_, ok = exportedState.RoleMembers[rbacMemberKeyBytes2]
+	require.True(t, ok)
 }
 
 func TestInitGenesisEmpty(t *testing.T) {
@@ -174,9 +218,11 @@ func TestInitGenesisEmpty(t *testing.T) {
 		Params: types.Params{
 			Admin: "cosmos1x0dqq9v6chqeholder",
 		},
-		Registries: map[uint64]types.Registry{},
-		Records:    []types.Record{},
-		Roles:      map[string]string{},
+		Registries:  map[uint64]types.Registry{},
+		Records:     []types.Record{},
+		Roles:       map[string]string{},
+		RoleAdmins:  map[string][]byte{},
+		RoleMembers: map[string][]byte{},
 	}
 
 	err := k.InitGenesis(ctx, emptyState)
@@ -284,6 +330,26 @@ func encodeTripleKey(t *testing.T, key collections.Triple[uint64, string, string
 	size := k.Roles.KeyCodec().Size(key)
 	buffer := make([]byte, size)
 	n, err := k.Roles.KeyCodec().Encode(buffer, key)
+	require.NoError(t, err)
+	return string(buffer[:n])
+}
+
+func encodeRBACRoleAdminKey(t *testing.T, key rbac.Role) string {
+	t.Helper()
+	k, _, _ := keeper.AnchoringKeeper(t)
+	size := k.RBAC.RoleAdmins.KeyCodec().Size(key)
+	buffer := make([]byte, size)
+	n, err := k.RBAC.RoleAdmins.KeyCodec().Encode(buffer, key)
+	require.NoError(t, err)
+	return string(buffer[:n])
+}
+
+func encodeRBACRoleMemberKey(t *testing.T, key collections.Pair[rbac.Role, sdk.AccAddress]) string {
+	t.Helper()
+	k, _, _ := keeper.AnchoringKeeper(t)
+	size := k.RBAC.RoleMembers.KeyCodec().Size(key)
+	buffer := make([]byte, size)
+	n, err := k.RBAC.RoleMembers.KeyCodec().Encode(buffer, key)
 	require.NoError(t, err)
 	return string(buffer[:n])
 }

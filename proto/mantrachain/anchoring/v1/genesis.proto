@@ -24,4 +24,12 @@ message GenesisState {
   // roles mapping: registryID (+ document checksum) + address -> role
   map<string, string> roles = 4
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  // role_admins mapping: encoded RBAC role key -> admin role bytes
+  map<string, bytes> role_admins = 5
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  // role_members mapping: encoded (role, account) RBAC pair key -> marker bytes
+  map<string, bytes> role_members = 6
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
