@@ -89,7 +89,8 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=inveniam \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 	-X github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep) \
-	-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(CMT_VERSION)
+	-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(CMT_VERSION) \
+	-X github.com/MANTRA-Chain/inveniam/app.Authority=$(AUTHORITY)
 
 ifeq (cleveldb,$(findstring cleveldb,$(INVENIAM_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
