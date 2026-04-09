@@ -138,3 +138,30 @@ func TestQueryRecords_RegistryOnly_PaginationDoesNotSkipResults(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, rspA.Records)
 }
+
+func TestQueryRecords_CountTotalDoesNotBypassLimit(t *testing.T) {
+	k, ctx, qs, admin := setupAnchoringQueryServer(t)
+	regID, err := k.AddRegistry(ctx, admin, "reg-limit", "", "{}")
+	require.NoError(t, err)
+
+	for i := 0; i < 5; i++ {
+		_, err = k.AddRecord(ctx, admin, types.Record{
+			Registry:     "reg-limit",
+			Uri:          "ipfs://limit",
+			Checksum:     "chk-limit-" + string(rune('a'+i)),
+			ChecksumAlgo: "sha256",
+			Metadata:     "{\"k\":\"v\"}",
+			Status:       "active",
+		})
+		require.NoError(t, err)
+	}
+
+	rsp, err := qs.Records(ctx, &types.QueryRecordsRequest{
+		RegistryId: regID,
+		Pagination: &query.PageRequest{Limit: 1, CountTotal: true},
+	})
+	require.NoError(t, err)
+	require.Len(t, rsp.Records, 1)
+	require.NotNil(t, rsp.Pagination)
+	require.Zero(t, rsp.Pagination.Total)
+}
