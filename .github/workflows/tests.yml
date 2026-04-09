@@ -30,6 +30,16 @@ jobs:
     name: SDK Tests
     runs-on: ubuntu-latest
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
