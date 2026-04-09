@@ -189,7 +189,7 @@ var (
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
 	// Authority address
-	Authority = "nvnm1wrapt0xsdp8u833fx0xlk5clru2gtts2p8yhvx"
+	Authority = "nvnm1qkptlvhg2cw5scmw0rcwdvfe6k5y9050pymmm9"
 )
 
 // module account permissions
