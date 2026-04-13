@@ -72,7 +72,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
-	github.com/yihuang/go-abi v0.1.2-0.20260108024738-f1417ba00d54
+	github.com/yihuang/go-abi v0.1.2-0.20260413060053-ffd281f0d537
 	golang.org/x/tools v0.38.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250707201910-8d1bb00bc6a7
 	google.golang.org/grpc v1.75.0
