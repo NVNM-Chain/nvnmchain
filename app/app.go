@@ -647,7 +647,6 @@ func New(
 		transfer stack (outermost to innermost, i.e. call-entry order for RecvPacket):
 			- IBC RateLimit middleware
 			- IBC Callbacks middleware (with EVM ContractKeeper)
-			- ERC-20 middleware
 			- IBC Transfer
 
 		SendPacket, since it is originating from the application to core IBC:
@@ -657,7 +656,7 @@ func New(
 		RecvPacket, actual logic execution order (note: ratelimit runs its check BEFORE calling next;
 		callbacks and erc20 call next before their own logic):
 			channel.RecvPacket -> ratelimit.OnRecvPacket (guard, aborts if exceeded) -> transfer.OnRecvPacket
-			-> erc20.OnRecvPacket -> callbacks.OnRecvPacket
+			-> callbacks.OnRecvPacket
 	*/
 
 	// create IBC module from top to bottom of stack
@@ -665,7 +664,7 @@ func New(
 
 	transferStack = ibctransfer.NewIBCModule(app.TransferKeeper)
 	maxCallbackGas := uint64(1_000_000)
-	transferStack = erc20.NewIBCMiddleware(app.Erc20Keeper, transferStack)
+	// transferStack = erc20.NewIBCMiddleware(app.Erc20Keeper, transferStack)
 	app.CallbackKeeper = ibccallbackskeeper.NewKeeper(
 		app.AccountKeeper,
 		app.EVMKeeper,
