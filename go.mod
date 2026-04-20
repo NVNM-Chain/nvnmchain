@@ -25,7 +25,7 @@ replace (
 )
 
 replace (
-	cosmossdk.io/api => github.com/MANTRA-Chain/cosmos-sdk/api v0.7.3-0.20260318083824-1b9479efc713
+	cosmossdk.io/api => github.com/MANTRA-Chain/cosmos-sdk/api v0.0.0-20260402055312-eca3f45af560
 	// Direct cosmos-sdk branch link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/mantra/v0.53.6, current branch: mantra/v0.53.6
 	// Direct commit link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/eca3f45af56019d6e184b795b8216c447040f84c
 	// Direct tag link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/v0.53.6-v8-mantra-1
@@ -57,7 +57,7 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/gogoproto v1.7.2
 	github.com/cosmos/ibc-apps/modules/rate-limiting/v10 v10.1.0
-	github.com/cosmos/ibc-go/v10 v10.4.0
+	github.com/cosmos/ibc-go/v10 v10.5.1
 	github.com/cosmos/interchain-security/v7 v7.0.1
 	github.com/ethereum/go-ethereum v1.16.7
 	github.com/golang/protobuf v1.5.4
