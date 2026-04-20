@@ -10,7 +10,6 @@ replace (
 	github.com/ChainSafe/go-schnorrkel => github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d
 	github.com/ChainSafe/go-schnorrkel/1 => github.com/ChainSafe/go-schnorrkel v1.0.0
 	github.com/btcsuite/btcd/btcec/v2 => github.com/btcsuite/btcd/btcec/v2 v2.3.2 // 2.3.4 breaks api
-	github.com/cosmos/evm => github.com/MANTRA-Chain/evm v0.0.0-20260107083355-bdb64ccad316
 	github.com/cosmos/iavl => github.com/cosmos/iavl v1.2.4
 	github.com/cosmos/interchain-security/v5 => github.com/cosmos/interchain-security/v5 v5.0.0-20240905162918-300530f18130
 	github.com/docker/distribution => github.com/docker/distribution v2.8.2+incompatible
