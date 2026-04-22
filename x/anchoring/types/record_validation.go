@@ -34,9 +34,6 @@ func ValidateRecordForCreate(record Record) error {
 	if record.Metadata == "" || record.Metadata == "{}" {
 		return fmt.Errorf("metadata cannot be empty")
 	}
-	if record.Status == "" {
-		return fmt.Errorf("status cannot be empty")
-	}
 	if record.Registry == "" {
 		return fmt.Errorf("registry cannot be empty")
 	}
@@ -53,7 +50,7 @@ func ValidateRecordForCreate(record Record) error {
 	if err := validateMaxLen("metadata", record.Metadata, MaxRecordMetadataLen); err != nil {
 		return err
 	}
-	if err := validateMaxLen("status", record.Status, MaxRecordStatusLen); err != nil {
+	if err := ValidateRecordStatus(record.Status); err != nil {
 		return err
 	}
 
