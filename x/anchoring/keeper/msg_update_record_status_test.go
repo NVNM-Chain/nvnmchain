@@ -6,7 +6,6 @@ import (
 
 	"cosmossdk.io/collections"
 	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
-	anchoringtest "github.com/MANTRA-Chain/nvnmchain/testutil/anchoring"
 	keepertest "github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
@@ -93,7 +92,7 @@ func TestMsgUpdateRecordStatus_MsgServer_Cases(t *testing.T) {
 	ms := keeper.NewMsgServerImpl(k)
 	sender := keepertest.TestSenderAddr
 	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
-	recordID := keepertest.MustAddAnchoringRecord(t, k, ctx, sender, "reg1", anchoringtest.SHA256Hex("reg1-record"), "sha256")
+	recordID := keepertest.MustAddAnchoringRecord(t, k, ctx, sender, "reg1", "deadbeef", "sha256")
 	testCases := []struct {
 		name            string
 		req             *types.MsgUpdateRecordStatus
@@ -146,9 +145,11 @@ func TestMsgUpdateRecordStatus_RecordRoleDoesNotBleedAcrossRegistries(t *testing
 	k, ctx, _ := keepertest.AnchoringKeeper(t)
 	ms := keeper.NewMsgServerImpl(k)
 
-	victimRegistry := "victim-reg"
-	attackerReg := "attacker-reg"
-	checksum := anchoringtest.SHA256Hex("same-checksum")
+	const (
+		checksum       = "same-checksum"
+		victimRegistry = "victim-reg"
+		attackerReg    = "attacker-reg"
+	)
 
 	victimAdmin := keepertest.TestSenderAddr
 	attacker := types.DefaultParams().Admin

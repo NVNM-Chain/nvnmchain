@@ -1,27 +1,14 @@
 package types
 
-import (
-	"fmt"
-	"regexp"
-	"strings"
-)
+import "fmt"
 
 const (
-	MaxRecordChecksumLen     = 128
+	MaxRecordChecksumLen     = 64
 	MaxRecordChecksumAlgoLen = 128
 	MaxRecordURILen          = 2048
 	MaxRecordMetadataLen     = 2048
 	MaxRecordStatusLen       = 64
 )
-
-var hexPattern = regexp.MustCompile(`^[a-fA-F0-9]+$`)
-
-// knownAlgos maps canonical algorithm names (lowercase, hyphens stripped) to their expected hex checksum length.
-var knownAlgos = map[string]int{
-	"sha256":  64,
-	"sha512":  128,
-	"sha3256": 64,
-}
 
 func validateMaxLen(field string, value string, max int) error {
 	if max <= 0 {
@@ -66,25 +53,7 @@ func ValidateRecordForCreate(record Record) error {
 	if err := ValidateRecordStatus(record.Status); err != nil {
 		return err
 	}
-	if err := validateChecksum(record.ChecksumAlgo, record.Checksum); err != nil {
-		return err
-	}
 
-	return nil
-}
-
-func validateChecksum(algo, checksum string) error {
-	normalized := strings.ReplaceAll(strings.ToLower(algo), "-", "")
-	expectedLen, ok := knownAlgos[normalized]
-	if !ok {
-		return fmt.Errorf("unsupported checksum algorithm %q: supported values are sha256 (alias sha-256), sha512 (alias sha-512), and sha3-256; matching is case-insensitive", algo)
-	}
-	if !hexPattern.MatchString(checksum) {
-		return fmt.Errorf("checksum must be hex-encoded (^[a-fA-F0-9]+$)")
-	}
-	if len(checksum) != expectedLen {
-		return fmt.Errorf("checksum length %d does not match algorithm %s (expected %d hex characters)", len(checksum), algo, expectedLen)
-	}
 	return nil
 }
 

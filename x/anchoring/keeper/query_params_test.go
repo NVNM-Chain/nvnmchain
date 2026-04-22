@@ -1,11 +1,9 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 
 	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
-	anchoringtest "github.com/MANTRA-Chain/nvnmchain/testutil/anchoring"
 	keepertest "github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
@@ -42,7 +40,7 @@ func TestParamsQuery(t *testing.T) {
 func TestQueryRecords_ChecksumOnly_RespectsPagination(t *testing.T) {
 	k, ctx, qs, admin := setupAnchoringQueryServer(t)
 
-	checksum := anchoringtest.SHA256Hex("same-checksum")
+	checksum := "same-checksum"
 	registries := []string{"reg-a", "reg-b", "reg-c"}
 	for _, name := range registries {
 		_, err := k.AddRegistry(ctx, admin, name, "", "{}")
@@ -95,7 +93,7 @@ func TestQueryRecords_RegistryOnly_PaginationDoesNotSkipResults(t *testing.T) {
 		_, err := k.AddRecord(ctx, admin, types.Record{
 			Registry:     "reg-a",
 			Uri:          "ipfs://a",
-			Checksum:     anchoringtest.SHA256Hex(fmt.Sprintf("reg-a-record-%d", i)),
+			Checksum:     "chk-a-" + string(rune('a'+i)),
 			ChecksumAlgo: "sha256",
 			Metadata:     "{\"k\":\"v\"}",
 			Status:       "active",
@@ -103,7 +101,7 @@ func TestQueryRecords_RegistryOnly_PaginationDoesNotSkipResults(t *testing.T) {
 		require.NoError(t, err)
 	}
 
-	checksumB := anchoringtest.SHA256Hex("reg-b-record")
+	checksumB := "chk-b"
 	_, err = k.AddRecord(ctx, admin, types.Record{
 		Registry:     "reg-b",
 		Uri:          "ipfs://b",
@@ -150,7 +148,7 @@ func TestQueryRecords_CountTotalDoesNotBypassLimit(t *testing.T) {
 		_, err = k.AddRecord(ctx, admin, types.Record{
 			Registry:     "reg-limit",
 			Uri:          "ipfs://limit",
-			Checksum:     anchoringtest.SHA256Hex(fmt.Sprintf("reg-limit-record-%d", i)),
+			Checksum:     "chk-limit-" + string(rune('a'+i)),
 			ChecksumAlgo: "sha256",
 			Metadata:     "{\"k\":\"v\"}",
 			Status:       "active",

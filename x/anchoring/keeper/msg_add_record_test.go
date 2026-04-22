@@ -37,7 +37,14 @@ func TestMsgAddRecord_ValidateBasic_NilRecord(t *testing.T) {
 	sender := keepertest.TestSenderAddr
 
 	validRecord := func() *types.Record {
-		return keepertest.ValidRecord("reg1")
+		return &types.Record{
+			Registry:     "reg1",
+			Uri:          "ipfs://bafy...",
+			Checksum:     "deadbeef",
+			ChecksumAlgo: "sha256",
+			Metadata:     "{\"k\":\"v\"}",
+			Status:       "active",
+		}
 	}
 
 	testCases := []struct {
@@ -150,73 +157,13 @@ func TestMsgAddRecord_ValidateBasic_NilRecord(t *testing.T) {
 			}(),
 			wantErrContains: "checksum algorithm exceeds max length",
 		},
-		{
-			name: "unsupported checksum algorithm",
-			msg: func() types.MsgAddRecord {
-				record := validRecord()
-				record.ChecksumAlgo = "md5"
-				return types.MsgAddRecord{Sender: sender, Record: record}
-			}(),
-			wantErrContains: "unsupported checksum algorithm",
-		},
-		{
-			name: "non-hex checksum",
-			msg: func() types.MsgAddRecord {
-				record := validRecord()
-				record.Checksum = strings.Repeat("z", 64)
-				return types.MsgAddRecord{Sender: sender, Record: record}
-			}(),
-			wantErrContains: "checksum must be hex-encoded",
-		},
-		{
-			name: "checksum length mismatch for sha256",
-			msg: func() types.MsgAddRecord {
-				record := validRecord()
-				record.Checksum = strings.Repeat("a", 63)
-				return types.MsgAddRecord{Sender: sender, Record: record}
-			}(),
-			wantErrContains: "checksum length",
-		},
-		{
-			name: "checksum length mismatch for sha512",
-			msg: func() types.MsgAddRecord {
-				record := validRecord()
-				record.ChecksumAlgo = "sha512"
-				record.Checksum = strings.Repeat("a", 64) // sha512 needs 128
-				return types.MsgAddRecord{Sender: sender, Record: record}
-			}(),
-			wantErrContains: "checksum length",
-		},
-		{
-			name: "valid sha512 checksum accepted",
-			msg: func() types.MsgAddRecord {
-				record := validRecord()
-				record.ChecksumAlgo = "sha512"
-				record.Checksum = strings.Repeat("a", 128)
-				return types.MsgAddRecord{Sender: sender, Record: record}
-			}(),
-			wantErrContains: "", // no error expected
-		},
-		{
-			name: "case-insensitive algo SHA256 accepted",
-			msg: func() types.MsgAddRecord {
-				record := validRecord()
-				record.ChecksumAlgo = "SHA256"
-				return types.MsgAddRecord{Sender: sender, Record: record}
-			}(),
-			wantErrContains: "", // no error expected
-		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			err := tc.msg.ValidateBasic()
-			if tc.wantErrContains == "" {
-				require.NoError(t, err)
-			} else {
-				require.Error(t, err)
-				require.Contains(t, err.Error(), tc.wantErrContains)
-			}
+			require.Error(t, err)
+			require.Contains(t, err.Error(), tc.wantErrContains)
 		})
 	}
 }

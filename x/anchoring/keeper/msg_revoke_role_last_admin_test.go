@@ -5,7 +5,6 @@ import (
 
 	"cosmossdk.io/core/address"
 	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
-	anchoringtest "github.com/MANTRA-Chain/nvnmchain/testutil/anchoring"
 	keepertest "github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
@@ -174,16 +173,16 @@ func TestMsgRevokeRole_ValidationErrors(t *testing.T) {
 			setupReq: func(t *testing.T, k keeper.Keeper, ctx sdk.Context) *types.MsgRevokeRole {
 				t.Helper()
 				registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-record-check")
-				keepertest.MustAddAnchoringRecord(t, k, ctx, registryAdminAddr, "reg-record-check", anchoringtest.SHA256Hex("present-checksum"), "sha256")
+				keepertest.MustAddAnchoringRecord(t, k, ctx, registryAdminAddr, "reg-record-check", "present-checksum", "sha256")
 				return &types.MsgRevokeRole{
 					Admin:      registryAdminAddr,
 					Address:    moduleAdminAddr,
 					RegistryId: registryID,
-					Checksum:   anchoringtest.SHA256Hex("missing-checksum"),
+					Checksum:   "missing-checksum",
 					Role:       keeper.RoleEditor,
 				}
 			},
-			wantErrContains: "record with checksum " + anchoringtest.SHA256Hex("missing-checksum") + " does not exist in registry",
+			wantErrContains: "record with checksum missing-checksum does not exist in registry",
 		},
 		{
 			name: "registry zero with checksum",
