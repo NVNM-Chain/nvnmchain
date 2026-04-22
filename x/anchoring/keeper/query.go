@@ -49,6 +49,9 @@ func sanitizePageRequest(pr *query.PageRequest, defaultLimit, maxLimit uint64) *
 // of a document checksum
 func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest) (recordResponse *types.QueryRecordsResponse, err error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	if req == nil {
+		req = &types.QueryRecordsRequest{}
+	}
 
 	type paginator struct {
 		offset    uint64
@@ -91,19 +94,16 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 	}
 
 	if req.RegistryId != 0 && req.RecordId != 0 {
-		var record types.Record
 		index := req.Index
-		if req.RegistryId != 0 && req.RecordId != 0 {
-			if index == 0 {
-				index, err = q.k.RecordIndices.Get(ctx, collections.Join(req.RegistryId, req.RecordId))
-				if err != nil {
-					return nil, err
-				}
-			}
-			record, err = q.k.Records.Get(sdkCtx, collections.Join3(req.RegistryId, req.RecordId, index))
+		if index == 0 {
+			index, err = q.k.RecordIndices.Get(ctx, collections.Join(req.RegistryId, req.RecordId))
 			if err != nil {
 				return nil, err
 			}
+		}
+		record, err := q.k.Records.Get(sdkCtx, collections.Join3(req.RegistryId, req.RecordId, index))
+		if err != nil {
+			return nil, err
 		}
 		return &types.QueryRecordsResponse{Records: []*types.Record{&record}}, nil
 	}
@@ -182,7 +182,36 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 		return &types.QueryRecordsResponse{Records: records, Pagination: pageRes}, nil
 	}
 
-	return &types.QueryRecordsResponse{Records: nil, Pagination: nil}, nil
+	// Empty filter: return latest records across all registries.
+	p := newPaginator(req.Pagination)
+	records := make([]*types.Record, 0, p.limit)
+
+	walkErr := q.k.RecordIndices.Walk(
+		ctx,
+		nil,
+		func(key collections.Pair[uint64, uint64], index uint64) (bool, error) {
+			include, stop := step(&p)
+			if include {
+				registryId := key.K1()
+				recordId := key.K2()
+				record, err := q.k.Records.Get(sdkCtx, collections.Join3(registryId, recordId, index))
+				if err != nil {
+					return true, err
+				}
+				records = append(records, &record)
+			}
+			return stop, nil
+		},
+	)
+	if walkErr != nil {
+		return nil, walkErr
+	}
+
+	var pageRes *query.PageResponse
+	if req.Pagination != nil {
+		pageRes = &query.PageResponse{}
+	}
+	return &types.QueryRecordsResponse{Records: records, Pagination: pageRes}, nil
 }
 
 // Registries returns all registries with pagination, or a specific registry if registry_id or name is provided
