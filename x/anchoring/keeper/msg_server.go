@@ -63,6 +63,12 @@ func (k msgServer) scopedRole(registryId uint64, checksum, role string) rbac.Rol
 }
 
 func (k msgServer) AddRegistry(goCtx context.Context, req *types.MsgAddRegistry) (*types.MsgAddRegistryResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sender, err := k.addressCodec.StringToBytes(req.Sender)
 	if err != nil {
@@ -117,6 +123,12 @@ func (k msgServer) UpdateRecordStatus(goCtx context.Context, req *types.MsgUpdat
 
 // GrantRole allows an admin to assign a role to an address
 func (k msgServer) GrantRole(goCtx context.Context, req *types.MsgGrantRole) (*types.MsgGrantRoleResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	granter, err := k.addressCodec.StringToBytes(req.Admin)
 	if err != nil {
