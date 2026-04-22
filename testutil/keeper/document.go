@@ -9,6 +9,7 @@ import (
 	"cosmossdk.io/store/metrics"
 	storetypes "cosmossdk.io/store/types"
 	_ "github.com/MANTRA-Chain/nvnmchain/app"
+	anchoringtest "github.com/MANTRA-Chain/nvnmchain/testutil/anchoring"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -22,6 +23,12 @@ import (
 )
 
 const TestSenderAddr = "nvnm1axznhnm82lah8qqvp9hxdad49yx3s5dc6h6p3s"
+
+// ValidRecord returns a pointer to a minimal valid Record for the given registry.
+func ValidRecord(registry string) *types.Record {
+	r := anchoringtest.ValidRecord(registry)
+	return &r
+}
 
 func AnchoringKeeper(tb testing.TB) (keeper.Keeper, sdk.Context, address.Codec) {
 	tb.Helper()

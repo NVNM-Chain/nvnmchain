@@ -13,6 +13,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	testChecksum1   = "0000000000000000000000000000000000000000000000000000000000000001"
+	testChecksum2   = "0000000000000000000000000000000000000000000000000000000000000002"
+	testChecksum3   = "0000000000000000000000000000000000000000000000000000000000000003"
+	testChecksum999 = "0000000000000000000000000000000000000000000000000000000000000999"
+)
+
 func TestInitGenesisAndExportGenesis(t *testing.T) {
 	k, ctx, _ := keeper.AnchoringKeeper(t)
 
@@ -24,9 +31,9 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	registryOne := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
 	registryTwo := testRegistry(2, "aml_registry", "AML document registry", "cosmos1creator2", "2024-01-02T00:00:00Z")
 
-	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001","figi":"BBG000B9M9V0","individualId":"individual_001"}`, "2024-01-01T10:00:00Z", 1)
-	recordTwo := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash002", `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`, "2024-01-01T11:00:00Z", 2)
-	recordThree := testRecord("aml_registry", "ipfs://QmExample3", "sha256hash003", `{"document":"aml_document_001","figi":"BBG000B9M9V2","individualId":"individual_003"}`, "2024-01-02T10:00:00Z", 1)
+	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", testChecksum1, `{"document":"kyc_document_001","figi":"BBG000B9M9V0","individualId":"individual_001"}`, "2024-01-01T10:00:00Z", 1)
+	recordTwo := testRecord("kyc_registry", "ipfs://QmExample2", testChecksum2, `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`, "2024-01-01T11:00:00Z", 2)
+	recordThree := testRecord("aml_registry", "ipfs://QmExample3", testChecksum3, `{"document":"aml_document_001","figi":"BBG000B9M9V2","individualId":"individual_003"}`, "2024-01-02T10:00:00Z", 1)
 
 	// Prepare encoded role keys
 	// Registry-level admin role for creator1
@@ -38,7 +45,7 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	registryAdminKeyBytes2 := encodeTripleKey(t, registryAdminKey2)
 
 	// Record-level editor role for user1 on sha256hash001
-	docEditorKey := collections.Join3(uint64(1), "cosmos1user1", "sha256hash001")
+	docEditorKey := collections.Join3(uint64(1), "cosmos1user1", testChecksum1)
 	docEditorKeyBytes := encodeTripleKey(t, docEditorKey)
 
 	// Registry-level editor role for user2 on kyc_registry
@@ -132,11 +139,11 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	// Verify records by registry mapping
 	record1, err := k.Records.Get(ctx, collections.Join3(uint64(1), uint64(1), uint64(1)))
 	require.NoError(t, err)
-	require.Equal(t, "sha256hash001", record1.Checksum)
+	require.Equal(t, testChecksum1, record1.Checksum)
 
 	record2, err := k.Records.Get(ctx, collections.Join3(uint64(1), uint64(2), uint64(1)))
 	require.NoError(t, err)
-	require.Equal(t, "sha256hash002", record2.Checksum)
+	require.Equal(t, testChecksum2, record2.Checksum)
 
 	// Verify record counts by registry
 	count1, err := k.RecordsCountByRegistry.Get(ctx, uint64(1))
@@ -157,7 +164,7 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	require.Equal(t, "admin", creatorRole2)
 
 	// Verify imported roles
-	docEditorRole, err := k.Roles.Get(ctx, collections.Join3(uint64(1), "cosmos1user1", "sha256hash001"))
+	docEditorRole, err := k.Roles.Get(ctx, collections.Join3(uint64(1), "cosmos1user1", testChecksum1))
 	require.NoError(t, err)
 	require.Equal(t, "editor", docEditorRole)
 
@@ -248,8 +255,8 @@ func TestInitGenesisEmpty(t *testing.T) {
 func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
 	k, ctx, _ := keeper.AnchoringKeeper(t)
 	registry := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
-	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001"}`, "2024-01-01T10:00:00Z", 1)
-	recordDuplicateKey := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash999", `{"document":"kyc_document_999"}`, "2024-01-01T11:00:00Z", 1)
+	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", testChecksum1, `{"document":"kyc_document_001"}`, "2024-01-01T10:00:00Z", 1)
+	recordDuplicateKey := testRecord("kyc_registry", "ipfs://QmExample2", testChecksum999, `{"document":"kyc_document_999"}`, "2024-01-01T11:00:00Z", 1)
 
 	genState := types.GenesisState{
 		Params: types.Params{
@@ -276,7 +283,7 @@ func TestInitGenesisRejectsOversizedRecordFields(t *testing.T) {
 	record := testRecord(
 		"kyc_registry",
 		"ipfs://QmExample1",
-		"sha256hash001",
+		testChecksum1,
 		strings.Repeat("a", types.MaxRecordMetadataLen+1),
 		"2024-01-01T10:00:00Z",
 		1,
