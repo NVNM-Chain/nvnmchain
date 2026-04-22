@@ -1,6 +1,10 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 const (
 	MaxRegistryNameLen        = 128
@@ -23,4 +27,18 @@ func ValidateRegistryForCreate(name, description, metadata string) error {
 		return err
 	}
 	return nil
+}
+
+// ValidateRegistry validates a Registry for genesis.
+func ValidateRegistry(r Registry) error {
+	if r.Id <= 0 {
+		return fmt.Errorf("id cannot be <= 0")
+	}
+	if r.Creator == "" {
+		return fmt.Errorf("creator cannot be empty")
+	}
+	if _, err := sdk.AccAddressFromBech32(r.Creator); err != nil {
+		return fmt.Errorf("invalid creator address: %w", err)
+	}
+	return ValidateRegistryForCreate(r.Name, r.Description, r.Metadata)
 }

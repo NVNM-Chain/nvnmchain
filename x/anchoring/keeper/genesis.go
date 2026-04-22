@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/rbac"
@@ -47,8 +49,14 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 		return err
 	}
 
+	type versionGroupKey struct {
+		registryID uint64
+		recordID   uint64
+	}
+	groups := make(map[versionGroupKey]*types.RecordVersionGroup)
+
 	for i, record := range genState.Records {
-		if err := types.ValidateRecordForCreate(record); err != nil {
+		if err := types.ValidateRecord(record); err != nil {
 			return errorsmod.Wrapf(err, "invalid genesis record (registry=%s, record_id=%d, index=%d, checksum=%s, position=%d)", record.Registry, record.RecordId, record.Index, record.Checksum, i)
 		}
 
@@ -92,6 +100,18 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 			if err := k.RecordsCountByRegistry.Set(ctx, registryId, record.RecordId); err != nil {
 				return err
 			}
+		}
+
+		gk := versionGroupKey{registryId, record.RecordId}
+		if groups[gk] == nil {
+			groups[gk] = &types.RecordVersionGroup{}
+		}
+		groups[gk].Add(record)
+	}
+	for gk, g := range groups {
+		label := fmt.Sprintf("record group (registry_id=%d, record_id=%d)", gk.registryID, gk.recordID)
+		if err := g.ValidateIsLatest(label); err != nil {
+			return errorsmod.Wrapf(types.ErrInvalidGenesisState, "%s", err)
 		}
 	}
 
