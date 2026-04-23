@@ -185,7 +185,7 @@ func TestMsgRevokeRole_ValidationErrors(t *testing.T) {
 			wantErrContains: "record with checksum missing-checksum does not exist in registry",
 		},
 		{
-			name: "registry zero with checksum",
+			name: "registry id cannot be zero",
 			setupReq: func(t *testing.T, _ keeper.Keeper, _ sdk.Context) *types.MsgRevokeRole {
 				t.Helper()
 				return &types.MsgRevokeRole{
@@ -196,7 +196,7 @@ func TestMsgRevokeRole_ValidationErrors(t *testing.T) {
 					Role:       keeper.RoleEditor,
 				}
 			},
-			wantErrContains: "registry 0 does not exist",
+			wantErrContains: "registry ID cannot be zero: invalid request",
 		},
 	}
 

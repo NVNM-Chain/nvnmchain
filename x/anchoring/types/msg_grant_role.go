@@ -1,6 +1,7 @@
 package types
 
 import (
+	"errors"
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,6 +22,12 @@ func (msg MsgGrantRole) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.Address)
 	if err != nil {
 		return fmt.Errorf("invalid grantee address: %w", err)
+	}
+	if msg.RegistryId == 0 {
+		return errors.New(ErrMsgRegistryIDZero)
+	}
+	if err := validateMaxLen("checksum", msg.Checksum, MaxRecordChecksumLen); err != nil {
+		return err
 	}
 	if msg.Role == "" {
 		return fmt.Errorf("role cannot be empty")

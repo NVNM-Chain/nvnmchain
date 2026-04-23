@@ -8,6 +8,8 @@ const (
 	MaxRecordURILen          = 2048
 	MaxRecordMetadataLen     = 2048
 	MaxRecordStatusLen       = 64
+
+	ErrMsgRegistryIDZero = "registry ID cannot be zero"
 )
 
 func validateMaxLen(field string, value string, max int) error {

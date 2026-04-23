@@ -1,6 +1,7 @@
 package types
 
 import (
+	"errors"
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +23,7 @@ func (msg MsgUpdateRecordStatus) ValidateBasic() error {
 		return err
 	}
 	if msg.RegistryId == 0 {
-		return fmt.Errorf("registry ID cannot be zero")
+		return errors.New(ErrMsgRegistryIDZero)
 	}
 	if msg.Index == 0 {
 		return fmt.Errorf("index cannot be zero")
