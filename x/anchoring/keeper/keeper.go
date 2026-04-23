@@ -181,24 +181,6 @@ func (k Keeper) checkRegistryRoles(ctx sdk.Context, sender sdk.AccAddress, regis
 	return false, nil
 }
 
-// checkGlobalRoles checks if sender has any of the specified roles at the global level
-func (k Keeper) checkGlobalRoles(ctx sdk.Context, sender sdk.AccAddress, roles []string) (bool, error) {
-	if len(roles) == 0 {
-		return false, nil
-	}
-	for _, roleStr := range roles {
-		globalRole := k.GlobalRole(roleStr)
-		hasRole, err := k.RBAC.HasRole(ctx, globalRole, sender)
-		if err != nil {
-			return false, err
-		}
-		if hasRole {
-			return true, nil
-		}
-	}
-	return false, nil
-}
-
 func (k Keeper) checkPermission(ctx sdk.Context, sender sdk.AccAddress, registryId uint64, checksum string, requiredRoles []string) error {
 	hasRecordRole, err := k.checkRecordRoles(ctx, sender, registryId, checksum, requiredRoles)
 	if err != nil {
@@ -216,14 +198,6 @@ func (k Keeper) checkPermission(ctx sdk.Context, sender sdk.AccAddress, registry
 		return nil
 	}
 
-	hasGlobalRole, err := k.checkGlobalRoles(ctx, sender, requiredRoles)
-	if err != nil {
-		return err
-	}
-	if hasGlobalRole {
-		return nil
-	}
-
 	return sdkerrors.ErrUnauthorized
 }
 
@@ -236,11 +210,6 @@ func (k Keeper) RecordRole(registryId uint64, checksum string, role string) rbac
 // RegistryRole creates a role identifier for a registry: hash("registry:id", role)
 func (k Keeper) RegistryRole(registryId uint64, role string) rbac.Role {
 	return rbac.NewRoleHash(fmt.Sprintf("registry:%d:%s", registryId, role))
-}
-
-// GlobalRole creates a global role identifier: hash(role)
-func (k Keeper) GlobalRole(role string) rbac.Role {
-	return rbac.NewRoleHash(role)
 }
 
 // BytesToString converts bytes to a string address using the keeper's address codec
