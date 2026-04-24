@@ -77,7 +77,27 @@ func TestMsgRevokeRole_DisallowRevokingLastRegistryAdmin(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestMsgRevokeRole_AllowModuleAdminEmergencyLastAdminRevokeAndRecovery(t *testing.T) {
+func TestMsgRevokeRole_ModuleAdminCannotOrphanRegistryViaRevoke(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, addressCodec := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-emergency-no-orphan")
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
+
+	// Module admin cannot revoke the sole registry admin — that would orphan the registry.
+	_, err := ms.RevokeRole(ctx, &types.MsgRevokeRole{
+		Admin:      moduleAdminAddr,
+		Address:    registryAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "cannot revoke the last registry admin")
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
+}
+
+func TestMsgRevokeRole_ModuleAdminEmergencyRecoveryViaBreakGlassGrantThenRevoke(t *testing.T) {
 	appparams.SetAddressPrefixes()
 	k, ctx, addressCodec := keepertest.AnchoringKeeper(t)
 	ms := keeper.NewMsgServerImpl(k)
@@ -85,6 +105,18 @@ func TestMsgRevokeRole_AllowModuleAdminEmergencyLastAdminRevokeAndRecovery(t *te
 	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-emergency-admin-recovery")
 	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
 
+	// Break-glass: module admin grants themselves admin first (registry is never left orphan).
+	_, err = ms.GrantRole(ctx, &types.MsgGrantRole{
+		Admin:      moduleAdminAddr,
+		Address:    moduleAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.NoError(t, err)
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+
+	// Now the compromised/lost original admin can be revoked safely.
 	_, err = ms.RevokeRole(ctx, &types.MsgRevokeRole{
 		Admin:      moduleAdminAddr,
 		Address:    registryAdminAddr,
@@ -94,15 +126,6 @@ func TestMsgRevokeRole_AllowModuleAdminEmergencyLastAdminRevokeAndRecovery(t *te
 	})
 	require.NoError(t, err)
 	require.False(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
-
-	_, err = ms.GrantRole(ctx, &types.MsgGrantRole{
-		Admin:      moduleAdminAddr,
-		Address:    moduleAdminAddr,
-		RegistryId: registryID,
-		Checksum:   "",
-		Role:       keeper.RoleAdmin,
-	})
-	require.NoError(t, err)
 	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
 }
 

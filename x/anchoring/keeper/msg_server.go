@@ -198,11 +198,6 @@ func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (
 	}
 	isRecordScoped := isRecordRole(req.RegistryId, req.Checksum)
 
-	type roleRevokeTarget struct {
-		name      string
-		unchecked bool
-	}
-
 	role := k.scopedRole(req.RegistryId, req.Checksum, req.Role)
 	hasRole, err := k.Keeper.RBAC.HasRole(ctx, role, revokee)
 	if err != nil {
@@ -212,32 +207,18 @@ func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (
 		return nil, sdkerrors.ErrInvalidRequest.Wrap("address does not have the specified role")
 	}
 
-	// Prevent revoking the last registry-level admin, which would permanently lock the registry.
-	target := roleRevokeTarget{name: req.Role}
+	// Always prevent revoking the last registry-level admin. The module admin's break-glass
+	// path is MsgGrantRole (unchecked admin grant): recover by granting a new admin first,
+	// then revoking the compromised one — so the registry is never left with zero admins.
 	if !isRecordScoped && req.Role == RoleAdmin {
 		adminRole := k.Keeper.RegistryRole(req.RegistryId, RoleAdmin)
 		isSoleAdmin, err := k.Keeper.RBAC.IsSoleAdmin(ctx, adminRole)
 		if err != nil {
 			return nil, err
 		}
-		isModuleAdmin, err := k.isModuleAdmin(ctx, req.Admin)
-		if err != nil {
-			return nil, err
-		}
 		if isSoleAdmin {
-			if !isModuleAdmin {
-				return nil, sdkerrors.ErrInvalidRequest.Wrap("cannot revoke the last registry admin")
-			}
-			target.unchecked = true
+			return nil, sdkerrors.ErrInvalidRequest.Wrap("cannot revoke the last registry admin")
 		}
-	}
-
-	role = k.scopedRole(req.RegistryId, req.Checksum, target.name)
-	if target.unchecked {
-		if err := k.Keeper.RBAC.RevokeRoleUnchecked(ctx, role, revokee, revoker); err != nil {
-			return nil, err
-		}
-		return &types.MsgRevokeRoleResponse{}, nil
 	}
 
 	if err := k.Keeper.RBAC.RevokeRole(ctx, role, revokee, revoker); err != nil {
