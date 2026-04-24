@@ -13,4 +13,5 @@ var (
 	ErrDuplicateRecordKey                    = sdkerrors.Register(ModuleName, 2102, "duplicate record key in genesis")
 	ErrInvalidGenesisState                   = sdkerrors.Register(ModuleName, 2103, "invalid genesis state")
 	ErrMissingRole                           = sdkerrors.Register(ModuleName, 2104, "missing required role")
+	ErrRoleAdminNotConfigured                = sdkerrors.Register(ModuleName, 2105, "role admin not configured")
 )

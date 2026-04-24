@@ -65,9 +65,9 @@ func (k *RBACKeeper) GetRoleAdmin(ctx sdk.Context, role Role) (Role, error) {
 	bz, err := k.RoleAdmins.Get(ctx, role)
 	if err != nil {
 		if errors.Is(err, collections.ErrNotFound) {
-			return DefaultRoleAdmin, nil
+			return DefaultRoleAdmin, types.ErrRoleAdminNotConfigured.Wrapf("role %s", common.Hash(role).Hex())
 		}
-		return Role{}, err
+		return DefaultRoleAdmin, err
 	}
 	return NewRole(bz), nil
 }
