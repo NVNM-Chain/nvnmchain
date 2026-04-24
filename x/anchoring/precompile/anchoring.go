@@ -3,7 +3,6 @@
 package precompile
 
 import (
-	"errors"
 	"fmt"
 
 	cmn "github.com/cosmos/evm/precompiles/common"
@@ -105,20 +104,9 @@ func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Co
 		}
 	}
 
-	handleExecutionErr := func(err error) ([]byte, error) {
-		if errors.Is(err, core.ErrSenderNoEOA) {
-			return encodeRevertReason(core.ErrSenderNoEOA.Error()), vm.ErrExecutionReverted
-		}
-		return nil, err
-	}
-
 	switch methodID {
 	case AddRegistryID:
-		bz, err := invcmn.RunWithStateDB(ctx, p.AddRegistry, input, stateDB, contract)
-		if err != nil {
-			return handleExecutionErr(err)
-		}
-		return bz, nil
+		return invcmn.RunWithStateDB(ctx, p.AddRegistry, input, stateDB, contract)
 	case AddRecordID:
 		return invcmn.RunWithStateDB(ctx, p.AddRecord, input, stateDB, contract)
 	case UpdateRecordStatusID:
@@ -128,17 +116,9 @@ func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Co
 	case RegistriesID:
 		return invcmn.Run(ctx, p.Registries, input)
 	case GrantRoleID:
-		bz, err := invcmn.RunWithStateDB(ctx, p.GrantRole, input, stateDB, contract)
-		if err != nil {
-			return handleExecutionErr(err)
-		}
-		return bz, nil
+		return invcmn.RunWithStateDB(ctx, p.GrantRole, input, stateDB, contract)
 	case RevokeRoleID:
-		bz, err := invcmn.RunWithStateDB(ctx, p.RevokeRole, input, stateDB, contract)
-		if err != nil {
-			return handleExecutionErr(err)
-		}
-		return bz, nil
+		return invcmn.RunWithStateDB(ctx, p.RevokeRole, input, stateDB, contract)
 	}
 
 	return nil, fmt.Errorf(invcmn.ErrUnknownMethodID, methodID)
