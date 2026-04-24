@@ -501,12 +501,6 @@ func New(
 	app.ConsumerKeeper = *app.ConsumerKeeper.SetHooks(app.SlashingKeeper.Hooks())
 	consumerModule := consumer.NewAppModule(app.ConsumerKeeper, app.GetSubspace(consumertypes.ModuleName))
 
-	sortedKnownModules := make([]string, 0, len(maccPerms))
-	for moduleName := range maccPerms {
-		sortedKnownModules = append(sortedKnownModules, moduleName)
-	}
-	sort.Strings(sortedKnownModules)
-
 	app.AnchoringKeeper = anchoringkeeper.NewKeeper(
 		appCodec,
 		app.AccountKeeper.AddressCodec(),
