@@ -28,23 +28,6 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	recordTwo := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash002", `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`, "2024-01-01T11:00:00Z", 2)
 	recordThree := testRecord("aml_registry", "ipfs://QmExample3", "sha256hash003", `{"document":"aml_document_001","figi":"BBG000B9M9V2","individualId":"individual_003"}`, "2024-01-02T10:00:00Z", 1)
 
-	// Prepare encoded role keys
-	// Registry-level admin role for creator1
-	registryAdminKey1 := collections.Join3(uint64(1), "cosmos1creator1", "")
-	registryAdminKeyBytes1 := encodeTripleKey(t, registryAdminKey1)
-
-	// Registry-level admin role for creator2
-	registryAdminKey2 := collections.Join3(uint64(2), "cosmos1creator2", "")
-	registryAdminKeyBytes2 := encodeTripleKey(t, registryAdminKey2)
-
-	// Record-level editor role for user1 on sha256hash001
-	docEditorKey := collections.Join3(uint64(1), "cosmos1user1", "sha256hash001")
-	docEditorKeyBytes := encodeTripleKey(t, docEditorKey)
-
-	// Registry-level editor role for user2 on kyc_registry
-	registryEditorKey := collections.Join3(uint64(1), "cosmos1user2", "")
-	registryEditorKeyBytes := encodeTripleKey(t, registryEditorKey)
-
 	adminRole := k.RegistryRole(1, "admin")
 	adminRoleKeyBytes := encodeRBACRoleAdminKey(t, adminRole)
 
@@ -65,12 +48,6 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 			2: registryTwo,
 		},
 		Records: []types.Record{recordOne, recordTwo, recordThree},
-		Roles: map[string]string{
-			registryAdminKeyBytes1: "admin",
-			registryAdminKeyBytes2: "admin",
-			docEditorKeyBytes:      "editor",
-			registryEditorKeyBytes: "editor",
-		},
 		RoleAdmins: map[string][]byte{
 			adminRoleKeyBytes: adminRole.Bytes(),
 		},
@@ -147,24 +124,6 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, uint64(1), count2)
 
-	// Verify creator roles
-	creatorRole1, err := k.Roles.Get(ctx, collections.Join3(uint64(1), "cosmos1creator1", ""))
-	require.NoError(t, err)
-	require.Equal(t, "admin", creatorRole1)
-
-	creatorRole2, err := k.Roles.Get(ctx, collections.Join3(uint64(2), "cosmos1creator2", ""))
-	require.NoError(t, err)
-	require.Equal(t, "admin", creatorRole2)
-
-	// Verify imported roles
-	docEditorRole, err := k.Roles.Get(ctx, collections.Join3(uint64(1), "cosmos1user1", "sha256hash001"))
-	require.NoError(t, err)
-	require.Equal(t, "editor", docEditorRole)
-
-	registryEditorRole, err := k.Roles.Get(ctx, collections.Join3(uint64(1), "cosmos1user2", ""))
-	require.NoError(t, err)
-	require.Equal(t, "editor", registryEditorRole)
-
 	storedAdminRole, err := k.RBAC.RoleAdmins.Get(ctx, adminRole)
 	require.NoError(t, err)
 	require.Equal(t, adminRole.Bytes(), storedAdminRole)
@@ -220,7 +179,6 @@ func TestInitGenesisEmpty(t *testing.T) {
 		},
 		Registries:  map[uint64]types.Registry{},
 		Records:     []types.Record{},
-		Roles:       map[string]string{},
 		RoleAdmins:  map[string][]byte{},
 		RoleMembers: map[string][]byte{},
 	}
@@ -259,7 +217,6 @@ func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
 			1: registry,
 		},
 		Records: []types.Record{recordOne, recordDuplicateKey},
-		Roles:   map[string]string{},
 	}
 
 	err := k.InitGenesis(ctx, genState)
@@ -290,7 +247,6 @@ func TestInitGenesisRejectsOversizedRecordFields(t *testing.T) {
 			1: registry,
 		},
 		Records: []types.Record{record},
-		Roles:   map[string]string{},
 	}
 
 	err := k.InitGenesis(ctx, genState)
@@ -321,17 +277,6 @@ func testRecord(registry, uri, checksum, metadata, timestamp string, recordID ui
 		Index:        1,
 		IsLatest:     true,
 	}
-}
-
-// encodeTripleKey encodes a triple key for testing genesis roles
-func encodeTripleKey(t *testing.T, key collections.Triple[uint64, string, string]) string {
-	t.Helper()
-	k, _, _ := keeper.AnchoringKeeper(t)
-	size := k.Roles.KeyCodec().Size(key)
-	buffer := make([]byte, size)
-	n, err := k.Roles.KeyCodec().Encode(buffer, key)
-	require.NoError(t, err)
-	return string(buffer[:n])
 }
 
 func encodeRBACRoleAdminKey(t *testing.T, key rbac.Role) string {

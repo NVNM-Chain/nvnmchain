@@ -41,10 +41,7 @@ type (
 		RecordIndices collections.Map[collections.Pair[uint64, uint64], uint64]
 		// document checksum + registryId => recordId
 		RecordIdByChecksumAndRegistry collections.Map[collections.Pair[string, uint64], uint64]
-		// registryId + user address + document checksum => role
-		// checksum is omitted for registry level roles
-		Roles collections.Map[collections.Triple[uint64, string, string], string]
-		RBAC  rbac.RBACKeeper
+		RBAC                          rbac.RBACKeeper
 	}
 )
 
@@ -113,17 +110,6 @@ func NewKeeper(
 			"record_id_by_checksum_and_registry",
 			collections.PairKeyCodec(collections.StringKey, collections.Uint64Key),
 			collections.Uint64Value,
-		),
-		Roles: collections.NewMap(
-			sb,
-			types.RolesKeyPrefix,
-			"roles",
-			collections.TripleKeyCodec(
-				collections.Uint64Key,
-				collections.StringKey,
-				collections.StringKey,
-			),
-			collections.StringValue,
 		),
 		RBAC: rbac.NewRBACKeeper(
 			sb,

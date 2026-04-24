@@ -22,7 +22,6 @@ var (
 	RecordsCountByRegistryIdKeyPrefix      = collections.NewPrefix(6)
 	RecordIndicesKeyPrefix                 = collections.NewPrefix(7)
 	RecordIdByChecksumAndRegistryKeyPrefix = collections.NewPrefix(8)
-	RolesKeyPrefix                         = collections.NewPrefix(9)
 	RoleAdminsKeyPrefix                    = collections.NewPrefix(10)
 	RoleMembersKeyPrefix                   = collections.NewPrefix(11)
 )

@@ -70,15 +70,6 @@ func (gs GenesisState) Validate() error {
 		}
 	}
 
-	for key, role := range gs.Roles {
-		if key == "" {
-			return fmt.Errorf("roles: key cannot be empty")
-		}
-		if role == "" {
-			return fmt.Errorf("roles: role value cannot be empty (key=%q)", key)
-		}
-	}
-
 	for key, adminRole := range gs.RoleAdmins {
 		if key == "" {
 			return fmt.Errorf("role_admins: key cannot be empty")

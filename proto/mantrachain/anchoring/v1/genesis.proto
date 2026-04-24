@@ -21,10 +21,6 @@ message GenesisState {
   repeated Record records = 3
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
-  // roles mapping: registryID (+ document checksum) + address -> role
-  map<string, string> roles = 4
-      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-
   // role_admins mapping: encoded RBAC role key -> admin role bytes
   map<string, bytes> role_admins = 5
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];

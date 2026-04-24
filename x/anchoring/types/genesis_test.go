@@ -372,7 +372,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 	}
 }
 
-func TestGenesisState_ValidateRoles(t *testing.T) {
+func TestGenesisState_ValidateRBAC(t *testing.T) {
 	appparams.SetAddressPrefixes()
 
 	validParams := types.NewParams("nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca")
@@ -384,40 +384,22 @@ func TestGenesisState_ValidateRoles(t *testing.T) {
 		valid    bool
 	}{
 		{
-			desc: "valid roles",
+			desc: "valid RBAC maps",
 			genState: &types.GenesisState{
 				Params:      validParams,
-				Roles:       map[string]string{validKey: "admin"},
 				RoleAdmins:  map[string][]byte{validKey: {0x01}},
 				RoleMembers: map[string][]byte{validKey: {}},
 			},
 			valid: true,
 		},
 		{
-			desc: "empty roles map is valid",
+			desc: "empty RBAC maps are valid",
 			genState: &types.GenesisState{
 				Params:      validParams,
-				Roles:       map[string]string{},
 				RoleAdmins:  map[string][]byte{},
 				RoleMembers: map[string][]byte{},
 			},
 			valid: true,
-		},
-		{
-			desc: "empty roles key is invalid",
-			genState: &types.GenesisState{
-				Params: validParams,
-				Roles:  map[string]string{"": "admin"},
-			},
-			valid: false,
-		},
-		{
-			desc: "empty roles value is invalid",
-			genState: &types.GenesisState{
-				Params: validParams,
-				Roles:  map[string]string{validKey: ""},
-			},
-			valid: false,
 		},
 		{
 			desc: "empty role_admins key is invalid",

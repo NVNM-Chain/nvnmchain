@@ -30,13 +30,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 		if err := k.RegistryIdByName.Set(ctx, registry.Name, registry.Id); err != nil {
 			return err
 		}
-		if _, err := k.Roles.Get(ctx, collections.Join3(registry.Id, registry.Creator, "")); errorsmod.IsOf(err, collections.ErrNotFound) {
-			if err := k.Roles.Set(ctx, collections.Join3(registry.Id, registry.Creator, ""), RoleAdmin); err != nil {
-				return err
-			}
-		} else if err != nil {
-			return err
-		}
 		if err := k.initializeRegistryRecordCounter(ctx, registry.Id); err != nil {
 			return err
 		}
@@ -115,16 +108,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 		}
 	}
 
-	for keyStr, role := range genState.Roles {
-		_, key, err := k.Roles.KeyCodec().Decode([]byte(keyStr))
-		if err != nil {
-			return err
-		}
-		if err := k.Roles.Set(ctx, key, role); err != nil {
-			return err
-		}
-	}
-
 	for keyStr, adminRole := range genState.RoleAdmins {
 		_, key, err := k.RBAC.RoleAdmins.KeyCodec().Decode([]byte(keyStr))
 		if err != nil {
@@ -171,18 +154,6 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (*types.GenesisState, error) {
 		return nil, err
 	}
 
-	genRoles := map[string]string{}
-	if err := k.Roles.Walk(ctx, nil, func(key collections.Triple[uint64, string, string], role string) (stop bool, err error) {
-		keyBytes, err := encodeRoleKey(k, key)
-		if err != nil {
-			return true, err
-		}
-		genRoles[string(keyBytes)] = role
-		return false, nil
-	}); err != nil {
-		return nil, err
-	}
-
 	genRoleAdmins := map[string][]byte{}
 	if err := k.RBAC.RoleAdmins.Walk(ctx, nil, func(key rbac.Role, adminRole []byte) (stop bool, err error) {
 		keyBytes, err := encodeRBACRoleAdminKey(k, key)
@@ -211,21 +182,9 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (*types.GenesisState, error) {
 		Params:      params,
 		Registries:  genRegistries,
 		Records:     genRecords,
-		Roles:       genRoles,
 		RoleAdmins:  genRoleAdmins,
 		RoleMembers: genRoleMembers,
 	}, nil
-}
-
-// encodeRoleKey safely encodes a role key to bytes
-func encodeRoleKey(k Keeper, key collections.Triple[uint64, string, string]) ([]byte, error) {
-	size := k.Roles.KeyCodec().Size(key)
-	buffer := make([]byte, size)
-	n, err := k.Roles.KeyCodec().Encode(buffer, key)
-	if err != nil {
-		return nil, err
-	}
-	return buffer[:n], nil
 }
 
 // encodeRBACRoleAdminKey safely encodes an RBAC role-admin key to bytes.
