@@ -43,9 +43,9 @@ The tax module parameters can be updated through governance proposals. This allo
 
 ## Key Functions
 
-### BeginBlocker
+### EndBlocker
 
-The `BeginBlocker` function is called at the beginning of each block. It handles the allocation of MCA tax based on the current parameters.
+The `EndBlocker` function is called at the end of each block. It handles the allocation of MCA tax based on the current parameters.
 
 
 ### UpdateParams
