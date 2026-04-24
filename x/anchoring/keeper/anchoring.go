@@ -103,6 +103,9 @@ func (k Keeper) AddRecord(ctx sdk.Context, sender sdk.AccAddress, record types.R
 		if err := k.RecordIdByChecksumAndRegistry.Set(ctx, collections.Join(record.Checksum, registryId), recordId); err != nil {
 			return 0, err
 		}
+		if err := k.RecordIdByRegistryAndChecksum.Set(ctx, collections.Join(registryId, record.Checksum), recordId); err != nil {
+			return 0, err
+		}
 	} else if err != nil {
 		return 0, err
 	}
@@ -127,9 +130,6 @@ func (k Keeper) AddRecord(ctx sdk.Context, sender sdk.AccAddress, record types.R
 
 	// store the record
 	if err := k.Records.Set(ctx, collections.Join3(registryId, record.RecordId, record.Index), record); err != nil {
-		return 0, err
-	}
-	if err := k.RecordIdByRegistryAndChecksum.Set(ctx, collections.Join(registryId, record.Checksum), record.RecordId); err != nil {
 		return 0, err
 	}
 
