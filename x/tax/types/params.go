@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"strings"
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -85,9 +84,6 @@ func ValidateTaxAddress(address string) error {
 	_, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
 		return fmt.Errorf("invalid tax address: %w", err)
-	}
-	if !strings.HasPrefix(address, "nvnm") {
-		return fmt.Errorf("tax address must have 'nvnm' prefix")
 	}
 	return nil
 }

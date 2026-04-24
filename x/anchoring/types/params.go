@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -40,9 +39,6 @@ func ValidateAdminAddress(address string) error {
 	_, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
 		return fmt.Errorf("invalid admin address: %w", err)
-	}
-	if !strings.HasPrefix(address, "nvnm") {
-		return fmt.Errorf("admin address must have 'nvnm' prefix")
 	}
 	return nil
 }
