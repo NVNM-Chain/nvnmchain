@@ -119,7 +119,7 @@ message MsgGrantRole {
   uint64 registry_id = 3;
   // checksum of document
   string checksum = 4;
-  // role to revoke (e.g., "admin", "editor")
+  // role to grant (e.g., "admin", "editor")
   string role = 5;
 }
 

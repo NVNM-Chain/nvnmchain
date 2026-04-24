@@ -472,7 +472,7 @@ type MsgGrantRole struct {
 	RegistryId uint64 `protobuf:"varint,3,opt,name=registry_id,json=registryId,proto3" json:"registry_id,omitempty"`
 	// checksum of document
 	Checksum string `protobuf:"bytes,4,opt,name=checksum,proto3" json:"checksum,omitempty"`
-	// role to revoke (e.g., "admin", "editor")
+	// role to grant (e.g., "admin", "editor")
 	Role string `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
 }
 
