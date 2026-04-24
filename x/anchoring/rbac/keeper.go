@@ -4,17 +4,12 @@ import (
 	"errors"
 
 	"cosmossdk.io/collections"
-	errorsmod "cosmossdk.io/errors"
 	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-var (
-	DefaultRoleAdmin = Role{}
-
-	ErrMissingRole = errorsmod.Register("rbac", 100, "missing required role")
-)
+var DefaultRoleAdmin = Role{}
 
 // rbac keeper implements a generic role-based access control,
 // * role -> adminRole
@@ -91,7 +86,7 @@ func (k *RBACKeeper) GrantRole(ctx sdk.Context, role Role, addr sdk.AccAddress, 
 		return err
 	}
 	if !hasAdminRole {
-		return ErrMissingRole.Wrapf("account %s is missing role %s", granter.String(), common.Hash(adminRole).Hex())
+		return types.ErrMissingRole.Wrapf("account %s is missing role %s", granter.String(), common.Hash(adminRole).Hex())
 	}
 
 	return k.GrantRoleUnchecked(ctx, role, addr, granter)
@@ -120,7 +115,7 @@ func (k *RBACKeeper) RevokeRole(ctx sdk.Context, role Role, addr sdk.AccAddress,
 		return err
 	}
 	if !hasAdminRole {
-		return ErrMissingRole.Wrapf("account %s is missing role %s", revoker.String(), common.Hash(adminRole).Hex())
+		return types.ErrMissingRole.Wrapf("account %s is missing role %s", revoker.String(), common.Hash(adminRole).Hex())
 	}
 	return k.RevokeRoleUnchecked(ctx, role, addr, revoker)
 }
