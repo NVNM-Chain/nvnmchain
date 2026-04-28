@@ -43,6 +43,7 @@ import (
 	sdkmempool "github.com/cosmos/cosmos-sdk/types/mempool"
 
 	"github.com/MANTRA-Chain/nvnmchain/app/ante"
+	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
 	"github.com/MANTRA-Chain/nvnmchain/app/upgrades"
 	_ "github.com/MANTRA-Chain/nvnmchain/client/docs/statik"
 	"github.com/MANTRA-Chain/nvnmchain/client/docs/swagger"
@@ -1104,7 +1105,7 @@ func (app *App) DefaultGenesis() map[string]json.RawMessage {
 
 	// Add mint denom configuration
 	mintGenState := minttypes.DefaultGenesisState()
-	mintGenState.Params.MintDenom = sdk.DefaultBondDenom
+	mintGenState.Params.MintDenom = appparams.DefaultBondDenom
 	genesis[minttypes.ModuleName] = app.appCodec.MustMarshalJSON(mintGenState)
 
 	// Add EVM genesis configuration
