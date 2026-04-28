@@ -90,7 +90,6 @@ func TestEndBlocker_InvalidTaxAddress(t *testing.T) {
 			params := types.Params{
 				TaxAddress: tc.taxAddress,
 				Tax:        math.LegacyMustNewDecFromStr(tc.tax),
-				MaxTax:     math.LegacyMustNewDecFromStr("0.4"),
 			}
 			require.NoError(t, k.Params.Set(ctx, params))
 

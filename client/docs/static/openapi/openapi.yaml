@@ -3268,8 +3268,9 @@ paths:
                         type: string
                       tax_address:
                         type: string
-                      max_tax:
-                        type: string
+                  max_tax:
+                    type: string
+                    description: max_tax is the hardcoded upper bound for the tax rate.
                 description: QueryParamsResponse is response type for the Query/Params RPC
                   method.
         default:
@@ -41324,8 +41325,6 @@ components:
           type: string
         tax_address:
           type: string
-        max_tax:
-          type: string
       description: Params defines the parameters for the module.
     mantrachain.tax.v1.QueryParamsResponse:
       type: object
@@ -41338,8 +41337,9 @@ components:
               type: string
             tax_address:
               type: string
-            max_tax:
-              type: string
+        max_tax:
+          type: string
+          description: max_tax is the hardcoded upper bound for the tax rate.
       description: QueryParamsResponse is response type for the Query/Params RPC method.
     cosmos.auth.v1beta1.AddressBytesToStringResponse:
       type: object

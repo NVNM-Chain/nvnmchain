@@ -23,7 +23,6 @@ func NewParams(
 	return Params{
 		Tax:        tax,
 		TaxAddress: taxAddress,
-		MaxTax:     MaxTax,
 	}
 }
 
@@ -43,9 +42,6 @@ func (p Params) Validate() error {
 	if err := ValidateTaxAddress(p.TaxAddress); err != nil {
 		return err
 	}
-	if p.Tax.GT(MaxTax) {
-		return fmt.Errorf("tax cannot exceed maximum of %s", MaxTax)
-	}
 	return nil
 }
 
@@ -63,10 +59,6 @@ func ValidateTax(i interface{}) error {
 
 	if tax.IsNegative() {
 		return fmt.Errorf("tax cannot be negative")
-	}
-
-	if tax.GT(math.LegacyOneDec()) {
-		return fmt.Errorf("tax cannot exceed 100%%")
 	}
 
 	if tax.GT(MaxTax) {

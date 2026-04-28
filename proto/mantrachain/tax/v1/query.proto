@@ -25,4 +25,11 @@ message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  // max_tax is the hardcoded upper bound for the tax rate.
+  string max_tax = 2 [
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (amino.dont_omitempty) = true,
+    (gogoproto.nullable) = false
+  ];
 }

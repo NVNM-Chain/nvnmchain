@@ -23,9 +23,4 @@ message Params {
     (amino.dont_omitempty) = true
   ];
 
-  string max_tax = 3 [
-    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
-    (amino.dont_omitempty) = true,
-    (gogoproto.nullable) = false
-  ];
 }
