@@ -1881,8 +1881,8 @@ github.com/xeipuuv/gojsonschema v1.2.0/go.mod h1:anYRn/JVcOK2ZgGU+IjEV4nwlhoK5sQ
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 h1:gEOO8jv9F4OT7lGCjxCBTO/36wtF6j2nSip77qHd4x4=
 github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1/go.mod h1:Ohn+xnUBiLI6FVj/9LpzZWtj1/D6lUovWYBkxHVV3aM=
-github.com/yihuang/go-abi v0.1.2-0.20260413060053-ffd281f0d537 h1:Mc6B2pWKbc4Dpxj2MwqGIjjusLyxpuhdI8PHfxf+Zzc=
-github.com/yihuang/go-abi v0.1.2-0.20260413060053-ffd281f0d537/go.mod h1:MeYIkIY6LO6Kd3M6XYpI8urkkaxE1FBkms3Hjb5vcxM=
+github.com/yihuang/go-abi v0.1.2-0.20260428035709-fbb0e0f4827f h1:MvV2D8dQPqvFUVz0clzCFHdz3+hM69W1+Wp56PeO6eU=
+github.com/yihuang/go-abi v0.1.2-0.20260428035709-fbb0e0f4827f/go.mod h1:FwMw+wlYZnoYb0dASTdOCkdYd/dknfwuyDdfmt7+ef4=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
