@@ -193,7 +193,7 @@ func (c *Chain) ReplaceImagesAndRestart(ctx context.Context, version string) err
 	repository := c.GetNode().Image.Repository
 	// Support for using the public v8.0.0-rc0 image from GitHub Container Registry
 	if version == "local" {
-		repository = "mantra-chain/mantrachain"
+		repository = "nvnm-chain/nvnmchain"
 		version = "latest"
 	} else if version == "v8.0.0-rc0" {
 		repository = "ghcr.io/mantra-chain/mantrachain"

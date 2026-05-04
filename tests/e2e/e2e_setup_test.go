@@ -567,7 +567,7 @@ func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
 			Mounts: []string{
 				fmt.Sprintf("%s/:%s", val.configDir(), nvnmchainHomePath),
 			},
-			Repository: "mantra-chain/nvnmchain",
+			Repository: "nvnm-chain/nvnmchain",
 			Tag:        "latest",
 		}
 

@@ -277,10 +277,10 @@ func ConsumerGenesisModifier() func(ibc.ChainConfig, []byte) ([]byte, error) {
 
 // ConsumerImageName returns the full image name for the consumer
 func ConsumerImageName(env Environment) string {
-	if env.DockerRegistry == "" {
+	if env.ConsumerDockerRegistry == "" {
 		return env.ConsumerImageName
 	}
-	return env.DockerRegistry + "/" + env.ConsumerImageName
+	return env.ConsumerDockerRegistry + "/" + env.ConsumerImageName
 }
 
 // ConsumerImageVersion returns the image version for the consumer
