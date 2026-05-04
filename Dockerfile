@@ -8,7 +8,7 @@ ARG BUILD_TAGS="netgo,ledger,muslc"
 # Builder
 # --------------------------------------------------------
 
-FROM golang:${GO_VERSION}-alpine AS mantra-builder
+FROM golang:${GO_VERSION}-alpine AS nvnm-builder
 WORKDIR /src/app/
 RUN apk add --no-cache \
     ca-certificates \
@@ -42,7 +42,7 @@ RUN apk add --no-cache build-base jq
 RUN addgroup -g 1025 nonroot
 RUN adduser -D nonroot -u 1025 -G nonroot
 ARG IMG_TAG
-COPY --from=mantra-builder /src/app/build/nvnmchaind /usr/local/bin/
+COPY --from=nvnm-builder /src/app/build/nvnmchaind /usr/local/bin/
 EXPOSE 26656 26657 1317 9090
 USER nonroot
 

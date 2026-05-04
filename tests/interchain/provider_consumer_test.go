@@ -15,7 +15,7 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/MANTRA-Chain/nvnmchain/tests/interchain/chainsuite"
+	"github.com/NVNM-Chain/nvnmchain/tests/interchain/chainsuite"
 )
 
 func TestProviderConsumerSuite(t *testing.T) {

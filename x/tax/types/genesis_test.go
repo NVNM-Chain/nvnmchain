@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
-	"github.com/MANTRA-Chain/nvnmchain/x/tax/types"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/types"
 	"github.com/stretchr/testify/require"
 )
 

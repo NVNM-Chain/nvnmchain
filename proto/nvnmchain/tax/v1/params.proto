@@ -1,11 +1,11 @@
 syntax = "proto3";
-package mantrachain.tax.v1;
+package nvnmchain.tax.v1;
 
 import "amino/amino.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/MANTRA-Chain/nvnmchain/x/tax/types";
+option go_package = "github.com/NVNM-Chain/nvnmchain/x/tax/types";
 
 // Params defines the parameters for the module.
 message Params {

@@ -1,11 +1,11 @@
 syntax = "proto3";
-package mantrachain.anchoring.v1;
+package nvnmchain.anchoring.v1;
 
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/MANTRA-Chain/nvnmchain/x/anchoring/types";
+option go_package = "github.com/NVNM-Chain/nvnmchain/x/anchoring/types";
 
 // Params defines the parameters for the module.
 message Params {

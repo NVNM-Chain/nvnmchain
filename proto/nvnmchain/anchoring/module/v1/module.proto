@@ -1,11 +1,11 @@
 syntax = "proto3";
-package mantrachain.anchoring.module.v1;
+package nvnmchain.anchoring.module.v1;
 
 import "cosmos/app/v1alpha1/module.proto";
 
 // Module is the config object for the module.
 message Module {
   option (cosmos.app.v1alpha1.module) = {
-    go_import : "github.com/MANTRA-Chain/nvnmchain/x/anchoring"
+    go_import : "github.com/NVNM-Chain/nvnmchain/x/anchoring"
   };
 }

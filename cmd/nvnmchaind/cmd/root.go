@@ -4,8 +4,8 @@ import (
 	"os"
 
 	"cosmossdk.io/log"
-	"github.com/MANTRA-Chain/nvnmchain/app"
-	"github.com/MANTRA-Chain/nvnmchain/app/params"
+	"github.com/NVNM-Chain/nvnmchain/app"
+	"github.com/NVNM-Chain/nvnmchain/app/params"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/client"
 	clientcfg "github.com/cosmos/cosmos-sdk/client/config"

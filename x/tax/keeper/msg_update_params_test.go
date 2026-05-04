@@ -3,10 +3,10 @@ package keeper_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
-	keepertest "github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
-	"github.com/MANTRA-Chain/nvnmchain/x/tax/keeper"
-	"github.com/MANTRA-Chain/nvnmchain/x/tax/types"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	keepertest "github.com/NVNM-Chain/nvnmchain/testutil/keeper"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/keeper"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
 )

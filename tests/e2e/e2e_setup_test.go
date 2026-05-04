@@ -16,7 +16,7 @@ import (
 
 	"cosmossdk.io/math"
 	evidencetypes "cosmossdk.io/x/evidence/types"
-	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
 	tmconfig "github.com/cometbft/cometbft/config"
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	tmjson "github.com/cometbft/cometbft/libs/json"

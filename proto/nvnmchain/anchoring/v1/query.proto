@@ -1,37 +1,35 @@
 syntax = "proto3";
-package mantrachain.anchoring.v1;
+package nvnmchain.anchoring.v1;
 
 import "amino/amino.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "cosmos/base/query/v1beta1/pagination.proto";
-import "mantrachain/anchoring/v1/params.proto";
-import "mantrachain/anchoring/v1/document.proto";
+import "nvnmchain/anchoring/v1/document.proto";
+import "nvnmchain/anchoring/v1/params.proto";
 
-option go_package = "github.com/MANTRA-Chain/nvnmchain/x/anchoring/types";
+option go_package = "github.com/NVNM-Chain/nvnmchain/x/anchoring/types";
 
 // Query defines the gRPC querier service.
 service Query {
   // Parameters queries the parameters of the module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/MANTRA-Chain/nvnmchain/anchoring/v1/params";
+    option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/params";
   }
 
   // Records queries documents based on filters
   rpc Records(QueryRecordsRequest) returns (QueryRecordsResponse) {
-    option (google.api.http).get = "/MANTRA-Chain/nvnmchain/anchoring/v1/records";
+    option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/records";
   }
 
   // Registries queries all registries with pagination
   rpc Registries(QueryRegistriesRequest) returns (QueryRegistriesResponse) {
-    option (google.api.http).get =
-        "/MANTRA-Chain/nvnmchain/anchoring/v1/registries";
+    option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/registries";
   }
 
   // Registry queries a specific registry by id or name
   rpc Registry(QueryRegistryRequest) returns (QueryRegistryResponse) {
-    option (google.api.http).get =
-        "/MANTRA-Chain/nvnmchain/anchoring/v1/registry";
+    option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/registry";
   }
 }
 
@@ -41,8 +39,10 @@ message QueryParamsRequest {}
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params holds all the parameters of this module.
-  Params params = 1
-      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
 }
 
 // QueryRecordsRequest is request type for the Query/Records RPC method.

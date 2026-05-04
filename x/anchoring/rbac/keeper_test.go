@@ -3,12 +3,12 @@ package rbac_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
-	keepertest "github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
-	"github.com/MANTRA-Chain/nvnmchain/testutil/sample"
-	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
-	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/rbac"
-	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	keepertest "github.com/NVNM-Chain/nvnmchain/testutil/keeper"
+	"github.com/NVNM-Chain/nvnmchain/testutil/sample"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/rbac"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"

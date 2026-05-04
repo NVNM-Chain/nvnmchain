@@ -42,14 +42,14 @@ import (
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	sdkmempool "github.com/cosmos/cosmos-sdk/types/mempool"
 
-	"github.com/MANTRA-Chain/nvnmchain/app/ante"
-	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
-	"github.com/MANTRA-Chain/nvnmchain/app/upgrades"
-	_ "github.com/MANTRA-Chain/nvnmchain/client/docs/statik"
-	"github.com/MANTRA-Chain/nvnmchain/client/docs/swagger"
-	taxkeeper "github.com/MANTRA-Chain/nvnmchain/x/tax/keeper"
-	tax "github.com/MANTRA-Chain/nvnmchain/x/tax/module"
-	taxtypes "github.com/MANTRA-Chain/nvnmchain/x/tax/types"
+	"github.com/NVNM-Chain/nvnmchain/app/ante"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	"github.com/NVNM-Chain/nvnmchain/app/upgrades"
+	_ "github.com/NVNM-Chain/nvnmchain/client/docs/statik"
+	"github.com/NVNM-Chain/nvnmchain/client/docs/swagger"
+	taxkeeper "github.com/NVNM-Chain/nvnmchain/x/tax/keeper"
+	tax "github.com/NVNM-Chain/nvnmchain/x/tax/module"
+	taxtypes "github.com/NVNM-Chain/nvnmchain/x/tax/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -111,10 +111,10 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	"cosmossdk.io/client/v2/autocli"
-	anchoringkeeper "github.com/MANTRA-Chain/nvnmchain/x/anchoring/keeper"
-	anchoring "github.com/MANTRA-Chain/nvnmchain/x/anchoring/module"
-	anchoringprecompile "github.com/MANTRA-Chain/nvnmchain/x/anchoring/precompile"
-	anchoringtypes "github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
+	anchoringkeeper "github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
+	anchoring "github.com/NVNM-Chain/nvnmchain/x/anchoring/module"
+	anchoringprecompile "github.com/NVNM-Chain/nvnmchain/x/anchoring/precompile"
+	anchoringtypes "github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	chainante "github.com/cosmos/evm/ante"
 	evmaddress "github.com/cosmos/evm/encoding/address"
 	evmmempool "github.com/cosmos/evm/mempool"
@@ -265,10 +265,8 @@ type App struct {
 	RateLimitKeeper ratelimitkeeper.Keeper
 	CallbackKeeper  ibccallbackskeeper.ContractKeeper
 
-	// MANTRAChain keepers
-	TaxKeeper taxkeeper.Keeper
-
 	// NVNMChain keepers
+	TaxKeeper       taxkeeper.Keeper
 	AnchoringKeeper anchoringkeeper.Keeper
 
 	// Cosmos EVM keepers
@@ -731,10 +729,8 @@ func New(
 		ibctm.NewAppModule(tmLightClientModule),
 		ratelimit.NewAppModule(appCodec, app.RateLimitKeeper),
 
-		// mantrachain modules
-		tax.NewAppModule(appCodec, app.TaxKeeper),
-
 		// nvnmchain modules
+		tax.NewAppModule(appCodec, app.TaxKeeper),
 		anchoring.NewAppModule(appCodec, app.AnchoringKeeper),
 
 		// Cosmos EVM modules

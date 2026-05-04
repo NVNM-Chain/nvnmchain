@@ -92,7 +92,7 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=nvnmchain \
 	-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(CMT_VERSION)
 
 ifdef AUTHORITY
-ldflags += -X github.com/MANTRA-Chain/nvnmchain/app.Authority=$(AUTHORITY)
+ldflags += -X github.com/NVNM-Chain/nvnmchain/app.Authority=$(AUTHORITY)
 endif
 
 ifeq (cleveldb,$(findstring cleveldb,$(NVNMCHAIN_BUILD_OPTIONS)))
@@ -127,7 +127,7 @@ build-arm:
 build-linux:
 	GOOS=linux GOARCH=$(if $(findstring aarch64,$(shell uname -m)) || $(findstring arm64,$(shell uname -m)),arm64,amd64) $(MAKE) build
 build-image:
-	docker build -f Dockerfile -t ghcr.io/mantra-chain/nvnmchain:local .
+	docker build -f Dockerfile -t ghcr.io/nvnm-chain/nvnmchain:local .
 
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) $(GO_MODULE)/cmd/nvnmchaind
@@ -174,7 +174,7 @@ GO_VERSION_FALLBACK := 1.24.2
 GORELEASER_IMAGE := $(shell docker manifest inspect $(GORELEASER_CROSS):v$(GO_VERSION) > /dev/null 2>&1 && echo $(GORELEASER_CROSS):v$(GO_VERSION) || echo $(GORELEASER_CROSS):v$(GO_VERSION_FALLBACK))
 endif
 GORELEASER_PLATFORM ?= linux/amd64
-REPO_OWNER ?= MANTRA-Chain
+REPO_OWNER ?= NVNM-Chain
 REPO_NAME ?= nvnmchain
 
 # Check if GITHUB_TOKEN is defined

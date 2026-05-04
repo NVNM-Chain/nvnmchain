@@ -8,7 +8,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	cmn "github.com/MANTRA-Chain/nvnmchain/precompiles"
+	cmn "github.com/NVNM-Chain/nvnmchain/precompiles"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/yihuang/go-abi"
 )

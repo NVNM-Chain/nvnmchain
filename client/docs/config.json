@@ -7,6 +7,14 @@
   },
   "apis": [
     {
+      "url": "./tmp-swagger-gen/nvnmchain/anchoring/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "AnchoringParams"
+        }
+      }
+    },
+    {
       "url": "./tmp-swagger-gen/cosmos/evm/vm/v1/query.swagger.json",
       "operationIds": {
         "rename": {
@@ -51,7 +59,7 @@
       }
     },
     {
-      "url": "./tmp-swagger-gen/mantrachain/tax/v1/query.swagger.json",
+      "url": "./tmp-swagger-gen/nvnmchain/tax/v1/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "TaxParams"

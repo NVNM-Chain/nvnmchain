@@ -10,7 +10,7 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/MANTRA-Chain/nvnmchain/tests/interchain/chainsuite"
+	"github.com/NVNM-Chain/nvnmchain/tests/interchain/chainsuite"
 )
 
 // ProviderConsumerSuite is the test suite for provider-consumer chain interactions
