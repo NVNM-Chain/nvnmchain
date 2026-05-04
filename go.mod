@@ -1,4 +1,4 @@
-module github.com/MANTRA-Chain/nvnmchain
+module github.com/NVNM-Chain/nvnmchain
 
 go 1.24.2
 

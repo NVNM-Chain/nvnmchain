@@ -3,7 +3,7 @@
 package precompile
 
 import (
-	"github.com/MANTRA-Chain/nvnmchain/x/anchoring/types"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 )
 
 func FromABIRecord(rec Record) types.Record {

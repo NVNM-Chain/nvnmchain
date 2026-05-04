@@ -3,11 +3,11 @@ package tax_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/nvnmchain/app/params"
-	keepertest "github.com/MANTRA-Chain/nvnmchain/testutil/keeper"
-	"github.com/MANTRA-Chain/nvnmchain/testutil/nullify"
-	tax "github.com/MANTRA-Chain/nvnmchain/x/tax/module"
-	"github.com/MANTRA-Chain/nvnmchain/x/tax/types"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	keepertest "github.com/NVNM-Chain/nvnmchain/testutil/keeper"
+	"github.com/NVNM-Chain/nvnmchain/testutil/nullify"
+	tax "github.com/NVNM-Chain/nvnmchain/x/tax/module"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/types"
 	"github.com/stretchr/testify/require"
 )
 

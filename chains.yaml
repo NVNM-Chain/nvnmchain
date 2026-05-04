@@ -1,6 +1,6 @@
 # Nvnmchain
 - name: nvnmchain
-  github-organization: MANTRA-Chain
+  github-organization: NVNM-Chain
   github-repo: nvnmchain
   dockerfile: cosmos
   build-target: |

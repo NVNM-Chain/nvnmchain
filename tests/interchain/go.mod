@@ -1,4 +1,4 @@
-module github.com/MANTRA-Chain/nvnmchain/tests/interchain
+module github.com/NVNM-Chain/nvnmchain/tests/interchain
 
 go 1.25.0
 

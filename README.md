@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/github/license/MANTRA-Chain/nvnmchain)](https://github.com/MANTRA-Chain/nvnmchain/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/NVNM-Chain/nvnmchain)](https://github.com/NVNM-Chain/nvnmchain/blob/main/LICENSE)
 
 # NVNMChain
 
@@ -39,7 +39,7 @@ To get started with NVNMChain, you'll need to set up your development environmen
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/MANTRA-Chain/nvnmchain.git
+   git clone https://github.com/NVNM-Chain/nvnmchain.git
    cd nvnmchain
    ```
 

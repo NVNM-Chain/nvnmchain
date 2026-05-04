@@ -11,7 +11,7 @@ The Tax Module is a crucial component of the NVNMChain ecosystem, responsible fo
 
 The Keeper is the main component that handles the business logic of the tax module. It provides methods for:
 
-- Allocating MCA (Mantra Chain Authority) tax
+- Allocating tax
 - Managing tax parameters
 - Interacting with other modules (e.g., bank, auth)
 

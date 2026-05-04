@@ -5,8 +5,8 @@ import (
 	"os"
 
 	clienthelpers "cosmossdk.io/client/v2/helpers"
-	"github.com/MANTRA-Chain/nvnmchain/app"
-	"github.com/MANTRA-Chain/nvnmchain/cmd/nvnmchaind/cmd"
+	"github.com/NVNM-Chain/nvnmchain/app"
+	"github.com/NVNM-Chain/nvnmchain/cmd/nvnmchaind/cmd"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	evmcfg "github.com/cosmos/evm/config"

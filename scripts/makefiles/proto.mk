@@ -52,13 +52,6 @@ proto-download-deps:
 	@rm -rf "$(THIRD_PARTY_DIR)"
 	@mkdir -p "$(THIRD_PARTY_DIR)"
 
-	@echo "Copying mantrachain proto..."
-	@DIR=$$(go list -m -f '{{.Dir}}' github.com/MANTRA-Chain/mantrachain/v8); \
-	if [ -d "$$DIR/proto" ]; then \
-		cp -r "$$DIR/proto"/* "$(THIRD_PARTY_DIR)"; \
-		chmod -R 755 "$(THIRD_PARTY_DIR)"; \
-	fi
-
 	@echo "Copying cosmos-sdk proto..."
 	@DIR=$$(go list -m -f '{{.Dir}}' github.com/cosmos/cosmos-sdk); \
 	if [ -d "$$DIR/proto" ]; then \

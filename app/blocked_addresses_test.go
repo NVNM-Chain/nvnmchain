@@ -3,7 +3,7 @@ package app
 import (
 	"testing"
 
-	anchoringprecompile "github.com/MANTRA-Chain/nvnmchain/x/anchoring/precompile"
+	anchoringprecompile "github.com/NVNM-Chain/nvnmchain/x/anchoring/precompile"
 	cosmosevmutils "github.com/cosmos/evm/utils"
 	evmtypes "github.com/cosmos/evm/x/vm/types"
 	corevm "github.com/ethereum/go-ethereum/core/vm"
