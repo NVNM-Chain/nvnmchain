@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"errors"
@@ -156,33 +157,88 @@ import (
 	ccvtypes "github.com/cosmos/interchain-security/v7/x/ccv/types"
 )
 
-// loadEvmCoinInfoFromGenesis builds EvmCoinInfo from genesis evm_denom +
-// bank denom_metadata, mirrors runtime LoadEvmCoinInfo (cosmos/evm#816).
+// defaultEvmCoinInfo seeds the EVM keeper's fallback (cosmos/evm#816):
+// genesis bank_metadata when present, else FutureStakingDenom for in-memory
+// test apps.
+func defaultEvmCoinInfo(homePath string) evmtypes.EvmCoinInfo {
+	if info, ok := loadEvmCoinInfoFromGenesis(homePath); ok {
+		return info
+	}
+	return evmtypes.EvmCoinInfo{
+		Denom:         FutureStakingDenom,
+		ExtendedDenom: FutureStakingDenom,
+		DisplayDenom:  "nvnm",
+		Decimals:      evmtypes.EighteenDecimals.Uint32(),
+	}
+}
+
+// loadEvmCoinInfoFromGenesis streams genesis.json (mirrors the
+// ParseChainIDFromGenesis pattern), pulling only evm.params and
+// bank.denom_metadata so we don't allocate typed objects for bank balances.
 func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
 	if homePath == "" {
 		return evmtypes.EvmCoinInfo{}, false
 	}
-	var g struct {
-		AppState struct {
-			Evm  evmtypes.GenesisState  `json:"evm"`
-			Bank banktypes.GenesisState `json:"bank"`
-		} `json:"app_state"`
-	}
-	bz, err := os.ReadFile(filepath.Join(homePath, "config", "genesis.json"))
+	f, err := os.Open(filepath.Join(homePath, "config", "genesis.json"))
 	if err != nil {
 		return evmtypes.EvmCoinInfo{}, false
 	}
-	if err := json.Unmarshal(bz, &g); err != nil {
+	defer f.Close()
+
+	dec := json.NewDecoder(bufio.NewReader(f))
+	if !seekObjectKey(dec, "app_state") {
 		return evmtypes.EvmCoinInfo{}, false
 	}
-	evmDenom := g.AppState.Evm.Params.EvmDenom
-	if evmDenom == "" {
+
+	var evmRaw, bankRaw json.RawMessage
+	if t, err := dec.Token(); err != nil || t != json.Delim('{') {
 		return evmtypes.EvmCoinInfo{}, false
+	}
+	for dec.More() && (evmRaw == nil || bankRaw == nil) {
+		t, err := dec.Token()
+		if err != nil {
+			return evmtypes.EvmCoinInfo{}, false
+		}
+		key, _ := t.(string)
+		var raw json.RawMessage
+		if err := dec.Decode(&raw); err != nil {
+			return evmtypes.EvmCoinInfo{}, false
+		}
+		switch key {
+		case evmtypes.ModuleName:
+			evmRaw = raw
+		case banktypes.ModuleName:
+			bankRaw = raw
+		}
+	}
+
+	var evm struct {
+		Params struct {
+			EvmDenom             string `json:"evm_denom"`
+			ExtendedDenomOptions *struct {
+				ExtendedDenom string `json:"extended_denom"`
+			} `json:"extended_denom_options"`
+		} `json:"params"`
+	}
+	if evmRaw == nil {
+		return evmtypes.EvmCoinInfo{}, false
+	}
+	if err := json.Unmarshal(evmRaw, &evm); err != nil || evm.Params.EvmDenom == "" {
+		return evmtypes.EvmCoinInfo{}, false
+	}
+
+	var bank struct {
+		DenomMetadata []banktypes.Metadata `json:"denom_metadata"`
+	}
+	if bankRaw != nil {
+		if err := json.Unmarshal(bankRaw, &bank); err != nil {
+			return evmtypes.EvmCoinInfo{}, false
+		}
 	}
 	var meta *banktypes.Metadata
-	for i := range g.AppState.Bank.DenomMetadata {
-		if g.AppState.Bank.DenomMetadata[i].Base == evmDenom {
-			meta = &g.AppState.Bank.DenomMetadata[i]
+	for i := range bank.DenomMetadata {
+		if bank.DenomMetadata[i].Base == evm.Params.EvmDenom {
+			meta = &bank.DenomMetadata[i]
 			break
 		}
 	}
@@ -196,19 +252,46 @@ func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
 			break
 		}
 	}
-	extended := evmDenom
+	extended := evm.Params.EvmDenom
 	if decimals != evmtypes.EighteenDecimals.Uint32() {
-		if g.AppState.Evm.Params.ExtendedDenomOptions == nil {
+		if evm.Params.ExtendedDenomOptions == nil {
 			return evmtypes.EvmCoinInfo{}, false
 		}
-		extended = g.AppState.Evm.Params.ExtendedDenomOptions.ExtendedDenom
+		extended = evm.Params.ExtendedDenomOptions.ExtendedDenom
 	}
 	return evmtypes.EvmCoinInfo{
-		Denom:         evmDenom,
+		Denom:         evm.Params.EvmDenom,
 		ExtendedDenom: extended,
 		DisplayDenom:  meta.Display,
 		Decimals:      decimals,
 	}, true
+}
+
+// seekObjectKey advances dec to the value of the named top-level key,
+// skipping siblings. Returns false on parse error or missing key.
+func seekObjectKey(dec *json.Decoder, key string) bool {
+	t, err := dec.Token()
+	if err != nil || t != json.Delim('{') {
+		return false
+	}
+	for dec.More() {
+		t, err := dec.Token()
+		if err != nil {
+			return false
+		}
+		k, ok := t.(string)
+		if !ok {
+			return false
+		}
+		if k == key {
+			return true
+		}
+		var skip json.RawMessage
+		if err := dec.Decode(&skip); err != nil {
+			return false
+		}
+	}
+	return false
 }
 
 func init() {
@@ -656,9 +739,7 @@ func New(
 		evmChainID,
 		tracer,
 	)
-	if defaultCoinInfo, ok := loadEvmCoinInfoFromGenesis(homePath); ok {
-		app.EVMKeeper = app.EVMKeeper.WithDefaultEvmCoinInfo(defaultCoinInfo)
-	}
+	app.EVMKeeper = app.EVMKeeper.WithDefaultEvmCoinInfo(defaultEvmCoinInfo(homePath))
 
 	// ERC20 Keeper
 	app.Erc20Keeper = erc20keeper.NewKeeper(
