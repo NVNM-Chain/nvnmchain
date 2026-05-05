@@ -23,5 +23,5 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
-          version: v2.8.0
+          version: latest
           args: --config=.golangci.yml --verbose --timeout=30m --build-tags=uint256
