@@ -157,38 +157,50 @@ import (
 	ccvtypes "github.com/cosmos/interchain-security/v7/x/ccv/types"
 )
 
+var errGenesisAbsent = errors.New("genesis.json not found")
+
 // defaultEvmCoinInfo seeds the EVM keeper's fallback (cosmos/evm#816).
+// Panics on parse/config errors so a misconfigured chain surfaces at
+// startup instead of running with stale FutureStakingDenom defaults.
 func defaultEvmCoinInfo(homePath string) evmtypes.EvmCoinInfo {
-	if info, ok := loadEvmCoinInfoFromGenesis(homePath); ok {
+	info, err := loadEvmCoinInfoFromGenesis(homePath)
+	switch {
+	case err == nil:
 		return info
-	}
-	return evmtypes.EvmCoinInfo{
-		Denom:         FutureStakingDenom,
-		ExtendedDenom: FutureStakingDenom,
-		DisplayDenom:  "nvnm",
-		Decimals:      evmtypes.EighteenDecimals.Uint32(),
+	case errors.Is(err, errGenesisAbsent):
+		return evmtypes.EvmCoinInfo{
+			Denom:         FutureStakingDenom,
+			ExtendedDenom: FutureStakingDenom,
+			DisplayDenom:  "nvnm",
+			Decimals:      evmtypes.EighteenDecimals.Uint32(),
+		}
+	default:
+		panic(fmt.Sprintf("nvnmchain: cannot derive EVM coin info from genesis: %v", err))
 	}
 }
 
 // loadEvmCoinInfoFromGenesis token-streams evm.params + bank.denom_metadata,
 // skipping bank.balances/supply. Returns evm_denom-only info if metadata
-// is missing.
-func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
+// is missing. Returns errGenesisAbsent when no genesis file exists.
+func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, error) {
 	if homePath == "" {
-		return evmtypes.EvmCoinInfo{}, false
+		return evmtypes.EvmCoinInfo{}, errGenesisAbsent
 	}
 	f, err := os.Open(filepath.Join(homePath, "config", "genesis.json"))
 	if err != nil {
-		return evmtypes.EvmCoinInfo{}, false
+		if os.IsNotExist(err) {
+			return evmtypes.EvmCoinInfo{}, errGenesisAbsent
+		}
+		return evmtypes.EvmCoinInfo{}, fmt.Errorf("open genesis: %w", err)
 	}
 	defer f.Close()
 
 	dec := json.NewDecoder(bufio.NewReader(f))
 	if !seekObjectKey(dec, "app_state") {
-		return evmtypes.EvmCoinInfo{}, false
+		return evmtypes.EvmCoinInfo{}, errors.New("genesis: app_state not found")
 	}
 	if t, err := dec.Token(); err != nil || t != json.Delim('{') {
-		return evmtypes.EvmCoinInfo{}, false
+		return evmtypes.EvmCoinInfo{}, errors.New("genesis: app_state is not an object")
 	}
 
 	var evm struct {
@@ -204,29 +216,29 @@ func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
 	for dec.More() && (!seenEvm || !seenBank) {
 		t, err := dec.Token()
 		if err != nil {
-			return evmtypes.EvmCoinInfo{}, false
+			return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: read app_state key: %w", err)
 		}
 		key, _ := t.(string)
 		switch key {
 		case evmtypes.ModuleName:
 			if err := dec.Decode(&evm); err != nil {
-				return evmtypes.EvmCoinInfo{}, false
+				return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: decode evm: %w", err)
 			}
 			seenEvm = true
 		case banktypes.ModuleName:
 			if err := streamBankDenomMetadata(dec, &metadata); err != nil {
-				return evmtypes.EvmCoinInfo{}, false
+				return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: decode bank: %w", err)
 			}
 			seenBank = true
 		default:
 			if err := skipValue(dec); err != nil {
-				return evmtypes.EvmCoinInfo{}, false
+				return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: skip %q: %w", key, err)
 			}
 		}
 	}
 
 	if evm.Params.EvmDenom == "" {
-		return evmtypes.EvmCoinInfo{}, false
+		return evmtypes.EvmCoinInfo{}, errors.New("genesis: evm.params.evm_denom is empty")
 	}
 
 	info := evmtypes.EvmCoinInfo{
@@ -249,12 +261,13 @@ func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
 		break
 	}
 	if info.Decimals != evmtypes.EighteenDecimals.Uint32() {
-		if evm.Params.ExtendedDenomOptions == nil {
-			return evmtypes.EvmCoinInfo{}, false
+		ext := evm.Params.ExtendedDenomOptions
+		if ext == nil || ext.ExtendedDenom == "" {
+			return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: non-18-decimal evm_denom %q requires extended_denom_options.extended_denom", evm.Params.EvmDenom)
 		}
-		info.ExtendedDenom = evm.Params.ExtendedDenomOptions.ExtendedDenom
+		info.ExtendedDenom = ext.ExtendedDenom
 	}
-	return info, true
+	return info, nil
 }
 
 // seekObjectKey advances dec to the named key's value, skipping siblings.
