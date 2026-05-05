@@ -281,7 +281,6 @@ func (s *ProviderConsumerSuite) TestIBCTransferMalformedCallbackMemo() {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		s.Run(tt.name, func() {
 			err := chainsuite.SendIBCTransferWithMemo(ctx, s.Consumer, s.Provider, s.Relayer, senderKey, tt.memo)
 			if tt.expectError {
