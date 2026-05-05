@@ -201,7 +201,7 @@ func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
 	}
 	var metadata []banktypes.Metadata
 	var seenEvm, seenBank bool
-	for dec.More() && !(seenEvm && seenBank) {
+	for dec.More() && (!seenEvm || !seenBank) {
 		t, err := dec.Token()
 		if err != nil {
 			return evmtypes.EvmCoinInfo{}, false
@@ -232,6 +232,7 @@ func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
 	info := evmtypes.EvmCoinInfo{
 		Denom:         evm.Params.EvmDenom,
 		ExtendedDenom: evm.Params.EvmDenom,
+		DisplayDenom:  evm.Params.EvmDenom,
 		Decimals:      evmtypes.EighteenDecimals.Uint32(),
 	}
 	for i := range metadata {
