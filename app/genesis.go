@@ -21,7 +21,8 @@ import (
 // object provided to it during init.
 type GenesisState map[string]json.RawMessage
 
-var FeeDenom = "anvnm"
+// Change variable name when anvnm is launched
+var FutureStakingDenom = "anvnm"
 
 // NewDefaultGenesisState generates the default state for the application.
 func NewDefaultGenesisState(cdc codec.JSONCodec) GenesisState {
@@ -50,12 +51,12 @@ func NewDefaultGenesisState(cdc codec.JSONCodec) GenesisState {
 
 	var evmState evmtypes.GenesisState
 	cdc.MustUnmarshalJSON(genesisState[evmtypes.ModuleName], &evmState)
-	evmState.Params.EvmDenom = FeeDenom
+	evmState.Params.EvmDenom = FutureStakingDenom
 	genesisState[evmtypes.ModuleName] = cdc.MustMarshalJSON(&evmState)
 
 	var erc20State erc20types.GenesisState
 	cdc.MustUnmarshalJSON(genesisState[erc20types.ModuleName], &erc20State)
-	erc20State.TokenPairs[0].Denom = FeeDenom
+	erc20State.TokenPairs[0].Denom = FutureStakingDenom
 	genesisState[erc20types.ModuleName] = cdc.MustMarshalJSON(&erc20State)
 
 	return genesisState
