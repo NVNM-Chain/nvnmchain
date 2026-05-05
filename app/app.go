@@ -157,9 +157,7 @@ import (
 	ccvtypes "github.com/cosmos/interchain-security/v7/x/ccv/types"
 )
 
-// defaultEvmCoinInfo seeds the EVM keeper's fallback (cosmos/evm#816):
-// genesis bank_metadata when present, else FutureStakingDenom for in-memory
-// test apps.
+// defaultEvmCoinInfo seeds the EVM keeper's fallback (cosmos/evm#816).
 func defaultEvmCoinInfo(homePath string) evmtypes.EvmCoinInfo {
 	if info, ok := loadEvmCoinInfoFromGenesis(homePath); ok {
 		return info
@@ -172,9 +170,9 @@ func defaultEvmCoinInfo(homePath string) evmtypes.EvmCoinInfo {
 	}
 }
 
-// loadEvmCoinInfoFromGenesis streams genesis.json (mirrors the
-// ParseChainIDFromGenesis pattern), pulling only evm.params and
-// bank.denom_metadata so we don't allocate typed objects for bank balances.
+// loadEvmCoinInfoFromGenesis token-streams evm.params + bank.denom_metadata,
+// skipping bank.balances/supply. Returns evm_denom-only info if metadata
+// is missing.
 func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
 	if homePath == "" {
 		return evmtypes.EvmCoinInfo{}, false
@@ -189,27 +187,8 @@ func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
 	if !seekObjectKey(dec, "app_state") {
 		return evmtypes.EvmCoinInfo{}, false
 	}
-
-	var evmRaw, bankRaw json.RawMessage
 	if t, err := dec.Token(); err != nil || t != json.Delim('{') {
 		return evmtypes.EvmCoinInfo{}, false
-	}
-	for dec.More() && (evmRaw == nil || bankRaw == nil) {
-		t, err := dec.Token()
-		if err != nil {
-			return evmtypes.EvmCoinInfo{}, false
-		}
-		key, _ := t.(string)
-		var raw json.RawMessage
-		if err := dec.Decode(&raw); err != nil {
-			return evmtypes.EvmCoinInfo{}, false
-		}
-		switch key {
-		case evmtypes.ModuleName:
-			evmRaw = raw
-		case banktypes.ModuleName:
-			bankRaw = raw
-		}
 	}
 
 	var evm struct {
@@ -220,55 +199,64 @@ func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
 			} `json:"extended_denom_options"`
 		} `json:"params"`
 	}
-	if evmRaw == nil {
-		return evmtypes.EvmCoinInfo{}, false
+	var metadata []banktypes.Metadata
+	var seenEvm, seenBank bool
+	for dec.More() && !(seenEvm && seenBank) {
+		t, err := dec.Token()
+		if err != nil {
+			return evmtypes.EvmCoinInfo{}, false
+		}
+		key, _ := t.(string)
+		switch key {
+		case evmtypes.ModuleName:
+			if err := dec.Decode(&evm); err != nil {
+				return evmtypes.EvmCoinInfo{}, false
+			}
+			seenEvm = true
+		case banktypes.ModuleName:
+			if err := streamBankDenomMetadata(dec, &metadata); err != nil {
+				return evmtypes.EvmCoinInfo{}, false
+			}
+			seenBank = true
+		default:
+			if err := skipValue(dec); err != nil {
+				return evmtypes.EvmCoinInfo{}, false
+			}
+		}
 	}
-	if err := json.Unmarshal(evmRaw, &evm); err != nil || evm.Params.EvmDenom == "" {
+
+	if evm.Params.EvmDenom == "" {
 		return evmtypes.EvmCoinInfo{}, false
 	}
 
-	var bank struct {
-		DenomMetadata []banktypes.Metadata `json:"denom_metadata"`
+	info := evmtypes.EvmCoinInfo{
+		Denom:         evm.Params.EvmDenom,
+		ExtendedDenom: evm.Params.EvmDenom,
+		Decimals:      evmtypes.EighteenDecimals.Uint32(),
 	}
-	if bankRaw != nil {
-		if err := json.Unmarshal(bankRaw, &bank); err != nil {
-			return evmtypes.EvmCoinInfo{}, false
+	for i := range metadata {
+		if metadata[i].Base != evm.Params.EvmDenom {
+			continue
 		}
-	}
-	var meta *banktypes.Metadata
-	for i := range bank.DenomMetadata {
-		if bank.DenomMetadata[i].Base == evm.Params.EvmDenom {
-			meta = &bank.DenomMetadata[i]
-			break
+		info.DisplayDenom = metadata[i].Display
+		for _, u := range metadata[i].DenomUnits {
+			if u.Denom == metadata[i].Display {
+				info.Decimals = u.Exponent
+				break
+			}
 		}
+		break
 	}
-	if meta == nil {
-		return evmtypes.EvmCoinInfo{}, false
-	}
-	var decimals uint32
-	for _, u := range meta.DenomUnits {
-		if u.Denom == meta.Display {
-			decimals = u.Exponent
-			break
-		}
-	}
-	extended := evm.Params.EvmDenom
-	if decimals != evmtypes.EighteenDecimals.Uint32() {
+	if info.Decimals != evmtypes.EighteenDecimals.Uint32() {
 		if evm.Params.ExtendedDenomOptions == nil {
 			return evmtypes.EvmCoinInfo{}, false
 		}
-		extended = evm.Params.ExtendedDenomOptions.ExtendedDenom
+		info.ExtendedDenom = evm.Params.ExtendedDenomOptions.ExtendedDenom
 	}
-	return evmtypes.EvmCoinInfo{
-		Denom:         evm.Params.EvmDenom,
-		ExtendedDenom: extended,
-		DisplayDenom:  meta.Display,
-		Decimals:      decimals,
-	}, true
+	return info, true
 }
 
-// seekObjectKey advances dec to the value of the named top-level key,
-// skipping siblings. Returns false on parse error or missing key.
+// seekObjectKey advances dec to the named key's value, skipping siblings.
 func seekObjectKey(dec *json.Decoder, key string) bool {
 	t, err := dec.Token()
 	if err != nil || t != json.Delim('{') {
@@ -286,12 +274,68 @@ func seekObjectKey(dec *json.Decoder, key string) bool {
 		if k == key {
 			return true
 		}
-		var skip json.RawMessage
-		if err := dec.Decode(&skip); err != nil {
+		if err := skipValue(dec); err != nil {
 			return false
 		}
 	}
 	return false
+}
+
+// streamBankDenomMetadata decodes only the bank module's denom_metadata.
+func streamBankDenomMetadata(dec *json.Decoder, out *[]banktypes.Metadata) error {
+	t, err := dec.Token()
+	if err != nil {
+		return err
+	}
+	if t != json.Delim('{') {
+		return fmt.Errorf("bank: expected object, got %v", t)
+	}
+	for dec.More() {
+		t, err := dec.Token()
+		if err != nil {
+			return err
+		}
+		k, ok := t.(string)
+		if !ok {
+			return fmt.Errorf("bank: expected key string, got %v", t)
+		}
+		if k == "denom_metadata" {
+			if err := dec.Decode(out); err != nil {
+				return err
+			}
+			continue
+		}
+		if err := skipValue(dec); err != nil {
+			return err
+		}
+	}
+	_, err = dec.Token() // closing }
+	return err
+}
+
+// skipValue consumes one JSON value via token reads (no buffering).
+func skipValue(dec *json.Decoder) error {
+	t, err := dec.Token()
+	if err != nil {
+		return err
+	}
+	if t != json.Delim('{') && t != json.Delim('[') {
+		return nil
+	}
+	depth := 1
+	for depth > 0 {
+		t, err := dec.Token()
+		if err != nil {
+			return err
+		}
+		switch t {
+		case json.Delim('{'), json.Delim('['):
+			depth++
+		case json.Delim('}'), json.Delim(']'):
+			depth--
+		}
+	}
+	return nil
 }
 
 func init() {
