@@ -637,19 +637,21 @@ func New(
 	/*
 		Create Transfer Stack
 
-		transfer stack (outermost to innermost, i.e. call-entry order for RecvPacket):
+		IBCModule stack (outermost to innermost, i.e. call-entry order for RecvPacket/OnAck/OnTimeout):
 			- IBC RateLimit middleware
 			- IBC Callbacks middleware (with EVM ContractKeeper)
 			- IBC Transfer
 
-		SendPacket, since it is originating from the application to core IBC:
-			transfer.SendTransfer -> ratelimit.SendPacket -> channel.SendPacket
-			(ICS4Wrapper chain wired via WithICS4Wrapper after stack is built below)
+		SendPacket ICS4Wrapper chain (transfer → core IBC):
+			transfer.SendTransfer -> callbacks.SendPacket -> ratelimit.SendPacket -> channel.SendPacket
 
-		RecvPacket, actual logic execution order (note: ratelimit runs its check BEFORE calling next;
-		callbacks and erc20 call next before their own logic):
-			channel.RecvPacket -> ratelimit.OnRecvPacket (guard, aborts if exceeded) -> transfer.OnRecvPacket
-			-> callbacks.OnRecvPacket
+		The callbacks middleware sits in the ICS4Wrapper send path so that malformed src_callback
+		metadata is rejected at send time. Without this, a sender could include a syntactically
+		invalid src_callback memo that passes at send time but permanently blocks
+		OnAcknowledgementPacket / OnTimeoutPacket, locking funds indefinitely.
+
+		RecvPacket / OnAcknowledgementPacket / OnTimeoutPacket execution order:
+			channel -> ratelimit (guard, aborts if rate exceeded) -> callbacks -> transfer
 	*/
 
 	// create IBC module from top to bottom of stack
