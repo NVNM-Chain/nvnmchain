@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sort"
 
 	corevm "github.com/ethereum/go-ethereum/core/vm"
@@ -155,32 +156,57 @@ import (
 	ccvtypes "github.com/cosmos/interchain-security/v7/x/ccv/types"
 )
 
-// CLI flags seeding the EVM keeper's default EvmCoinInfo (cosmos/evm#816).
-const (
-	FlagEVMDefaultCoinDenom         = "evm.default-coin-denom"
-	FlagEVMDefaultCoinExtendedDenom = "evm.default-coin-extended-denom"
-	FlagEVMDefaultCoinDisplayDenom  = "evm.default-coin-display-denom"
-	FlagEVMDefaultCoinDecimals      = "evm.default-coin-decimals"
-)
-
-// ok=false when the denom flag is empty; callers skip seeding in that case.
-func evmDefaultCoinInfoFromOpts(appOpts servertypes.AppOptions) (evmtypes.EvmCoinInfo, bool) {
-	denom := cast.ToString(appOpts.Get(FlagEVMDefaultCoinDenom))
-	if denom == "" {
+// loadEvmCoinInfoFromGenesis builds EvmCoinInfo from genesis evm_denom +
+// bank denom_metadata, mirrors runtime LoadEvmCoinInfo (cosmos/evm#816).
+func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, bool) {
+	if homePath == "" {
 		return evmtypes.EvmCoinInfo{}, false
 	}
-	extended := cast.ToString(appOpts.Get(FlagEVMDefaultCoinExtendedDenom))
-	if extended == "" {
-		extended = denom
+	var g struct {
+		AppState struct {
+			Evm  evmtypes.GenesisState  `json:"evm"`
+			Bank banktypes.GenesisState `json:"bank"`
+		} `json:"app_state"`
 	}
-	decimals := cast.ToUint32(appOpts.Get(FlagEVMDefaultCoinDecimals))
-	if decimals == 0 {
-		decimals = evmtypes.EighteenDecimals.Uint32()
+	bz, err := os.ReadFile(filepath.Join(homePath, "config", "genesis.json"))
+	if err != nil {
+		return evmtypes.EvmCoinInfo{}, false
+	}
+	if err := json.Unmarshal(bz, &g); err != nil {
+		return evmtypes.EvmCoinInfo{}, false
+	}
+	evmDenom := g.AppState.Evm.Params.EvmDenom
+	if evmDenom == "" {
+		return evmtypes.EvmCoinInfo{}, false
+	}
+	var meta *banktypes.Metadata
+	for i := range g.AppState.Bank.DenomMetadata {
+		if g.AppState.Bank.DenomMetadata[i].Base == evmDenom {
+			meta = &g.AppState.Bank.DenomMetadata[i]
+			break
+		}
+	}
+	if meta == nil {
+		return evmtypes.EvmCoinInfo{}, false
+	}
+	var decimals uint32
+	for _, u := range meta.DenomUnits {
+		if u.Denom == meta.Display {
+			decimals = u.Exponent
+			break
+		}
+	}
+	extended := evmDenom
+	if decimals != evmtypes.EighteenDecimals.Uint32() {
+		if g.AppState.Evm.Params.ExtendedDenomOptions == nil {
+			return evmtypes.EvmCoinInfo{}, false
+		}
+		extended = g.AppState.Evm.Params.ExtendedDenomOptions.ExtendedDenom
 	}
 	return evmtypes.EvmCoinInfo{
-		Denom:         denom,
+		Denom:         evmDenom,
 		ExtendedDenom: extended,
-		DisplayDenom:  cast.ToString(appOpts.Get(FlagEVMDefaultCoinDisplayDenom)),
+		DisplayDenom:  meta.Display,
 		Decimals:      decimals,
 	}, true
 }
@@ -630,7 +656,7 @@ func New(
 		evmChainID,
 		tracer,
 	)
-	if defaultCoinInfo, ok := evmDefaultCoinInfoFromOpts(appOpts); ok {
+	if defaultCoinInfo, ok := loadEvmCoinInfoFromGenesis(homePath); ok {
 		app.EVMKeeper = app.EVMKeeper.WithDefaultEvmCoinInfo(defaultCoinInfo)
 	}
 

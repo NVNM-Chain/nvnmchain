@@ -91,12 +91,6 @@ func initRootCmd(
 func addModuleInitFlags(startCmd *cobra.Command) {
 	startCmd.Flags().Bool("x-crisis-skip-assert-invariants", true, "[DEPRECATED] No longer used, x/crisis module was removed")
 	_ = startCmd.Flags().MarkHidden("x-crisis-skip-assert-invariants")
-
-	// EVM defaultEvmCoinInfo fallback, should match evm.params.evm_denom.
-	startCmd.Flags().String(app.FlagEVMDefaultCoinDenom, "", "Default EVM coin denom")
-	startCmd.Flags().String(app.FlagEVMDefaultCoinExtendedDenom, "", "Default EVM coin extended denom (defaults to --"+app.FlagEVMDefaultCoinDenom+")")
-	startCmd.Flags().String(app.FlagEVMDefaultCoinDisplayDenom, "", "Default EVM coin display denom")
-	startCmd.Flags().Uint32(app.FlagEVMDefaultCoinDecimals, 18, "Default EVM coin decimals")
 }
 
 // genesisCommand builds genesis-related `nvnmchaind genesis` command. Users may provide application specific commands as a parameter
