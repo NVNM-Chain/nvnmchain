@@ -155,6 +155,36 @@ import (
 	ccvtypes "github.com/cosmos/interchain-security/v7/x/ccv/types"
 )
 
+// CLI flags seeding the EVM keeper's default EvmCoinInfo (cosmos/evm#816).
+const (
+	FlagEVMDefaultCoinDenom         = "evm.default-coin-denom"
+	FlagEVMDefaultCoinExtendedDenom = "evm.default-coin-extended-denom"
+	FlagEVMDefaultCoinDisplayDenom  = "evm.default-coin-display-denom"
+	FlagEVMDefaultCoinDecimals      = "evm.default-coin-decimals"
+)
+
+// ok=false when the denom flag is empty; callers skip seeding in that case.
+func evmDefaultCoinInfoFromOpts(appOpts servertypes.AppOptions) (evmtypes.EvmCoinInfo, bool) {
+	denom := cast.ToString(appOpts.Get(FlagEVMDefaultCoinDenom))
+	if denom == "" {
+		return evmtypes.EvmCoinInfo{}, false
+	}
+	extended := cast.ToString(appOpts.Get(FlagEVMDefaultCoinExtendedDenom))
+	if extended == "" {
+		extended = denom
+	}
+	decimals := cast.ToUint32(appOpts.Get(FlagEVMDefaultCoinDecimals))
+	if decimals == 0 {
+		decimals = evmtypes.EighteenDecimals.Uint32()
+	}
+	return evmtypes.EvmCoinInfo{
+		Denom:         denom,
+		ExtendedDenom: extended,
+		DisplayDenom:  cast.ToString(appOpts.Get(FlagEVMDefaultCoinDisplayDenom)),
+		Decimals:      decimals,
+	}, true
+}
+
 func init() {
 	// Replace evmos defaults
 	// manually update the power reduction by replacing micro (u) -> atto (a) nvnm
@@ -600,6 +630,9 @@ func New(
 		evmChainID,
 		tracer,
 	)
+	if defaultCoinInfo, ok := evmDefaultCoinInfoFromOpts(appOpts); ok {
+		app.EVMKeeper = app.EVMKeeper.WithDefaultEvmCoinInfo(defaultCoinInfo)
+	}
 
 	// ERC20 Keeper
 	app.Erc20Keeper = erc20keeper.NewKeeper(
