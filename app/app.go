@@ -155,13 +155,6 @@ import (
 	ccvtypes "github.com/cosmos/interchain-security/v7/x/ccv/types"
 )
 
-var EVMCoinInfo = evmtypes.EvmCoinInfo{
-	Denom:         "anvnm",
-	ExtendedDenom: "anvnm",
-	DisplayDenom:  "nvnm",
-	Decimals:      evmtypes.EighteenDecimals.Uint32(),
-}
-
 func init() {
 	// Replace evmos defaults
 	// manually update the power reduction by replacing micro (u) -> atto (a) nvnm
@@ -606,7 +599,7 @@ func New(
 		&app.Erc20Keeper,
 		evmChainID,
 		tracer,
-	).WithDefaultEvmCoinInfo(EVMCoinInfo)
+	)
 
 	// ERC20 Keeper
 	app.Erc20Keeper = erc20keeper.NewKeeper(
