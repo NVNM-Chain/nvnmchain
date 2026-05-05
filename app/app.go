@@ -663,11 +663,11 @@ func New(
 		app.EVMKeeper,
 		app.Erc20Keeper,
 	)
-	transferStack = ibccallbacks.NewIBCMiddleware(transferStack, app.IBCKeeper.ChannelKeeper, app.CallbackKeeper, maxCallbackGas)
-	transferStack = ratelimit.NewIBCMiddleware(app.RateLimitKeeper, transferStack)
+	cbMiddleware := ibccallbacks.NewIBCMiddleware(transferStack, app.RateLimitKeeper, app.CallbackKeeper, maxCallbackGas)
+	transferStack = ratelimit.NewIBCMiddleware(app.RateLimitKeeper, &cbMiddleware)
 
-	// Wire the ICS4Wrapper send path: transfer -> ratelimit -> channel.
-	app.TransferKeeper.WithICS4Wrapper(app.RateLimitKeeper)
+	// Wire the ICS4Wrapper send path: transfer -> callbacks -> ratelimit -> channel.
+	app.TransferKeeper.WithICS4Wrapper(&cbMiddleware)
 
 	// Create static IBC router, add app routes, then set and seal it
 	ibcRouter := porttypes.NewRouter().

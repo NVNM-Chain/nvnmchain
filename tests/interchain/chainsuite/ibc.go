@@ -10,6 +10,29 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 )
 
+// SendIBCTransferWithMemo sends an IBC transfer from chainA to chainB with a custom memo.
+// senderKeyName must be a key already present in chainA.Validators[0]'s keyring with sufficient funds.
+// Returns the tx error directly — callers decide whether an error is expected or not.
+func SendIBCTransferWithMemo(ctx context.Context, chainA *Chain, chainB *Chain, relayer *Relayer, senderKeyName string, memo string) error {
+	senderTxChannel, err := relayer.GetTransferChannel(ctx, chainA, chainB)
+	if err != nil {
+		return err
+	}
+
+	_, err = chainA.Validators[0].SendIBCTransfer(
+		ctx,
+		senderTxChannel.ChannelID,
+		senderKeyName,
+		ibc.WalletAmount{
+			Denom:   chainA.Config().Denom,
+			Amount:  math.NewInt(1_000_000),
+			Address: chainB.ValidatorWallets[0].Address,
+		},
+		ibc.TransferOptions{Memo: memo},
+	)
+	return err
+}
+
 func SendSimpleIBCTx(ctx context.Context, chainA *Chain, chainB *Chain, relayer *Relayer) error {
 	addr1 := chainA.ValidatorWallets[0].Address
 	addr2 := chainB.ValidatorWallets[0].Address

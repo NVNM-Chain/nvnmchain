@@ -219,6 +219,80 @@ func (s *ProviderConsumerSuite) TestValidatorStakeChange() {
 	s.Require().NoError(s.Provider.UpdateAndVerifyStakeChange(s.GetContext(), s.Consumer, s.Relayer, 1_000_000_000_000_000_000, 0))
 }
 
+// TestIBCTransferMalformedCallbackMemo verifies that IBC transfers with malformed
+// src_callback metadata in the memo are rejected at send time on the consumer chain.
+//
+// Before the fix, the callbacks middleware's SendPacket was not wired into the
+// ICS4Wrapper chain, so malformed memos were accepted at send time but then
+// blocked ack/timeout processing, permanently locking funds.
+//
+// After the fix (transfer → callbacks → ratelimit → channel), the same validation
+// that runs at ack/timeout also runs at send time, so bad memos fail fast.
+func (s *ProviderConsumerSuite) TestIBCTransferMalformedCallbackMemo() {
+	ctx := s.GetContext()
+
+	const senderKey = "ibcTestSender"
+
+	// Create a fresh wallet and fund it from the pre-funded genesis account.
+	senderWallet, err := s.Consumer.BuildWallet(ctx, senderKey, "")
+	s.Require().NoError(err)
+
+	_, _ = s.Consumer.BuildWallet(ctx, "prefundedTest", chainsuite.TestAccountMnemonic)
+	err = s.Consumer.SendFunds(ctx, "prefundedTest", ibc.WalletAmount{
+		Address: senderWallet.FormattedAddress(),
+		Denom:   s.Consumer.Config().Denom,
+		Amount:  sdkmath.NewInt(10_000_000_000_000_000), // enough for gas + several IBC sends
+	})
+	s.Require().NoError(err)
+
+	// validAddr is only used as a string value inside memo fields, not as a tx signer.
+	validAddr := s.Consumer.ValidatorWallets[0].Address
+
+	tests := []struct {
+		name        string
+		memo        string
+		expectError bool
+	}{
+		{
+			name:        "no memo",
+			memo:        "",
+			expectError: false,
+		},
+		{
+			name:        "memo without src_callback key",
+			memo:        `{"ibc_memo": "plain transfer"}`,
+			expectError: false,
+		},
+		{
+			name:        "empty callback address",
+			memo:        `{"src_callback": {"address": ""}}`,
+			expectError: true,
+		},
+		{
+			name:        "gas_limit as JSON number instead of string",
+			memo:        `{"src_callback": {"address": "` + validAddr + `", "gas_limit": 500000}}`,
+			expectError: true,
+		},
+		{
+			name:        "calldata is not valid hex",
+			memo:        `{"src_callback": {"address": "` + validAddr + `", "calldata": "not_hex!"}}`,
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		s.Run(tt.name, func() {
+			err := chainsuite.SendIBCTransferWithMemo(ctx, s.Consumer, s.Provider, s.Relayer, senderKey, tt.memo)
+			if tt.expectError {
+				s.Require().Error(err, "expected IBC transfer with memo %q to be rejected at send time", tt.memo)
+			} else {
+				s.Require().NoError(err, "IBC transfer with memo %q should succeed", tt.memo)
+			}
+		})
+	}
+}
+
 // TestProviderInfo tests that consumer can query provider info correctly
 func (s *ProviderConsumerSuite) TestProviderInfo() {
 	providerInfo, err := s.Consumer.GetProviderInfo(s.GetContext())
