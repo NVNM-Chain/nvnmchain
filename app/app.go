@@ -196,11 +196,17 @@ func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, error) {
 	defer f.Close()
 
 	dec := json.NewDecoder(bufio.NewReader(f))
-	if !seekObjectKey(dec, "app_state") {
+	found, err := seekObjectKey(dec, "app_state")
+	if err != nil {
+		return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: %w", err)
+	}
+	if !found {
 		return evmtypes.EvmCoinInfo{}, errors.New("genesis: app_state not found")
 	}
-	if t, err := dec.Token(); err != nil || t != json.Delim('{') {
-		return evmtypes.EvmCoinInfo{}, errors.New("genesis: app_state is not an object")
+	if t, err := dec.Token(); err != nil {
+		return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: read app_state: %w", err)
+	} else if t != json.Delim('{') {
+		return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: app_state is not an object (got %v)", t)
 	}
 
 	var evm struct {
@@ -270,29 +276,32 @@ func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, error) {
 	return info, nil
 }
 
-// seekObjectKey advances dec to the named key's value, skipping siblings.
-func seekObjectKey(dec *json.Decoder, key string) bool {
+// seekObjectKey advances dec to key's value; (false, nil) means absent.
+func seekObjectKey(dec *json.Decoder, key string) (bool, error) {
 	t, err := dec.Token()
-	if err != nil || t != json.Delim('{') {
-		return false
+	if err != nil {
+		return false, err
+	}
+	if t != json.Delim('{') {
+		return false, fmt.Errorf("expected object, got %v", t)
 	}
 	for dec.More() {
 		t, err := dec.Token()
 		if err != nil {
-			return false
+			return false, err
 		}
 		k, ok := t.(string)
 		if !ok {
-			return false
+			return false, fmt.Errorf("expected key string, got %v", t)
 		}
 		if k == key {
-			return true
+			return true, nil
 		}
 		if err := skipValue(dec); err != nil {
-			return false
+			return false, fmt.Errorf("skip %q: %w", k, err)
 		}
 	}
-	return false
+	return false, nil
 }
 
 // streamBankDenomMetadata decodes only the bank module's denom_metadata.
