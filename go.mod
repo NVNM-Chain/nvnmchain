@@ -9,7 +9,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
 	// mantra/v0.6.x
-	github.com/cosmos/evm => github.com/MANTRA-Chain/evm v0.6.0-v7-mantra-4.0.20260505014220-c01b44d006a1
+	github.com/cosmos/evm => github.com/MANTRA-Chain/evm v0.6.0-v8-mantra-1
 
 	// branch: release/1.16
 	github.com/ethereum/go-ethereum => github.com/cosmos/go-ethereum v1.16.2-cosmos-1
