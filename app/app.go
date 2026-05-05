@@ -156,8 +156,8 @@ import (
 )
 
 var EVMCoinInfo = evmtypes.EvmCoinInfo{
-	Denom:         "anvnm",
-	ExtendedDenom: "anvnm",
+	Denom:         FutureStakingDenom,
+	ExtendedDenom: FutureStakingDenom,
 	DisplayDenom:  "nvnm",
 	Decimals:      evmtypes.EighteenDecimals.Uint32(),
 }
