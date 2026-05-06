@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"errors"
@@ -8,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sort"
 
 	corevm "github.com/ethereum/go-ethereum/core/vm"
@@ -155,11 +157,208 @@ import (
 	ccvtypes "github.com/cosmos/interchain-security/v7/x/ccv/types"
 )
 
-var EVMCoinInfo = evmtypes.EvmCoinInfo{
-	Denom:         FutureStakingDenom,
-	ExtendedDenom: FutureStakingDenom,
-	DisplayDenom:  "nvnm",
-	Decimals:      evmtypes.EighteenDecimals.Uint32(),
+var errGenesisAbsent = errors.New("genesis.json not found")
+
+// defaultEvmCoinInfo seeds the EVM keeper's fallback (cosmos/evm#816).
+// Panics on parse/config errors so a misconfigured chain surfaces at
+// startup instead of running with stale FutureStakingDenom defaults.
+func defaultEvmCoinInfo(homePath string) evmtypes.EvmCoinInfo {
+	info, err := loadEvmCoinInfoFromGenesis(homePath)
+	switch {
+	case err == nil:
+		return info
+	case errors.Is(err, errGenesisAbsent):
+		return evmtypes.EvmCoinInfo{
+			Denom:         FutureStakingDenom,
+			ExtendedDenom: FutureStakingDenom,
+			DisplayDenom:  "nvnm",
+			Decimals:      evmtypes.EighteenDecimals.Uint32(),
+		}
+	default:
+		panic(fmt.Sprintf("nvnmchain: cannot derive EVM coin info from genesis: %v", err))
+	}
+}
+
+// loadEvmCoinInfoFromGenesis token-streams evm.params + bank.denom_metadata,
+// skipping bank.balances/supply. Returns evm_denom-only info if metadata
+// is missing. Returns errGenesisAbsent when no genesis file exists.
+func loadEvmCoinInfoFromGenesis(homePath string) (evmtypes.EvmCoinInfo, error) {
+	if homePath == "" {
+		return evmtypes.EvmCoinInfo{}, errGenesisAbsent
+	}
+	f, err := os.Open(filepath.Join(homePath, "config", "genesis.json"))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return evmtypes.EvmCoinInfo{}, errGenesisAbsent
+		}
+		return evmtypes.EvmCoinInfo{}, fmt.Errorf("open genesis: %w", err)
+	}
+	defer f.Close()
+
+	dec := json.NewDecoder(bufio.NewReader(f))
+	found, err := seekObjectKey(dec, "app_state")
+	if err != nil {
+		return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: %w", err)
+	}
+	if !found {
+		return evmtypes.EvmCoinInfo{}, errors.New("genesis: app_state not found")
+	}
+	if t, err := dec.Token(); err != nil {
+		return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: read app_state: %w", err)
+	} else if t != json.Delim('{') {
+		return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: app_state is not an object (got %v)", t)
+	}
+
+	var evm struct {
+		Params struct {
+			EvmDenom             string `json:"evm_denom"`
+			ExtendedDenomOptions *struct {
+				ExtendedDenom string `json:"extended_denom"`
+			} `json:"extended_denom_options"`
+		} `json:"params"`
+	}
+	var metadata []banktypes.Metadata
+	var seenEvm, seenBank bool
+	for dec.More() && (!seenEvm || !seenBank) {
+		t, err := dec.Token()
+		if err != nil {
+			return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: read app_state key: %w", err)
+		}
+		key, _ := t.(string)
+		switch key {
+		case evmtypes.ModuleName:
+			if err := dec.Decode(&evm); err != nil {
+				return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: decode evm: %w", err)
+			}
+			seenEvm = true
+		case banktypes.ModuleName:
+			if err := streamBankDenomMetadata(dec, &metadata); err != nil {
+				return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: decode bank: %w", err)
+			}
+			seenBank = true
+		default:
+			if err := skipValue(dec); err != nil {
+				return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: skip %q: %w", key, err)
+			}
+		}
+	}
+
+	if evm.Params.EvmDenom == "" {
+		return evmtypes.EvmCoinInfo{}, errors.New("genesis: evm.params.evm_denom is empty")
+	}
+
+	info := evmtypes.EvmCoinInfo{
+		Denom:         evm.Params.EvmDenom,
+		ExtendedDenom: evm.Params.EvmDenom,
+		DisplayDenom:  evm.Params.EvmDenom,
+		Decimals:      evmtypes.EighteenDecimals.Uint32(),
+	}
+	for i := range metadata {
+		if metadata[i].Base != evm.Params.EvmDenom {
+			continue
+		}
+		info.DisplayDenom = metadata[i].Display
+		for _, u := range metadata[i].DenomUnits {
+			if u.Denom == metadata[i].Display {
+				info.Decimals = u.Exponent
+				break
+			}
+		}
+		break
+	}
+	if info.Decimals != evmtypes.EighteenDecimals.Uint32() {
+		ext := evm.Params.ExtendedDenomOptions
+		if ext == nil || ext.ExtendedDenom == "" {
+			return evmtypes.EvmCoinInfo{}, fmt.Errorf("genesis: non-18-decimal evm_denom %q requires extended_denom_options.extended_denom", evm.Params.EvmDenom)
+		}
+		info.ExtendedDenom = ext.ExtendedDenom
+	}
+	return info, nil
+}
+
+// seekObjectKey advances dec to key's value; (false, nil) means absent.
+func seekObjectKey(dec *json.Decoder, key string) (bool, error) {
+	t, err := dec.Token()
+	if err != nil {
+		return false, err
+	}
+	if t != json.Delim('{') {
+		return false, fmt.Errorf("expected object, got %v", t)
+	}
+	for dec.More() {
+		t, err := dec.Token()
+		if err != nil {
+			return false, err
+		}
+		k, ok := t.(string)
+		if !ok {
+			return false, fmt.Errorf("expected key string, got %v", t)
+		}
+		if k == key {
+			return true, nil
+		}
+		if err := skipValue(dec); err != nil {
+			return false, fmt.Errorf("skip %q: %w", k, err)
+		}
+	}
+	return false, nil
+}
+
+// streamBankDenomMetadata decodes only the bank module's denom_metadata.
+func streamBankDenomMetadata(dec *json.Decoder, out *[]banktypes.Metadata) error {
+	t, err := dec.Token()
+	if err != nil {
+		return err
+	}
+	if t != json.Delim('{') {
+		return fmt.Errorf("bank: expected object, got %v", t)
+	}
+	for dec.More() {
+		t, err := dec.Token()
+		if err != nil {
+			return err
+		}
+		k, ok := t.(string)
+		if !ok {
+			return fmt.Errorf("bank: expected key string, got %v", t)
+		}
+		if k == "denom_metadata" {
+			if err := dec.Decode(out); err != nil {
+				return err
+			}
+			continue
+		}
+		if err := skipValue(dec); err != nil {
+			return err
+		}
+	}
+	_, err = dec.Token() // closing }
+	return err
+}
+
+// skipValue consumes one JSON value via token reads (no buffering).
+func skipValue(dec *json.Decoder) error {
+	t, err := dec.Token()
+	if err != nil {
+		return err
+	}
+	if t != json.Delim('{') && t != json.Delim('[') {
+		return nil
+	}
+	depth := 1
+	for depth > 0 {
+		t, err := dec.Token()
+		if err != nil {
+			return err
+		}
+		switch t {
+		case json.Delim('{'), json.Delim('['):
+			depth++
+		case json.Delim('}'), json.Delim(']'):
+			depth--
+		}
+	}
+	return nil
 }
 
 func init() {
@@ -606,7 +805,8 @@ func New(
 		&app.Erc20Keeper,
 		evmChainID,
 		tracer,
-	).WithDefaultEvmCoinInfo(EVMCoinInfo)
+	)
+	app.EVMKeeper = app.EVMKeeper.WithDefaultEvmCoinInfo(defaultEvmCoinInfo(homePath))
 
 	// ERC20 Keeper
 	app.Erc20Keeper = erc20keeper.NewKeeper(
