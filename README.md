@@ -17,7 +17,11 @@ NVNMChain is a blockchain platform for anchoring document hashes and off-chain a
 
 NVNMChain is an ICS opt-in consumer chain secured by a provider chain (e.g. MANTRAChain) via Interchain Security v7. It runs an EVM execution environment using a MANTRA fork of `cosmos/evm`, enabling Solidity smart contracts and EVM precompiles alongside native Cosmos SDK transactions.
 
-The gas token is the IBC-wrapped MantraUSD token (`transfer/channel-1/erc20:<wMantraUSD address>`), bridged from the provider chain. As an ICS consumer chain, NVNMChain has no native staking at launch — validator security is inherited entirely from the provider chain.
+As an ICS consumer chain, NVNMChain has no native staking at launch — validator security is inherited entirely from the provider chain.
+
+The gas token differs by environment:
+- **ICS deployment:** the IBC-wrapped MantraUSD token (`transfer/channel-1/erc20:<wMantraUSD address>`), bridged from the provider chain.
+- **Standalone local devnet** (`make build-and-run-single-node`): `anvnm`, a placeholder denom used for development without a live provider chain.
 
 ## Architecture
 
@@ -71,7 +75,7 @@ make install
 make build-and-run-single-node
 ```
 
-This initialises a node with chain ID `test-chain`, native denom `anvnm`, and starts it locally.
+This initialises a standalone node with chain ID `test-chain` and gas denom `anvnm`. This is a development-only setup with no provider chain — the gas denom differs from the ICS deployment which uses IBC-wrapped MantraUSD.
 
 
 ## Development
