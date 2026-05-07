@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/inveniam/app/params"
-	"github.com/MANTRA-Chain/inveniam/x/tax/types"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,63 +23,63 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "negative proportion is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("-0.5", types.DefaultMcaAddress),
+				Params: types.NewParams("-0.5", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
 			desc: "invalid bech32 address",
 			genState: &types.GenesisState{
-				Params: types.NewParams(types.DefaultMcaTax, "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx073"),
+				Params: types.NewParams(types.DefaultTax, "nvnm1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx073"),
 			},
 			valid: false,
 		},
 		{
 			desc: "valid custom parameters",
 			genState: &types.GenesisState{
-				Params: types.NewParams("0.1", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"),
+				Params: types.NewParams("0.1", "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"),
 			},
 			valid: true,
 		},
 		{
-			desc: "mca tax greater than 1 is invalid",
+			desc: "tax greater than 1 is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("1.5", types.DefaultMcaAddress),
+				Params: types.NewParams("1.5", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
-			desc: "empty mca address is invalid",
+			desc: "empty tax address is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams(types.DefaultMcaTax, ""),
+				Params: types.NewParams(types.DefaultTax, ""),
 			},
 			valid: false,
 		},
 		{
-			desc: "mca tax of 0.5 is invalid",
+			desc: "tax of 0.5 is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("0.5", types.DefaultMcaAddress),
+				Params: types.NewParams("0.5", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
-			desc: "mca tax of 0 is valid",
+			desc: "tax of 0 is valid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("0", types.DefaultMcaAddress),
+				Params: types.NewParams("0", types.DefaultTaxAddress),
 			},
 			valid: true,
 		},
 		{
-			desc: "mca tax of 1 is invalid",
+			desc: "tax of 1 is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("1", types.DefaultMcaAddress),
+				Params: types.NewParams("1", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
-			desc: "mca address with wrong prefix is invalid",
+			desc: "tax address with wrong prefix is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams(types.DefaultMcaTax, "cosmos1qypqxpq9qcrsszg2pvxq6rs0zqg3yyc5lzutu9"),
+				Params: types.NewParams(types.DefaultTax, "cosmos1qypqxpq9qcrsszg2pvxq6rs0zqg3yyc5lzutu9"),
 			},
 			valid: false,
 		},

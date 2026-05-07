@@ -48,7 +48,7 @@ func newCosmosAnteHandler(ctx sdk.Context, options HandlerOptions) sdk.AnteHandl
 	anteDecorators := []sdk.AnteDecorator{
 		cosmosante.NewRejectMessagesDecorator(), // reject MsgEthereumTxs
 		consumerante.NewMsgFilterDecorator(options.ConsumerKeeper),
-		consumerante.NewDisabledModulesDecorator("/cosmos.evidence", "/cosmos.slashing"),
+		consumerante.NewDisabledModulesDecorator("/cosmos.evidence", "/cosmos.slashing.v1beta1.MsgUnjail"),
 		ante.NewSetUpContextDecorator(),
 		circuitante.NewCircuitBreakerDecorator(options.CircuitKeeper),
 		ante.NewExtensionOptionsDecorator(options.EvmOptions.ExtensionOptionChecker),

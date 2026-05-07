@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"cosmossdk.io/collections"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

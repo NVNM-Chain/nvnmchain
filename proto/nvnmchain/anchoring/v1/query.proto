@@ -1,0 +1,96 @@
+syntax = "proto3";
+package nvnmchain.anchoring.v1;
+
+import "amino/amino.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "nvnmchain/anchoring/v1/document.proto";
+import "nvnmchain/anchoring/v1/params.proto";
+
+option go_package = "github.com/NVNM-Chain/nvnmchain/x/anchoring/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/params";
+  }
+
+  // Records queries documents based on filters
+  rpc Records(QueryRecordsRequest) returns (QueryRecordsResponse) {
+    option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/records";
+  }
+
+  // Registries queries all registries with pagination
+  rpc Registries(QueryRegistriesRequest) returns (QueryRegistriesResponse) {
+    option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/registries";
+  }
+
+  // Registry queries a specific registry by id or name
+  rpc Registry(QueryRegistryRequest) returns (QueryRegistryResponse) {
+    option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/registry";
+  }
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// QueryRecordsRequest is request type for the Query/Records RPC method.
+message QueryRecordsRequest {
+  string checksum = 1;
+  uint64 registry_id = 2;
+  uint64 record_id = 3;
+  uint64 index = 4;
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 5;
+}
+
+// QueryRecordsResponse is response type for the Query/Documents RPC method.
+message QueryRecordsResponse {
+  // records is a list of records
+  repeated Record records = 1;
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryRegistriesRequest is request type for the Query/Registries RPC method.
+message QueryRegistriesRequest {
+  // registry_id is an optional filter for a specific registry
+  uint64 registry_id = 1;
+  // name is an optional filter for a specific registry by name
+  string name = 2;
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryRegistriesResponse is response type for the Query/Registries RPC method.
+message QueryRegistriesResponse {
+  // registries is a list of registries
+  repeated Registry registries = 1;
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryRegistryRequest is request type for the Query/Registry RPC method.
+message QueryRegistryRequest {
+  // id is the unique identifier of the registry
+  uint64 id = 1;
+  // name is the name of the registry (alternative to id)
+  string name = 2;
+}
+
+// QueryRegistryResponse is response type for the Query/Registry RPC method.
+message QueryRegistryResponse {
+  // registry is the requested registry
+  Registry registry = 1;
+}

@@ -58,8 +58,10 @@ func (s *IntegrationTestSuite) testBankTokenTransfer() {
 				afterBobUomBalance, err = getSpecificBalance(chainEndpoint, bob.String(), anvnmDenom)
 				s.Require().NoError(err)
 
-				decremented := beforeAliceUomBalance.Sub(tokenAmount).Sub(standardFees).IsEqual(afterAliceUomBalance)
-				incremented := beforeBobUomBalance.Add(tokenAmount).IsEqual(afterBobUomBalance)
+				expectedAliceUomBalance := beforeAliceUomBalance.Sub(tokenAmount).Sub(standardFees)
+				expectedBobUomBalance := beforeBobUomBalance.Add(tokenAmount)
+				decremented := expectedAliceUomBalance.Equal(afterAliceUomBalance)
+				incremented := expectedBobUomBalance.Equal(afterBobUomBalance)
 
 				return decremented && incremented
 			},
@@ -84,9 +86,12 @@ func (s *IntegrationTestSuite) testBankTokenTransfer() {
 				afterCharlieUomBalance, err = getSpecificBalance(chainEndpoint, charlie.String(), anvnmDenom)
 				s.Require().NoError(err)
 
-				decremented := beforeAliceUomBalance.Sub(tokenAmount).Sub(tokenAmount).Sub(standardFees).IsEqual(afterAliceUomBalance)
-				incremented := beforeBobUomBalance.Add(tokenAmount).IsEqual(afterBobUomBalance) &&
-					beforeCharlieUomBalance.Add(tokenAmount).IsEqual(afterCharlieUomBalance)
+				expectedAliceUomBalance := beforeAliceUomBalance.Sub(tokenAmount).Sub(tokenAmount).Sub(standardFees)
+				expectedBobUomBalance := beforeBobUomBalance.Add(tokenAmount)
+				expectedCharlieUomBalance := beforeCharlieUomBalance.Add(tokenAmount)
+				decremented := expectedAliceUomBalance.Equal(afterAliceUomBalance)
+				incremented := expectedBobUomBalance.Equal(afterBobUomBalance) &&
+					expectedCharlieUomBalance.Equal(afterCharlieUomBalance)
 
 				return decremented && incremented
 			},

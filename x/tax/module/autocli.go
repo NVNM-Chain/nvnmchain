@@ -2,7 +2,7 @@ package tax
 
 import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
-	types "github.com/MANTRA-Chain/inveniam/x/tax/types"
+	types "github.com/NVNM-Chain/nvnmchain/x/tax/types"
 )
 
 // AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
@@ -27,19 +27,19 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:       "update-params",
 					Skip:      false,
 					FlagOptions: map[string]*autocliv1.FlagOptions{
-						"mca_tax": {
-							Name:         "mca_tax",
-							Usage:        "mca tax for the allocation in decimal",
+						"tax": {
+							Name:         "tax",
+							Usage:        "tax for the allocation in decimal",
 							DefaultValue: "",
 						},
-						"mca_address": {
-							Name:         "mca_address",
-							Usage:        "mca address for the allocation",
+						"tax_address": {
+							Name:         "tax_address",
+							Usage:        "tax address for the allocation",
 							DefaultValue: "",
 						},
 					},
 					Short:   "Update the parameters of the tax module",
-					Example: "inveniamd tx tax update-params --mca_tax 0.4 --mca_address inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dc2p4pfz",
+					Example: "nvnmchaind tx tax update-params --tax 0.4 --tax_address nvnm1axznhnm82lah8qqvp9hxdad49yx3s5dc6h6p3s",
 				},
 			},
 		},

@@ -35,7 +35,7 @@ func (s *IntegrationTestSuite) testStaking() {
 	delegation := sdk.NewCoin(anvnmDenom, delegationAmount) // 500 om
 
 	// Alice delegate uom to Validator A
-	s.execDelegate(s.chainA, 0, delegation.String(), validatorAddressA, delegatorAddress.String(), inveniamHomePath, fees.String())
+	s.execDelegate(s.chainA, 0, delegation.String(), validatorAddressA, delegatorAddress.String(), nvnmchainHomePath, fees.String())
 
 	// Validate delegation successful
 	s.Require().Eventually(
@@ -54,7 +54,7 @@ func (s *IntegrationTestSuite) testStaking() {
 	redelegation := sdk.NewCoin(anvnmDenom, redelegationAmount) // 250 om
 
 	// Alice re-delegate half of her uom delegation from Validator A to Validator B
-	s.execRedelegate(s.chainA, 0, redelegation.String(), validatorAddressA, validatorAddressB, delegatorAddress.String(), inveniamHomePath, fees.String())
+	s.execRedelegate(s.chainA, 0, redelegation.String(), validatorAddressA, validatorAddressB, delegatorAddress.String(), nvnmchainHomePath, fees.String())
 
 	// Validate re-delegation successful
 	s.Require().Eventually(
@@ -91,7 +91,7 @@ func (s *IntegrationTestSuite) testStaking() {
 	)
 
 	// Alice unbonds all her uom delegation from Validator A
-	s.execUnbondDelegation(s.chainA, 0, currDelegation.String(), validatorAddressA, delegatorAddress.String(), inveniamHomePath, fees.String())
+	s.execUnbondDelegation(s.chainA, 0, currDelegation.String(), validatorAddressA, delegatorAddress.String(), nvnmchainHomePath, fees.String())
 
 	var ubdDelegationEntry types.UnbondingDelegationEntry
 
@@ -118,7 +118,7 @@ func (s *IntegrationTestSuite) testStaking() {
 		validatorAddressA,
 		strconv.Itoa(int(ubdDelegationEntry.CreationHeight)),
 		delegatorAddress.String(),
-		inveniamHomePath,
+		nvnmchainHomePath,
 		fees.String(),
 	)
 

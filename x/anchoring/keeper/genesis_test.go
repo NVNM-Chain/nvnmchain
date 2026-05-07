@@ -1,11 +1,15 @@
 package keeper_test
 
 import (
+	"strings"
 	"testing"
 
 	"cosmossdk.io/collections"
-	"github.com/MANTRA-Chain/inveniam/testutil/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/NVNM-Chain/nvnmchain/testutil/keeper"
+	"github.com/NVNM-Chain/nvnmchain/testutil/sample"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/rbac"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,77 +21,25 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 		Admin: "cosmos1x0dqq9v6chqeholder",
 	}
 
-	registryOne := types.Registry{
-		Id:          1,
-		Name:        "kyc_registry",
-		Description: "KYC document registry",
-		Creator:     "cosmos1creator1",
-		CreatedAt:   "2024-01-01T00:00:00Z",
-	}
+	registryOne := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
+	registryTwo := testRegistry(2, "aml_registry", "AML document registry", "cosmos1creator2", "2024-01-02T00:00:00Z")
 
-	registryTwo := types.Registry{
-		Id:          2,
-		Name:        "aml_registry",
-		Description: "AML document registry",
-		Creator:     "cosmos1creator2",
-		CreatedAt:   "2024-01-02T00:00:00Z",
-	}
+	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001","figi":"BBG000B9M9V0","individualId":"individual_001"}`, "2024-01-01T10:00:00Z", 1)
+	recordTwo := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash002", `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`, "2024-01-01T11:00:00Z", 2)
+	recordThree := testRecord("aml_registry", "ipfs://QmExample3", "sha256hash003", `{"document":"aml_document_001","figi":"BBG000B9M9V2","individualId":"individual_003"}`, "2024-01-02T10:00:00Z", 1)
 
-	recordOne := types.Record{
-		Registry:     "kyc_registry",
-		Uri:          "ipfs://QmExample1",
-		Checksum:     "sha256hash001",
-		ChecksumAlgo: "SHA-256",
-		Metadata:     `{"document":"kyc_document_001","figi":"BBG000B9M9V0","individualId":"individual_001"}`,
-		Timestamp:    "2024-01-01T10:00:00Z",
-		Status:       "active",
-		RecordId:     1,
-		Index:        1,
-		IsLatest:     true,
-	}
+	adminRole := k.RegistryRole(1, "admin")
+	adminRoleKeyBytes := encodeRBACRoleAdminKey(t, adminRole)
 
-	recordTwo := types.Record{
-		Registry:     "kyc_registry",
-		Uri:          "ipfs://QmExample2",
-		Checksum:     "sha256hash002",
-		ChecksumAlgo: "SHA-256",
-		Metadata:     `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`,
-		Timestamp:    "2024-01-01T11:00:00Z",
-		Status:       "active",
-		RecordId:     2,
-		Index:        1,
-		IsLatest:     true,
-	}
+	memberAddr1, err := sdk.AccAddressFromBech32(sample.AccAddress())
+	require.NoError(t, err)
+	rbacMemberKey1 := collections.Join(adminRole, memberAddr1)
+	rbacMemberKeyBytes1 := encodeRBACRoleMemberKey(t, rbacMemberKey1)
 
-	recordThree := types.Record{
-		Registry:     "aml_registry",
-		Uri:          "ipfs://QmExample3",
-		Checksum:     "sha256hash003",
-		ChecksumAlgo: "SHA-256",
-		Metadata:     `{"document":"aml_document_001","figi":"BBG000B9M9V2","individualId":"individual_003"}`,
-		Timestamp:    "2024-01-02T10:00:00Z",
-		Status:       "active",
-		RecordId:     1,
-		Index:        1,
-		IsLatest:     true,
-	}
-
-	// Prepare encoded role keys
-	// Registry-level admin role for creator1
-	registryAdminKey1 := collections.Join3(uint64(1), "cosmos1creator1", "")
-	registryAdminKeyBytes1 := encodeTripleKey(t, registryAdminKey1)
-
-	// Registry-level admin role for creator2
-	registryAdminKey2 := collections.Join3(uint64(2), "cosmos1creator2", "")
-	registryAdminKeyBytes2 := encodeTripleKey(t, registryAdminKey2)
-
-	// Record-level editor role for user1 on sha256hash001
-	docEditorKey := collections.Join3(uint64(1), "cosmos1user1", "sha256hash001")
-	docEditorKeyBytes := encodeTripleKey(t, docEditorKey)
-
-	// Registry-level editor role for user2 on kyc_registry
-	registryEditorKey := collections.Join3(uint64(1), "cosmos1user2", "")
-	registryEditorKeyBytes := encodeTripleKey(t, registryEditorKey)
+	memberAddr2, err := sdk.AccAddressFromBech32(sample.AccAddress())
+	require.NoError(t, err)
+	rbacMemberKey2 := collections.Join(adminRole, memberAddr2)
+	rbacMemberKeyBytes2 := encodeRBACRoleMemberKey(t, rbacMemberKey2)
 
 	genState := types.GenesisState{
 		Params: params,
@@ -96,16 +48,17 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 			2: registryTwo,
 		},
 		Records: []types.Record{recordOne, recordTwo, recordThree},
-		Roles: map[string]string{
-			registryAdminKeyBytes1: "admin",
-			registryAdminKeyBytes2: "admin",
-			docEditorKeyBytes:      "editor",
-			registryEditorKeyBytes: "editor",
+		RoleAdmins: map[string][]byte{
+			adminRoleKeyBytes: adminRole.Bytes(),
+		},
+		RoleMembers: map[string][]byte{
+			rbacMemberKeyBytes1: {},
+			rbacMemberKeyBytes2: {},
 		},
 	}
 
 	// Test InitGenesis
-	err := k.InitGenesis(ctx, genState)
+	err = k.InitGenesis(ctx, genState)
 	require.NoError(t, err)
 
 	// Verify params were set
@@ -171,23 +124,17 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, uint64(1), count2)
 
-	// Verify creator roles
-	creatorRole1, err := k.Roles.Get(ctx, collections.Join3(uint64(1), "cosmos1creator1", ""))
+	storedAdminRole, err := k.RBAC.RoleAdmins.Get(ctx, adminRole)
 	require.NoError(t, err)
-	require.Equal(t, "admin", creatorRole1)
+	require.Equal(t, adminRole.Bytes(), storedAdminRole)
 
-	creatorRole2, err := k.Roles.Get(ctx, collections.Join3(uint64(2), "cosmos1creator2", ""))
+	hasMember1, err := k.RBAC.RoleMembers.Has(ctx, rbacMemberKey1)
 	require.NoError(t, err)
-	require.Equal(t, "admin", creatorRole2)
+	require.True(t, hasMember1)
 
-	// Verify imported roles
-	docEditorRole, err := k.Roles.Get(ctx, collections.Join3(uint64(1), "cosmos1user1", "sha256hash001"))
+	hasMember2, err := k.RBAC.RoleMembers.Has(ctx, rbacMemberKey2)
 	require.NoError(t, err)
-	require.Equal(t, "editor", docEditorRole)
-
-	registryEditorRole, err := k.Roles.Get(ctx, collections.Join3(uint64(1), "cosmos1user2", ""))
-	require.NoError(t, err)
-	require.Equal(t, "editor", registryEditorRole)
+	require.True(t, hasMember2)
 
 	// Test ExportGenesis
 	exportedState, err := k.ExportGenesis(ctx)
@@ -197,6 +144,8 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	require.Equal(t, params.Admin, exportedState.Params.Admin)
 	require.Len(t, exportedState.Registries, 2)
 	require.Len(t, exportedState.Records, 3)
+	require.Len(t, exportedState.RoleAdmins, 1)
+	require.Len(t, exportedState.RoleMembers, 2)
 
 	// Verify exported registries
 	require.Equal(t, registryOne.Name, exportedState.Registries[1].Name)
@@ -211,6 +160,13 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	require.True(t, recordMetadata[recordOne.Metadata])
 	require.True(t, recordMetadata[recordTwo.Metadata])
 	require.True(t, recordMetadata[recordThree.Metadata])
+
+	require.Equal(t, adminRole.Bytes(), exportedState.RoleAdmins[adminRoleKeyBytes])
+
+	_, ok := exportedState.RoleMembers[rbacMemberKeyBytes1]
+	require.True(t, ok)
+	_, ok = exportedState.RoleMembers[rbacMemberKeyBytes2]
+	require.True(t, ok)
 }
 
 func TestInitGenesisEmpty(t *testing.T) {
@@ -221,9 +177,10 @@ func TestInitGenesisEmpty(t *testing.T) {
 		Params: types.Params{
 			Admin: "cosmos1x0dqq9v6chqeholder",
 		},
-		Registries: map[uint64]types.Registry{},
-		Records:    []types.Record{},
-		Roles:      map[string]string{},
+		Registries:  map[uint64]types.Registry{},
+		Records:     []types.Record{},
+		RoleAdmins:  map[string][]byte{},
+		RoleMembers: map[string][]byte{},
 	}
 
 	err := k.InitGenesis(ctx, emptyState)
@@ -246,13 +203,98 @@ func TestInitGenesisEmpty(t *testing.T) {
 	require.Empty(t, exportedState.Records)
 }
 
-// encodeTripleKey encodes a triple key for testing genesis roles
-func encodeTripleKey(t *testing.T, key collections.Triple[uint64, string, string]) string {
+func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
+	k, ctx, _ := keeper.AnchoringKeeper(t)
+	registry := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
+	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001"}`, "2024-01-01T10:00:00Z", 1)
+	recordDuplicateKey := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash999", `{"document":"kyc_document_999"}`, "2024-01-01T11:00:00Z", 1)
+
+	genState := types.GenesisState{
+		Params: types.Params{
+			Admin: "cosmos1x0dqq9v6chqeholder",
+		},
+		Registries: map[uint64]types.Registry{
+			1: registry,
+		},
+		Records: []types.Record{recordOne, recordDuplicateKey},
+	}
+
+	err := k.InitGenesis(ctx, genState)
+	require.ErrorIs(t, err, types.ErrDuplicateRecordKey)
+	require.Contains(t, err.Error(), "registry_id=1")
+	require.Contains(t, err.Error(), "record_id=1")
+	require.Contains(t, err.Error(), "index=1")
+}
+
+func TestInitGenesisRejectsOversizedRecordFields(t *testing.T) {
+	k, ctx, _ := keeper.AnchoringKeeper(t)
+
+	registry := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
+	record := testRecord(
+		"kyc_registry",
+		"ipfs://QmExample1",
+		"sha256hash001",
+		strings.Repeat("a", types.MaxRecordMetadataLen+1),
+		"2024-01-01T10:00:00Z",
+		1,
+	)
+
+	genState := types.GenesisState{
+		Params: types.Params{
+			Admin: "cosmos1x0dqq9v6chqeholder",
+		},
+		Registries: map[uint64]types.Registry{
+			1: registry,
+		},
+		Records: []types.Record{record},
+	}
+
+	err := k.InitGenesis(ctx, genState)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "metadata exceeds max length")
+}
+
+func testRegistry(id uint64, name, description, creator, createdAt string) types.Registry {
+	return types.Registry{
+		Id:          id,
+		Name:        name,
+		Description: description,
+		Creator:     creator,
+		CreatedAt:   createdAt,
+	}
+}
+
+func testRecord(registry, uri, checksum, metadata, timestamp string, recordID uint64) types.Record {
+	return types.Record{
+		Registry:     registry,
+		Uri:          uri,
+		Checksum:     checksum,
+		ChecksumAlgo: "SHA-256",
+		Metadata:     metadata,
+		Timestamp:    timestamp,
+		Status:       "active",
+		RecordId:     recordID,
+		Index:        1,
+		IsLatest:     true,
+	}
+}
+
+func encodeRBACRoleAdminKey(t *testing.T, key rbac.Role) string {
 	t.Helper()
 	k, _, _ := keeper.AnchoringKeeper(t)
-	size := k.Roles.KeyCodec().Size(key)
+	size := k.RBAC.RoleAdmins.KeyCodec().Size(key)
 	buffer := make([]byte, size)
-	n, err := k.Roles.KeyCodec().Encode(buffer, key)
+	n, err := k.RBAC.RoleAdmins.KeyCodec().Encode(buffer, key)
+	require.NoError(t, err)
+	return string(buffer[:n])
+}
+
+func encodeRBACRoleMemberKey(t *testing.T, key collections.Pair[rbac.Role, sdk.AccAddress]) string {
+	t.Helper()
+	k, _, _ := keeper.AnchoringKeeper(t)
+	size := k.RBAC.RoleMembers.KeyCodec().Size(key)
+	buffer := make([]byte, size)
+	n, err := k.RBAC.RoleMembers.KeyCodec().Encode(buffer, key)
 	require.NoError(t, err)
 	return string(buffer[:n])
 }

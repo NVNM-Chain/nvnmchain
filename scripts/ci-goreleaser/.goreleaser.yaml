@@ -1,11 +1,11 @@
 ---
 version: 2
-project_name: inveniamd
+project_name: nvnmchaind
 
 builds:
-  - id: inveniamd-darwin-amd64
+  - id: nvnmchaind-darwin-amd64
     main: ./scripts/ci-goreleaser/goreleaser.go
-    binary: inveniamd
+    binary: nvnmchaind
     goos:
       - darwin
     goarch:
@@ -14,9 +14,9 @@ builds:
       post:
         - ./scripts/ci-goreleaser/.goreleaser_hook.sh {{ .Arch }} {{ .Os }} {{ .ProjectName }}
 
-  - id: inveniamd-darwin-arm64
+  - id: nvnmchaind-darwin-arm64
     main: ./scripts/ci-goreleaser/goreleaser.go
-    binary: inveniamd
+    binary: nvnmchaind
     goos:
       - darwin
     goarch:
@@ -25,9 +25,9 @@ builds:
       post:
         - ./scripts/ci-goreleaser/.goreleaser_hook.sh {{ .Arch }} {{ .Os }} {{ .ProjectName }}
 
-  - id: inveniamd-linux-amd64
+  - id: nvnmchaind-linux-amd64
     main: ./scripts/ci-goreleaser/goreleaser.go
-    binary: inveniamd
+    binary: nvnmchaind
     goos:
       - linux
     goarch:
@@ -36,9 +36,9 @@ builds:
       post:
         - ./scripts/ci-goreleaser/.goreleaser_hook.sh {{ .Arch }} {{ .Os }} {{ .ProjectName }}
 
-  - id: inveniamd-linux-arm64
+  - id: nvnmchaind-linux-arm64
     main: ./scripts/ci-goreleaser/goreleaser.go
-    binary: inveniamd
+    binary: nvnmchaind
     goos:
       - linux
     goarch:
@@ -50,20 +50,20 @@ builds:
 archives:
   - id: zipped
     builds:
-      - inveniamd-linux-amd64
-      - inveniamd-linux-arm64
-      - inveniamd-darwin-amd64
-      - inveniamd-darwin-arm64
+      - nvnmchaind-linux-amd64
+      - nvnmchaind-linux-arm64
+      - nvnmchaind-darwin-amd64
+      - nvnmchaind-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     format: tar.gz
     files:
       - none*
   - id: binaries
     builds:
-      - inveniamd-linux-amd64
-      - inveniamd-linux-arm64
-      - inveniamd-darwin-amd64
-      - inveniamd-darwin-arm64
+      - nvnmchaind-linux-amd64
+      - nvnmchaind-linux-arm64
+      - nvnmchaind-darwin-amd64
+      - nvnmchaind-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     format: binary
     files:
@@ -96,11 +96,11 @@ release:
 
     ````bash
     git clone https://github.com/{{ .Env.REPO_OWNER }}/{{ .Env.REPO_NAME }}
-    cd inveniam && git checkout v{{ .Version }}
+    cd nvnmchain && git checkout v{{ .Version }}
     make install
     ````
 
-  name_template: "Inveniam v{{.Version}}"
+  name_template: "Nvnmchain v{{.Version}}"
   mode: replace
   draft: true
 

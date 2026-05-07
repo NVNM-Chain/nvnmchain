@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"cosmossdk.io/collections"
-	"github.com/MANTRA-Chain/inveniam/x/tax/types"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -23,7 +23,5 @@ func (q queryServer) Params(ctx context.Context, req *types.QueryParamsRequest) 
 
 		return nil, status.Error(codes.Internal, "internal error")
 	}
-	// set the max tax rate to the hardcoded value
-	params.MaxMcaTax = types.MaxMcaTax
-	return &types.QueryParamsResponse{Params: params}, nil
+	return &types.QueryParamsResponse{Params: params, MaxTax: types.MaxTax}, nil
 }

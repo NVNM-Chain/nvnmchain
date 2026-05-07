@@ -1,15 +1,15 @@
 ---
 version: 2
-project_name: inveniamd
+project_name: nvnmchaind
 
 env:
   - GO111MODULE=on
   - CGO_ENABLED=1
 
 builds:
-  - id: inveniamd-darwin-amd64
-    main: ./cmd/inveniamd/main.go
-    binary: inveniamd
+  - id: nvnmchaind-darwin-amd64
+    main: ./cmd/nvnmchaind/main.go
+    binary: nvnmchaind
     env:
       - CC=o64-clang
       - CGO_LDFLAGS=-L/lib
@@ -21,8 +21,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniam
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd
+      - -X github.com/cosmos/cosmos-sdk/version.Name=nvnmchain
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=nvnmchaind
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
@@ -35,9 +35,9 @@ builds:
       - pebbledb
       - uint256
 
-  - id: inveniamd-darwin-arm64
-    main: ./cmd/inveniamd/main.go
-    binary: inveniamd
+  - id: nvnmchaind-darwin-arm64
+    main: ./cmd/nvnmchaind/main.go
+    binary: nvnmchaind
     env:
       - CC=oa64-clang
       - CGO_LDFLAGS=-L/lib
@@ -49,8 +49,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniam
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd
+      - -X github.com/cosmos/cosmos-sdk/version.Name=nvnmchain
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=nvnmchaind
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
@@ -63,9 +63,9 @@ builds:
       - pebbledb
       - uint256
 
-  - id: inveniamd-linux-amd64
-    main: ./cmd/inveniamd
-    binary: inveniamd
+  - id: nvnmchaind-linux-amd64
+    main: ./cmd/nvnmchaind
+    binary: nvnmchaind
     hooks:
       pre:
         - apk add --update linux-headers
@@ -77,8 +77,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniam
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd
+      - -X github.com/cosmos/cosmos-sdk/version.Name=nvnmchain
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=nvnmchaind
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger,muslc,osusergo
@@ -94,9 +94,9 @@ builds:
       - pebbledb
       - uint256
 
-  - id: inveniamd-linux-arm64
-    main: ./cmd/inveniamd
-    binary: inveniamd
+  - id: nvnmchaind-linux-arm64
+    main: ./cmd/nvnmchaind
+    binary: nvnmchaind
     hooks:
       pre:
         - apk add --update linux-headers
@@ -108,8 +108,8 @@ builds:
       - -mod=readonly
       - -trimpath
     ldflags:
-      - -X github.com/cosmos/cosmos-sdk/version.Name=inveniam
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd
+      - -X github.com/cosmos/cosmos-sdk/version.Name=nvnmchain
+      - -X github.com/cosmos/cosmos-sdk/version.AppName=nvnmchaind
       - -X github.com/cosmos/cosmos-sdk/version.Version={{ .Version }}
       - -X github.com/cosmos/cosmos-sdk/version.Commit={{ .ShortCommit }}
       - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger,muslc,osusergo
@@ -128,20 +128,20 @@ builds:
 archives:
   - id: zipped
     builds:
-      - inveniamd-linux-amd64
-      - inveniamd-linux-arm64
-      - inveniamd-darwin-amd64
-      - inveniamd-darwin-arm64
+      - nvnmchaind-linux-amd64
+      - nvnmchaind-linux-arm64
+      - nvnmchaind-darwin-amd64
+      - nvnmchaind-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     format: tar.gz
     files:
       - none*
   - id: binaries
     builds:
-      - inveniamd-linux-amd64
-      - inveniamd-linux-arm64
-      - inveniamd-darwin-amd64
-      - inveniamd-darwin-arm64
+      - nvnmchaind-linux-amd64
+      - nvnmchaind-linux-arm64
+      - nvnmchaind-darwin-amd64
+      - nvnmchaind-darwin-arm64
     name_template: "{{.ProjectName}}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     format: binary
     files:
@@ -174,11 +174,11 @@ release:
 
     ````bash
     git clone https://github.com/{{ .Env.REPO_OWNER }}/{{ .Env.REPO_NAME }}
-    cd inveniam && git checkout v{{ .Version }}
+    cd nvnmchain && git checkout v{{ .Version }}
     make install
     ````
 
-  name_template: "Inveniam v{{.Version}}"
+  name_template: "Nvnmchain v{{.Version}}"
   mode: replace
   draft: true
 

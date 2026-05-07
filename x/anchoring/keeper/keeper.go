@@ -6,8 +6,8 @@ import (
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/store"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/rbac"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/rbac"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -41,10 +41,7 @@ type (
 		RecordIndices collections.Map[collections.Pair[uint64, uint64], uint64]
 		// document checksum + registryId => recordId
 		RecordIdByChecksumAndRegistry collections.Map[collections.Pair[string, uint64], uint64]
-		// registryId + user address + document checksum => role
-		// checksum is omitted for registry level roles
-		Roles collections.Map[collections.Triple[uint64, string, string], string]
-		RBAC  rbac.RBACKeeper
+		RBAC                          rbac.RBACKeeper
 	}
 )
 
@@ -114,17 +111,6 @@ func NewKeeper(
 			collections.PairKeyCodec(collections.StringKey, collections.Uint64Key),
 			collections.Uint64Value,
 		),
-		Roles: collections.NewMap(
-			sb,
-			types.RolesKeyPrefix,
-			"roles",
-			collections.TripleKeyCodec(
-				collections.Uint64Key,
-				collections.StringKey,
-				collections.StringKey,
-			),
-			collections.StringValue,
-		),
 		RBAC: rbac.NewRBACKeeper(
 			sb,
 			types.RoleAdminsKeyPrefix,
@@ -144,13 +130,14 @@ func (k Keeper) initializeRegistryRecordCounter(ctx sdk.Context, registryId uint
 	return k.RecordsCountByRegistry.Set(ctx, registryId, 0)
 }
 
-// checkRecordRoles checks if sender has any of the specified roles at the record level
-func (k Keeper) checkRecordRoles(ctx sdk.Context, sender sdk.AccAddress, checksum string, roles []string) (bool, error) {
+// checkRecordRoles checks if sender has any of the specified roles at the record level.
+// Record-level roles are scoped by registry and checksum.
+func (k Keeper) checkRecordRoles(ctx sdk.Context, sender sdk.AccAddress, registryId uint64, checksum string, roles []string) (bool, error) {
 	if checksum == "" || len(roles) == 0 {
 		return false, nil
 	}
 	for _, roleStr := range roles {
-		recordRole := k.RecordRole(checksum, roleStr)
+		recordRole := k.RecordRole(registryId, checksum, roleStr)
 		hasRole, err := k.RBAC.HasRole(ctx, recordRole, sender)
 		if err != nil {
 			return false, err
@@ -180,26 +167,8 @@ func (k Keeper) checkRegistryRoles(ctx sdk.Context, sender sdk.AccAddress, regis
 	return false, nil
 }
 
-// checkGlobalRoles checks if sender has any of the specified roles at the global level
-func (k Keeper) checkGlobalRoles(ctx sdk.Context, sender sdk.AccAddress, roles []string) (bool, error) {
-	if len(roles) == 0 {
-		return false, nil
-	}
-	for _, roleStr := range roles {
-		globalRole := k.GlobalRole(roleStr)
-		hasRole, err := k.RBAC.HasRole(ctx, globalRole, sender)
-		if err != nil {
-			return false, err
-		}
-		if hasRole {
-			return true, nil
-		}
-	}
-	return false, nil
-}
-
 func (k Keeper) checkPermission(ctx sdk.Context, sender sdk.AccAddress, registryId uint64, checksum string, requiredRoles []string) error {
-	hasRecordRole, err := k.checkRecordRoles(ctx, sender, checksum, requiredRoles)
+	hasRecordRole, err := k.checkRecordRoles(ctx, sender, registryId, checksum, requiredRoles)
 	if err != nil {
 		return err
 	}
@@ -215,30 +184,18 @@ func (k Keeper) checkPermission(ctx sdk.Context, sender sdk.AccAddress, registry
 		return nil
 	}
 
-	hasGlobalRole, err := k.checkGlobalRoles(ctx, sender, requiredRoles)
-	if err != nil {
-		return err
-	}
-	if hasGlobalRole {
-		return nil
-	}
-
 	return sdkerrors.ErrUnauthorized
 }
 
-// RecordRole creates a role identifier for a specific record: hash(checksum, role)
-func (k Keeper) RecordRole(checksum string, role string) rbac.Role {
-	return rbac.NewRoleHash(fmt.Sprintf("%s:%s", checksum, role))
+// RecordRole creates a role identifier for a specific record.
+// User-controlled fields are hex-encoded to keep separators unambiguous.
+func (k Keeper) RecordRole(registryId uint64, checksum string, role string) rbac.Role {
+	return rbac.NewRoleHash(fmt.Sprintf("record:%d:%x:%x", registryId, checksum, role))
 }
 
 // RegistryRole creates a role identifier for a registry: hash("registry:id", role)
 func (k Keeper) RegistryRole(registryId uint64, role string) rbac.Role {
 	return rbac.NewRoleHash(fmt.Sprintf("registry:%d:%s", registryId, role))
-}
-
-// GlobalRole creates a global role identifier: hash(role)
-func (k Keeper) GlobalRole(role string) rbac.Role {
-	return rbac.NewRoleHash(role)
 }
 
 // BytesToString converts bytes to a string address using the keeper's address codec

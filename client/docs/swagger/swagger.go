@@ -1,11 +1,11 @@
 package swagger
 
 import (
-	_ "github.com/MANTRA-Chain/inveniam/client/docs/statik" // Import MANTRA Chain statik
+	_ "github.com/NVNM-Chain/nvnmchain/client/docs/statik" // Import NVNM Chain statik
 	"github.com/rakyll/statik/fs"
 )
 
 // https://github.com/rakyll/statik/issues/56
 
-// FS is the MANTRA Chain swagger filesystem
+// FS is the NVNM Chain swagger filesystem
 var FS, _ = fs.New()

@@ -14,9 +14,10 @@ type Environment struct {
 	OldMantraImageVersion string `envconfig:"OLD_MANTRA_IMAGE_VERSION" default:"v8.0.0-rc0"`
 	NewMantraImageVersion string `envconfig:"NEW_MANTRA_IMAGE_VERSION"`
 	UpgradeName           string `envconfig:"UPGRADE_NAME"`
-	// Consumer chain (inveniam) configuration
-	ConsumerImageName    string `envconfig:"CONSUMER_IMAGE_NAME" default:"inveniam"`
-	ConsumerImageVersion string `envconfig:"CONSUMER_IMAGE_VERSION" default:"local"`
+	// Consumer chain (nvnmchain) configuration
+	ConsumerDockerRegistry string `envconfig:"CONSUMER_DOCKER_REGISTRY" default:"ghcr.io/nvnm-chain"`
+	ConsumerImageName      string `envconfig:"CONSUMER_IMAGE_NAME" default:"nvnmchain"`
+	ConsumerImageVersion   string `envconfig:"CONSUMER_IMAGE_VERSION" default:"local"`
 }
 
 func GetEnvironment() Environment {

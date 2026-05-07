@@ -3,10 +3,10 @@ package keeper_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/inveniam/app/params"
-	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	keepertest "github.com/NVNM-Chain/nvnmchain/testutil/keeper"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -35,17 +35,17 @@ func TestMsgUpdateParams(t *testing.T) {
 			expErrMsg: "invalid authority",
 		},
 		{
-			name: "update mca address",
+			name: "update tax address",
 			input: &types.MsgUpdateParams{
-				Authority: "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
-				Admin:     "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072",
+				Authority: "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
+				Admin:     keepertest.TestSenderAddr,
 			},
 			expErr: false,
 		},
 		{
 			name: "old authority address no longer work",
 			input: &types.MsgUpdateParams{
-				Authority: "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
+				Authority: "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
 				Admin:     "",
 			},
 			expErr:    true,

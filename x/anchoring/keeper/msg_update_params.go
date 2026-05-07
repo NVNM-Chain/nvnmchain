@@ -4,7 +4,7 @@ import (
 	"context"
 
 	errorsmod "cosmossdk.io/errors"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 

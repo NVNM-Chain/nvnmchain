@@ -2,13 +2,12 @@ package types
 
 import (
 	"fmt"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// Declare defaults for MCA tax and MCA address
-const DefaultAdminAddress = "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"
+// Declare defaults for tax and tax address
+const DefaultAdminAddress = "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"
 
 // NewParams creates a new Params instance.
 func NewParams(
@@ -40,9 +39,6 @@ func ValidateAdminAddress(address string) error {
 	_, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
 		return fmt.Errorf("invalid admin address: %w", err)
-	}
-	if !strings.HasPrefix(address, "inveniam") {
-		return fmt.Errorf("admin address must have 'inveniam' prefix")
 	}
 	return nil
 }

@@ -17,10 +17,10 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.24
-      - uses: actions/checkout@v4
+          go-version-file: go.mod
       - name: Install tparse
         run: |
           go install github.com/mfridman/tparse@latest
@@ -30,10 +30,20 @@ jobs:
     name: SDK Tests
     runs-on: ubuntu-latest
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.24
-      - uses: actions/checkout@v4
+          go-version-file: go.mod
       - name: Extract Tag or Commit
         run: |
           FULL_VERSION=$(go list -m github.com/cosmos/cosmos-sdk 2> /dev/null | sed 's:.* ::')
@@ -87,10 +97,10 @@ jobs:
           large-packages: false
           docker-images: false
           swap-storage: false
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: 1.25
-      - uses: actions/checkout@v4
       - name: Install tparse
         run: |
           go install github.com/mfridman/tparse@latest

@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/MANTRA-Chain/inveniam/x/tax/types"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/types"
 )
 
 type msgServer struct {

@@ -1,0 +1,19 @@
+syntax = "proto3";
+package nvnmchain.anchoring.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/NVNM-Chain/nvnmchain/x/anchoring/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (amino.name) = "nvnmchain/x/anchoring/Params";
+  option (gogoproto.equal) = true;
+
+  string admin = 1 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (amino.dont_omitempty) = true
+  ];
+}

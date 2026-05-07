@@ -3,7 +3,7 @@
 
 ## Overview
 
-The Tax Module is a crucial component of the Inveniam ecosystem, responsible for managing and allocating taxes within the blockchain network. It provides functionality to set tax parameters, allocate taxes to designated addresses, and manage the overall tax system of the chain.
+The Tax Module is a crucial component of the NVNMChain ecosystem, responsible for managing and allocating taxes within the blockchain network. It provides functionality to set tax parameters, allocate taxes to designated addresses, and manage the overall tax system of the chain.
 
 ## Key Components
 
@@ -11,7 +11,7 @@ The Tax Module is a crucial component of the Inveniam ecosystem, responsible for
 
 The Keeper is the main component that handles the business logic of the tax module. It provides methods for:
 
-- Allocating MCA (Mantra Chain Authority) tax
+- Allocating tax
 - Managing tax parameters
 - Interacting with other modules (e.g., bank, auth)
 
@@ -43,9 +43,9 @@ The tax module parameters can be updated through governance proposals. This allo
 
 ## Key Functions
 
-### BeginBlocker
+### EndBlocker
 
-The `BeginBlocker` function is called at the beginning of each block. It handles the allocation of MCA tax based on the current parameters.
+The `EndBlocker` function is called at the end of each block. It handles the allocation of MCA tax based on the current parameters.
 
 
 ### UpdateParams

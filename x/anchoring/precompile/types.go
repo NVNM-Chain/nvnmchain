@@ -3,7 +3,7 @@
 package precompile
 
 import (
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 )
 
 func FromABIRecord(rec Record) types.Record {
@@ -43,5 +43,6 @@ func ToABIRegistry(reg types.Registry) Registry {
 		Description: reg.Description,
 		Creator:     reg.Creator,
 		CreatedAt:   reg.CreatedAt,
+		Metadata:    reg.Metadata,
 	}
 }

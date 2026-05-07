@@ -1,0 +1,238 @@
+package keeper_test
+
+import (
+	"testing"
+
+	"cosmossdk.io/core/address"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	keepertest "github.com/NVNM-Chain/nvnmchain/testutil/keeper"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+)
+
+var (
+	registryAdminAddr = keepertest.TestSenderAddr
+	moduleAdminAddr   = types.DefaultParams().Admin
+)
+
+func hasRegistryAdminRole(t *testing.T, k keeper.Keeper, ctx sdk.Context, addressCodec address.Codec, registryID uint64, addr string) bool {
+	t.Helper()
+	addrBz, err := addressCodec.StringToBytes(addr)
+	require.NoError(t, err)
+	hasRole, err := k.RBAC.HasRole(ctx, k.RegistryRole(registryID, keeper.RoleAdmin), addrBz)
+	require.NoError(t, err)
+	return hasRole
+}
+
+func hasRegistryEditorRole(t *testing.T, k keeper.Keeper, ctx sdk.Context, addressCodec address.Codec, registryID uint64, addr string) bool {
+	t.Helper()
+	addrBz, err := addressCodec.StringToBytes(addr)
+	require.NoError(t, err)
+	hasRole, err := k.RBAC.HasRole(ctx, k.RegistryRole(registryID, keeper.RoleEditor), addrBz)
+	require.NoError(t, err)
+	return hasRole
+}
+
+func TestMsgRevokeRole_DisallowRevokingLastRegistryAdmin(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, _ := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+	var err error
+
+	admin1 := registryAdminAddr
+	admin2 := moduleAdminAddr
+
+	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, admin1, "reg-last-admin")
+
+	// Sole admin cannot revoke their own admin role (would leave 0 admins).
+	_, err = ms.RevokeRole(ctx, &types.MsgRevokeRole{
+		Admin:      admin1,
+		Address:    admin1,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "cannot revoke the last registry admin")
+
+	// Grant a replacement admin, then self-revocation should be allowed.
+	_, err = ms.GrantRole(ctx, &types.MsgGrantRole{
+		Admin:      admin1,
+		Address:    admin2,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.NoError(t, err)
+
+	_, err = ms.RevokeRole(ctx, &types.MsgRevokeRole{
+		Admin:      admin1,
+		Address:    admin1,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.NoError(t, err)
+}
+
+func TestMsgRevokeRole_ModuleAdminCannotOrphanRegistryViaRevoke(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, addressCodec := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-emergency-no-orphan")
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
+
+	// Module admin cannot revoke the sole registry admin — that would orphan the registry.
+	_, err := ms.RevokeRole(ctx, &types.MsgRevokeRole{
+		Admin:      moduleAdminAddr,
+		Address:    registryAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "cannot revoke the last registry admin")
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
+}
+
+func TestMsgRevokeRole_ModuleAdminEmergencyRecoveryViaBreakGlassGrantThenRevoke(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, addressCodec := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+	var err error
+	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-emergency-admin-recovery")
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
+
+	// Break-glass: module admin grants themselves admin first (registry is never left orphan).
+	_, err = ms.GrantRole(ctx, &types.MsgGrantRole{
+		Admin:      moduleAdminAddr,
+		Address:    moduleAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.NoError(t, err)
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+
+	// Now the compromised/lost original admin can be revoked safely.
+	_, err = ms.RevokeRole(ctx, &types.MsgRevokeRole{
+		Admin:      moduleAdminAddr,
+		Address:    registryAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.NoError(t, err)
+	require.False(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, registryAdminAddr))
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+}
+
+func TestMsgRevokeRole_EmptyRoleRejected(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, addressCodec := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+
+	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-revoke-all-roles")
+
+	_, err := ms.GrantRole(ctx, &types.MsgGrantRole{
+		Admin:      registryAdminAddr,
+		Address:    moduleAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleEditor,
+	})
+	require.NoError(t, err)
+
+	_, err = ms.GrantRole(ctx, &types.MsgGrantRole{
+		Admin:      registryAdminAddr,
+		Address:    moduleAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       keeper.RoleAdmin,
+	})
+	require.NoError(t, err)
+
+	require.True(t, hasRegistryEditorRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+
+	_, err = ms.RevokeRole(ctx, &types.MsgRevokeRole{
+		Admin:      registryAdminAddr,
+		Address:    moduleAdminAddr,
+		RegistryId: registryID,
+		Checksum:   "",
+		Role:       "",
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "role cannot be empty")
+
+	require.True(t, hasRegistryEditorRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+	require.True(t, hasRegistryAdminRole(t, k, ctx, addressCodec, registryID, moduleAdminAddr))
+}
+
+func TestMsgRevokeRole_ValidationErrors(t *testing.T) {
+	testCases := []struct {
+		name            string
+		setupReq        func(t *testing.T, k keeper.Keeper, ctx sdk.Context) *types.MsgRevokeRole
+		wantErrContains string
+	}{
+		{
+			name: "registry not found",
+			setupReq: func(t *testing.T, _ keeper.Keeper, _ sdk.Context) *types.MsgRevokeRole {
+				t.Helper()
+				return &types.MsgRevokeRole{
+					Admin:      registryAdminAddr,
+					Address:    registryAdminAddr,
+					RegistryId: 999,
+					Checksum:   "",
+					Role:       keeper.RoleAdmin,
+				}
+			},
+			wantErrContains: "registry 999 does not exist",
+		},
+		{
+			name: "record checksum missing in registry",
+			setupReq: func(t *testing.T, k keeper.Keeper, ctx sdk.Context) *types.MsgRevokeRole {
+				t.Helper()
+				registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-record-check")
+				keepertest.MustAddAnchoringRecord(t, k, ctx, registryAdminAddr, "reg-record-check", "present-checksum", "sha256")
+				return &types.MsgRevokeRole{
+					Admin:      registryAdminAddr,
+					Address:    moduleAdminAddr,
+					RegistryId: registryID,
+					Checksum:   "missing-checksum",
+					Role:       keeper.RoleEditor,
+				}
+			},
+			wantErrContains: "record with checksum missing-checksum does not exist in registry",
+		},
+		{
+			name: "registry id cannot be zero",
+			setupReq: func(t *testing.T, _ keeper.Keeper, _ sdk.Context) *types.MsgRevokeRole {
+				t.Helper()
+				return &types.MsgRevokeRole{
+					Admin:      registryAdminAddr,
+					Address:    moduleAdminAddr,
+					RegistryId: 0,
+					Checksum:   "any-checksum",
+					Role:       keeper.RoleEditor,
+				}
+			},
+			wantErrContains: "registry ID cannot be zero: invalid request",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			appparams.SetAddressPrefixes()
+			k, ctx, _ := keepertest.AnchoringKeeper(t)
+			ms := keeper.NewMsgServerImpl(k)
+
+			req := tc.setupReq(t, k, ctx)
+			_, err := ms.RevokeRole(ctx, req)
+			require.Error(t, err)
+			require.Contains(t, err.Error(), tc.wantErrContains)
+		})
+	}
+}

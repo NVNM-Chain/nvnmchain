@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -41,17 +42,14 @@ import (
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	sdkmempool "github.com/cosmos/cosmos-sdk/types/mempool"
 
-	"github.com/MANTRA-Chain/inveniam/app/ante"
-	"github.com/MANTRA-Chain/inveniam/app/upgrades"
-	v1rc2 "github.com/MANTRA-Chain/inveniam/app/upgrades/v1rc2"
-	_ "github.com/MANTRA-Chain/inveniam/client/docs/statik"
-	"github.com/MANTRA-Chain/inveniam/client/docs/swagger"
-	taxkeeper "github.com/MANTRA-Chain/inveniam/x/tax/keeper"
-	tax "github.com/MANTRA-Chain/inveniam/x/tax/module"
-	taxtypes "github.com/MANTRA-Chain/inveniam/x/tax/types"
-	"github.com/MANTRA-Chain/inveniam/x/tokenfactory"
-	tokenfactorykeeper "github.com/MANTRA-Chain/inveniam/x/tokenfactory/keeper"
-	tokenfactorytypes "github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
+	"github.com/NVNM-Chain/nvnmchain/app/ante"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	"github.com/NVNM-Chain/nvnmchain/app/upgrades"
+	_ "github.com/NVNM-Chain/nvnmchain/client/docs/statik"
+	"github.com/NVNM-Chain/nvnmchain/client/docs/swagger"
+	taxkeeper "github.com/NVNM-Chain/nvnmchain/x/tax/keeper"
+	tax "github.com/NVNM-Chain/nvnmchain/x/tax/module"
+	taxtypes "github.com/NVNM-Chain/nvnmchain/x/tax/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -113,9 +111,10 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	"cosmossdk.io/client/v2/autocli"
-	anchoringkeeper "github.com/MANTRA-Chain/inveniam/x/anchoring/keeper"
-	anchoring "github.com/MANTRA-Chain/inveniam/x/anchoring/module"
-	anchoringtypes "github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	anchoringkeeper "github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
+	anchoring "github.com/NVNM-Chain/nvnmchain/x/anchoring/module"
+	anchoringprecompile "github.com/NVNM-Chain/nvnmchain/x/anchoring/precompile"
+	anchoringtypes "github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	chainante "github.com/cosmos/evm/ante"
 	evmaddress "github.com/cosmos/evm/encoding/address"
 	evmmempool "github.com/cosmos/evm/mempool"
@@ -128,8 +127,6 @@ import (
 	feemarketkeeper "github.com/cosmos/evm/x/feemarket/keeper"
 	feemarkettypes "github.com/cosmos/evm/x/feemarket/types"
 	ibccallbackskeeper "github.com/cosmos/evm/x/ibc/callbacks/keeper"
-	"github.com/cosmos/evm/x/ibc/transfer"
-	transferkeeper "github.com/cosmos/evm/x/ibc/transfer/keeper"
 	"github.com/cosmos/evm/x/vm"
 	evmkeeper "github.com/cosmos/evm/x/vm/keeper"
 	evmtypes "github.com/cosmos/evm/x/vm/types"
@@ -137,19 +134,14 @@ import (
 	ratelimit "github.com/cosmos/ibc-apps/modules/rate-limiting/v10"
 	ratelimitkeeper "github.com/cosmos/ibc-apps/modules/rate-limiting/v10/keeper"
 	ratelimittypes "github.com/cosmos/ibc-apps/modules/rate-limiting/v10/types"
-	ica "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts"
-	icacontroller "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts/controller"
-	icacontrollerkeeper "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts/controller/keeper"
-	icacontrollertypes "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts/controller/types"
-	icahost "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts/host"
-	icahostkeeper "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts/host/keeper"
-	icahosttypes "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts/host/types"
-	icatypes "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts/types"
 	ibccallbacks "github.com/cosmos/ibc-go/v10/modules/apps/callbacks"
 	ibctransfer "github.com/cosmos/ibc-go/v10/modules/apps/transfer"
+	transferkeeper "github.com/cosmos/ibc-go/v10/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v10/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v10/modules/core"
 	ibcclienttypes "github.com/cosmos/ibc-go/v10/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v10/modules/core/04-channel/types"
+	channelv2types "github.com/cosmos/ibc-go/v10/modules/core/04-channel/v2/types"
 	porttypes "github.com/cosmos/ibc-go/v10/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v10/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v10/modules/core/keeper"
@@ -164,8 +156,8 @@ import (
 )
 
 var EVMCoinInfo = evmtypes.EvmCoinInfo{
-	Denom:         "anvnm",
-	ExtendedDenom: "anvnm",
+	Denom:         FutureStakingDenom,
+	ExtendedDenom: FutureStakingDenom,
 	DisplayDenom:  "nvnm",
 	Decimals:      evmtypes.EighteenDecimals.Uint32(),
 }
@@ -176,7 +168,7 @@ func init() {
 	sdk.DefaultPowerReduction = cosmosevmutils.AttoPowerReduction
 	stakingtypes.DefaultMinCommissionRate = math.LegacyZeroDec()
 
-	// DefaultNodeHome default home directories for inveniamd
+	// DefaultNodeHome default home directories for nvnmchaind
 	var err error
 	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(NodeDir)
 	if err != nil {
@@ -194,28 +186,26 @@ const (
 
 // We pull these out so we can set them with LDFLAGS in the Makefile
 var (
-	NodeDir = ".inveniam"
+	NodeDir = ".nvnmchain"
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
 	// Authority address
-	Authority = "inveniam1wrapt0xsdp8u833fx0xlk5clru2gtts2qrceru"
+	Authority = "nvnm1qkptlvhg2cw5scmw0rcwdvfe6k5y9050pymmm9"
 )
 
 // module account permissions
 var maccPerms = map[string][]string{
 	authtypes.FeeCollectorName:     nil,
 	distrtypes.ModuleName:          nil,
-	icatypes.ModuleName:            nil,
 	minttypes.ModuleName:           {authtypes.Minter},
 	stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
 	stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 	govtypes.ModuleName:            {authtypes.Burner},
 	nft.ModuleName:                 nil,
 	// non sdk modules
-	ibctransfertypes.ModuleName:  {authtypes.Minter, authtypes.Burner},
-	ratelimittypes.ModuleName:    nil,
-	tokenfactorytypes.ModuleName: {authtypes.Minter, authtypes.Burner},
-	taxtypes.ModuleName:          nil,
+	ibctransfertypes.ModuleName: {authtypes.Minter, authtypes.Burner},
+	ratelimittypes.ModuleName:   nil,
+	taxtypes.ModuleName:         nil,
 
 	// Cosmos EVM modules
 	evmtypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
@@ -226,11 +216,11 @@ var maccPerms = map[string][]string{
 	consumertypes.ConsumerRedistributeName:     nil,
 	consumertypes.ConsumerToSendToProviderName: nil,
 
-	// Inveniam Specific Modules
+	// NVNMChain Specific Modules
 	anchoringtypes.ModuleName: nil,
 }
 
-var Upgrades = []upgrades.Upgrade{v1rc2.Upgrade}
+var Upgrades = []upgrades.Upgrade{}
 
 var (
 	_ runtime.AppI            = (*App)(nil)
@@ -270,18 +260,13 @@ type App struct {
 	CircuitKeeper         circuitkeeper.Keeper
 
 	// IBC
-	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	ICAHostKeeper       icahostkeeper.Keeper
-	ICAControllerKeeper icacontrollerkeeper.Keeper
-	TransferKeeper      transferkeeper.Keeper
-	RateLimitKeeper     ratelimitkeeper.Keeper
-	CallbackKeeper      ibccallbackskeeper.ContractKeeper
+	IBCKeeper       *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
+	TransferKeeper  transferkeeper.Keeper
+	RateLimitKeeper ratelimitkeeper.Keeper
+	CallbackKeeper  ibccallbackskeeper.ContractKeeper
 
-	// MANTRAChain keepers
-	TokenFactoryKeeper tokenfactorykeeper.Keeper
-	TaxKeeper          taxkeeper.Keeper
-
-	// Inveniam keepers
+	// NVNMChain keepers
+	TaxKeeper       taxkeeper.Keeper
 	AnchoringKeeper anchoringkeeper.Keeper
 
 	// Cosmos EVM keepers
@@ -335,8 +320,7 @@ func New(
 		// non sdk store keys
 		ibcexported.StoreKey, ibctransfertypes.StoreKey,
 		ratelimittypes.StoreKey,
-		tokenfactorytypes.StoreKey, taxtypes.StoreKey,
-		icacontrollertypes.StoreKey, icahosttypes.StoreKey,
+		taxtypes.StoreKey,
 		consumertypes.StoreKey, anchoringtypes.StoreKey,
 
 		// Cosmos EVM store keys
@@ -394,6 +378,7 @@ func New(
 		Authority,
 		logger,
 	)
+	app.BankKeeper.AppendSendRestriction(app.blockUserSendsToCCVRewardsBuffer)
 
 	app.StakingKeeper = stakingkeeper.NewKeeper(
 		appCodec,
@@ -515,22 +500,6 @@ func New(
 	app.ConsumerKeeper = *app.ConsumerKeeper.SetHooks(app.SlashingKeeper.Hooks())
 	consumerModule := consumer.NewAppModule(app.ConsumerKeeper, app.GetSubspace(consumertypes.ModuleName))
 
-	sortedKnownModules := make([]string, 0, len(maccPerms))
-	for moduleName := range maccPerms {
-		sortedKnownModules = append(sortedKnownModules, moduleName)
-	}
-	sort.Strings(sortedKnownModules)
-
-	app.TokenFactoryKeeper = tokenfactorykeeper.NewKeeper(
-		appCodec,
-		runtime.NewKVStoreService(keys[tokenfactorytypes.StoreKey]),
-		sortedKnownModules,
-		app.AccountKeeper,
-		&app.BankKeeper,
-		&app.Erc20Keeper,
-		Authority,
-	)
-
 	app.AnchoringKeeper = anchoringkeeper.NewKeeper(
 		appCodec,
 		app.AccountKeeper.AddressCodec(),
@@ -582,19 +551,6 @@ func New(
 		authtypes.FeeCollectorName,
 	)
 
-	// ICA Host keeper
-	app.ICAHostKeeper = icahostkeeper.NewKeeper(
-		appCodec,
-		runtime.NewKVStoreService(app.keys[icahosttypes.StoreKey]),
-		nil,
-		app.IBCKeeper.ChannelKeeper, // ICS4Wrapper
-		app.IBCKeeper.ChannelKeeper,
-		app.AccountKeeper,
-		bApp.MsgServiceRouter(),
-		bApp.GRPCQueryRouter(),
-		Authority,
-	)
-
 	// Create RateLimit keeper
 	clientKeeper := app.IBCKeeper.ClientKeeper
 	app.RateLimitKeeper = *ratelimitkeeper.NewKeeper(
@@ -606,17 +562,6 @@ func New(
 		app.IBCKeeper.ChannelKeeper,
 		clientKeeper,
 		app.IBCKeeper.ChannelKeeper,
-	)
-
-	// ICA Controller keeper
-	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
-		appCodec,
-		runtime.NewKVStoreService(app.keys[icacontrollertypes.StoreKey]),
-		nil,
-		app.IBCKeeper.ChannelKeeper, // ICS4Wrapper
-		app.IBCKeeper.ChannelKeeper,
-		bApp.MsgServiceRouter(),
-		Authority,
 	)
 
 	app.NFTKeeper = nftkeeper.NewKeeper(
@@ -679,12 +624,12 @@ func New(
 	app.TransferKeeper = transferkeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[ibctransfertypes.StoreKey]),
-		app.RateLimitKeeper, // ISC4 Wrapper: RateLimit IBC middleware
+		nil,
+		app.IBCKeeper.ChannelKeeper, // ICS4Wrapper: overridden after transfer stack is built via WithICS4Wrapper
 		app.IBCKeeper.ChannelKeeper,
 		bApp.MsgServiceRouter(),
 		app.AccountKeeper,
 		app.BankKeeper,
-		app.Erc20Keeper, // Add ERC20 Keeper for ERC20 transfers
 		Authority,
 	)
 	app.TransferKeeper.SetAddressCodec(evmaddress.NewEvmCodec(sdk.GetConfig().GetBech32AccountAddrPrefix()))
@@ -692,46 +637,42 @@ func New(
 	/*
 		Create Transfer Stack
 
-		transfer stack contains (from bottom to top):
-			- IBC ratelimit
-			- TokenFactory Middleware
-			- IBC Callbacks Middleware (with EVM ContractKeeper)
-			- ERC-20 Middleware
+		IBCModule stack (outermost to innermost, i.e. call-entry order for RecvPacket/OnAck/OnTimeout):
+			- IBC RateLimit middleware
+			- IBC Callbacks middleware (with EVM ContractKeeper)
 			- IBC Transfer
 
-		SendPacket, since it is originating from the application to core IBC:
-			transfer.SendTransfer -> ratelimit.SendPacket -> channel.SendPacket
+		SendPacket ICS4Wrapper chain (transfer → core IBC):
+			transfer.SendTransfer -> callbacks.SendPacket -> ratelimit.SendPacket -> channel.SendPacket
 
-		RecvPacket, message that originates from core IBC and goes down to app, the flow is the other way
-			channel.RecvPacket -> ratelimit.OnRecvPacket -> tokenfactory.OnRecvPacket -> callbacks.OnRecvPacket -> erc20.OnRecvPacket -> transfer.OnRecvPacket
+		The callbacks middleware sits in the ICS4Wrapper send path so that malformed src_callback
+		metadata is rejected at send time. Without this, a sender could include a syntactically
+		invalid src_callback memo that passes at send time but permanently blocks
+		OnAcknowledgementPacket / OnTimeoutPacket, locking funds indefinitely.
+
+		RecvPacket / OnAcknowledgementPacket / OnTimeoutPacket execution order:
+			channel -> ratelimit (guard, aborts if rate exceeded) -> callbacks -> transfer
 	*/
 
 	// create IBC module from top to bottom of stack
 	var transferStack porttypes.IBCModule
 
-	transferStack = transfer.NewIBCModule(app.TransferKeeper)
+	transferStack = ibctransfer.NewIBCModule(app.TransferKeeper)
 	maxCallbackGas := uint64(1_000_000)
-	transferStack = erc20.NewIBCMiddleware(app.Erc20Keeper, transferStack)
+	// transferStack = erc20.NewIBCMiddleware(app.Erc20Keeper, transferStack)
 	app.CallbackKeeper = ibccallbackskeeper.NewKeeper(
 		app.AccountKeeper,
 		app.EVMKeeper,
 		app.Erc20Keeper,
 	)
-	transferStack = ibccallbacks.NewIBCMiddleware(transferStack, app.IBCKeeper.ChannelKeeper, app.CallbackKeeper, maxCallbackGas)
-	// register escrow address for tokenfactory when channel opens
-	transferStack = tokenfactory.NewIBCModule(transferStack, app.TokenFactoryKeeper)
-	transferStack = ratelimit.NewIBCMiddleware(app.RateLimitKeeper, transferStack)
+	cbMiddleware := ibccallbacks.NewIBCMiddleware(transferStack, app.RateLimitKeeper, app.CallbackKeeper, maxCallbackGas)
+	transferStack = ratelimit.NewIBCMiddleware(app.RateLimitKeeper, &cbMiddleware)
 
-	// Create ICAHost Stack
-	var icaHostStack porttypes.IBCModule = icahost.NewIBCModule(app.ICAHostKeeper)
-
-	// Create Interchain Accounts Controller Stack
-	var icaControllerStack porttypes.IBCModule = icacontroller.NewIBCMiddleware(app.ICAControllerKeeper)
+	// Wire the ICS4Wrapper send path: transfer -> callbacks -> ratelimit -> channel.
+	app.TransferKeeper.WithICS4Wrapper(&cbMiddleware)
 
 	// Create static IBC router, add app routes, then set and seal it
 	ibcRouter := porttypes.NewRouter().
-		AddRoute(icahosttypes.SubModuleName, icaHostStack).
-		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
 		AddRoute(ibctransfertypes.ModuleName, transferStack).
 		AddRoute(ccvtypes.ConsumerPortID, consumerModule)
 
@@ -786,16 +727,12 @@ func New(
 		consumerModule,
 		// non sdk modules
 		ibc.NewAppModule(app.IBCKeeper),
-		transfer.NewAppModule(app.TransferKeeper),
-		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
+		ibctransfer.NewAppModule(app.TransferKeeper),
 		ibctm.NewAppModule(tmLightClientModule),
 		ratelimit.NewAppModule(appCodec, app.RateLimitKeeper),
 
-		// mantrachain modules
-		tokenfactory.NewAppModule(appCodec, app.TokenFactoryKeeper),
+		// nvnmchain modules
 		tax.NewAppModule(appCodec, app.TaxKeeper),
-
-		// inveniam modules
 		anchoring.NewAppModule(appCodec, app.AnchoringKeeper),
 
 		// Cosmos EVM modules
@@ -852,9 +789,7 @@ func New(
 		genutiltypes.ModuleName,
 		govtypes.ModuleName,
 		// additional non simd modules
-		icatypes.ModuleName,
 		ratelimittypes.ModuleName,
-		tokenfactorytypes.ModuleName,
 		consumertypes.ModuleName,
 	)
 
@@ -874,9 +809,7 @@ func New(
 		taxtypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		ibcexported.ModuleName,
-		icatypes.ModuleName,
 		ratelimittypes.ModuleName,
-		tokenfactorytypes.ModuleName,
 		consumertypes.ModuleName,
 	)
 
@@ -915,10 +848,7 @@ func New(
 		// additional non simd modules
 		ibctransfertypes.ModuleName,
 		genutiltypes.ModuleName,
-		icatypes.ModuleName,
 		ratelimittypes.ModuleName,
-
-		tokenfactorytypes.ModuleName,
 		taxtypes.ModuleName,
 		consumertypes.ModuleName,
 		anchoringtypes.ModuleName,
@@ -977,7 +907,7 @@ func New(
 
 	// must be before Loading version
 	// requires the snapshot store to be created and registered as a BaseAppOption
-	// see cmd/inveniamd/root.go: 206 - 214 approx
+	// see cmd/nvnmchaind/root.go: 206 - 214 approx
 	if manager := app.SnapshotManager(); manager != nil {
 		err := manager.RegisterExtensions()
 		if err != nil {
@@ -989,7 +919,9 @@ func New(
 	// app.setPostHandler()
 
 	// configure mempool
-	app.configureEVMMempool(appOpts, logger)
+	prepareProposalHandler, processProposalHandler := app.configureEVMMempool(appOpts, logger)
+	app.SetPrepareProposal(prepareProposalHandler)
+	app.SetProcessProposal(processProposalHandler)
 
 	// Register any on-chain upgrades.
 	app.setupUpgradeStoreLoaders()
@@ -1171,7 +1103,7 @@ func (app *App) DefaultGenesis() map[string]json.RawMessage {
 
 	// Add mint denom configuration
 	mintGenState := minttypes.DefaultGenesisState()
-	mintGenState.Params.MintDenom = sdk.DefaultBondDenom
+	mintGenState.Params.MintDenom = appparams.DefaultBondDenom
 	genesis[minttypes.ModuleName] = app.appCodec.MustMarshalJSON(mintGenState)
 
 	// Add EVM genesis configuration
@@ -1317,6 +1249,55 @@ func (app *App) setupUpgradeHandlers() {
 	}
 }
 
+func (app *App) blockUserSendsToCCVRewardsBuffer(
+	ctx context.Context,
+	fromAddr, toAddr sdk.AccAddress,
+	_ sdk.Coins,
+) (sdk.AccAddress, error) {
+	if !toAddr.Equals(authtypes.NewModuleAddress(consumertypes.ConsumerToSendToProviderName)) {
+		return toAddr, nil
+	}
+	if fromAddr.Equals(authtypes.NewModuleAddress(authtypes.FeeCollectorName)) {
+		return toAddr, nil
+	}
+	if app.isIBCRefundTx(ctx, fromAddr) {
+		return toAddr, nil
+	}
+	return nil, fmt.Errorf("sending to %s is restricted", consumertypes.ConsumerToSendToProviderName)
+}
+
+func (app *App) isIBCRefundTx(ctx context.Context, fromAddr sdk.AccAddress) bool {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	txBytes := sdkCtx.TxBytes()
+	if len(txBytes) == 0 {
+		return fromAddr.Equals(authtypes.NewModuleAddress(ibctransfertypes.ModuleName))
+	}
+	tx, err := app.txConfig.TxDecoder()(txBytes)
+	if err != nil {
+		return false
+	}
+	msgs := tx.GetMsgs()
+	if len(msgs) == 0 {
+		return false
+	}
+	hasRefund := false
+	for _, msg := range msgs {
+		switch msg.(type) {
+		case *channeltypes.MsgTimeout, *channeltypes.MsgTimeoutOnClose, *channeltypes.MsgAcknowledgement:
+			hasRefund = true
+		case *channelv2types.MsgTimeout, *channelv2types.MsgAcknowledgement:
+			hasRefund = true
+		case *ibcclienttypes.MsgUpdateClient:
+			continue
+		case *channeltypes.MsgRecvPacket, *channelv2types.MsgRecvPacket:
+			return false
+		default:
+			return false
+		}
+	}
+	return hasRefund
+}
+
 // GetMaccPerms returns a copy of the module account permissions
 //
 // NOTE: This is solely to be used for testing purposes.
@@ -1350,12 +1331,14 @@ func BlockedAddresses() map[string]bool {
 	delete(blockedAddrs, authtypes.NewModuleAddress(
 		consumertypes.ConsumerToSendToProviderName).String())
 
-	blockedPrecompilesHex := evmtypes.AvailableStaticPrecompiles
-	for _, addr := range corevm.PrecompiledAddressesPrague {
-		blockedPrecompilesHex = append(blockedPrecompilesHex, addr.Hex())
+	for _, precompile := range evmtypes.AvailableStaticPrecompiles {
+		blockedAddrs[cosmosevmutils.Bech32StringFromHexAddress(precompile)] = true
 	}
 
-	for _, precompile := range blockedPrecompilesHex {
+	blockedAddrs[cosmosevmutils.Bech32StringFromHexAddress(anchoringprecompile.AnchoringPrecompileAddress.Hex())] = true
+
+	for _, addr := range corevm.PrecompiledAddressesPrague {
+		precompile := addr.Hex()
 		blockedAddrs[cosmosevmutils.Bech32StringFromHexAddress(precompile)] = true
 	}
 
@@ -1367,8 +1350,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey) //nolint:staticcheck
 	keyTable := ibcclienttypes.ParamKeyTable()
 	paramsKeeper.Subspace(ratelimittypes.ModuleName).WithKeyTable(ratelimittypes.ParamKeyTable())
-	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
-	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(ibcexported.ModuleName).WithKeyTable(keyTable)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName).WithKeyTable(ibctransfertypes.ParamKeyTable())
 

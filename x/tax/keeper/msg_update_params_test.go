@@ -3,16 +3,23 @@ package keeper_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/inveniam/app/params"
-	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/tax/keeper"
-	"github.com/MANTRA-Chain/inveniam/x/tax/types"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	keepertest "github.com/NVNM-Chain/nvnmchain/testutil/keeper"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/keeper"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMsgUpdateParams(t *testing.T) {
 	appparams.SetAddressPrefixes()
-	k, ctx, _ := keepertest.TaxKeeper(t)
+
+	// a valid nvnmchain address that is marked as blocked (e.g. a module account address)
+	blockedAddr := authtypes.NewModuleAddress("distribution").String()
+	bk := &keepertest.MockBankKeeper{
+		BlockedAddrs: map[string]bool{blockedAddr: true},
+	}
+	k, ctx, _ := keepertest.TaxKeeperWithBankKeeper(t, bk)
 	ms := keeper.NewMsgServerImpl(k)
 
 	params := types.DefaultParams()
@@ -29,46 +36,56 @@ func TestMsgUpdateParams(t *testing.T) {
 			name: "invalid authority",
 			input: &types.MsgUpdateParams{
 				Authority:  "invalid",
-				McaTax:     "",
-				McaAddress: "",
+				Tax:        "",
+				TaxAddress: "",
 			},
 			expErr:    true,
 			expErrMsg: "invalid authority",
 		},
 		{
-			name: "update mca tax",
+			name: "update tax",
 			input: &types.MsgUpdateParams{
-				Authority:  "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
-				McaTax:     "0.200000000000000000",
-				McaAddress: "",
+				Authority:  "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
+				Tax:        "0.200000000000000000",
+				TaxAddress: "",
 			},
 			expErr: false,
 		},
 		{
-			name: "update mca address",
+			name: "blocked tax address",
 			input: &types.MsgUpdateParams{
-				Authority:  "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
-				McaTax:     "",
-				McaAddress: "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072",
+				Authority:  "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
+				Tax:        "",
+				TaxAddress: blockedAddr,
+			},
+			expErr:    true,
+			expErrMsg: "is blocked",
+		},
+		{
+			name: "update tax address",
+			input: &types.MsgUpdateParams{
+				Authority:  "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
+				Tax:        "",
+				TaxAddress: keepertest.TestSenderAddr,
 			},
 			expErr: false,
 		},
 		{
 			name: "old authority address no longer work",
 			input: &types.MsgUpdateParams{
-				Authority:  "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
-				McaTax:     "",
-				McaAddress: "",
+				Authority:  "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
+				Tax:        "",
+				TaxAddress: "",
 			},
 			expErr:    true,
-			expErrMsg: "invalid sender; expected mcaAddress",
+			expErrMsg: "invalid sender; expected taxAddress",
 		},
 		{
 			name: "update both",
 			input: &types.MsgUpdateParams{
-				Authority:  "inveniam1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx072",
-				McaTax:     "0.200000000000000000",
-				McaAddress: "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8",
+				Authority:  keepertest.TestSenderAddr,
+				Tax:        "0.200000000000000000",
+				TaxAddress: "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
 			},
 			expErr: false,
 		},
@@ -85,11 +102,11 @@ func TestMsgUpdateParams(t *testing.T) {
 				require.NoError(t, err)
 				params, err := k.Params.Get(ctx)
 				require.NoError(t, err)
-				if tc.input.McaTax != "" {
-					require.Equal(t, tc.input.McaTax, params.McaTax.String())
+				if tc.input.Tax != "" {
+					require.Equal(t, tc.input.Tax, params.Tax.String())
 				}
-				if tc.input.McaAddress != "" {
-					require.Equal(t, tc.input.McaAddress, params.McaAddress)
+				if tc.input.TaxAddress != "" {
+					require.Equal(t, tc.input.TaxAddress, params.TaxAddress)
 				}
 			}
 		})

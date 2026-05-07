@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Architecture Decision Records (ADR)
 
-This is a location to record all high-level architecture decisions in inveniam.
+This is a location to record all high-level architecture decisions in NVNMchain.
 
 An Architectural Decision (**AD**) is a software design choice that addresses a functional or non-functional requirement that is architecturally significant.
 An Architecturally Significant Requirement (**ASR**) is a requirement that has a measurable effect on a software system’s architecture and quality.
@@ -42,13 +42,8 @@ When writing ADRs, follow the same best practices for writing RFCs. When writing
 
 ### Accepted
 
-* [ADR 001: Inveniam ADR Creation](./adr-001-adr-creation.md)
-
 ### Proposed
 
-### Draft
+* [ADR 001: Allow Unprotected Transactions](./adr-001-allow-unprotected-tx.md)
 
-* [ADR 002: Using of official Cosmos modules](./adr-002-use-official-cosmos-modules.md)
-* [ADR 003: Adopt Neutron TokenFactory](./adr-003-use-neutron-tokenfactory.md)
-* [ADR 004: Usage of Depinject](./adr-004-use-depinject-when-possible.md)
-* [ADR 005: Maintain a cosmos-sdk fork for the bank module](./adr-005-maintain-sdk-fork.md)
+### Draft

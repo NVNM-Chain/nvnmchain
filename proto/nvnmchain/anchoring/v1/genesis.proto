@@ -1,0 +1,31 @@
+syntax = "proto3";
+package nvnmchain.anchoring.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "nvnmchain/anchoring/v1/params.proto";
+import "nvnmchain/anchoring/v1/document.proto";
+
+option go_package = "github.com/NVNM-Chain/nvnmchain/x/anchoring/types";
+
+// GenesisState defines the document module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  // records mapping: registryID -> registry
+  map<uint64, Registry> registries = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  repeated Record records = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  // role_admins mapping: encoded RBAC role key -> admin role bytes
+  map<string, bytes> role_admins = 5
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+
+  // role_members mapping: encoded (role, account) RBAC pair key -> marker bytes
+  map<string, bytes> role_members = 6
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+}

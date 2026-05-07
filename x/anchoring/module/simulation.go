@@ -3,9 +3,9 @@ package anchoring
 import (
 	"math/rand"
 
-	"github.com/MANTRA-Chain/inveniam/testutil/sample"
-	taxsimulation "github.com/MANTRA-Chain/inveniam/x/anchoring/simulation"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/NVNM-Chain/nvnmchain/testutil/sample"
+	taxsimulation "github.com/NVNM-Chain/nvnmchain/x/anchoring/simulation"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"

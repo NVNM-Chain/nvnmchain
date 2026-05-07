@@ -27,16 +27,16 @@ jobs:
       matrix:
         platform:
           - name: Linux x86_64
-            ids: inveniamd-linux-amd64
+            ids: nvnmchaind-linux-amd64
             runner: ubuntu-latest
             cross: false
           - name: Linux aarch64
-            ids: inveniamd-linux-arm64
-            runner: ubuntu-arm64-2cores
+            ids: nvnmchaind-linux-arm64
+            runner: ubuntu-24.04-arm
             docker-platform: linux/arm64
             cross: false
           - name: MacOS x86_64 and aarch64
-            ids: inveniamd-darwin-amd64,inveniamd-darwin-arm64
+            ids: nvnmchaind-darwin-amd64,nvnmchaind-darwin-arm64
             runner: ubuntu-latest
             cross: true
 
@@ -51,14 +51,14 @@ jobs:
           large-packages: true
           docker-images: true
           swap-storage: true
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.24
       - name: Checkout Git repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.release_tag || github.ref }}
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:

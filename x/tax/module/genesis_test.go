@@ -3,11 +3,11 @@ package tax_test
 import (
 	"testing"
 
-	appparams "github.com/MANTRA-Chain/inveniam/app/params"
-	keepertest "github.com/MANTRA-Chain/inveniam/testutil/keeper"
-	"github.com/MANTRA-Chain/inveniam/testutil/nullify"
-	tax "github.com/MANTRA-Chain/inveniam/x/tax/module"
-	"github.com/MANTRA-Chain/inveniam/x/tax/types"
+	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	keepertest "github.com/NVNM-Chain/nvnmchain/testutil/keeper"
+	"github.com/NVNM-Chain/nvnmchain/testutil/nullify"
+	tax "github.com/NVNM-Chain/nvnmchain/x/tax/module"
+	"github.com/NVNM-Chain/nvnmchain/x/tax/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -42,35 +42,35 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
-				Params: types.NewParams("0.1", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"),
+				Params: types.NewParams("0.1", "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"),
 			},
 			valid: true,
 		},
 		{
-			desc: "negative MCA tax is invalid",
+			desc: "negative tax is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("-0.5", types.DefaultMcaAddress),
+				Params: types.NewParams("-0.5", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
-			desc: "MCA tax greater than 1 is invalid",
+			desc: "tax greater than 1 is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("1.5", types.DefaultMcaAddress),
+				Params: types.NewParams("1.5", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
 		{
 			desc: "invalid bech32 address",
 			genState: &types.GenesisState{
-				Params: types.NewParams(types.DefaultMcaTax, "invalid_address"),
+				Params: types.NewParams(types.DefaultTax, "invalid_address"),
 			},
 			valid: false,
 		},
 		{
-			desc: "empty mca address is invalid",
+			desc: "empty tax address is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams(types.DefaultMcaTax, ""),
+				Params: types.NewParams(types.DefaultTax, ""),
 			},
 			valid: false,
 		},
@@ -100,22 +100,22 @@ func TestParams_Validate(t *testing.T) {
 		},
 		{
 			name:    "valid params",
-			params:  types.NewParams("0.1", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"),
+			params:  types.NewParams("0.1", "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"),
 			wantErr: false,
 		},
 		{
-			name:    "invalid mca tax",
-			params:  types.NewParams("-0.1", types.DefaultMcaAddress),
+			name:    "invalid tax",
+			params:  types.NewParams("-0.1", types.DefaultTaxAddress),
 			wantErr: true,
 		},
 		{
-			name:    "invalid mca address",
-			params:  types.NewParams(types.DefaultMcaTax, "invalid_address"),
+			name:    "invalid tax address",
+			params:  types.NewParams(types.DefaultTax, "invalid_address"),
 			wantErr: true,
 		},
 		{
-			name:    "mca tax too high",
-			params:  types.NewParams("1.1", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8"),
+			name:    "tax too high",
+			params:  types.NewParams("1.1", "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"),
 			wantErr: true,
 		},
 	}
@@ -145,7 +145,7 @@ func TestParams_ValidateProportion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := types.ValidateMcaTax(tt.proportion)
+			err := types.ValidateTax(tt.proportion)
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {
@@ -155,20 +155,20 @@ func TestParams_ValidateProportion(t *testing.T) {
 	}
 }
 
-func TestParams_ValidateMcaAddress(t *testing.T) {
+func TestParams_ValidateTaxAddress(t *testing.T) {
 	tests := []struct {
 		name    string
 		address string
 		wantErr bool
 	}{
-		{"valid address", "inveniam15m77x4pe6w9vtpuqm22qxu0ds7vn4ehz80mwh8", false},
+		{"valid address", "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca", false},
 		{"empty address", "", true},
 		{"invalid bech32", "invalid_address", true},
 		{"wrong prefix", "cosmos1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnrql8a", true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := types.ValidateMcaAddress(tt.address)
+			err := types.ValidateTaxAddress(tt.address)
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {

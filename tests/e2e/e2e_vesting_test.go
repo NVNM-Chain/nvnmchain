@@ -61,7 +61,7 @@ func (s *IntegrationTestSuite) testDelayedVestingAccount(api string) {
 
 		// Delegate coins should succeed
 		s.execDelegate(chain, valIdx, vestingDelegationAmount.String(), valOpAddr,
-			vestingDelayedAcc.String(), inveniamHomePath, vestingDelegationFees.String())
+			vestingDelayedAcc.String(), nvnmchainHomePath, vestingDelegationFees.String())
 
 		// Validate delegation successful
 		s.Require().Eventually(
@@ -130,7 +130,7 @@ func (s *IntegrationTestSuite) testContinuousVestingAccount(api string) {
 
 		// Delegate coins should succeed
 		s.execDelegate(chain, valIdx, vestingDelegationAmount.String(),
-			valOpAddr, continuousVestingAcc.String(), inveniamHomePath, vestingDelegationFees.String())
+			valOpAddr, continuousVestingAcc.String(), nvnmchainHomePath, vestingDelegationFees.String())
 
 		// Validate delegation successful
 		s.Require().Eventually(
@@ -210,7 +210,7 @@ func (s *IntegrationTestSuite) testPeriodicVestingAccount(api string) {
 		s.execCreatePeriodicVestingAccount(
 			chain,
 			periodicVestingAddr,
-			filepath.Join(inveniamHomePath, vestingPeriodFile),
+			filepath.Join(nvnmchainHomePath, vestingPeriodFile),
 			withKeyValue(flagFrom, sender.String()),
 		)
 
@@ -268,7 +268,7 @@ func (s *IntegrationTestSuite) testPeriodicVestingAccount(api string) {
 
 		// Delegate coins should succeed
 		s.execDelegate(chain, valIdx, vestingDelegationAmount.String(), valOpAddr,
-			periodicVestingAddr, inveniamHomePath, vestingDelegationFees.String())
+			periodicVestingAddr, nvnmchainHomePath, vestingDelegationFees.String())
 
 		// Validate delegation successful
 		s.Require().Eventually(

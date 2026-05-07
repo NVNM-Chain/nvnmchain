@@ -1,8 +1,8 @@
-[![License](https://img.shields.io/github/license/MANTRA-Chain/inveniam)](https://github.com/MANTRA-Chain/inveniam/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/NVNM-Chain/nvnmchain)](https://github.com/NVNM-Chain/nvnmchain/blob/main/LICENSE)
 
-# Inveniam
+# NVNMChain
 
-Inveniam is a global real-world assets platform built on blockchain technology. It leverages advanced blockchain features to facilitate the tokenization and trading of real-world assets.
+NVNMChain is a global real-world assets platform built on blockchain technology. It leverages advanced blockchain features to facilitate the tokenization and trading of real-world assets.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ Inveniam is a global real-world assets platform built on blockchain technology. 
 
 ## Overview
 
-Inveniam is designed to bridge the gap between traditional assets and the blockchain world. By enabling the tokenization of real-world assets, it opens up new possibilities for asset management, trading, and financial innovation.
+NVNMChain is designed to bridge the gap between traditional assets and the blockchain world. By enabling the tokenization of real-world assets, it opens up new possibilities for asset management, trading, and financial innovation.
 
 ## Features
 
@@ -27,13 +27,9 @@ Inveniam is designed to bridge the gap between traditional assets and the blockc
 - Custom fee market implementation
 - Cosmos SDK-based architecture
 
-## Joining the Mainnet
-
-[Please visit the official instructions on how to join the Mainnet here.](https://docs.inveniam.io/node-and-validator-operations/node-setup-and-deployment/running-a-node)
-
 ## Getting Started
 
-To get started with Inveniam, you'll need to set up your development environment.
+To get started with NVNMChain, you'll need to set up your development environment.
 
 ### Prerequisites
 
@@ -43,8 +39,8 @@ To get started with Inveniam, you'll need to set up your development environment
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/MANTRA-Chain/inveniam.git
-   cd inveniam
+   git clone https://github.com/NVNM-Chain/nvnmchain.git
+   cd nvnmchain
    ```
 
 2. Build the project:
@@ -90,16 +86,14 @@ docker run -t --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.64.8 golangc
 
 ## Architecture
 
-Inveniam follows the Cosmos SDK architecture and implements several custom modules to achieve its functionality. The project uses Architecture Decision Records (ADRs) to document important architectural decisions.
+NVNMChain follows the Cosmos SDK architecture and implements several custom modules to achieve its functionality. The project uses Architecture Decision Records (ADRs) to document important architectural decisions.
 
 For more information on the architecture and design decisions, please refer to the [ADR directory](adr/).
 
 ## Modules
 
-Inveniam includes several custom modules:
+NVNMChain includes several custom modules:
 
-- `x/sanction`: Blacklisting of addresses to prevent transactions from sanctioned entities.
-- `x/tokenfactory`: Allows for the creation and management of new tokens (based on Neutron's implementation).
 - `x/tax`: Handles tax-related operations within the chain.
 
 For detailed information on each module, please refer to their respective README files in the `x/` directory.

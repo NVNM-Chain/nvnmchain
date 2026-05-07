@@ -4,16 +4,12 @@ import (
 	"errors"
 
 	"cosmossdk.io/collections"
-	errorsmod "cosmossdk.io/errors"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-var (
-	DefaultRoleAdmin = Role{}
-
-	ErrMissingRole = errorsmod.Register("rbac", 100, "missing required role")
-)
+var DefaultRoleAdmin = Role{}
 
 // rbac keeper implements a generic role-based access control,
 // * role -> adminRole
@@ -49,13 +45,29 @@ func (k *RBACKeeper) HasRole(ctx sdk.Context, role Role, addr sdk.AccAddress) (b
 	return k.RoleMembers.Has(ctx, collections.Join(role, addr))
 }
 
+// IsSoleAdmin returns true if the provided admin role has exactly one member.
+// It short-circuits early once two members are found.
+func (k *RBACKeeper) IsSoleAdmin(ctx sdk.Context, adminRole Role) (bool, error) {
+	var seen uint64
+	err := k.RoleMembers.Walk(ctx, collections.NewPrefixedPairRange[Role, sdk.AccAddress](adminRole),
+		func(_ collections.Pair[Role, sdk.AccAddress], _ []byte) (bool, error) {
+			seen++
+			return seen >= 2, nil
+		},
+	)
+	if err != nil {
+		return false, err
+	}
+	return seen == 1, nil
+}
+
 func (k *RBACKeeper) GetRoleAdmin(ctx sdk.Context, role Role) (Role, error) {
 	bz, err := k.RoleAdmins.Get(ctx, role)
 	if err != nil {
 		if errors.Is(err, collections.ErrNotFound) {
-			return DefaultRoleAdmin, nil
+			return DefaultRoleAdmin, types.ErrRoleAdminNotConfigured.Wrapf("role %s", common.Hash(role).Hex())
 		}
-		return Role{}, err
+		return DefaultRoleAdmin, err
 	}
 	return NewRole(bz), nil
 }
@@ -74,8 +86,22 @@ func (k *RBACKeeper) GrantRole(ctx sdk.Context, role Role, addr sdk.AccAddress, 
 		return err
 	}
 	if !hasAdminRole {
-		return ErrMissingRole.Wrapf("account %s is missing role %s", granter.String(), common.Hash(adminRole).Hex())
+		return types.ErrMissingRole.Wrapf("account %s is missing role %s", granter.String(), common.Hash(adminRole).Hex())
 	}
+
+	return k.GrantRoleUnchecked(ctx, role, addr, granter)
+}
+
+func (k *RBACKeeper) GrantRoleUnchecked(ctx sdk.Context, role Role, addr sdk.AccAddress, granter sdk.AccAddress) error {
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeGrantRole,
+			sdk.NewAttribute(types.AttributeKeyGrantee, addr.String()),
+			sdk.NewAttribute(types.AttributeKeyGranter, granter.String()),
+			sdk.NewAttribute(types.AttributeKeyRole, common.Hash(role).Hex()),
+		),
+	})
+
 	return k.RoleMembers.Set(ctx, collections.Join(role, addr), []byte{})
 }
 
@@ -89,7 +115,20 @@ func (k *RBACKeeper) RevokeRole(ctx sdk.Context, role Role, addr sdk.AccAddress,
 		return err
 	}
 	if !hasAdminRole {
-		return ErrMissingRole.Wrapf("account %s is missing role %s", revoker.String(), common.Hash(adminRole).Hex())
+		return types.ErrMissingRole.Wrapf("account %s is missing role %s", revoker.String(), common.Hash(adminRole).Hex())
 	}
+	return k.RevokeRoleUnchecked(ctx, role, addr, revoker)
+}
+
+func (k *RBACKeeper) RevokeRoleUnchecked(ctx sdk.Context, role Role, addr sdk.AccAddress, revoker sdk.AccAddress) error {
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeRevokeRole,
+			sdk.NewAttribute(types.AttributeKeyRevokee, addr.String()),
+			sdk.NewAttribute(types.AttributeKeyRevoker, revoker.String()),
+			sdk.NewAttribute(types.AttributeKeyRole, common.Hash(role).Hex()),
+		),
+	})
+
 	return k.RoleMembers.Remove(ctx, collections.Join(role, addr))
 }

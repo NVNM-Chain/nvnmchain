@@ -11,7 +11,7 @@ help:
 	@echo "Usage:"
 	@echo "    make [command]"
 	@echo ""
-	@echo "  make build                 Build inveniamd binary"
+	@echo "  make build                 Build nvnmchaind binary"
 	@echo "  make lint                  Show available lint commands"
 	@echo "  make test                  Show available test commands"
 	@echo "  make proto                 Show available proto commands"
@@ -69,9 +69,9 @@ ifeq ($(LEDGER_ENABLED),true)
   endif
 endif
 
-ifeq (cleveldb,$(findstring cleveldb,$(INVENIAM_BUILD_OPTIONS)))
+ifeq (cleveldb,$(findstring cleveldb,$(NVNMCHAIN_BUILD_OPTIONS)))
   build_tags += gcc
-else ifeq (rocksdb,$(findstring rocksdb,$(INVENIAM_BUILD_OPTIONS)))
+else ifeq (rocksdb,$(findstring rocksdb,$(NVNMCHAIN_BUILD_OPTIONS)))
   build_tags += gcc
 endif
 build_tags += $(BUILD_TAGS)
@@ -84,19 +84,23 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 
 # process linker flags
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=inveniam \
-	-X github.com/cosmos/cosmos-sdk/version.AppName=inveniamd \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=nvnmchain \
+	-X github.com/cosmos/cosmos-sdk/version.AppName=nvnmchaind \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 	-X github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep) \
 	-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(CMT_VERSION)
 
-ifeq (cleveldb,$(findstring cleveldb,$(INVENIAM_BUILD_OPTIONS)))
+ifdef AUTHORITY
+ldflags += -X github.com/NVNM-Chain/nvnmchain/app.Authority=$(AUTHORITY)
+endif
+
+ifeq (cleveldb,$(findstring cleveldb,$(NVNMCHAIN_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
-else ifeq (rocksdb,$(findstring rocksdb,$(INVENIAM_BUILD_OPTIONS)))
+else ifeq (rocksdb,$(findstring rocksdb,$(NVNMCHAIN_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb
 endif
-ifeq (,$(findstring nostrip,$(INVENIAM_BUILD_OPTIONS)))
+ifeq (,$(findstring nostrip,$(NVNMCHAIN_BUILD_OPTIONS)))
   ldflags += -w -s
 endif
 ifeq ($(LINK_STATICALLY),true)
@@ -107,7 +111,7 @@ ldflags := $(strip $(ldflags))
 
 BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
 # check for nostrip option
-ifeq (,$(findstring nostrip,$(INVENIAM_BUILD_OPTIONS)))
+ifeq (,$(findstring nostrip,$(NVNMCHAIN_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
 
@@ -123,10 +127,10 @@ build-arm:
 build-linux:
 	GOOS=linux GOARCH=$(if $(findstring aarch64,$(shell uname -m)) || $(findstring arm64,$(shell uname -m)),arm64,amd64) $(MAKE) build
 build-image:
-	docker build -f Dockerfile -t ghcr.io/mantra-chain/inveniam:local .
+	docker build -f Dockerfile -t ghcr.io/nvnm-chain/nvnmchain:local .
 
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
-	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) $(GO_MODULE)/cmd/inveniamd
+	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) $(GO_MODULE)/cmd/nvnmchaind
 $(BUILDDIR)/:
 	mkdir -p $(BUILDDIR)/
 
@@ -137,7 +141,7 @@ $(BUILDDIR)/:
 PACKAGES_UNIT=$(shell go list ./... | grep -v -e '/tests/e2e' | grep -v '/tests/interchain' | grep -v '/simulation')
 PACKAGES_E2E=$(shell cd tests/interchain && go list ./... | grep -v '/chainsuite')
 TEST_PACKAGES=./...
-TEST_TARGETS := test-unit test-e2e test-cover test-connect
+TEST_TARGETS := test-unit test-e2e test-cover
 
 DIR=$(CURDIR)
 test-unit: ARGS=-timeout=5m -tags='norace uint256'
@@ -148,9 +152,6 @@ test-e2e: DIR=$(CURDIR)/tests/interchain
 test-e2e: build-image
 test-cover: ARGS=-timeout=30m -coverprofile=coverage.txt -covermode=atomic -tags='norace uint256'
 test-cover: TEST_PACKAGES=$(PACKAGES_UNIT)
-test-connect: ARGS=-v -race -tags='uint256'
-test-connect: DIR=$(CURDIR)/tests/connect
-test-connect: build-image
 $(TEST_TARGETS): run-tests
 
 run-tests:
@@ -173,8 +174,8 @@ GO_VERSION_FALLBACK := 1.24.2
 GORELEASER_IMAGE := $(shell docker manifest inspect $(GORELEASER_CROSS):v$(GO_VERSION) > /dev/null 2>&1 && echo $(GORELEASER_CROSS):v$(GO_VERSION) || echo $(GORELEASER_CROSS):v$(GO_VERSION_FALLBACK))
 endif
 GORELEASER_PLATFORM ?= linux/amd64
-REPO_OWNER ?= MANTRA-Chain
-REPO_NAME ?= inveniam
+REPO_OWNER ?= NVNM-Chain
+REPO_NAME ?= nvnmchain
 
 # Check if GITHUB_TOKEN is defined
 ifndef GITHUB_TOKEN
@@ -189,8 +190,8 @@ release:
 		-e CMT_VERSION=$(CMT_VERSION) \
 		-e REPO_OWNER=$(REPO_OWNER) \
 		-e REPO_NAME=$(REPO_NAME) \
-		-v `pwd`:/go/src/inveniamd \
-		-w /go/src/inveniamd \
+		-v `pwd`:/go/src/nvnmchaind \
+		-w /go/src/nvnmchaind \
 		--platform=$(GORELEASER_PLATFORM) \
 		$(GORELEASER_IMAGE) \
 		release $(if $(GORELEASER_SKIP),--skip=$(GORELEASER_SKIP)) $(if $(GORELEASER_CONFIG),--config=$(GORELEASER_CONFIG)) \
@@ -208,8 +209,8 @@ goreleaser-build-local:
 		-e CMT_VERSION=$(CMT_VERSION) \
 		-e REPO_OWNER=$(REPO_OWNER) \
 		-e REPO_NAME=$(REPO_NAME) \
-		-v `pwd`:/go/src/inveniamd \
-		-w /go/src/inveniamd \
+		-v `pwd`:/go/src/nvnmchaind \
+		-w /go/src/nvnmchaind \
 		--platform=$(GORELEASER_PLATFORM) \
 		$(GORELEASER_IMAGE) \
 		build $(if $(GORELEASER_IDS),$(shell echo $(GORELEASER_IDS) | tr ',' ' ' | sed 's/[^ ]*/--id=&/g')) \
@@ -234,15 +235,15 @@ mocks:
 
 build-and-run-single-node: build
 	@echo "Building and running a single node for testing..."
-	@mkdir -p .inveniamsinglenodetest
-	@if [ ! -f .inveniamsinglenodetest/config/config.toml ]; then \
-		./build/inveniamd init single-node-test --chain-id test-chain --home .inveniamsinglenodetest --default-denom anvnm; \
-		./build/inveniamd keys add validator --keyring-backend test --home .inveniamsinglenodetest; \
-		./build/inveniamd genesis add-genesis-account $$(./build/inveniamd keys show validator -a --keyring-backend test --home .inveniamsinglenodetest) 100000000000000anvnm --home .inveniamsinglenodetest; \
-		./build/inveniamd genesis gentx validator 100000000anvnm --chain-id test-chain --keyring-backend test --home .inveniamsinglenodetest; \
-		./build/inveniamd genesis collect-gentxs --home .inveniamsinglenodetest; \
-		sed -i'' -e 's/"fee_denom": "stake"/"fee_denom": "anvnm"/' .inveniamsinglenodetest/config/genesis.json; \
+	@mkdir -p .nvnmchainsinglenodetest
+	@if [ ! -f .nvnmchainsinglenodetest/config/config.toml ]; then \
+		./build/nvnmchaind init single-node-test --chain-id test-chain --home .nvnmchainsinglenodetest --default-denom anvnm; \
+		./build/nvnmchaind keys add validator --keyring-backend test --home .nvnmchainsinglenodetest; \
+		./build/nvnmchaind genesis add-genesis-account $$(./build/nvnmchaind keys show validator -a --keyring-backend test --home .nvnmchainsinglenodetest) 100000000000000anvnm --home .nvnmchainsinglenodetest; \
+		./build/nvnmchaind genesis gentx validator 100000000anvnm --chain-id test-chain --keyring-backend test --home .nvnmchainsinglenodetest; \
+		./build/nvnmchaind genesis collect-gentxs --home .nvnmchainsinglenodetest; \
+		sed -i'' -e 's/"fee_denom": "stake"/"fee_denom": "anvnm"/' .nvnmchainsinglenodetest/config/genesis.json; \
 	fi
-	./build/inveniamd start --home .inveniamsinglenodetest --minimum-gas-prices 0anvnm
+	./build/nvnmchaind start --home .nvnmchainsinglenodetest --minimum-gas-prices 0anvnm
 
 .PHONY: build-and-run-single-node

@@ -9,7 +9,6 @@ import (
 
 	"cosmossdk.io/math"
 	evidencetypes "cosmossdk.io/x/evidence/types"
-	tokenfactorytypes "github.com/MANTRA-Chain/inveniam/x/tokenfactory/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
@@ -19,8 +18,6 @@ import (
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ratelimittypes "github.com/cosmos/ibc-apps/modules/rate-limiting/v10/types"
-	icacontrollertypes "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts/controller/types"
-	transfertypes "github.com/cosmos/ibc-go/v10/modules/apps/transfer/types"
 )
 
 func queryTx(endpoint, txHash string) error {
@@ -169,20 +166,6 @@ func querySupplyOf(endpoint, denom string) (sdk.Coin, error) {
 	}
 
 	return supplyOfResp.Amount, nil
-}
-
-func querySendEnabled(endpoint string) ([]*banktypes.SendEnabled, error) {
-	body, err := httpGet(fmt.Sprintf("%s/cosmos/bank/v1beta1/send_enabled", endpoint))
-	if err != nil {
-		return nil, fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var sendEnabledResp banktypes.QuerySendEnabledResponse
-	if err := cdc.UnmarshalJSON(body, &sendEnabledResp); err != nil {
-		return nil, err
-	}
-
-	return sendEnabledResp.SendEnabled, nil
 }
 
 // func queryStakingParams(endpoint string) (stakingtypes.QueryParamsResponse, error) {
@@ -424,89 +407,6 @@ func queryRateLimitsByChainID(endpoint, channelID string) ([]ratelimittypes.Rate
 		return []ratelimittypes.RateLimit{}, err
 	}
 	return res.RateLimits, nil
-}
-
-func queryTokenfactoryDenomCreationFee(endpoint string) (amt sdk.Coin, err error) {
-	params, err := queryTokenfactoryParams(endpoint)
-	if err != nil {
-		return amt, err
-	}
-
-	if params.Params.DenomCreationFee == nil || params.Params.DenomCreationFee.Len() == 0 {
-		return amt, nil
-	}
-
-	return params.Params.DenomCreationFee[0], nil
-}
-
-func queryTokenfactoryParams(endpoint string) (tokenfactorytypes.QueryParamsResponse, error) {
-	body, err := httpGet(fmt.Sprintf("%s/osmosis/tokenfactory/v1beta1/params", endpoint))
-	if err != nil {
-		return tokenfactorytypes.QueryParamsResponse{}, fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var params tokenfactorytypes.QueryParamsResponse
-	if err := cdc.UnmarshalJSON(body, &params); err != nil {
-		return tokenfactorytypes.QueryParamsResponse{}, err
-	}
-
-	return params, nil
-}
-
-func queryTokenfactoryDenomMetadata(endpoint, denom string) (banktypes.Metadata, error) {
-	body, err := httpGet(fmt.Sprintf("%s/cosmos/bank/v1beta1/denoms_metadata_by_query_string?denom=%s", endpoint, denom))
-	if err != nil {
-		return banktypes.Metadata{}, fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var metadataResp banktypes.QueryDenomMetadataResponse
-	if err := cdc.UnmarshalJSON(body, &metadataResp); err != nil {
-		return banktypes.Metadata{}, err
-	}
-
-	return metadataResp.Metadata, nil
-}
-
-func queryTokenfactoryDenomAuthorityMetadata(endpoint, creator, denom string) (tokenfactorytypes.DenomAuthorityMetadata, error) {
-	body, err := httpGet(fmt.Sprintf("%s/osmosis/tokenfactory/v1beta1/denoms/factory/%s/%s/authority_metadata", endpoint, creator, denom))
-	if err != nil {
-		return tokenfactorytypes.DenomAuthorityMetadata{}, fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var metadataResp tokenfactorytypes.QueryDenomAuthorityMetadataResponse
-	if err := cdc.UnmarshalJSON(body, &metadataResp); err != nil {
-		return tokenfactorytypes.DenomAuthorityMetadata{}, err
-	}
-
-	return metadataResp.AuthorityMetadata, nil
-}
-
-func queryIBCEscrowAddress(endpoint, channelID string) (string, error) {
-	body, err := httpGet(fmt.Sprintf("%s/ibc/apps/transfer/v1/channels/%s/ports/transfer/escrow_address", endpoint, channelID))
-	if err != nil {
-		return "", fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var resp transfertypes.QueryEscrowAddressResponse
-	if err := cdc.UnmarshalJSON(body, &resp); err != nil {
-		return "", err
-	}
-
-	return resp.EscrowAddress, nil
-}
-
-func queryICAAccountAddress(endpoint, owner, connectionID string) (string, error) {
-	body, err := httpGet(fmt.Sprintf("%s/ibc/apps/interchain_accounts/controller/v1/owners/%s/connections/%s", endpoint, owner, connectionID))
-	if err != nil {
-		return "", fmt.Errorf("failed to execute HTTP request: %w", err)
-	}
-
-	var icaAccountResp icacontrollertypes.QueryInterchainAccountResponse
-	if err := cdc.UnmarshalJSON(body, &icaAccountResp); err != nil {
-		return "", err
-	}
-
-	return icaAccountResp.Address, nil
 }
 
 // TODO: Uncomment this function when CCV module is added

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"cosmossdk.io/collections"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/rbac"
-	"github.com/MANTRA-Chain/inveniam/x/anchoring/types"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/rbac"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -23,72 +23,92 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 var _ types.MsgServer = msgServer{}
 
 // isRecordRole returns true if the checksum indicates a record-specific role
-func isRecordRole(checksum string) bool {
-	return checksum != ""
+func isRecordRole(registryId uint64, checksum string) bool {
+	return registryId != 0 && checksum != ""
+}
+
+func (k msgServer) isModuleAdmin(ctx sdk.Context, addr string) (bool, error) {
+	params, err := k.Keeper.Params.Get(ctx)
+	if err != nil {
+		return false, err
+	}
+	return params.Admin == addr, nil
+}
+
+func (k msgServer) ensureRoleScopeExists(ctx sdk.Context, registryId uint64, checksum string) error {
+	hasRegistry, err := k.Keeper.Registries.Has(ctx, registryId)
+	if err != nil {
+		return err
+	}
+	if !hasRegistry {
+		return sdkerrors.ErrNotFound.Wrapf("registry %d does not exist", registryId)
+	}
+	if isRecordRole(registryId, checksum) {
+		hasChecksum, err := k.Keeper.RecordIdByChecksumAndRegistry.Has(ctx, collections.Join(checksum, registryId))
+		if err != nil {
+			return err
+		}
+		if !hasChecksum {
+			return sdkerrors.ErrNotFound.Wrapf("record with checksum %s does not exist in registry %d", checksum, registryId)
+		}
+	}
+	return nil
+}
+
+func (k msgServer) scopedRole(registryId uint64, checksum, role string) rbac.Role {
+	if isRecordRole(registryId, checksum) {
+		return k.Keeper.RecordRole(registryId, checksum, role)
+	}
+	return k.Keeper.RegistryRole(registryId, role)
 }
 
 func (k msgServer) AddRegistry(goCtx context.Context, req *types.MsgAddRegistry) (*types.MsgAddRegistryResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	if _, err := k.Keeper.RegistryIdByName.Get(ctx, req.Name); err == nil {
-		return nil, types.ErrRegistryExists
-	}
-	registryCount, err := k.RegistryCount.Get(ctx)
+	sender, err := k.addressCodec.StringToBytes(req.Sender)
 	if err != nil {
 		return nil, err
 	}
-	registryId := registryCount + 1
-	registry := types.Registry{
-		Id:          registryId,
-		Name:        req.Name,
-		Description: req.Description,
-		Creator:     req.Sender,
-		CreatedAt:   ctx.BlockTime().String(),
-	}
-	// Only admin or editor can add
-	if err := k.Keeper.Registries.Set(ctx, registryId, registry); err != nil {
-		return nil, err
-	}
-	if err := k.Keeper.RegistryIdByName.Set(ctx, req.Name, registryId); err != nil {
-		return nil, err
-	}
-
-	adminRole := k.Keeper.RegistryRole(registryId, RoleAdmin)
-	if err := k.Keeper.RBAC.SetRoleAdmin(ctx, adminRole, adminRole); err != nil {
-		return nil, err
-	}
-	creator, err := k.addressCodec.StringToBytes(req.Sender)
+	registryId, err := k.Keeper.AddRegistry(ctx, sender, req.Name, req.Description, req.Metadata)
 	if err != nil {
 		return nil, err
 	}
-	if err := k.Keeper.RBAC.RoleMembers.Set(ctx, collections.Join(adminRole, sdk.AccAddress(creator)), []byte{}); err != nil {
-		return nil, err
-	}
 
-	// set record count to zero
-	if err := k.Keeper.initializeRegistryRecordCounter(ctx, registryId); err != nil {
-		return nil, err
-	}
-	// update registry count
-	if err := k.RegistryCount.Set(ctx, registryId); err != nil {
-		return nil, err
-	}
 	return &types.MsgAddRegistryResponse{RegistryId: registryId}, nil
 }
 
 func (k msgServer) AddRecord(goCtx context.Context, req *types.MsgAddRecord) (*types.MsgAddRecordResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sender, err := k.addressCodec.StringToBytes(req.Sender)
 	if err != nil {
 		return nil, err
 	}
 	// Only admin or editor can add
-	if err := k.Keeper.AddRecord(ctx, sender, *req.Record); err != nil {
+	recordId, err := k.Keeper.AddRecord(ctx, sender, *req.Record)
+	if err != nil {
 		return nil, err
 	}
-	return &types.MsgAddRecordResponse{}, nil
+	return &types.MsgAddRecordResponse{RecordId: recordId}, nil
 }
 
 func (k msgServer) UpdateRecordStatus(goCtx context.Context, req *types.MsgUpdateRecordStatus) (*types.MsgUpdateRecordStatusResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	sender, err := k.addressCodec.StringToBytes(req.Editor)
 	if err != nil {
@@ -103,6 +123,12 @@ func (k msgServer) UpdateRecordStatus(goCtx context.Context, req *types.MsgUpdat
 
 // GrantRole allows an admin to assign a role to an address
 func (k msgServer) GrantRole(goCtx context.Context, req *types.MsgGrantRole) (*types.MsgGrantRoleResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	granter, err := k.addressCodec.StringToBytes(req.Admin)
 	if err != nil {
@@ -115,15 +141,30 @@ func (k msgServer) GrantRole(goCtx context.Context, req *types.MsgGrantRole) (*t
 
 	var role rbac.Role
 	var adminRole rbac.Role
+	isRecordScoped := isRecordRole(req.RegistryId, req.Checksum)
 
-	if isRecordRole(req.Checksum) {
-		role = k.Keeper.RecordRole(req.Checksum, req.Role)
-	} else {
-		role = k.Keeper.RegistryRole(req.RegistryId, req.Role)
+	if err := k.ensureRoleScopeExists(ctx, req.RegistryId, req.Checksum); err != nil {
+		return nil, err
 	}
+
+	role = k.scopedRole(req.RegistryId, req.Checksum, req.Role)
 	adminRole = k.Keeper.RegistryRole(req.RegistryId, RoleAdmin)
 	if err := k.Keeper.RBAC.SetRoleAdmin(ctx, role, adminRole); err != nil {
 		return nil, err
+	}
+
+	// Break-glass recovery: module admin can grant registry-level admin directly
+	if !isRecordScoped && req.Role == RoleAdmin {
+		isModuleAdmin, err := k.isModuleAdmin(ctx, req.Admin)
+		if err != nil {
+			return nil, err
+		}
+		if isModuleAdmin {
+			if err := k.Keeper.RBAC.GrantRoleUnchecked(ctx, role, grantee, granter); err != nil {
+				return nil, err
+			}
+			return &types.MsgGrantRoleResponse{}, nil
+		}
 	}
 
 	if err := k.Keeper.RBAC.GrantRole(ctx, role, grantee, granter); err != nil {
@@ -135,6 +176,13 @@ func (k msgServer) GrantRole(goCtx context.Context, req *types.MsgGrantRole) (*t
 
 // RevokeRole allows an admin to remove a role from an address
 func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (*types.MsgRevokeRoleResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	revoker, err := k.addressCodec.StringToBytes(req.Admin)
 	if err != nil {
@@ -145,43 +193,36 @@ func (k msgServer) RevokeRole(goCtx context.Context, req *types.MsgRevokeRole) (
 		return nil, err
 	}
 
-	// revoke common roles (editor, then admin) when no specific role provided
-	rolesToTry := []string{req.Role}
-	if req.Role == "" {
-		rolesToTry = []string{RoleEditor, RoleAdmin}
+	if err := k.ensureRoleScopeExists(ctx, req.RegistryId, req.Checksum); err != nil {
+		return nil, err
+	}
+	isRecordScoped := isRecordRole(req.RegistryId, req.Checksum)
+
+	role := k.scopedRole(req.RegistryId, req.Checksum, req.Role)
+	hasRole, err := k.Keeper.RBAC.HasRole(ctx, role, revokee)
+	if err != nil {
+		return nil, err
+	}
+	if !hasRole {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("address does not have the specified role")
 	}
 
-	var lastErr error
-	for _, roleStr := range rolesToTry {
-		var role rbac.Role
-		if isRecordRole(req.Checksum) {
-			role = k.Keeper.RecordRole(req.Checksum, roleStr)
-		} else {
-			role = k.Keeper.RegistryRole(req.RegistryId, roleStr)
-		}
-		hasRole, err := k.Keeper.RBAC.HasRole(ctx, role, revokee)
+	// Always prevent revoking the last registry-level admin. The module admin's break-glass
+	// path is MsgGrantRole (unchecked admin grant): recover by granting a new admin first,
+	// then revoking the compromised one — so the registry is never left with zero admins.
+	if !isRecordScoped && req.Role == RoleAdmin {
+		adminRole := k.Keeper.RegistryRole(req.RegistryId, RoleAdmin)
+		isSoleAdmin, err := k.Keeper.RBAC.IsSoleAdmin(ctx, adminRole)
 		if err != nil {
-			lastErr = err
-			continue
+			return nil, err
 		}
-		if !hasRole {
-			continue
+		if isSoleAdmin {
+			return nil, sdkerrors.ErrInvalidRequest.Wrap("cannot revoke the last registry admin")
 		}
-
-		if err := k.Keeper.RBAC.RevokeRole(ctx, role, revokee, revoker); err != nil {
-			lastErr = err
-			continue
-		}
-
-		return &types.MsgRevokeRoleResponse{}, nil
 	}
 
-	if req.Role == "" && lastErr == nil {
-		return nil, sdkerrors.ErrInvalidRequest.Wrap("address has no roles to revoke")
-	}
-
-	if lastErr != nil {
-		return nil, lastErr
+	if err := k.Keeper.RBAC.RevokeRole(ctx, role, revokee, revoker); err != nil {
+		return nil, err
 	}
 
 	return &types.MsgRevokeRoleResponse{}, nil
