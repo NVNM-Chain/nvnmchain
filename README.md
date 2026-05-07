@@ -2,7 +2,7 @@
 
 # NVNMChain
 
-NVNMChain is a real-world asset platform built as an ICS (Interchain Security) consumer chain. It uses the MANTRA EVM fork to expose EVM-compatible execution on top of Cosmos SDK, with custom modules for on-chain document anchoring and fee taxation.
+NVNMChain is a blockchain platform for anchoring document hashes and off-chain artifacts on-chain, built as an ICS (Interchain Security) consumer chain. It uses the MANTRA EVM fork to expose EVM-compatible execution on top of Cosmos SDK, with custom modules for on-chain document anchoring and fee taxation.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ NVNMChain is a real-world asset platform built as an ICS (Interchain Security) c
 
 NVNMChain is an ICS opt-in consumer chain secured by a provider chain (e.g. MANTRAChain) via Interchain Security v7. It runs an EVM execution environment using a MANTRA fork of `cosmos/evm`, enabling Solidity smart contracts and EVM precompiles alongside native Cosmos SDK transactions.
 
-The native staking token is `NVNM` (`anvnm` base denom, 18 decimals).
+The gas token is the IBC-wrapped MantraUSD token (`transfer/channel-1/erc20:<wMantraUSD address>`), bridged from the provider chain. As an ICS consumer chain, NVNMChain has no native staking at launch — validator security is inherited entirely from the provider chain.
 
 ## Architecture
 
