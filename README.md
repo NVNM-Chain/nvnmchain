@@ -2,34 +2,56 @@
 
 # NVNMChain
 
-NVNMChain is a global real-world assets platform built on blockchain technology. It leverages advanced blockchain features to facilitate the tokenization and trading of real-world assets.
+NVNMChain is a real-world asset platform built as an ICS (Interchain Security) consumer chain. It uses the MANTRA EVM fork to expose EVM-compatible execution on top of Cosmos SDK, with custom modules for on-chain document anchoring and fee taxation.
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Features](#features)
-- [Joining the Mainnet](#joining-the-mainnet)
-- [Getting Started](#getting-started)
-- [Development](#development)
 - [Architecture](#architecture)
 - [Modules](#modules)
+- [Getting Started](#getting-started)
+- [Development](#development)
 - [Security](#security)
 
 ## Overview
 
-NVNMChain is designed to bridge the gap between traditional assets and the blockchain world. By enabling the tokenization of real-world assets, it opens up new possibilities for asset management, trading, and financial innovation.
+NVNMChain is an ICS opt-in consumer chain secured by a provider chain (e.g. MANTRAChain) via Interchain Security v7. It runs an EVM execution environment using a MANTRA fork of `cosmos/evm`, enabling Solidity smart contracts and EVM precompiles alongside native Cosmos SDK transactions.
 
-## Features
+The native staking token is `NVNM` (`anvnm` base denom, 18 decimals).
 
-- Real-world asset tokenization
-- Advanced blockchain technology integration
-- Multi-token support for transaction fees
-- Custom fee market implementation
-- Cosmos SDK-based architecture
+## Architecture
+
+NVNMChain is built on:
+
+- **Cosmos SDK** (`MANTRA-Chain/cosmos-sdk v0.53.6`)
+- **MANTRA EVM** (`MANTRA-Chain/evm v0.6.0-v8-mantra-1`) — EVM execution with ERC-20 module and feemarket
+- **IBC Go v10** — cross-chain communication
+- **Interchain Security v7** — validator set security from the provider chain
+- **IBC Rate Limiting** — token transfer rate limits
+
+
+## Modules
+
+### `x/anchoring`
+
+Manages registries and versioned records for anchoring off-chain artifacts (e.g. documents, certificates) on-chain. Each record contains a checksum, URI, optional metadata, and a status field. Records are versioned per checksum within a registry.
+
+Key features:
+- RBAC (role-based access control) scoped per registry or per checksum
+- Roles: `admin`, `editor`
+- EVM precompile at `0x0000000000000000000000000000000000000a00`
+
+See [`x/anchoring/README.md`](x/anchoring/README.md) for full ABI, function selectors, and usage details.
+
+### `x/tax`
+
+Collects a configurable percentage of block fees and forwards them to a designated address. Runs in EndBlock before the CCV consumer module to ensure the tax cut is taken before any ICS reward distribution.
+
+Parameters (governable):
+- `tax.Tax` — fraction of fee collector balance to redirect (max 40%)
+- `tax.TaxAddress` — destination address for collected tax
 
 ## Getting Started
-
-To get started with NVNMChain, you'll need to set up your development environment.
 
 ### Prerequisites
 
@@ -37,76 +59,87 @@ To get started with NVNMChain, you'll need to set up your development environmen
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/NVNM-Chain/nvnmchain.git
-   cd nvnmchain
-   ```
+```bash
+git clone https://github.com/NVNM-Chain/nvnmchain.git
+cd nvnmchain
+make install
+```
 
-2. Build the project:
-   ```bash
-   make install
-   ```
+### Run a standalone single-node testnet
+
+```bash
+make build-and-run-single-node
+```
+
+This initialises a node with chain ID `test-chain`, native denom `anvnm`, and starts it locally.
+
+### Run a full ICS consumer testnet (with provider + Hermes relayer)
+
+From the `ccv-play` repository:
+
+```bash
+./local-testnet-opt-in-single.sh
+```
+
+The consumer JSON-RPC (EVM) endpoint will be available at `http://127.0.0.1:8541` with EVM chain ID `58886`.
 
 ## Development
 
+### Build
 
+```bash
+make build
+```
 
 ### Testing
 
-#### To run unit tests
+#### Unit tests
 ```bash
 make test-unit
 ```
 
-#### To run e2e tests
+#### E2E (interchain) tests
 
-For the first time, run the following command to build image and run e2e tests:
-```shell
+Build the Docker image and run:
+```bash
 make test-e2e
-````
-
-If you already have the image built, you can run the e2e tests directly:
-```shell
-cd test/e2e && go test -v -timeout 30m
 ```
 
-### Linter
-> Use same golangci-lint version as used in CI/CD pipeline to ensure consistency.
-
-#### Lint check
-```shell
-docker run -t --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.64.8 golangci-lint run
+If the image is already built:
+```bash
+cd tests/interchain && go test -v -timeout 30m
 ```
 
-#### Lint fix
-```shell
-docker run -t --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.64.8 golangci-lint run --fix
+### Linting
+
+Uses `golangci-lint v2.12.1`. Run the same version as CI to avoid false positives.
+
+#### Check
+```bash
+docker run -t --rm -v $(pwd):/app -w /app golangci/golangci-lint:v2.12.1 golangci-lint run
 ```
 
-## Architecture
+#### Fix
+```bash
+docker run -t --rm -v $(pwd):/app -w /app golangci/golangci-lint:v2.12.1 golangci-lint run --fix
+```
 
-NVNMChain follows the Cosmos SDK architecture and implements several custom modules to achieve its functionality. The project uses Architecture Decision Records (ADRs) to document important architectural decisions.
+### Generate protobuf
 
-For more information on the architecture and design decisions, please refer to the [ADR directory](adr/).
+```bash
+make proto-gen
+```
 
-## Modules
+### Generate docs
 
-NVNMChain includes several custom modules:
-
-- `x/tax`: Handles tax-related operations within the chain.
-
-For detailed information on each module, please refer to their respective README files in the `x/` directory.
+```bash
+make docs
+```
 
 ## Security
 
-We take security seriously. If you discover a security issue, please bring it to our attention right away!
-
-Please refer to our [Security Policy](SECURITY.md) for more details on reporting vulnerabilities.
-
-
-
+We take security seriously. If you discover a vulnerability, please follow the responsible disclosure process described in [SECURITY.md](SECURITY.md).
 
 ---
 
-For more detailed information, please check the documentation in the respective directories and files within the repository.
+For module-level documentation, refer to the README files under the `x/` directory and architecture decisions under `adr/`.
