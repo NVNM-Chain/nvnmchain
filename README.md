@@ -73,15 +73,6 @@ make build-and-run-single-node
 
 This initialises a node with chain ID `test-chain`, native denom `anvnm`, and starts it locally.
 
-### Run a full ICS consumer testnet (with provider + Hermes relayer)
-
-From the `ccv-play` repository:
-
-```bash
-./local-testnet-opt-in-single.sh
-```
-
-The consumer JSON-RPC (EVM) endpoint will be available at `http://127.0.0.1:8541` with EVM chain ID `58886`.
 
 ## Development
 
