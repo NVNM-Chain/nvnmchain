@@ -15,7 +15,7 @@ import (
 
 var (
 	EVMChainIDMap = map[string]uint64{
-		"nvnm-1":                 787110, // mainnet Chain ID
+		"nvnm-1":                 1611,   // mainnet Chain ID
 		"manveniam-1":            58887,  // testnet Chain ID
 		"nvnm-testnet-1":         787111, // dukong testnet Chain ID
 		"nvnmchain-canary-net-1": 59888,  // devnet Chain ID
