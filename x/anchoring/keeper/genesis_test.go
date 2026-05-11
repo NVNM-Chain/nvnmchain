@@ -13,13 +13,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func testParams() types.Params {
+	return types.Params{Admin: "cosmos1x0dqq9v6chqeholder"}
+}
+
 func TestInitGenesisAndExportGenesis(t *testing.T) {
 	k, ctx, _ := keeper.AnchoringKeeper(t)
 
-	// Prepare dummy data
-	params := types.Params{
-		Admin: "cosmos1x0dqq9v6chqeholder",
-	}
+	params := testParams()
 
 	registryOne := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
 	registryTwo := testRegistry(2, "aml_registry", "AML document registry", "cosmos1creator2", "2024-01-02T00:00:00Z")
@@ -174,9 +175,7 @@ func TestInitGenesisEmpty(t *testing.T) {
 
 	// Test with empty genesis state
 	emptyState := types.GenesisState{
-		Params: types.Params{
-			Admin: "cosmos1x0dqq9v6chqeholder",
-		},
+		Params:      testParams(),
 		Registries:  map[uint64]types.Registry{},
 		Records:     []types.Record{},
 		RoleAdmins:  map[string][]byte{},
@@ -210,9 +209,7 @@ func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
 	recordDuplicateKey := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash999", `{"document":"kyc_document_999"}`, "2024-01-01T11:00:00Z", 1)
 
 	genState := types.GenesisState{
-		Params: types.Params{
-			Admin: "cosmos1x0dqq9v6chqeholder",
-		},
+		Params: testParams(),
 		Registries: map[uint64]types.Registry{
 			1: registry,
 		},
@@ -224,6 +221,32 @@ func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
 	require.Contains(t, err.Error(), "registry_id=1")
 	require.Contains(t, err.Error(), "record_id=1")
 	require.Contains(t, err.Error(), "index=1")
+}
+
+func TestInitGenesisRejectsInvalidRegistryFields(t *testing.T) {
+	cases := []struct {
+		name        string
+		mutate      func(r *types.Registry)
+		expectedErr string
+	}{
+		{"empty name", func(r *types.Registry) { r.Name = "" }, "name cannot be empty"},
+		{"oversized name", func(r *types.Registry) { r.Name = strings.Repeat("a", types.MaxRegistryNameLen+1) }, "name exceeds max length"},
+		{"oversized description", func(r *types.Registry) { r.Description = strings.Repeat("a", types.MaxRegistryDescriptionLen+1) }, "description exceeds max length"},
+		{"oversized metadata", func(r *types.Registry) { r.Metadata = strings.Repeat("a", types.MaxRegistryMetadataLen+1) }, "metadata exceeds max length"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			k, ctx, _ := keeper.AnchoringKeeper(t)
+			registry := testRegistry(1, "kyc_registry", "desc", "cosmos1creator1", "2026-05-11T00:00:00Z")
+			tc.mutate(&registry)
+			err := k.InitGenesis(ctx, types.GenesisState{
+				Params:     testParams(),
+				Registries: map[uint64]types.Registry{registry.Id: registry},
+			})
+			require.ErrorContains(t, err, tc.expectedErr)
+		})
+	}
 }
 
 func TestInitGenesisRejectsOversizedRecordFields(t *testing.T) {
@@ -240,9 +263,7 @@ func TestInitGenesisRejectsOversizedRecordFields(t *testing.T) {
 	)
 
 	genState := types.GenesisState{
-		Params: types.Params{
-			Admin: "cosmos1x0dqq9v6chqeholder",
-		},
+		Params: testParams(),
 		Registries: map[uint64]types.Registry{
 			1: registry,
 		},
