@@ -7,6 +7,10 @@ const (
 	EventTypeUpdateRecordStatus = "update_record_status"
 	EventTypeGrantRole          = "grant_role"
 	EventTypeRevokeRole         = "revoke_role"
+	// EventTypeAnchoringFeeRefunded marks an AnchoringFee overage refund.
+	// Accounting tooling should index this event (or fee_collector balance
+	// deltas) rather than deriving fees from EVM receipts or tx fields.
+	EventTypeAnchoringFeeRefunded = "anchoring_fee_refunded"
 
 	// attribute keys
 	AttributeKeyRegistryName   = "registry_name"
@@ -20,4 +24,6 @@ const (
 	AttributeKeyRevokee        = "revokee"
 	AttributeKeyRevoker        = "revoker"
 	AttributeKeyRole           = "role"
+	AttributeKeyFeePayer       = "fee_payer"
+	AttributeKeyRefundAmount   = "refund_amount"
 )

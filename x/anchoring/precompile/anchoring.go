@@ -37,7 +37,9 @@ var HumanABI = []string{
 	"function revokeRole(uint64 registryId, string checksum, address account, string role) returns ()",
 }
 
-var AnchoringPrecompileAddress = common.HexToAddress("0x0000000000000000000000000000000000000a00")
+// Re-exported from x/anchoring/types so non-EVM packages can reference the
+// constant without pulling in this build-tagged package.
+var AnchoringPrecompileAddress = types.AnchoringPrecompileAddress
 
 var _ vm.PrecompiledContract = &Precompile{}
 

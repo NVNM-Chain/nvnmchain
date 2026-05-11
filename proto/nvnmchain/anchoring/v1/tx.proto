@@ -2,6 +2,7 @@ syntax = "proto3";
 package nvnmchain.anchoring.v1;
 
 import "amino/amino.proto";
+import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
@@ -44,6 +45,9 @@ message MsgUpdateParams {
   // authority is the address that controls the module parameters.
   string authority = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   string admin     = 2 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // anchoring_fee is the per-tx fee cap for direct anchoring traffic; see
+  // Params.anchoring_fee. Leave empty to keep the existing value.
+  cosmos.base.v1beta1.Coin anchoring_fee = 3 [ (gogoproto.nullable) = true ];
 }
 
 // MsgUpdateParamsResponse defines the response structure for executing a

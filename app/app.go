@@ -44,6 +44,7 @@ import (
 
 	"github.com/NVNM-Chain/nvnmchain/app/ante"
 	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	"github.com/NVNM-Chain/nvnmchain/app/posthandler"
 	"github.com/NVNM-Chain/nvnmchain/app/upgrades"
 	_ "github.com/NVNM-Chain/nvnmchain/client/docs/statik"
 	"github.com/NVNM-Chain/nvnmchain/client/docs/swagger"
@@ -916,7 +917,15 @@ func New(
 	}
 
 	app.setAnteHandler(txConfig, maxGasWanted)
-	// app.setPostHandler()
+	app.setPostHandler()
+	// Wrap for composition: SetHooks panics on a second call.
+	app.EVMKeeper.SetHooks(evmkeeper.NewMultiEvmHooks(
+		posthandler.NewAnchoringEVMRefundHook(
+			app.AnchoringKeeper,
+			app.BankKeeper,
+			authtypes.FeeCollectorName,
+		),
+	))
 
 	// configure mempool
 	prepareProposalHandler, processProposalHandler := app.configureEVMMempool(appOpts, logger)
@@ -982,9 +991,16 @@ func (app *App) onPendingTx(hash ethcommon.Hash) {
 	}
 }
 
-// no post handler currently
-// func (app *App) setPostHandler() {
-// }
+func (app *App) setPostHandler() {
+	postDecorators := []sdk.PostDecorator{
+		posthandler.NewAnchoringRefundDecorator(
+			app.AnchoringKeeper,
+			app.BankKeeper,
+			authtypes.FeeCollectorName,
+		),
+	}
+	app.SetPostHandler(sdk.ChainPostDecorators(postDecorators...))
+}
 
 // Name returns the name of the App
 func (app *App) Name() string { return app.BaseApp.Name() }

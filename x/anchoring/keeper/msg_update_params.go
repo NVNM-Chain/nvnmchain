@@ -31,6 +31,10 @@ func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams)
 		updateParams.Admin = req.Admin
 	}
 
+	if req.AnchoringFee != nil {
+		updateParams.AnchoringFee = *req.AnchoringFee
+	}
+
 	if err := updateParams.Validate(); err != nil {
 		return nil, err
 	}
