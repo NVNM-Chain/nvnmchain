@@ -14,7 +14,7 @@ import (
 )
 
 func testParams() types.Params {
-	return types.Params{Admin: "cosmos1x0dqq9v6chqeholder"}
+	return types.Params{Admin: sample.AccAddress()}
 }
 
 func TestInitGenesisAndExportGenesis(t *testing.T) {
@@ -22,8 +22,8 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 
 	params := testParams()
 
-	registryOne := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
-	registryTwo := testRegistry(2, "aml_registry", "AML document registry", "cosmos1creator2", "2024-01-02T00:00:00Z")
+	registryOne := testRegistry(1, "kyc_registry", "KYC document registry", sample.AccAddress(), "2024-01-01T00:00:00Z")
+	registryTwo := testRegistry(2, "aml_registry", "AML document registry", sample.AccAddress(), "2024-01-02T00:00:00Z")
 
 	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001","figi":"BBG000B9M9V0","individualId":"individual_001"}`, "2024-01-01T10:00:00Z", 1)
 	recordTwo := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash002", `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`, "2024-01-01T11:00:00Z", 2)
@@ -204,7 +204,7 @@ func TestInitGenesisEmpty(t *testing.T) {
 
 func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
 	k, ctx, _ := keeper.AnchoringKeeper(t)
-	registry := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
+	registry := testRegistry(1, "kyc_registry", "KYC document registry", sample.AccAddress(), "2024-01-01T00:00:00Z")
 	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001"}`, "2024-01-01T10:00:00Z", 1)
 	recordDuplicateKey := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash999", `{"document":"kyc_document_999"}`, "2024-01-01T11:00:00Z", 1)
 
@@ -233,12 +233,15 @@ func TestInitGenesisRejectsInvalidRegistryFields(t *testing.T) {
 		{"oversized name", func(r *types.Registry) { r.Name = strings.Repeat("a", types.MaxRegistryNameLen+1) }, "name exceeds max length"},
 		{"oversized description", func(r *types.Registry) { r.Description = strings.Repeat("a", types.MaxRegistryDescriptionLen+1) }, "description exceeds max length"},
 		{"oversized metadata", func(r *types.Registry) { r.Metadata = strings.Repeat("a", types.MaxRegistryMetadataLen+1) }, "metadata exceeds max length"},
+		{"zero id", func(r *types.Registry) { r.Id = 0 }, "id cannot be <= 0"},
+		{"empty creator", func(r *types.Registry) { r.Creator = "" }, "creator cannot be empty"},
+		{"invalid creator bech32", func(r *types.Registry) { r.Creator = "not-a-bech32-address" }, "invalid creator address"},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			k, ctx, _ := keeper.AnchoringKeeper(t)
-			registry := testRegistry(1, "kyc_registry", "desc", "cosmos1creator1", "2026-05-11T00:00:00Z")
+			registry := testRegistry(1, "kyc_registry", "desc", sample.AccAddress(), "2026-05-11T00:00:00Z")
 			tc.mutate(&registry)
 			err := k.InitGenesis(ctx, types.GenesisState{
 				Params:     testParams(),
@@ -249,10 +252,21 @@ func TestInitGenesisRejectsInvalidRegistryFields(t *testing.T) {
 	}
 }
 
+func TestInitGenesisRejectsMapKeyIdMismatch(t *testing.T) {
+	k, ctx, _ := keeper.AnchoringKeeper(t)
+	registry := testRegistry(1, "kyc_registry", "desc", sample.AccAddress(), "2026-05-11T00:00:00Z")
+	err := k.InitGenesis(ctx, types.GenesisState{
+		Params:     testParams(),
+		Registries: map[uint64]types.Registry{7: registry},
+	})
+	require.ErrorIs(t, err, types.ErrInvalidGenesisState)
+	require.ErrorContains(t, err, "registry map key 7 does not match registry id 1")
+}
+
 func TestInitGenesisRejectsOversizedRecordFields(t *testing.T) {
 	k, ctx, _ := keeper.AnchoringKeeper(t)
 
-	registry := testRegistry(1, "kyc_registry", "KYC document registry", "cosmos1creator1", "2024-01-01T00:00:00Z")
+	registry := testRegistry(1, "kyc_registry", "KYC document registry", sample.AccAddress(), "2024-01-01T00:00:00Z")
 	record := testRecord(
 		"kyc_registry",
 		"ipfs://QmExample1",
