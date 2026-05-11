@@ -11,6 +11,9 @@ import (
 )
 
 func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
 	if err := req.ValidateBasic(); err != nil {
 		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}

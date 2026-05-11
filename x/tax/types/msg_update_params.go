@@ -11,11 +11,11 @@ import (
 func (msg MsgUpdateParams) ValidateBasic() error {
 	// Validate Authority address
 	if msg.Authority == "" {
-		return fmt.Errorf("Authority address cannot be empty")
+		return fmt.Errorf("authority address cannot be empty")
 	}
 	_, err := sdk.AccAddressFromBech32(msg.Authority)
 	if err != nil {
-		return fmt.Errorf("invalid Authority address: %w", err)
+		return fmt.Errorf("invalid authority address: %w", err)
 	}
 
 	// Validate Tax
