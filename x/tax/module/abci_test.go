@@ -102,3 +102,29 @@ func TestEndBlocker_InvalidTaxAddress(t *testing.T) {
 		})
 	}
 }
+
+func TestEndBlocker_DustBalanceNoEvent(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	feeCollector := authtypes.NewEmptyModuleAccount(authtypes.FeeCollectorName)
+	ak := &keepertest.MockAuthKeeper{
+		ModuleAccounts: map[string]sdk.ModuleAccountI{authtypes.FeeCollectorName: feeCollector},
+	}
+	bk := &keepertest.MockBankKeeper{
+		Balances: map[string]sdk.Coins{
+			feeCollector.GetAddress().String(): sdk.NewCoins(sdk.NewInt64Coin("uom", 1)),
+		},
+	}
+	k, ctx, _ := keepertest.TaxKeeperWithAuthAndBankKeeper(t, ak, bk)
+	ctx = ctx.WithBlockHeight(2)
+
+	require.NoError(t, k.Params.Set(ctx, types.Params{
+		TaxAddress: keepertest.TestSenderAddr,
+		Tax:        math.LegacyMustNewDecFromStr("0.1"),
+	}))
+
+	require.NoError(t, tax.EndBlocker(ctx, k))
+
+	for _, ev := range ctx.EventManager().Events() {
+		require.NotEqual(t, types.EventTypeTaxAmount, ev.Type)
+	}
+}
