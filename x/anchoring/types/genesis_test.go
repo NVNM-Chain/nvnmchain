@@ -6,13 +6,14 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/NVNM-Chain/nvnmchain/app"
 	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	"github.com/stretchr/testify/require"
 )
 
 func defaultAnchoringFee() sdk.Coin {
-	return sdk.NewCoin(types.DefaultAnchoringFeeDenom, types.DefaultAnchoringFeeAmount)
+	return sdk.NewCoin(app.FutureStakingDenom, types.DefaultAnchoringFeeAmount)
 }
 
 func TestGenesisState_ValidateParams(t *testing.T) {
@@ -60,7 +61,7 @@ func TestGenesisState_ValidateParams(t *testing.T) {
 			genState: &types.GenesisState{
 				Params: types.NewParams(
 					"nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
-					sdk.NewInt64Coin(types.DefaultAnchoringFeeDenom, 0),
+					sdk.NewInt64Coin(app.FutureStakingDenom, 0),
 				),
 			},
 			valid: false,

@@ -46,6 +46,7 @@ import (
 	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
 	"github.com/NVNM-Chain/nvnmchain/app/posthandler"
 	"github.com/NVNM-Chain/nvnmchain/app/upgrades"
+	v1AnchoringFee "github.com/NVNM-Chain/nvnmchain/app/upgrades/v1_1"
 	_ "github.com/NVNM-Chain/nvnmchain/client/docs/statik"
 	"github.com/NVNM-Chain/nvnmchain/client/docs/swagger"
 	taxkeeper "github.com/NVNM-Chain/nvnmchain/x/tax/keeper"
@@ -169,6 +170,9 @@ func init() {
 	sdk.DefaultPowerReduction = cosmosevmutils.AttoPowerReduction
 	stakingtypes.DefaultMinCommissionRate = math.LegacyZeroDec()
 
+	// Fallback for reads before x/vm InitGenesis (unit tests only).
+	evmtypes.SetDefaultEvmCoinInfo(EVMCoinInfo)
+
 	// DefaultNodeHome default home directories for nvnmchaind
 	var err error
 	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(NodeDir)
@@ -221,7 +225,7 @@ var maccPerms = map[string][]string{
 	anchoringtypes.ModuleName: nil,
 }
 
-var Upgrades = []upgrades.Upgrade{}
+var Upgrades = []upgrades.Upgrade{v1AnchoringFee.Upgrade}
 
 var (
 	_ runtime.AppI            = (*App)(nil)
@@ -1258,7 +1262,9 @@ func (app *App) setupUpgradeHandlers() {
 			upgrade.CreateUpgradeHandler(
 				app.ModuleManager,
 				app.configurator,
-				&upgrades.UpgradeKeepers{},
+				&upgrades.UpgradeKeepers{
+					AnchoringKeeper: app.AnchoringKeeper,
+				},
 				app.keys,
 			),
 		)
