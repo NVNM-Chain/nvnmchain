@@ -4,10 +4,16 @@ import (
 	"strings"
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	"github.com/stretchr/testify/require"
 )
+
+func defaultAnchoringFee() sdk.Coin {
+	return sdk.NewCoin(types.DefaultAnchoringFeeDenom, types.DefaultAnchoringFeeAmount)
+}
 
 func TestGenesisState_ValidateParams(t *testing.T) {
 	appparams.SetAddressPrefixes()
@@ -24,28 +30,38 @@ func TestGenesisState_ValidateParams(t *testing.T) {
 		{
 			desc: "invalid bech32 address",
 			genState: &types.GenesisState{
-				Params: types.NewParams("nvnm1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx073"),
+				Params: types.NewParams("nvnm1axznhnm82lah8qqvp9hxdad49yx3s5dcmnx073", defaultAnchoringFee()),
 			},
 			valid: false,
 		},
 		{
 			desc: "valid custom parameters",
 			genState: &types.GenesisState{
-				Params: types.NewParams("nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"),
+				Params: types.NewParams("nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca", defaultAnchoringFee()),
 			},
 			valid: true,
 		},
 		{
 			desc: "empty admin address is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams(""),
+				Params: types.NewParams("", defaultAnchoringFee()),
 			},
 			valid: false,
 		},
 		{
 			desc: "tax address with wrong prefix is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("cosmos1qypqxpq9qcrsszg2pvxq6rs0zqg3yyc5lzutu9"),
+				Params: types.NewParams("cosmos1qypqxpq9qcrsszg2pvxq6rs0zqg3yyc5lzutu9", defaultAnchoringFee()),
+			},
+			valid: false,
+		},
+		{
+			desc: "zero anchoring fee amount is invalid",
+			genState: &types.GenesisState{
+				Params: types.NewParams(
+					"nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca",
+					sdk.NewInt64Coin(types.DefaultAnchoringFeeDenom, 0),
+				),
 			},
 			valid: false,
 		},
@@ -65,7 +81,7 @@ func TestGenesisState_ValidateParams(t *testing.T) {
 func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 	appparams.SetAddressPrefixes()
 
-	validParams := types.NewParams("nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca")
+	validParams := types.NewParams("nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca", defaultAnchoringFee())
 
 	validRegistry := types.Registry{
 		Id:      1,
@@ -375,7 +391,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 func TestGenesisState_ValidateRBAC(t *testing.T) {
 	appparams.SetAddressPrefixes()
 
-	validParams := types.NewParams("nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca")
+	validParams := types.NewParams("nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca", defaultAnchoringFee())
 	validKey := "\x01\x02\x03" // non-empty binary-encoded key
 
 	tests := []struct {
