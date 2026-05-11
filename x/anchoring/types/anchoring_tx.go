@@ -10,9 +10,9 @@ import (
 // packages can reference it without depending on the build-tagged precompile.
 var AnchoringPrecompileAddress = common.HexToAddress("0x0000000000000000000000000000000000000a00")
 
-// IsCosmosAnchoringTx returns true for single-msg MsgAddRecord txs only.
+// IsCosmosAnchoringTx returns true for single-msg user-facing anchoring txs.
 // The single-msg check prevents bundles like [MsgAddRecord, MsgSend] from
-// inheriting the fee cap.
+// inheriting the fee cap. MsgUpdateParams is gov-controlled and excluded.
 func IsCosmosAnchoringTx(tx sdk.Tx) bool {
 	if tx == nil {
 		return false
@@ -21,7 +21,12 @@ func IsCosmosAnchoringTx(tx sdk.Tx) bool {
 	if len(msgs) != 1 {
 		return false
 	}
-	if _, ok := msgs[0].(*MsgAddRecord); ok {
+	switch msgs[0].(type) {
+	case *MsgAddRecord,
+		*MsgAddRegistry,
+		*MsgUpdateRecordStatus,
+		*MsgGrantRole,
+		*MsgRevokeRole:
 		return true
 	}
 	return false

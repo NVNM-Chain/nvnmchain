@@ -28,6 +28,11 @@ func newEthTx(to *common.Address) sdk.Msg {
 
 func TestIsCosmosAnchoringTx(t *testing.T) {
 	addRecord := &types.MsgAddRecord{Sender: "nvnm1xyz"}
+	addRegistry := &types.MsgAddRegistry{Sender: "nvnm1xyz"}
+	updateStatus := &types.MsgUpdateRecordStatus{Editor: "nvnm1xyz"}
+	grantRole := &types.MsgGrantRole{Admin: "nvnm1xyz"}
+	revokeRole := &types.MsgRevokeRole{Admin: "nvnm1xyz"}
+	updateParams := &types.MsgUpdateParams{Authority: "nvnm1xyz"}
 	send := &banktypes.MsgSend{}
 
 	tests := []struct {
@@ -36,9 +41,15 @@ func TestIsCosmosAnchoringTx(t *testing.T) {
 		want bool
 	}{
 		{"single MsgAddRecord", fakeTx{msgs: []sdk.Msg{addRecord}}, true},
+		{"single MsgAddRegistry", fakeTx{msgs: []sdk.Msg{addRegistry}}, true},
+		{"single MsgUpdateRecordStatus", fakeTx{msgs: []sdk.Msg{updateStatus}}, true},
+		{"single MsgGrantRole", fakeTx{msgs: []sdk.Msg{grantRole}}, true},
+		{"single MsgRevokeRole", fakeTx{msgs: []sdk.Msg{revokeRole}}, true},
+		{"MsgUpdateParams excluded (gov)", fakeTx{msgs: []sdk.Msg{updateParams}}, false},
 		{"nil tx", nil, false},
 		{"empty msgs", fakeTx{}, false},
 		{"multi-msg bundle with MsgAddRecord", fakeTx{msgs: []sdk.Msg{addRecord, send}}, false},
+		{"multi-msg bundle all anchoring", fakeTx{msgs: []sdk.Msg{addRegistry, addRecord}}, false},
 		{"single non-anchoring msg", fakeTx{msgs: []sdk.Msg{send}}, false},
 	}
 	for _, tc := range tests {
