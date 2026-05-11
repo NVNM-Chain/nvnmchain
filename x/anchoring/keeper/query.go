@@ -57,9 +57,9 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 	if req.RecordId != 0 && req.RegistryId == 0 {
 		return nil, status.Error(codes.InvalidArgument, "record_id requires registry_id")
 	}
-	// index is per (registry_id, record_id)
-	if req.Index != 0 && (req.RegistryId == 0 || req.RecordId == 0) {
-		return nil, status.Error(codes.InvalidArgument, "index requires both registry_id and record_id")
+	// index is per (registry_id, record_id), record_id may be resolved from checksum
+	if req.Index != 0 && (req.RegistryId == 0 || (req.RecordId == 0 && req.Checksum == "")) {
+		return nil, status.Error(codes.InvalidArgument, "index requires registry_id and either record_id or checksum")
 	}
 
 	type paginator struct {
