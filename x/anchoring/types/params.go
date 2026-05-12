@@ -27,6 +27,12 @@ func (p *Params) ResolveAnchoringFeeDenom() {
 	}
 }
 
+// IsAnchoringFeeUsable guards the refund path to avoid nil amount panics on IsPositive/GT/BigInt
+func (p Params) IsAnchoringFeeUsable() bool {
+	fee := p.AnchoringFee
+	return fee.Denom != "" && !fee.Amount.IsNil() && fee.Amount.IsPositive()
+}
+
 // DefaultParams ships an empty AnchoringFee.Denom; anchoring InitGenesis
 // and the v1.1.0 upgrade handler resolve it to evmtypes.GetEVMCoinDenom().
 func DefaultParams() Params {

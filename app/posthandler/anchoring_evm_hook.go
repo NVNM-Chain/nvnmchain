@@ -62,6 +62,9 @@ func (h AnchoringEVMRefundHook) PostTxProcessing(
 	if err != nil {
 		return fmt.Errorf("get anchoring params: %w", err)
 	}
+	if !params.IsAnchoringFeeUsable() {
+		return nil
+	}
 	cap := params.AnchoringFee
 	capAmt := cap.Amount.BigInt()
 	if netPaid.Cmp(capAmt) <= 0 {

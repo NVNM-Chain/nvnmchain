@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/NVNM-Chain/nvnmchain/app/upgrades"
+	anchoringtypes "github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 )
 
 const UpgradeName = "v1.1.0"
@@ -25,24 +26,35 @@ func CreateUpgradeHandler(
 		if err != nil {
 			return toVM, err
 		}
-		if err := ResolveAnchoringFeeDenom(sdk.UnwrapSDKContext(ctx), keepers); err != nil {
+		if err := ResolveAnchoringFee(sdk.UnwrapSDKContext(ctx), keepers); err != nil {
 			return toVM, err
 		}
 		return toVM, nil
 	}
 }
 
-// ResolveAnchoringFeeDenom delegates to Params.ResolveAnchoringFeeDenom and
-// writes back only if the substitution actually changed the denom.
-func ResolveAnchoringFeeDenom(ctx sdk.Context, keepers *upgrades.UpgradeKeepers) error {
+// ResolveAnchoringFee fills any missing field on Params.AnchoringFee: the denom
+// (via Params.ResolveAnchoringFeeDenom) and the amount (via DefaultAnchoringFeeAmount
+// when nil or non-positive). Chains upgrading from a pre-anchoring_fee version
+// have a zero-value Coin after proto unmarshal — both fields must be healed,
+// not just the denom, or the refund path panics on the nil amount.
+func ResolveAnchoringFee(ctx sdk.Context, keepers *upgrades.UpgradeKeepers) error {
 	params, err := keepers.AnchoringKeeper.Params.Get(ctx)
 	if err != nil {
 		return fmt.Errorf("get anchoring params: %w", err)
 	}
-	if params.AnchoringFee.Denom != "" {
+	changed := false
+	if params.AnchoringFee.Denom == "" {
+		params.ResolveAnchoringFeeDenom()
+		changed = true
+	}
+	if params.AnchoringFee.Amount.IsNil() || !params.AnchoringFee.Amount.IsPositive() {
+		params.AnchoringFee.Amount = anchoringtypes.DefaultAnchoringFeeAmount
+		changed = true
+	}
+	if !changed {
 		return nil
 	}
-	params.ResolveAnchoringFeeDenom()
 	return keepers.AnchoringKeeper.Params.Set(ctx, params)
 }
 

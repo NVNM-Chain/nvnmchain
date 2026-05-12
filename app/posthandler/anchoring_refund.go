@@ -72,6 +72,9 @@ func (d AnchoringRefundDecorator) refundCosmos(ctx sdk.Context, tx sdk.Tx) error
 	if err != nil {
 		return fmt.Errorf("get anchoring params: %w", err)
 	}
+	if !params.IsAnchoringFeeUsable() {
+		return nil
+	}
 	cap := params.AnchoringFee
 
 	paidInCapDenom := paid.AmountOf(cap.Denom)

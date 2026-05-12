@@ -135,3 +135,36 @@ func TestAnchoringRefundDecorator(t *testing.T) {
 		})
 	}
 }
+
+// malformed cap must skip refund, not panic.
+func TestAnchoringRefundDecorator_MalformedCap(t *testing.T) {
+	payer, err := sdk.AccAddressFromBech32(testkeeper.TestSenderAddr)
+	require.NoError(t, err)
+	addRecord := &anchoringtypes.MsgAddRecord{Sender: testkeeper.TestSenderAddr}
+	paid5c := sdk.NewCoins(sdk.NewCoin(capDenom, math.NewIntWithDecimal(5, 16)))
+
+	tests := []struct {
+		name string
+		cap  sdk.Coin
+	}{
+		{"nil amount", sdk.Coin{Denom: capDenom, Amount: math.Int{}}},
+		{"zero amount", sdk.Coin{Denom: capDenom, Amount: math.ZeroInt()}},
+		{"empty denom", sdk.Coin{Denom: "", Amount: math.NewIntWithDecimal(1, 16)}},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			k, ctx, _ := testkeeper.AnchoringKeeper(t)
+			params, err := k.Params.Get(ctx)
+			require.NoError(t, err)
+			params.AnchoringFee = tc.cap
+			require.NoError(t, k.Params.Set(ctx, params))
+			bk := &mockBank{}
+			dec := posthandler.NewAnchoringRefundDecorator(k, bk, authtypes.FeeCollectorName)
+			require.NotPanics(t, func() {
+				runPost(t, dec, ctx, fakeFeeTx{msgs: []sdk.Msg{addRecord}, fee: paid5c, payer: payer}, true)
+			})
+			require.Empty(t, bk.calls)
+		})
+	}
+}
