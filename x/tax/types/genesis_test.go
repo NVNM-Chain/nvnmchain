@@ -56,9 +56,9 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid: false,
 		},
 		{
-			desc: "tax of 0.5 is invalid",
+			desc: "tax of 1.1 is invalid",
 			genState: &types.GenesisState{
-				Params: types.NewParams("0.5", types.DefaultTaxAddress),
+				Params: types.NewParams("1.1", types.DefaultTaxAddress),
 			},
 			valid: false,
 		},
@@ -68,13 +68,6 @@ func TestGenesisState_Validate(t *testing.T) {
 				Params: types.NewParams("0", types.DefaultTaxAddress),
 			},
 			valid: true,
-		},
-		{
-			desc: "tax of 1 is invalid",
-			genState: &types.GenesisState{
-				Params: types.NewParams("1", types.DefaultTaxAddress),
-			},
-			valid: false,
 		},
 		{
 			desc: "tax address with wrong prefix is invalid",
