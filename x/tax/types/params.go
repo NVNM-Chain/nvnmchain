@@ -11,7 +11,7 @@ import (
 var (
 	DefaultTax        = "0.4"
 	DefaultTaxAddress = "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"
-	MaxTax            = math.LegacyMustNewDecFromStr("0.4") // 40 %
+	MaxTax            = math.LegacyOneDec() // 100 %
 )
 
 // NewParams creates a new Params instance.
