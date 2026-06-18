@@ -79,6 +79,9 @@ func (k Keeper) AllocateTax(ctx context.Context, tax math.LegacyDec, taxAddress 
 	}
 
 	taxAllocation, _ := feesCollected.MulDec(tax).TruncateDecimal()
+	if taxAllocation.IsZero() {
+		return nil
+	}
 
 	// transfer allocated tax to the specified account
 	err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, k.feeCollectorName, taxAddress, taxAllocation)
