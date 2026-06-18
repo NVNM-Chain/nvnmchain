@@ -3,32 +3,50 @@ package types
 import (
 	"fmt"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	evmtypes "github.com/cosmos/evm/x/vm/types"
 )
 
-// Declare defaults for tax and tax address
 const DefaultAdminAddress = "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"
 
-// NewParams creates a new Params instance.
-func NewParams(
-	admin string,
-) Params {
-	return Params{
-		Admin: admin,
+// DefaultAnchoringFeeAmount: 10^16 = 1¢ at 18-decimal USD-pegged denom.
+var DefaultAnchoringFeeAmount = math.NewIntWithDecimal(1, 16)
+
+func NewParams(admin string, anchoringFee sdk.Coin) Params {
+	return Params{Admin: admin, AnchoringFee: anchoringFee}
+}
+
+// ResolveAnchoringFeeDenom fills AnchoringFee.Denom from the registered EVM
+// coin denom when the stored value is the InitGenesis/upgrade sentinel.
+// Single source of truth for InitGenesis, MsgUpdateParams, and the v1.1.0
+// upgrade handler.
+func (p *Params) ResolveAnchoringFeeDenom() {
+	if p.AnchoringFee.Denom == "" {
+		p.AnchoringFee.Denom = evmtypes.GetEVMCoinDenom()
 	}
 }
 
-// DefaultParams returns a default set of parameters.
-func DefaultParams() Params {
-	return NewParams(DefaultAdminAddress)
+// IsAnchoringFeeUsable guards the refund path to avoid nil amount panics on IsPositive/GT/BigInt
+func (p Params) IsAnchoringFeeUsable() bool {
+	fee := p.AnchoringFee
+	return fee.Denom != "" && !fee.Amount.IsNil() && fee.Amount.IsPositive()
 }
 
-// Validate validates the set of params.
+// DefaultParams ships an empty AnchoringFee.Denom; anchoring InitGenesis
+// and the v1.1.0 upgrade handler resolve it to evmtypes.GetEVMCoinDenom().
+func DefaultParams() Params {
+	return NewParams(
+		DefaultAdminAddress,
+		sdk.Coin{Denom: "", Amount: DefaultAnchoringFeeAmount},
+	)
+}
+
 func (p Params) Validate() error {
 	if err := ValidateAdminAddress(p.Admin); err != nil {
 		return err
 	}
-	return nil
+	return ValidateAnchoringFee(p.AnchoringFee)
 }
 
 // ValidateAdminAddress validates the admin address.
@@ -36,9 +54,23 @@ func ValidateAdminAddress(address string) error {
 	if address == "" {
 		return fmt.Errorf("admin address cannot be empty")
 	}
-	_, err := sdk.AccAddressFromBech32(address)
-	if err != nil {
+	if _, err := sdk.AccAddressFromBech32(address); err != nil {
 		return fmt.Errorf("invalid admin address: %w", err)
+	}
+	return nil
+}
+
+// ValidateAnchoringFee accepts empty denom (the InitGenesis/upgrade
+// sentinel) but requires a positive amount.
+func ValidateAnchoringFee(fee sdk.Coin) error {
+	if fee.Amount.IsNil() || !fee.Amount.IsPositive() {
+		return fmt.Errorf("anchoring fee amount must be positive")
+	}
+	if fee.Denom == "" {
+		return nil
+	}
+	if err := sdk.ValidateDenom(fee.Denom); err != nil {
+		return fmt.Errorf("invalid anchoring fee denom: %w", err)
 	}
 	return nil
 }

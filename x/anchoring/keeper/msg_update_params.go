@@ -31,6 +31,18 @@ func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams)
 		updateParams.Admin = req.Admin
 	}
 
+	if req.AnchoringFee != nil {
+		if req.AnchoringFee.Denom == "" {
+			return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "anchoring fee denom cannot be empty")
+		}
+		updateParams.AnchoringFee = *req.AnchoringFee
+	}
+
+	// Auto-heal the stored sentinel from the EVM denom so Admin-only updates
+	// on legacy state aren't blocked. Runs before Validate so the validator
+	// sees the final value.
+	updateParams.ResolveAnchoringFeeDenom()
+
 	if err := updateParams.Validate(); err != nil {
 		return nil, err
 	}

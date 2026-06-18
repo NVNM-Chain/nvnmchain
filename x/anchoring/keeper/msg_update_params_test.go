@@ -3,10 +3,13 @@ package keeper_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
+	"github.com/NVNM-Chain/nvnmchain/app"
 	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
 	keepertest "github.com/NVNM-Chain/nvnmchain/testutil/keeper"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,7 +18,9 @@ func TestMsgUpdateParams(t *testing.T) {
 	k, ctx, _ := keepertest.AnchoringKeeper(t)
 	ms := keeper.NewMsgServerImpl(k)
 
+	// Reflect post-upgrade state: denom resolved by v1.1.0 / InitGenesis.
 	params := types.DefaultParams()
+	params.AnchoringFee.Denom = app.FutureStakingDenom
 	require.NoError(t, k.Params.Set(ctx, params))
 
 	// default params
@@ -51,6 +56,23 @@ func TestMsgUpdateParams(t *testing.T) {
 			expErr:    true,
 			expErrMsg: "invalid sender; expected admin",
 		},
+		{
+			name: "empty denom rejected at runtime",
+			input: &types.MsgUpdateParams{
+				Authority:    keepertest.TestSenderAddr,
+				AnchoringFee: &sdk.Coin{Denom: "", Amount: math.NewIntWithDecimal(1, 16)},
+			},
+			expErr:    true,
+			expErrMsg: "anchoring fee denom cannot be empty",
+		},
+		{
+			name: "non-empty denom accepted",
+			input: &types.MsgUpdateParams{
+				Authority:    keepertest.TestSenderAddr,
+				AnchoringFee: &sdk.Coin{Denom: "updated", Amount: math.NewIntWithDecimal(2, 16)},
+			},
+			expErr: false,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -70,4 +92,46 @@ func TestMsgUpdateParams(t *testing.T) {
 			}
 		})
 	}
+}
+
+// Admin-only update on the InitGenesis/upgrade sentinel auto-heals the denom
+// from the EVM coin instead of failing validation.
+func TestMsgUpdateParams_AdminOnlyAutoHealsWhenStoredDenomEmpty(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, _ := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+
+	params := types.DefaultParams() // AnchoringFee.Denom is "" by default
+	require.NoError(t, k.Params.Set(ctx, params))
+
+	_, err := ms.UpdateParams(ctx, &types.MsgUpdateParams{
+		Authority: types.DefaultAdminAddress,
+		Admin:     keepertest.TestSenderAddr,
+	})
+	require.NoError(t, err)
+	got, err := k.Params.Get(ctx)
+	require.NoError(t, err)
+	require.Equal(t, keepertest.TestSenderAddr, got.Admin)
+	require.Equal(t, app.FutureStakingDenom, got.AnchoringFee.Denom)
+}
+
+// Admin-only update must not clobber a denom already set by the operator.
+func TestMsgUpdateParams_AdminOnlyPreservesExistingDenom(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, _ := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+
+	const operatorDenom = "ibc/CAFEBABE"
+	params := types.DefaultParams()
+	params.AnchoringFee = sdk.NewCoin(operatorDenom, math.NewIntWithDecimal(1, 16))
+	require.NoError(t, k.Params.Set(ctx, params))
+
+	_, err := ms.UpdateParams(ctx, &types.MsgUpdateParams{
+		Authority: types.DefaultAdminAddress,
+		Admin:     keepertest.TestSenderAddr,
+	})
+	require.NoError(t, err)
+	got, err := k.Params.Get(ctx)
+	require.NoError(t, err)
+	require.Equal(t, operatorDenom, got.AnchoringFee.Denom, "operator-set denom must survive an admin-only update")
 }

@@ -44,7 +44,9 @@ import (
 
 	"github.com/NVNM-Chain/nvnmchain/app/ante"
 	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
+	"github.com/NVNM-Chain/nvnmchain/app/posthandler"
 	"github.com/NVNM-Chain/nvnmchain/app/upgrades"
+	v1AnchoringFee "github.com/NVNM-Chain/nvnmchain/app/upgrades/v1_1"
 	_ "github.com/NVNM-Chain/nvnmchain/client/docs/statik"
 	"github.com/NVNM-Chain/nvnmchain/client/docs/swagger"
 	taxkeeper "github.com/NVNM-Chain/nvnmchain/x/tax/keeper"
@@ -168,6 +170,9 @@ func init() {
 	sdk.DefaultPowerReduction = cosmosevmutils.AttoPowerReduction
 	stakingtypes.DefaultMinCommissionRate = math.LegacyZeroDec()
 
+	// Fallback for reads before x/vm InitGenesis (unit tests only).
+	evmtypes.SetDefaultEvmCoinInfo(EVMCoinInfo)
+
 	// DefaultNodeHome default home directories for nvnmchaind
 	var err error
 	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(NodeDir)
@@ -220,7 +225,7 @@ var maccPerms = map[string][]string{
 	anchoringtypes.ModuleName: nil,
 }
 
-var Upgrades = []upgrades.Upgrade{}
+var Upgrades = []upgrades.Upgrade{v1AnchoringFee.Upgrade}
 
 var (
 	_ runtime.AppI            = (*App)(nil)
@@ -916,7 +921,15 @@ func New(
 	}
 
 	app.setAnteHandler(txConfig, maxGasWanted)
-	// app.setPostHandler()
+	app.setPostHandler()
+	// Wrap for composition: SetHooks panics on a second call.
+	app.EVMKeeper.SetHooks(evmkeeper.NewMultiEvmHooks(
+		posthandler.NewAnchoringEVMRefundHook(
+			app.AnchoringKeeper,
+			app.BankKeeper,
+			authtypes.FeeCollectorName,
+		),
+	))
 
 	// configure mempool
 	prepareProposalHandler, processProposalHandler := app.configureEVMMempool(appOpts, logger)
@@ -982,9 +995,16 @@ func (app *App) onPendingTx(hash ethcommon.Hash) {
 	}
 }
 
-// no post handler currently
-// func (app *App) setPostHandler() {
-// }
+func (app *App) setPostHandler() {
+	postDecorators := []sdk.PostDecorator{
+		posthandler.NewAnchoringRefundDecorator(
+			app.AnchoringKeeper,
+			app.BankKeeper,
+			authtypes.FeeCollectorName,
+		),
+	}
+	app.SetPostHandler(sdk.ChainPostDecorators(postDecorators...))
+}
 
 // Name returns the name of the App
 func (app *App) Name() string { return app.BaseApp.Name() }
@@ -1242,7 +1262,9 @@ func (app *App) setupUpgradeHandlers() {
 			upgrade.CreateUpgradeHandler(
 				app.ModuleManager,
 				app.configurator,
-				&upgrades.UpgradeKeepers{},
+				&upgrades.UpgradeKeepers{
+					AnchoringKeeper: app.AnchoringKeeper,
+				},
 				app.keys,
 			),
 		)

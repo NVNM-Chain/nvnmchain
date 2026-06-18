@@ -13,6 +13,7 @@ import (
 // InitGenesis initializes the anchoring module's state from a provided genesis
 // state.
 func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error {
+	genState.Params.ResolveAnchoringFeeDenom()
 	err := k.Params.Set(ctx, genState.Params)
 	if err != nil {
 		return err

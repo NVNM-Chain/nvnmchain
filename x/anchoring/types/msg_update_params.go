@@ -25,5 +25,11 @@ func (msg MsgUpdateParams) ValidateBasic() error {
 		}
 	}
 
+	if msg.AnchoringFee != nil {
+		if err := ValidateAnchoringFee(*msg.AnchoringFee); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

@@ -20,6 +20,27 @@ paths:
                 properties:
                   admin:
                     type: string
+                  anchoring_fee:
+                    description: >-
+                      anchoring_fee is the per-tx fee cap for direct anchoring
+                      traffic. When the
+
+                      natural gas-based fee exceeds this amount, the chain
+                      refunds the overage
+
+                      in PostHandler. Applies to single-msg MsgAddRecord txs and
+                      direct EVM
+
+                      precompile calls (tx.to == AnchoringPrecompileAddress).
+                      Contract-wrapped
+
+                      precompile calls are unaffected.
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -42507,6 +42528,18 @@ definitions:
                repeated Bar results = 1;
                PageResponse page = 2;
        }
+  cosmos.base.v1beta1.Coin:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+    description: |-
+      Coin defines a token with a denomination and an amount.
+
+      NOTE: The amount field is an Int which implements the custom method
+      signatures required by gogoproto.
   google.protobuf.Any:
     type: object
     properties:
@@ -42859,6 +42892,26 @@ definitions:
     properties:
       admin:
         type: string
+      anchoring_fee:
+        description: >-
+          anchoring_fee is the per-tx fee cap for direct anchoring traffic. When
+          the
+
+          natural gas-based fee exceeds this amount, the chain refunds the
+          overage
+
+          in PostHandler. Applies to single-msg MsgAddRecord txs and direct EVM
+
+          precompile calls (tx.to == AnchoringPrecompileAddress).
+          Contract-wrapped
+
+          precompile calls are unaffected.
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
     description: Params defines the parameters for the module.
   nvnmchain.anchoring.v1.QueryParamsResponse:
     type: object
@@ -42869,6 +42922,27 @@ definitions:
         properties:
           admin:
             type: string
+          anchoring_fee:
+            description: >-
+              anchoring_fee is the per-tx fee cap for direct anchoring traffic.
+              When the
+
+              natural gas-based fee exceeds this amount, the chain refunds the
+              overage
+
+              in PostHandler. Applies to single-msg MsgAddRecord txs and direct
+              EVM
+
+              precompile calls (tx.to == AnchoringPrecompileAddress).
+              Contract-wrapped
+
+              precompile calls are unaffected.
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   nvnmchain.anchoring.v1.QueryRecordsResponse:
     type: object
@@ -44356,18 +44430,6 @@ definitions:
     description: >-
       QueryParamsResponse defines the response type for querying x/vm
       parameters.
-  cosmos.base.v1beta1.Coin:
-    type: object
-    properties:
-      denom:
-        type: string
-      amount:
-        type: string
-    description: |-
-      Coin defines a token with a denomination and an amount.
-
-      NOTE: The amount field is an Int which implements the custom method
-      signatures required by gogoproto.
   cosmos.evm.precisebank.v1.QueryFractionalBalanceResponse:
     type: object
     properties:

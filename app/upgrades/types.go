@@ -5,6 +5,8 @@ import (
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
+	anchoringkeeper "github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
 )
 
 // Upgrade defines a struct containing necessary fields that a SoftwareUpgradeProposal
@@ -37,4 +39,6 @@ type Fork struct {
 	BeginForkLogic func(ctx sdk.Context)
 }
 
-type UpgradeKeepers struct{}
+type UpgradeKeepers struct {
+	AnchoringKeeper anchoringkeeper.Keeper
+}
