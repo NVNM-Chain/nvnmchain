@@ -7,9 +7,17 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	"github.com/NVNM-Chain/nvnmchain/x/tax/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("empty request")
+	}
+	if err := req.ValidateBasic(); err != nil {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
+	}
+
 	if _, err := k.addressCodec.StringToBytes(req.Authority); err != nil {
 		return nil, errorsmod.Wrap(err, "invalid authority address")
 	}
