@@ -19,7 +19,13 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 	}
 
 	registryCount := uint64(0)
-	for _, registry := range genState.Registries {
+	for mapKey, registry := range genState.Registries {
+		if mapKey != registry.Id {
+			return errorsmod.Wrapf(types.ErrInvalidGenesisState, "registry map key %d does not match registry id %d", mapKey, registry.Id)
+		}
+		if err := types.ValidateRegistry(registry); err != nil {
+			return errorsmod.Wrapf(err, "invalid genesis registry (id=%d, name=%s)", registry.Id, registry.Name)
+		}
 		if err := k.Registries.Set(ctx, registry.Id, registry); err != nil {
 			return err
 		}

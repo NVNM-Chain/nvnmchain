@@ -10,6 +10,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func setupAnchoringQueryServer(t *testing.T) (keeper.Keeper, sdk.Context, types.QueryServer, sdk.AccAddress) {
@@ -197,6 +199,55 @@ func TestQueryRecords_EmptyRequest_ReturnsLatestRecords(t *testing.T) {
 	require.Len(t, rsp.Records, 1, "empty request should return latest records")
 	require.Equal(t, uint64(2), rsp.Records[0].GetIndex())
 	require.Equal(t, "chk-empty-all", rsp.Records[0].GetChecksum())
+}
+
+func TestQueryRecords_RejectsUnmatchedFilters(t *testing.T) {
+	k, ctx, qs, admin := setupAnchoringQueryServer(t)
+
+	regID, err := k.AddRegistry(ctx, admin, "reg-reject", "", "{}")
+	require.NoError(t, err)
+	_, err = k.AddRecord(ctx, admin, types.Record{
+		Registry:     "reg-reject",
+		Uri:          "ipfs://r",
+		Checksum:     "chk-reject",
+		ChecksumAlgo: "sha256",
+		Metadata:     "{\"k\":\"v\"}",
+		Status:       "active",
+	})
+	require.NoError(t, err)
+
+	cases := []struct {
+		name string
+		req  *types.QueryRecordsRequest
+	}{
+		{
+			name: "record_id without registry_id",
+			req:  &types.QueryRecordsRequest{RecordId: 1},
+		},
+		{
+			name: "record_id with checksum but no registry_id",
+			req:  &types.QueryRecordsRequest{RecordId: 1, Checksum: "chk-reject"},
+		},
+		{
+			name: "index without registry_id and record_id",
+			req:  &types.QueryRecordsRequest{Index: 1},
+		},
+		{
+			name: "index with registry_id but no record_id",
+			req:  &types.QueryRecordsRequest{RegistryId: regID, Index: 1},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			rsp, err := qs.Records(ctx, tc.req)
+			require.Error(t, err)
+			require.Nil(t, rsp)
+			st, ok := status.FromError(err)
+			require.True(t, ok, "expected gRPC status error")
+			require.Equal(t, codes.InvalidArgument, st.Code())
+		})
+	}
 }
 
 func TestQueryRegistries_CountTotalDoesNotTriggerFullScan(t *testing.T) {
