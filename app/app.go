@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -72,7 +71,6 @@ import (
 	sigtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authcodec "github.com/cosmos/cosmos-sdk/x/auth/codec"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
@@ -143,19 +141,13 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v10/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v10/modules/core"
 	ibcclienttypes "github.com/cosmos/ibc-go/v10/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v10/modules/core/04-channel/types"
-	channelv2types "github.com/cosmos/ibc-go/v10/modules/core/04-channel/v2/types"
 	porttypes "github.com/cosmos/ibc-go/v10/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v10/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v10/modules/core/keeper"
 	ibctm "github.com/cosmos/ibc-go/v10/modules/light-clients/07-tendermint"
 
-	consumer "github.com/cosmos/interchain-security/v7/x/ccv/consumer"
-	consumerkeeper "github.com/cosmos/interchain-security/v7/x/ccv/consumer/keeper"
-	consumertypes "github.com/cosmos/interchain-security/v7/x/ccv/consumer/types"
-	ccvdistr "github.com/cosmos/interchain-security/v7/x/ccv/democracy/distribution"
-	ccvstaking "github.com/cosmos/interchain-security/v7/x/ccv/democracy/staking"
-	ccvtypes "github.com/cosmos/interchain-security/v7/x/ccv/types"
+	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+	staking "github.com/cosmos/cosmos-sdk/x/staking"
 )
 
 var EVMCoinInfo = evmtypes.EvmCoinInfo{
@@ -214,10 +206,6 @@ var maccPerms = map[string][]string{
 	evmtypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
 	feemarkettypes.ModuleName: nil,
 	erc20types.ModuleName:     {authtypes.Minter, authtypes.Burner},
-
-	// Consumer
-	consumertypes.ConsumerRedistributeName:     nil,
-	consumertypes.ConsumerToSendToProviderName: nil,
 
 	// NVNMChain Specific Modules
 	anchoringtypes.ModuleName: nil,
@@ -278,9 +266,6 @@ type App struct {
 	Erc20Keeper     erc20keeper.Keeper
 	EVMMempool      *evmmempool.ExperimentalEVMMempool
 
-	// Consumer
-	ConsumerKeeper consumerkeeper.Keeper
-
 	// the module manager
 	ModuleManager      *module.Manager
 	BasicModuleManager module.BasicManager
@@ -324,7 +309,7 @@ func New(
 		ibcexported.StoreKey, ibctransfertypes.StoreKey,
 		ratelimittypes.StoreKey,
 		taxtypes.StoreKey,
-		consumertypes.StoreKey, anchoringtypes.StoreKey,
+		anchoringtypes.StoreKey,
 
 		// Cosmos EVM store keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey, erc20types.StoreKey,
@@ -381,8 +366,6 @@ func New(
 		Authority,
 		logger,
 	)
-	app.BankKeeper.AppendSendRestriction(app.blockUserSendsToCCVRewardsBuffer)
-
 	app.StakingKeeper = stakingkeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[stakingtypes.StoreKey]),
@@ -409,7 +392,7 @@ func New(
 		app.AccountKeeper,
 		&app.BankKeeper,
 		app.StakingKeeper,
-		consumertypes.ConsumerRedistributeName,
+		authtypes.FeeCollectorName,
 		Authority,
 	)
 
@@ -449,18 +432,8 @@ func New(
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	// NOTE: slashing hook was removed since it's only relevant for consumerKeeper
 	app.StakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks()),
-	)
-
-	// pre-initialize ConsumerKeeper to satsfy ibckeeper.NewKeeper
-	// which would panic on nil or zero keeper
-	// ConsumerKeeper implements StakingKeeper but all function calls result in no-ops so this is safe
-	// communication over IBC is not affected by these changes
-	app.ConsumerKeeper = consumerkeeper.NewNonZeroKeeper(
-		appCodec,
-		keys[consumertypes.StoreKey],
+		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
 	app.IBCKeeper = ibckeeper.NewKeeper(
@@ -470,38 +443,6 @@ func New(
 		app.UpgradeKeeper,
 		Authority,
 	)
-
-	// Create CCV consumer and modules
-	app.ConsumerKeeper = consumerkeeper.NewKeeper(
-		appCodec,
-		keys[consumertypes.StoreKey],
-		app.IBCKeeper.ChannelKeeper,
-		app.IBCKeeper.ConnectionKeeper,
-		app.IBCKeeper.ClientKeeper,
-		app.SlashingKeeper,
-		app.BankKeeper,
-		app.AccountKeeper,
-		&app.TransferKeeper,
-		app.IBCKeeper,
-		authtypes.FeeCollectorName,
-		Authority,
-		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ValidatorAddrPrefix()),
-		authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
-	)
-
-	// consumer keeper satisfies the staking keeper interface
-	// of the slashing module
-	app.SlashingKeeper = slashingkeeper.NewKeeper(
-		appCodec,
-		legacyAmino,
-		runtime.NewKVStoreService(keys[slashingtypes.StoreKey]),
-		&app.ConsumerKeeper,
-		Authority,
-	)
-
-	// register slashing module StakingHooks to the consumer keeper
-	app.ConsumerKeeper = *app.ConsumerKeeper.SetHooks(app.SlashingKeeper.Hooks())
-	consumerModule := consumer.NewAppModule(app.ConsumerKeeper, app.GetSubspace(consumertypes.ModuleName))
 
 	app.AnchoringKeeper = anchoringkeeper.NewKeeper(
 		appCodec,
@@ -595,7 +536,7 @@ func New(
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[evidencetypes.StoreKey]),
-		&app.ConsumerKeeper,
+		app.StakingKeeper,
 		app.SlashingKeeper,
 		app.AccountKeeper.AddressCodec(),
 		runtime.ProvideCometInfoService(),
@@ -693,8 +634,7 @@ func New(
 
 	// Create static IBC router, add app routes, then set and seal it
 	ibcRouter := porttypes.NewRouter().
-		AddRoute(ibctransfertypes.ModuleName, transferStack).
-		AddRoute(ccvtypes.ConsumerPortID, consumerModule)
+		AddRoute(ibctransfertypes.ModuleName, transferStack)
 
 	app.IBCKeeper.SetRouter(ibcRouter)
 
@@ -725,7 +665,7 @@ func New(
 	app.ModuleManager = module.NewManager(
 		genutil.NewAppModule(
 			app.AccountKeeper,
-			&app.ConsumerKeeper,
+			app.StakingKeeper,
 			app,
 			txConfig,
 		),
@@ -736,15 +676,14 @@ func New(
 		gov.NewAppModule(appCodec, &app.GovKeeper, app.AccountKeeper, app.BankKeeper, nil),
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil, nil),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, nil, app.interfaceRegistry),
-		ccvdistr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, *app.StakingKeeper, authtypes.FeeCollectorName, app.GetSubspace(distrtypes.ModuleName)),
-		ccvstaking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
+		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(distrtypes.ModuleName)),
+		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
 		upgrade.NewAppModule(app.UpgradeKeeper, app.AccountKeeper.AddressCodec()),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		params.NewAppModule(app.ParamsKeeper), //nolint:staticcheck
 		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
 		circuit.NewAppModule(appCodec, app.CircuitKeeper),
-		consumerModule,
 		// non sdk modules
 		ibc.NewAppModule(app.IBCKeeper),
 		ibctransfer.NewAppModule(app.TransferKeeper),
@@ -790,8 +729,6 @@ func New(
 	// CanWithdrawInvariant invariant.
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	app.ModuleManager.SetOrderBeginBlockers(
-		// distribute first to distribute rewards from ConsumerRedistributeName
-		// to governators and community pool
 		distrtypes.ModuleName,
 		minttypes.ModuleName,
 
@@ -810,7 +747,6 @@ func New(
 		govtypes.ModuleName,
 		// additional non simd modules
 		ratelimittypes.ModuleName,
-		consumertypes.ModuleName,
 	)
 
 	app.ModuleManager.SetOrderEndBlockers(
@@ -824,13 +760,10 @@ func New(
 		erc20types.ModuleName,
 		feemarkettypes.ModuleName,
 		feegrant.ModuleName,
-		// tax before consumer to ensure tax is collected prior to
-		// sending funds to provider and sending to redistribute account
 		taxtypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		ibcexported.ModuleName,
 		ratelimittypes.ModuleName,
-		consumertypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -870,7 +803,6 @@ func New(
 		genutiltypes.ModuleName,
 		ratelimittypes.ModuleName,
 		taxtypes.ModuleName,
-		consumertypes.ModuleName,
 		anchoringtypes.ModuleName,
 	}
 	app.ModuleManager.SetOrderInitGenesis(genesisModuleOrder...)
@@ -984,10 +916,9 @@ func (app *App) setAnteHandler(txConfig client.TxConfig, maxGasWanted uint64) {
 	}
 
 	handlerOpts := ante.HandlerOptions{
-		EvmOptions:     evmHandlerOpts.Options(),
-		IBCKeeper:      app.IBCKeeper,
-		CircuitKeeper:  &app.CircuitKeeper,
-		ConsumerKeeper: app.ConsumerKeeper,
+		EvmOptions:    evmHandlerOpts.Options(),
+		IBCKeeper:     app.IBCKeeper,
+		CircuitKeeper: &app.CircuitKeeper,
 	}
 
 	if err := handlerOpts.Validate(); err != nil {
@@ -1281,55 +1212,6 @@ func (app *App) setupUpgradeHandlers() {
 	}
 }
 
-func (app *App) blockUserSendsToCCVRewardsBuffer(
-	ctx context.Context,
-	fromAddr, toAddr sdk.AccAddress,
-	_ sdk.Coins,
-) (sdk.AccAddress, error) {
-	if !toAddr.Equals(authtypes.NewModuleAddress(consumertypes.ConsumerToSendToProviderName)) {
-		return toAddr, nil
-	}
-	if fromAddr.Equals(authtypes.NewModuleAddress(authtypes.FeeCollectorName)) {
-		return toAddr, nil
-	}
-	if app.isIBCRefundTx(ctx, fromAddr) {
-		return toAddr, nil
-	}
-	return nil, fmt.Errorf("sending to %s is restricted", consumertypes.ConsumerToSendToProviderName)
-}
-
-func (app *App) isIBCRefundTx(ctx context.Context, fromAddr sdk.AccAddress) bool {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	txBytes := sdkCtx.TxBytes()
-	if len(txBytes) == 0 {
-		return fromAddr.Equals(authtypes.NewModuleAddress(ibctransfertypes.ModuleName))
-	}
-	tx, err := app.txConfig.TxDecoder()(txBytes)
-	if err != nil {
-		return false
-	}
-	msgs := tx.GetMsgs()
-	if len(msgs) == 0 {
-		return false
-	}
-	hasRefund := false
-	for _, msg := range msgs {
-		switch msg.(type) {
-		case *channeltypes.MsgTimeout, *channeltypes.MsgTimeoutOnClose, *channeltypes.MsgAcknowledgement:
-			hasRefund = true
-		case *channelv2types.MsgTimeout, *channelv2types.MsgAcknowledgement:
-			hasRefund = true
-		case *ibcclienttypes.MsgUpdateClient:
-			continue
-		case *channeltypes.MsgRecvPacket, *channelv2types.MsgRecvPacket:
-			return false
-		default:
-			return false
-		}
-	}
-	return hasRefund
-}
-
 // GetMaccPerms returns a copy of the module account permissions
 //
 // NOTE: This is solely to be used for testing purposes.
@@ -1356,12 +1238,6 @@ func BlockedAddresses() map[string]bool {
 	for _, acc := range accs {
 		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = true
 	}
-
-	// Remove the fee-pool from the group of blocked recipient addresses in bank
-	// this is required for the consumer chain to be able to send tokens to
-	// the provider chain
-	delete(blockedAddrs, authtypes.NewModuleAddress(
-		consumertypes.ConsumerToSendToProviderName).String())
 
 	for _, precompile := range evmtypes.AvailableStaticPrecompiles {
 		blockedAddrs[cosmosevmutils.Bech32StringFromHexAddress(precompile)] = true

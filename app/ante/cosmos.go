@@ -11,17 +11,14 @@ import (
 	evmante "github.com/cosmos/evm/ante/evm"
 	ibcante "github.com/cosmos/ibc-go/v10/modules/core/ante"
 	"github.com/cosmos/ibc-go/v10/modules/core/keeper"
-	consumerante "github.com/cosmos/interchain-security/v7/app/consumer/ante"
-	ibcconsumerkeeper "github.com/cosmos/interchain-security/v7/x/ccv/consumer/keeper"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by r	equiring the IBC
 // channel keeper.
 type HandlerOptions struct {
-	EvmOptions     EVMHandlerOptions
-	IBCKeeper      *keeper.Keeper
-	CircuitKeeper  *circuitkeeper.Keeper
-	ConsumerKeeper ibcconsumerkeeper.Keeper
+	EvmOptions    EVMHandlerOptions
+	IBCKeeper     *keeper.Keeper
+	CircuitKeeper *circuitkeeper.Keeper
 }
 
 // Validate checks if the keepers are defined
@@ -47,8 +44,6 @@ func newCosmosAnteHandler(ctx sdk.Context, options HandlerOptions) sdk.AnteHandl
 	}
 	anteDecorators := []sdk.AnteDecorator{
 		cosmosante.NewRejectMessagesDecorator(), // reject MsgEthereumTxs
-		consumerante.NewMsgFilterDecorator(options.ConsumerKeeper),
-		consumerante.NewDisabledModulesDecorator("/cosmos.evidence", "/cosmos.slashing.v1beta1.MsgUnjail"),
 		ante.NewSetUpContextDecorator(),
 		circuitante.NewCircuitBreakerDecorator(options.CircuitKeeper),
 		ante.NewExtensionOptionsDecorator(options.EvmOptions.ExtensionOptionChecker),
