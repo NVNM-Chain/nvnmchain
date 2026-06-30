@@ -58,7 +58,6 @@ require (
 	github.com/cosmos/gogoproto v1.7.2
 	github.com/cosmos/ibc-apps/modules/rate-limiting/v10 v10.1.0
 	github.com/cosmos/ibc-go/v10 v10.5.1
-	github.com/cosmos/interchain-security/v7 v7.0.1
 	github.com/ethereum/go-ethereum v1.16.7
 	github.com/golang/protobuf v1.5.4
 	github.com/gorilla/mux v1.8.1

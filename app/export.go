@@ -242,14 +242,25 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 
 // GetValidatorSet returns a slice of bonded validators.
 func (app *App) GetValidatorSet(ctx sdk.Context) ([]tmtypes.GenesisValidator, error) {
-	cVals := app.ConsumerKeeper.GetAllCCValidator(ctx)
-	if len(cVals) == 0 {
+	bondedVals, err := app.StakingKeeper.GetBondedValidatorsByPower(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(bondedVals) == 0 {
 		return nil, fmt.Errorf("empty validator set")
 	}
 
-	vals := []tmtypes.GenesisValidator{}
-	for _, v := range cVals {
-		vals = append(vals, tmtypes.GenesisValidator{Address: v.Address, Power: v.Power})
+	vals := make([]tmtypes.GenesisValidator, 0, len(bondedVals))
+	for _, v := range bondedVals {
+		pk, err := v.ConsPubKey()
+		if err != nil {
+			return nil, err
+		}
+		vals = append(vals, tmtypes.GenesisValidator{
+			Address: sdk.ConsAddress(pk.Address()).Bytes(),
+			Power:   v.ConsensusPower(sdk.DefaultPowerReduction),
+			Name:    v.GetMoniker(),
+		})
 	}
 	return vals, nil
 }
