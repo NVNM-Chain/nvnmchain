@@ -1,4 +1,4 @@
-package upgrades
+package v1_2
 
 import (
 	"bufio"
@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/NVNM-Chain/nvnmchain/app/upgrades"
 	anchoringtypes "github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -92,7 +93,7 @@ type ManifestFileEntry struct {
 // created_at/timestamp are stamped with the upgrade block time. registriesJSON and manifestJSON
 // are passed in (rather than read directly from an embed) so tests can exercise this against
 // small fixtures instead of a real mainnet-scale export.
-func SeedAnchoringData(ctx sdk.Context, keepers *UpgradeKeepers, exportDir string, registriesJSON, manifestJSON []byte) error {
+func SeedAnchoringData(ctx sdk.Context, keepers *upgrades.UpgradeKeepers, exportDir string, registriesJSON, manifestJSON []byte) error {
 	var registries []RegistryImport
 	if err := json.Unmarshal(registriesJSON, &registries); err != nil {
 		return fmt.Errorf("failed to unmarshal registries.json: %w", err)
@@ -161,7 +162,7 @@ func SeedAnchoringData(ctx sdk.Context, keepers *UpgradeKeepers, exportDir strin
 // loadTrancheFile reads, hash-verifies, decompresses and writes a single manifest-listed
 // tranche file's records, returning the number of records written. registryId is the id
 // (already created by SeedAnchoringData) of the registry this file's records belong to.
-func loadTrancheFile(ctx sdk.Context, keepers *UpgradeKeepers, exportDir string, adminAddr sdk.AccAddress, registryId uint64, fileEntry ManifestFileEntry) (int, error) {
+func loadTrancheFile(ctx sdk.Context, keepers *upgrades.UpgradeKeepers, exportDir string, adminAddr sdk.AccAddress, registryId uint64, fileEntry ManifestFileEntry) (int, error) {
 	path := filepath.Join(exportDir, fileEntry.File)
 	gzBytes, err := os.ReadFile(path)
 	if err != nil {

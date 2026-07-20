@@ -45,7 +45,6 @@ import (
 	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
 	"github.com/NVNM-Chain/nvnmchain/app/upgrades"
 	"github.com/NVNM-Chain/nvnmchain/app/upgrades/v1_2"
-	"github.com/NVNM-Chain/nvnmchain/app/upgrades/v1_3"
 	_ "github.com/NVNM-Chain/nvnmchain/client/docs/statik"
 	"github.com/NVNM-Chain/nvnmchain/client/docs/swagger"
 	taxkeeper "github.com/NVNM-Chain/nvnmchain/x/tax/keeper"
@@ -210,7 +209,7 @@ var maccPerms = map[string][]string{
 	anchoringtypes.ModuleName: nil,
 }
 
-var Upgrades = []upgrades.Upgrade{v1_2.Upgrade, v1_3.Upgrade}
+var Upgrades = []upgrades.Upgrade{v1_2.Upgrade}
 
 var (
 	_ runtime.AppI            = (*App)(nil)

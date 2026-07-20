@@ -13,7 +13,7 @@ import (
 )
 
 // exportDirEnvVar optionally overrides the on-disk location of this upgrade's tranche data
-// (tranches 1-3 of the mainnet-full-export). Unset by default; only needed if an operator
+// (all 4 tranches of the mainnet-full-export). Unset by default; only needed if an operator
 // stages the export somewhere other than the default path under the node's home directory.
 const exportDirEnvVar = "NVNMCHAIN_V1_2_EXPORT_DIR"
 
@@ -34,8 +34,8 @@ func CreateUpgradeHandler(
 			return vm, err
 		}
 
-		exportDir := upgrades.ResolveExportDir(homeDir, "v1_2", exportDirEnvVar)
-		if err := upgrades.SeedAnchoringData(ctx, keepers, exportDir, data.RegistriesJSON, data.ManifestJSON); err != nil {
+		exportDir := ResolveExportDir(homeDir, "v1_2", exportDirEnvVar)
+		if err := SeedAnchoringData(ctx, keepers, exportDir, data.RegistriesJSON, data.ManifestJSON); err != nil {
 			return vm, fmt.Errorf("failed to seed anchoring data: %w", err)
 		}
 

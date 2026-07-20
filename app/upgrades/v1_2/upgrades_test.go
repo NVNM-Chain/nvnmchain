@@ -72,18 +72,19 @@ func findRegistryIdByName(t *testing.T, k anchoringkeeper.Keeper, ctx sdk.Contex
 // tranche data.
 func emptyManifestJSON(t *testing.T, wantRegistries int) []byte {
 	t.Helper()
-	manifest := upgrades.MigrationManifest{}
+	manifest := MigrationManifest{}
 	manifest.Totals.Registries = wantRegistries
 	manifest.Totals.Records = 0
-	manifest.Files = []upgrades.ManifestFileEntry{}
+	manifest.Files = []ManifestFileEntry{}
 	b, err := json.Marshal(manifest)
 	require.NoError(t, err)
 	return b
 }
 
-// TestSeedAnchoringData_RealRegistriesJSON loads the actual embedded v1_2 registries.json
-// (tranches 1-3, 886 registries) to catch data-level regressions (duplicate names, bad JSON,
-// count drift) without needing the real tranche files on disk.
+// TestSeedAnchoringData_RealRegistriesJSON loads the actual embedded registries.json (all 4
+// tranches, 2,114 registries) to catch data-level regressions (duplicate names, bad JSON,
+// count drift) without needing the real tranche files on disk, and spot-checks one registry
+// from tranches 1-3 and one from tranche 4 to confirm the merged file actually covers both.
 func TestSeedAnchoringData_RealRegistriesJSON(t *testing.T) {
 	appparams.SetAddressPrefixes()
 	k, ctx := newTestAnchoringKeeper(t)
@@ -91,10 +92,10 @@ func TestSeedAnchoringData_RealRegistriesJSON(t *testing.T) {
 	blockTime := time.Date(2026, 7, 17, 12, 0, 0, 0, time.UTC)
 	ctx = ctx.WithBlockTime(blockTime)
 
-	var registries []upgrades.RegistryImport
+	var registries []RegistryImport
 	require.NoError(t, json.Unmarshal(data.RegistriesJSON, &registries))
 
-	err := upgrades.SeedAnchoringData(ctx, &upgrades.UpgradeKeepers{AnchoringKeeper: k}, t.TempDir(), data.RegistriesJSON, emptyManifestJSON(t, len(registries)))
+	err := SeedAnchoringData(ctx, &upgrades.UpgradeKeepers{AnchoringKeeper: k}, t.TempDir(), data.RegistriesJSON, emptyManifestJSON(t, len(registries)))
 	require.NoError(t, err)
 
 	count, err := k.RegistryCount.Get(ctx)
@@ -102,11 +103,15 @@ func TestSeedAnchoringData_RealRegistriesJSON(t *testing.T) {
 	require.Equal(t, uint64(len(registries)), count)
 
 	scotusId := findRegistryIdByName(t, k, ctx, "us-scotus")
-
 	reg, err := k.Registries.Get(ctx, scotusId)
 	require.NoError(t, err)
 	require.Equal(t, blockTime.String(), reg.CreatedAt, "created_at must be stamped with upgrade block time, not exported value")
-	require.Equal(t, upgrades.MainnetRegistryAdmin, reg.Creator)
+	require.Equal(t, MainnetRegistryAdmin, reg.Creator)
+
+	admiraltyId := findRegistryIdByName(t, k, ctx, "us-admiraltyctsc")
+	regAdmiralty, err := k.Registries.Get(ctx, admiraltyId)
+	require.NoError(t, err)
+	require.Equal(t, blockTime.String(), regAdmiralty.CreatedAt)
 }
 
 // TestSeedAnchoringData_RegistryManifestCountMismatchRejected guards against registries.json
@@ -115,7 +120,7 @@ func TestSeedAnchoringData_RegistryManifestCountMismatchRejected(t *testing.T) {
 	appparams.SetAddressPrefixes()
 	k, ctx := newTestAnchoringKeeper(t)
 
-	err := upgrades.SeedAnchoringData(ctx, &upgrades.UpgradeKeepers{AnchoringKeeper: k}, t.TempDir(), data.RegistriesJSON, emptyManifestJSON(t, 1))
+	err := SeedAnchoringData(ctx, &upgrades.UpgradeKeepers{AnchoringKeeper: k}, t.TempDir(), data.RegistriesJSON, emptyManifestJSON(t, 1))
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "manifest.json expects 1")
 }
@@ -123,13 +128,13 @@ func TestSeedAnchoringData_RegistryManifestCountMismatchRejected(t *testing.T) {
 func TestExportDir(t *testing.T) {
 	t.Run("default path is derived from home dir", func(t *testing.T) {
 		t.Setenv(exportDirEnvVar, "")
-		got := upgrades.ResolveExportDir("/home/validator/.nvnmchain", "v1_2", exportDirEnvVar)
+		got := ResolveExportDir("/home/validator/.nvnmchain", "v1_2", exportDirEnvVar)
 		require.Equal(t, filepath.Join("/home/validator/.nvnmchain", "upgrades", "v1_2", "mainnet-full-export"), got)
 	})
 
 	t.Run("env var overrides default path", func(t *testing.T) {
 		t.Setenv(exportDirEnvVar, "/mnt/export-data")
-		got := upgrades.ResolveExportDir("/home/validator/.nvnmchain", "v1_2", exportDirEnvVar)
+		got := ResolveExportDir("/home/validator/.nvnmchain", "v1_2", exportDirEnvVar)
 		require.Equal(t, "/mnt/export-data", got)
 	})
 }
