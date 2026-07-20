@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"cosmossdk.io/collections"
 	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
 	keepertest "github.com/NVNM-Chain/nvnmchain/testutil/keeper"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
@@ -38,7 +39,7 @@ func TestMsgAddRecord_ValidateBasic_NilRecord(t *testing.T) {
 
 	validRecord := func() *types.Record {
 		return &types.Record{
-			Registry:     "reg1",
+			RegistryId:   1,
 			Uri:          "ipfs://bafy...",
 			Checksum:     "deadbeef",
 			ChecksumAlgo: "sha256",
@@ -140,13 +141,13 @@ func TestMsgAddRecord_ValidateBasic_NilRecord(t *testing.T) {
 			wantErrContains: "status cannot be empty",
 		},
 		{
-			name: "empty registry",
+			name: "zero registry_id",
 			msg: func() types.MsgAddRecord {
 				record := validRecord()
-				record.Registry = ""
+				record.RegistryId = 0
 				return types.MsgAddRecord{Sender: sender, Record: record}
 			}(),
-			wantErrContains: "registry cannot be empty",
+			wantErrContains: types.ErrMsgRegistryIDZero,
 		},
 		{
 			name: "oversized checksum algo",
@@ -175,13 +176,13 @@ func TestMsgAddRecord_OversizedChecksumAlgo_RejectedByMsgServerPath(t *testing.T
 	sender := keepertest.TestSenderAddr
 
 	// sender becomes admin and can add records
-	keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
+	registryId := keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
 
 	tooLongAlgo := strings.Repeat("a", types.MaxRecordChecksumAlgoLen+1)
 	_, err := ms.AddRecord(ctx, &types.MsgAddRecord{
 		Sender: sender,
 		Record: &types.Record{
-			Registry:     "reg1",
+			RegistryId:   registryId,
 			Uri:          "ipfs://bafy...",
 			Checksum:     "deadbeef",
 			ChecksumAlgo: tooLongAlgo,
@@ -200,12 +201,12 @@ func TestMsgAddRecord_OversizedChecksum_RejectedByMsgServerPath(t *testing.T) {
 	sender := keepertest.TestSenderAddr
 
 	// sender becomes admin and can add records
-	keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
+	registryId := keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
 	tooLongChecksum := strings.Repeat("a", types.MaxRecordChecksumLen+1)
 	_, err := ms.AddRecord(ctx, &types.MsgAddRecord{
 		Sender: sender,
 		Record: &types.Record{
-			Registry:     "reg1",
+			RegistryId:   registryId,
 			Uri:          "ipfs://bafy...",
 			Checksum:     tooLongChecksum,
 			ChecksumAlgo: "sha256",
@@ -217,19 +218,45 @@ func TestMsgAddRecord_OversizedChecksum_RejectedByMsgServerPath(t *testing.T) {
 	require.Contains(t, err.Error(), "checksum exceeds max length")
 }
 
+func TestMsgAddRecord_ByRegistryId(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, _ := keepertest.AnchoringKeeper(t)
+	ms := keeper.NewMsgServerImpl(k)
+	sender := keepertest.TestSenderAddr
+
+	registryId := keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
+
+	res, err := ms.AddRecord(ctx, &types.MsgAddRecord{
+		Sender: sender,
+		Record: &types.Record{
+			RegistryId:   registryId,
+			Uri:          "ipfs://bafy...",
+			Checksum:     "deadbeef",
+			ChecksumAlgo: "sha256",
+			Metadata:     "{\"k\":\"v\"}",
+			Status:       "active",
+		},
+	})
+	require.NoError(t, err)
+
+	stored, err := k.Records.Get(ctx, collections.Join3(registryId, res.RecordId, uint64(1)))
+	require.NoError(t, err)
+	require.Equal(t, registryId, stored.RegistryId)
+}
+
 func TestMsgAddRecord_OversizedMetadata_RejectedByMsgServerPath(t *testing.T) {
 	appparams.SetAddressPrefixes()
 	k, ctx, _ := keepertest.AnchoringKeeper(t)
 	ms := keeper.NewMsgServerImpl(k)
 	sender := keepertest.TestSenderAddr
 
-	keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
+	registryId := keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
 
 	tooLongMetadata := strings.Repeat("a", types.MaxRecordMetadataLen+1)
 	_, err := ms.AddRecord(ctx, &types.MsgAddRecord{
 		Sender: sender,
 		Record: &types.Record{
-			Registry:     "reg1",
+			RegistryId:   registryId,
 			Uri:          "ipfs://bafy...",
 			Checksum:     "deadbeef",
 			ChecksumAlgo: "sha256",

@@ -74,7 +74,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 	}
 
 	validRecord := types.Record{
-		Registry:     "kyc_registry",
+		RegistryId:   1,
 		RecordId:     1,
 		Index:        1,
 		IsLatest:     true,
@@ -159,7 +159,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 			valid: false,
 		},
 		{
-			desc: "duplicate registry name is invalid",
+			desc: "duplicate registry name is valid",
 			genState: &types.GenesisState{
 				Params: validParams,
 				Registries: map[uint64]types.Registry{
@@ -167,7 +167,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 					2: {Id: 2, Name: "kyc_registry", Creator: "nvnm15m77x4pe6w9vtpuqm22qxu0ds7vn4ehzxt8qca"},
 				},
 			},
-			valid: false,
+			valid: true,
 		},
 		{
 			desc: "record referencing unknown registry is invalid",
@@ -176,7 +176,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 				Registries: map[uint64]types.Registry{1: validRegistry},
 				Records: []types.Record{
 					{
-						Registry:     "nonexistent_registry",
+						RegistryId:   999,
 						RecordId:     1,
 						Index:        1,
 						Checksum:     "abc123",
@@ -196,7 +196,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 				Registries: map[uint64]types.Registry{1: validRegistry},
 				Records: []types.Record{
 					{
-						Registry:     "kyc_registry",
+						RegistryId:   1,
 						RecordId:     0,
 						Index:        1,
 						Checksum:     "abc123",
@@ -216,7 +216,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 				Registries: map[uint64]types.Registry{1: validRegistry},
 				Records: []types.Record{
 					{
-						Registry:     "kyc_registry",
+						RegistryId:   1,
 						RecordId:     1,
 						Index:        1,
 						Checksum:     "",
@@ -248,7 +248,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 				Registries: map[uint64]types.Registry{1: validRegistry},
 				Records: []types.Record{
 					{
-						Registry:     "kyc_registry",
+						RegistryId:   1,
 						RecordId:     1,
 						Index:        1,
 						IsLatest:     false,
@@ -259,7 +259,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 						Status:       "active",
 					},
 					{
-						Registry:     "kyc_registry",
+						RegistryId:   1,
 						RecordId:     1,
 						Index:        2,
 						IsLatest:     true,
@@ -280,7 +280,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 				Registries: map[uint64]types.Registry{1: validRegistry},
 				Records: []types.Record{
 					{
-						Registry:     "kyc_registry",
+						RegistryId:   1,
 						RecordId:     1,
 						Index:        1,
 						IsLatest:     true, // wrong: not the highest index
@@ -291,7 +291,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 						Status:       "active",
 					},
 					{
-						Registry:     "kyc_registry",
+						RegistryId:   1,
 						RecordId:     1,
 						Index:        2,
 						IsLatest:     false,
@@ -312,7 +312,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 				Registries: map[uint64]types.Registry{1: validRegistry},
 				Records: []types.Record{
 					{
-						Registry:     "kyc_registry",
+						RegistryId:   1,
 						RecordId:     1,
 						Index:        1,
 						IsLatest:     true,
@@ -323,7 +323,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 						Status:       "active",
 					},
 					{
-						Registry:     "kyc_registry",
+						RegistryId:   1,
 						RecordId:     1,
 						Index:        2,
 						IsLatest:     true,
@@ -344,7 +344,7 @@ func TestGenesisState_ValidateRegistriesAndRecords(t *testing.T) {
 				Registries: map[uint64]types.Registry{1: validRegistry},
 				Records: []types.Record{
 					{
-						Registry:     "kyc_registry",
+						RegistryId:   1,
 						RecordId:     1,
 						Index:        1,
 						IsLatest:     false,

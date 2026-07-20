@@ -45,11 +45,11 @@ func TestQueryRecords_ChecksumOnly_RespectsPagination(t *testing.T) {
 	checksum := "same-checksum"
 	registries := []string{"reg-a", "reg-b", "reg-c"}
 	for _, name := range registries {
-		_, err := k.AddRegistry(ctx, admin, name, "", "{}")
+		registryId, err := k.AddRegistry(ctx, admin, name, "", "{}")
 		require.NoError(t, err)
 
 		_, err = k.AddRecord(ctx, admin, types.Record{
-			Registry:     name,
+			RegistryId:   registryId,
 			Uri:          "ipfs://" + checksum,
 			Checksum:     checksum,
 			ChecksumAlgo: "sha256",
@@ -93,7 +93,7 @@ func TestQueryRecords_RegistryOnly_PaginationDoesNotSkipResults(t *testing.T) {
 
 	for i := 0; i < 5; i++ {
 		_, err := k.AddRecord(ctx, admin, types.Record{
-			Registry:     "reg-a",
+			RegistryId:   regAID,
 			Uri:          "ipfs://a",
 			Checksum:     "chk-a-" + string(rune('a'+i)),
 			ChecksumAlgo: "sha256",
@@ -105,7 +105,7 @@ func TestQueryRecords_RegistryOnly_PaginationDoesNotSkipResults(t *testing.T) {
 
 	checksumB := "chk-b"
 	_, err = k.AddRecord(ctx, admin, types.Record{
-		Registry:     "reg-b",
+		RegistryId:   regBID,
 		Uri:          "ipfs://b",
 		Checksum:     checksumB,
 		ChecksumAlgo: "sha256",
@@ -129,7 +129,7 @@ func TestQueryRecords_RegistryOnly_PaginationDoesNotSkipResults(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.NotEmpty(t, rsp.Records)
-	require.Equal(t, "reg-b", rsp.Records[0].GetRegistry())
+	require.Equal(t, regBID, rsp.Records[0].GetRegistryId())
 	require.Equal(t, checksumB, rsp.Records[0].GetChecksum())
 
 	rspA, err := qs.Records(ctx, &types.QueryRecordsRequest{
@@ -148,7 +148,7 @@ func TestQueryRecords_CountTotalDoesNotBypassLimit(t *testing.T) {
 
 	for i := 0; i < 5; i++ {
 		_, err = k.AddRecord(ctx, admin, types.Record{
-			Registry:     "reg-limit",
+			RegistryId:   regID,
 			Uri:          "ipfs://limit",
 			Checksum:     "chk-limit-" + string(rune('a'+i)),
 			ChecksumAlgo: "sha256",
@@ -171,11 +171,11 @@ func TestQueryRecords_CountTotalDoesNotBypassLimit(t *testing.T) {
 func TestQueryRecords_EmptyRequest_ReturnsLatestRecords(t *testing.T) {
 	k, ctx, qs, admin := setupAnchoringQueryServer(t)
 
-	_, err := k.AddRegistry(ctx, admin, "reg-empty-all", "", "{}")
+	regID, err := k.AddRegistry(ctx, admin, "reg-empty-all", "", "{}")
 	require.NoError(t, err)
 
 	_, err = k.AddRecord(ctx, admin, types.Record{
-		Registry:     "reg-empty-all",
+		RegistryId:   regID,
 		Uri:          "ipfs://v1",
 		Checksum:     "chk-empty-all",
 		ChecksumAlgo: "sha256",
@@ -185,7 +185,7 @@ func TestQueryRecords_EmptyRequest_ReturnsLatestRecords(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = k.AddRecord(ctx, admin, types.Record{
-		Registry:     "reg-empty-all",
+		RegistryId:   regID,
 		Uri:          "ipfs://v2",
 		Checksum:     "chk-empty-all",
 		ChecksumAlgo: "sha256",
@@ -207,7 +207,7 @@ func TestQueryRecords_RejectsUnmatchedFilters(t *testing.T) {
 	regID, err := k.AddRegistry(ctx, admin, "reg-reject", "", "{}")
 	require.NoError(t, err)
 	_, err = k.AddRecord(ctx, admin, types.Record{
-		Registry:     "reg-reject",
+		RegistryId:   regID,
 		Uri:          "ipfs://r",
 		Checksum:     "chk-reject",
 		ChecksumAlgo: "sha256",
@@ -281,7 +281,7 @@ func TestQueryRecords_RegistryOnly_CountTotalDoesNotLeakCrossRegistry(t *testing
 	// 12 records in Registry A to fill early pages in the old full-collection scan
 	for i := 0; i < 12; i++ {
 		_, err = k.AddRecord(ctx, admin, types.Record{
-			Registry:     "reg-a",
+			RegistryId:   regAID,
 			Uri:          "ipfs://a",
 			Checksum:     "chk-a-" + string(rune('a'+i)),
 			ChecksumAlgo: "sha256",
@@ -293,7 +293,7 @@ func TestQueryRecords_RegistryOnly_CountTotalDoesNotLeakCrossRegistry(t *testing
 
 	checksumB := "chk-b"
 	_, err = k.AddRecord(ctx, admin, types.Record{
-		Registry:     "reg-b",
+		RegistryId:   regBID,
 		Uri:          "ipfs://b",
 		Checksum:     checksumB,
 		ChecksumAlgo: "sha256",
@@ -317,7 +317,7 @@ func TestQueryRecords_RegistryOnly_CountTotalDoesNotLeakCrossRegistry(t *testing
 	})
 	require.NoError(t, err)
 	require.Len(t, paged.Records, 1, "page_count should be 1, not 0")
-	require.Equal(t, "reg-b", paged.Records[0].GetRegistry())
+	require.Equal(t, regBID, paged.Records[0].GetRegistryId())
 	require.Equal(t, checksumB, paged.Records[0].GetChecksum())
 	require.NotNil(t, paged.Pagination)
 	require.Zero(t, paged.Pagination.Total, "page_total must be 0 (CountTotal disabled)")
@@ -329,5 +329,5 @@ func TestQueryRecords_RegistryOnly_CountTotalDoesNotLeakCrossRegistry(t *testing
 	})
 	require.NoError(t, err)
 	require.Len(t, pagedA.Records, 1)
-	require.Equal(t, "reg-a", pagedA.Records[0].GetRegistry())
+	require.Equal(t, regAID, pagedA.Records[0].GetRegistryId())
 }

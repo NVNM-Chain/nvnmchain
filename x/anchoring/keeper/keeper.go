@@ -27,8 +27,6 @@ type (
 		Params       collections.Item[types.Params]
 		// registryId => registry
 		Registries collections.Map[uint64, types.Registry]
-		// registry name => registryId
-		RegistryIdByName collections.Map[string, uint64]
 		// total number of registries
 		RegistryCount collections.Item[uint64]
 		// document registryId + recordId + index => record
@@ -62,13 +60,6 @@ func NewKeeper(
 			"registries",
 			collections.Uint64Key,
 			codec.CollValue[types.Registry](cdc),
-		),
-		RegistryIdByName: collections.NewMap(
-			sb,
-			types.RegistryIdByNameKeyPrefix,
-			"registry_id_by_name",
-			collections.StringKey,
-			collections.Uint64Value,
 		),
 		RegistryCount: collections.NewItem(
 			sb,

@@ -13,8 +13,12 @@ const (
 )
 
 var (
-	ParamsKey                              = collections.NewPrefix(0)
-	RegistriesKeyPrefix                    = collections.NewPrefix(1)
+	ParamsKey           = collections.NewPrefix(0)
+	RegistriesKeyPrefix = collections.NewPrefix(1)
+	// RegistryIdByNameKeyPrefix is retired: the keeper no longer maintains this index
+	// (registry lookups are id-only now). Kept only so the x/anchoring/migrations/v2
+	// store migration knows which prefix to purge from existing chain state, and so
+	// prefix 2 is never reused by a future collection.
 	RegistryIdByNameKeyPrefix              = collections.NewPrefix(2)
 	RegistryCountKey                       = collections.NewPrefix(3)
 	RecordsKeyPrefix                       = collections.NewPrefix(4)

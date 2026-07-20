@@ -29,13 +29,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 		if err := k.Registries.Set(ctx, registry.Id, registry); err != nil {
 			return err
 		}
-		// ensure name uniqueness
-		if existingId, err := k.RegistryIdByName.Get(ctx, registry.Name); err == nil {
-			return errorsmod.Wrapf(types.ErrRegistryExists, "duplicate registry name '%s' (ids: %d, %d)", registry.Name, existingId, registry.Id)
-		}
-		if err := k.RegistryIdByName.Set(ctx, registry.Name, registry.Id); err != nil {
-			return err
-		}
 		if err := k.initializeRegistryRecordCounter(ctx, registry.Id); err != nil {
 			return err
 		}
@@ -56,12 +49,12 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) error 
 
 	for i, record := range genState.Records {
 		if err := types.ValidateRecord(record); err != nil {
-			return errorsmod.Wrapf(err, "invalid genesis record (registry=%s, record_id=%d, index=%d, checksum=%s, position=%d)", record.Registry, record.RecordId, record.Index, record.Checksum, i)
+			return errorsmod.Wrapf(err, "invalid genesis record (registry_id=%d, record_id=%d, index=%d, checksum=%s, position=%d)", record.RegistryId, record.RecordId, record.Index, record.Checksum, i)
 		}
 
-		registryId, err := k.RegistryIdByName.Get(ctx, record.Registry)
-		if err != nil {
-			return err
+		registryId := record.RegistryId
+		if _, err := k.Registries.Get(ctx, registryId); err != nil {
+			return errorsmod.Wrapf(err, "record references unknown registry_id %d", registryId)
 		}
 
 		recordKey := collections.Join3(registryId, record.RecordId, record.Index)
