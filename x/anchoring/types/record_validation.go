@@ -1,6 +1,9 @@
 package types
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 const (
 	MaxRecordChecksumLen     = 64
@@ -36,8 +39,8 @@ func ValidateRecordForCreate(record Record) error {
 	if record.Metadata == "" || record.Metadata == "{}" {
 		return fmt.Errorf("metadata cannot be empty")
 	}
-	if record.Registry == "" {
-		return fmt.Errorf("registry cannot be empty")
+	if record.RegistryId == 0 {
+		return errors.New(ErrMsgRegistryIDZero)
 	}
 
 	if err := validateMaxLen("checksum", record.Checksum, MaxRecordChecksumLen); err != nil {

@@ -223,27 +223,12 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 	return &types.QueryRecordsResponse{Records: records, Pagination: pageRes}, nil
 }
 
-// Registries returns all registries with pagination, or a specific registry if registry_id or name is provided
+// Registries returns all registries with pagination, or a specific registry if registry_id is provided
 func (q queryServer) Registries(ctx context.Context, req *types.QueryRegistriesRequest) (*types.QueryRegistriesResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	if req.RegistryId != 0 {
 		registry, err := q.k.Registries.Get(sdkCtx, req.RegistryId)
-		if err != nil {
-			return nil, err
-		}
-		return &types.QueryRegistriesResponse{
-			Registries: []*types.Registry{&registry},
-			Pagination: nil,
-		}, nil
-	}
-
-	if req.Name != "" {
-		registryId, err := q.k.RegistryIdByName.Get(sdkCtx, req.Name)
-		if err != nil {
-			return nil, err
-		}
-		registry, err := q.k.Registries.Get(sdkCtx, registryId)
 		if err != nil {
 			return nil, err
 		}
@@ -264,25 +249,15 @@ func (q queryServer) Registries(ctx context.Context, req *types.QueryRegistriesR
 	return &types.QueryRegistriesResponse{Registries: registries, Pagination: pageRes}, nil
 }
 
-// Registry returns a specific registry by id or name
+// Registry returns a specific registry by id
 func (q queryServer) Registry(ctx context.Context, req *types.QueryRegistryRequest) (*types.QueryRegistryResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	var id uint64
-	var err error
 
-	switch {
-	case req.Id != 0:
-		id = req.Id
-	case req.Name != "":
-		id, err = q.k.RegistryIdByName.Get(sdkCtx, req.Name)
-		if err != nil {
-			return nil, err
-		}
-	default:
-		return nil, status.Error(codes.InvalidArgument, "either id or name must be provided")
+	if req.Id == 0 {
+		return nil, status.Error(codes.InvalidArgument, "id must be provided")
 	}
 
-	registry, err := q.k.Registries.Get(sdkCtx, id)
+	registry, err := q.k.Registries.Get(sdkCtx, req.Id)
 	if err != nil {
 		return nil, err
 	}

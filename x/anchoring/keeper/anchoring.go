@@ -14,13 +14,6 @@ func (k Keeper) AddRegistry(ctx sdk.Context, sender sdk.AccAddress, name, descri
 	if err := types.ValidateRegistryForCreate(name, description, metadata); err != nil {
 		return 0, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}
-	exists, err := k.RegistryIdByName.Has(ctx, name)
-	if err != nil {
-		return 0, err
-	}
-	if exists {
-		return 0, types.ErrRegistryExists
-	}
 	registryCount, err := k.RegistryCount.Get(ctx)
 	if err != nil {
 		return 0, err
@@ -36,9 +29,6 @@ func (k Keeper) AddRegistry(ctx sdk.Context, sender sdk.AccAddress, name, descri
 	}
 	// Only admin or editor can add
 	if err := k.Registries.Set(ctx, registryId, registry); err != nil {
-		return 0, err
-	}
-	if err := k.RegistryIdByName.Set(ctx, name, registryId); err != nil {
 		return 0, err
 	}
 
@@ -79,8 +69,8 @@ func (k Keeper) AddRecord(ctx sdk.Context, sender sdk.AccAddress, record types.R
 		return 0, sdkerrors.ErrInvalidRequest.Wrap(err.Error())
 	}
 
-	registryId, err := k.RegistryIdByName.Get(ctx, record.Registry)
-	if err != nil {
+	registryId := record.RegistryId
+	if _, err := k.Registries.Get(ctx, registryId); err != nil {
 		return 0, err
 	}
 

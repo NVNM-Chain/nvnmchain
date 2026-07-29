@@ -196,7 +196,7 @@ func TestMsgRevokeRole_ValidationErrors(t *testing.T) {
 			setupReq: func(t *testing.T, k keeper.Keeper, ctx sdk.Context) *types.MsgRevokeRole {
 				t.Helper()
 				registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, registryAdminAddr, "reg-record-check")
-				keepertest.MustAddAnchoringRecord(t, k, ctx, registryAdminAddr, "reg-record-check", "present-checksum", "sha256")
+				keepertest.MustAddAnchoringRecord(t, k, ctx, registryAdminAddr, registryID, "present-checksum", "sha256")
 				return &types.MsgRevokeRole{
 					Admin:      registryAdminAddr,
 					Address:    moduleAdminAddr,

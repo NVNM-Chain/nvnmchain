@@ -68,13 +68,13 @@ func MustCreateAnchoringRegistry(tb testing.TB, k keeper.Keeper, ctx sdk.Context
 	return res.RegistryId
 }
 
-func MustAddAnchoringRecord(tb testing.TB, k keeper.Keeper, ctx sdk.Context, sender, registryName, checksum, checksumAlgo string) uint64 {
+func MustAddAnchoringRecord(tb testing.TB, k keeper.Keeper, ctx sdk.Context, sender string, registryId uint64, checksum, checksumAlgo string) uint64 {
 	tb.Helper()
 	ms := keeper.NewMsgServerImpl(k)
 	res, err := ms.AddRecord(ctx, &types.MsgAddRecord{
 		Sender: sender,
 		Record: &types.Record{
-			Registry:     registryName,
+			RegistryId:   registryId,
 			Uri:          "ipfs://bafy...",
 			Checksum:     checksum,
 			ChecksumAlgo: checksumAlgo,

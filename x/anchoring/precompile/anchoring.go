@@ -22,7 +22,7 @@ import (
 
 //go:generate go run github.com/yihuang/go-abi/cmd -var=HumanABI -output anchoring.abi.go --external-tuples PageRequest=cmn.PageRequest,PageResponse=cmn.PageResponse --imports cmn=github.com/NVNM-Chain/nvnmchain/precompiles -uint256
 var HumanABI = []string{
-	"struct Record {string registry; string uri; string checksum; string checksumAlgo; string metadata; string timestamp; string status; uint64 recordId; uint64 index; bool isLatest}",
+	"struct Record {string uri; string checksum; string checksumAlgo; string metadata; string timestamp; string status; uint64 recordId; uint64 index; bool isLatest; uint64 registryId}",
 	"struct Registry {uint64 id; string name; string description; string creator; string createdAt; string metadata}",
 	"struct PageRequest { bytes key; uint64 offset; uint64 limit; bool countTotal; bool reverse; }",
 	"struct PageResponse { bytes nextKey; uint64 total; }",
@@ -30,8 +30,8 @@ var HumanABI = []string{
 	"function addRegistry(string name, string description, string metadata) returns (uint64 registryId)",
 	"function addRecord(Record record) returns (uint64 recordId)",
 	"function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status) returns ()",
-	"function records(string registry, string checksum, uint64 recordId, uint64 index, PageRequest pagination) returns (Record[] records, PageResponse pagination)",
-	"function registries(uint64 registryId, string name, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
+	"function records(uint64 registryId, string checksum, uint64 recordId, uint64 index, PageRequest pagination) returns (Record[] records, PageResponse pagination)",
+	"function registries(uint64 registryId, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
 
 	"function grantRole(uint64 registryId, string checksum, address account, string role) returns ()",
 	"function revokeRole(uint64 registryId, string checksum, address account, string role) returns ()",
@@ -234,11 +234,7 @@ func (p Precompile) AddRecord(
 	if err != nil {
 		return nil, err
 	}
-	registryID, err := p.keeper.RegistryIdByName.Get(ctx, doc.Registry)
-	if err != nil {
-		return nil, err
-	}
-	if err := p.emitAddRecordEvent(ctx, stateDB, contract.Caller(), registryID, res.RecordId, doc.Checksum); err != nil {
+	if err := p.emitAddRecordEvent(ctx, stateDB, contract.Caller(), doc.RegistryId, res.RecordId, doc.Checksum); err != nil {
 		return nil, err
 	}
 	return &AddRecordReturn{RecordId: res.RecordId}, nil
@@ -279,18 +275,9 @@ func (p Precompile) Records(
 	pgReq := input.Pagination.ToPageRequest()
 	querySrv := keeper.NewQueryServerImpl(p.keeper)
 
-	var registryId uint64
-	var err error
-	if input.Registry != "" {
-		registryId, err = p.keeper.RegistryIdByName.Get(ctx, input.Registry)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	rsp, err := querySrv.Records(ctx, &types.QueryRecordsRequest{
 		Checksum:   input.Checksum,
-		RegistryId: registryId,
+		RegistryId: input.RegistryId,
 		RecordId:   input.RecordId,
 		Index:      input.Index,
 		Pagination: pgReq,
@@ -319,7 +306,6 @@ func (p Precompile) Registries(
 
 	rsp, err := querySrv.Registries(ctx, &types.QueryRegistriesRequest{
 		RegistryId: input.RegistryId,
-		Name:       input.Name,
 		Pagination: pgReq,
 	})
 	if err != nil {

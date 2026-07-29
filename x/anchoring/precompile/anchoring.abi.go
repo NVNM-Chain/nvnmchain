@@ -15,16 +15,16 @@ import (
 
 // Function selectors
 var (
-	// addRecord((string,string,string,string,string,string,string,uint64,uint64,bool))
-	AddRecordSelector = [4]byte{0x9b, 0x7b, 0x78, 0x69}
+	// addRecord((string,string,string,string,string,string,uint64,uint64,bool,uint64))
+	AddRecordSelector = [4]byte{0x64, 0xd2, 0x52, 0x95}
 	// addRegistry(string,string,string)
 	AddRegistrySelector = [4]byte{0x31, 0x8b, 0x38, 0xb1}
 	// grantRole(uint64,string,address,string)
 	GrantRoleSelector = [4]byte{0xb8, 0xfd, 0xd1, 0xa7}
-	// records(string,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))
-	RecordsSelector = [4]byte{0x02, 0xab, 0xaf, 0xdf}
-	// registries(uint64,string,(bytes,uint64,uint64,bool,bool))
-	RegistriesSelector = [4]byte{0x15, 0xae, 0x27, 0x0f}
+	// records(uint64,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))
+	RecordsSelector = [4]byte{0xc7, 0xbe, 0x5e, 0x37}
+	// registries(uint64,(bytes,uint64,uint64,bool,bool))
+	RegistriesSelector = [4]byte{0x17, 0xbd, 0x3e, 0x65}
 	// revokeRole(uint64,string,address,string)
 	RevokeRoleSelector = [4]byte{0xac, 0xd5, 0x8b, 0xc7}
 	// updateRecordStatus(uint64,uint64,uint64,string)
@@ -33,11 +33,11 @@ var (
 
 // Big endian integer versions of function selectors
 const (
-	AddRecordID          = 2608560233
+	AddRecordID          = 1691505301
 	AddRegistryID        = 831207601
 	GrantRoleID          = 3103642023
-	RecordsID            = 44806111
-	RegistriesID         = 363734799
+	RecordsID            = 3351141943
+	RegistriesID         = 398278245
 	RevokeRoleID         = 2899676103
 	UpdateRecordStatusID = 2545159205
 )
@@ -48,7 +48,6 @@ var _ abi.Tuple = (*Record)(nil)
 
 // Record represents an ABI tuple
 type Record struct {
-	Registry     string
 	Uri          string
 	Checksum     string
 	ChecksumAlgo string
@@ -58,12 +57,12 @@ type Record struct {
 	RecordId     uint64
 	Index        uint64
 	IsLatest     bool
+	RegistryId   uint64
 }
 
 // EncodedSize returns the total encoded size of Record
 func (t Record) EncodedSize() int {
 	dynamicSize := 0
-	dynamicSize += abi.SizeString(t.Registry)
 	dynamicSize += abi.SizeString(t.Uri)
 	dynamicSize += abi.SizeString(t.Checksum)
 	dynamicSize += abi.SizeString(t.ChecksumAlgo)
@@ -82,19 +81,9 @@ func (value Record) EncodeTo(buf []byte) (int, error) {
 		err error
 		n   int
 	)
-	// Field Registry: string
-	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[0+24:0+32], uint64(dynamicOffset))
-	// Encode dynamic data
-	n, err = abi.EncodeString(value.Registry, buf[dynamicOffset:])
-	if err != nil {
-		return 0, err
-	}
-	dynamicOffset += n
-
 	// Field Uri: string
 	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[32+24:32+32], uint64(dynamicOffset))
+	binary.BigEndian.PutUint64(buf[0+24:0+32], uint64(dynamicOffset))
 	// Encode dynamic data
 	n, err = abi.EncodeString(value.Uri, buf[dynamicOffset:])
 	if err != nil {
@@ -104,7 +93,7 @@ func (value Record) EncodeTo(buf []byte) (int, error) {
 
 	// Field Checksum: string
 	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[64+24:64+32], uint64(dynamicOffset))
+	binary.BigEndian.PutUint64(buf[32+24:32+32], uint64(dynamicOffset))
 	// Encode dynamic data
 	n, err = abi.EncodeString(value.Checksum, buf[dynamicOffset:])
 	if err != nil {
@@ -114,7 +103,7 @@ func (value Record) EncodeTo(buf []byte) (int, error) {
 
 	// Field ChecksumAlgo: string
 	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[96+24:96+32], uint64(dynamicOffset))
+	binary.BigEndian.PutUint64(buf[64+24:64+32], uint64(dynamicOffset))
 	// Encode dynamic data
 	n, err = abi.EncodeString(value.ChecksumAlgo, buf[dynamicOffset:])
 	if err != nil {
@@ -124,7 +113,7 @@ func (value Record) EncodeTo(buf []byte) (int, error) {
 
 	// Field Metadata: string
 	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[128+24:128+32], uint64(dynamicOffset))
+	binary.BigEndian.PutUint64(buf[96+24:96+32], uint64(dynamicOffset))
 	// Encode dynamic data
 	n, err = abi.EncodeString(value.Metadata, buf[dynamicOffset:])
 	if err != nil {
@@ -134,7 +123,7 @@ func (value Record) EncodeTo(buf []byte) (int, error) {
 
 	// Field Timestamp: string
 	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[160+24:160+32], uint64(dynamicOffset))
+	binary.BigEndian.PutUint64(buf[128+24:128+32], uint64(dynamicOffset))
 	// Encode dynamic data
 	n, err = abi.EncodeString(value.Timestamp, buf[dynamicOffset:])
 	if err != nil {
@@ -144,7 +133,7 @@ func (value Record) EncodeTo(buf []byte) (int, error) {
 
 	// Field Status: string
 	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[192+24:192+32], uint64(dynamicOffset))
+	binary.BigEndian.PutUint64(buf[160+24:160+32], uint64(dynamicOffset))
 	// Encode dynamic data
 	n, err = abi.EncodeString(value.Status, buf[dynamicOffset:])
 	if err != nil {
@@ -153,17 +142,22 @@ func (value Record) EncodeTo(buf []byte) (int, error) {
 	dynamicOffset += n
 
 	// Field RecordId: uint64
-	if _, err := abi.EncodeUint64(value.RecordId, buf[224:]); err != nil {
+	if _, err := abi.EncodeUint64(value.RecordId, buf[192:]); err != nil {
 		return 0, err
 	}
 
 	// Field Index: uint64
-	if _, err := abi.EncodeUint64(value.Index, buf[256:]); err != nil {
+	if _, err := abi.EncodeUint64(value.Index, buf[224:]); err != nil {
 		return 0, err
 	}
 
 	// Field IsLatest: bool
-	if _, err := abi.EncodeBool(value.IsLatest, buf[288:]); err != nil {
+	if _, err := abi.EncodeBool(value.IsLatest, buf[256:]); err != nil {
+		return 0, err
+	}
+
+	// Field RegistryId: uint64
+	if _, err := abi.EncodeUint64(value.RegistryId, buf[288:]); err != nil {
 		return 0, err
 	}
 
@@ -190,24 +184,9 @@ func (t *Record) Decode(data []byte) (int, error) {
 		offset int
 	)
 	dynamicOffset := 320
-	// Decode dynamic field Registry
-	{
-		offset, err = abi.DecodeSize(data[0:])
-		if err != nil {
-			return 0, err
-		}
-		if offset != dynamicOffset {
-			return 0, abi.ErrInvalidOffsetForDynamicField
-		}
-		t.Registry, n, err = abi.DecodeString(data[dynamicOffset:])
-		if err != nil {
-			return 0, err
-		}
-		dynamicOffset += n
-	}
 	// Decode dynamic field Uri
 	{
-		offset, err = abi.DecodeSize(data[32:])
+		offset, err = abi.DecodeSize(data[0:])
 		if err != nil {
 			return 0, err
 		}
@@ -222,7 +201,7 @@ func (t *Record) Decode(data []byte) (int, error) {
 	}
 	// Decode dynamic field Checksum
 	{
-		offset, err = abi.DecodeSize(data[64:])
+		offset, err = abi.DecodeSize(data[32:])
 		if err != nil {
 			return 0, err
 		}
@@ -237,7 +216,7 @@ func (t *Record) Decode(data []byte) (int, error) {
 	}
 	// Decode dynamic field ChecksumAlgo
 	{
-		offset, err = abi.DecodeSize(data[96:])
+		offset, err = abi.DecodeSize(data[64:])
 		if err != nil {
 			return 0, err
 		}
@@ -252,7 +231,7 @@ func (t *Record) Decode(data []byte) (int, error) {
 	}
 	// Decode dynamic field Metadata
 	{
-		offset, err = abi.DecodeSize(data[128:])
+		offset, err = abi.DecodeSize(data[96:])
 		if err != nil {
 			return 0, err
 		}
@@ -267,7 +246,7 @@ func (t *Record) Decode(data []byte) (int, error) {
 	}
 	// Decode dynamic field Timestamp
 	{
-		offset, err = abi.DecodeSize(data[160:])
+		offset, err = abi.DecodeSize(data[128:])
 		if err != nil {
 			return 0, err
 		}
@@ -282,7 +261,7 @@ func (t *Record) Decode(data []byte) (int, error) {
 	}
 	// Decode dynamic field Status
 	{
-		offset, err = abi.DecodeSize(data[192:])
+		offset, err = abi.DecodeSize(data[160:])
 		if err != nil {
 			return 0, err
 		}
@@ -296,17 +275,22 @@ func (t *Record) Decode(data []byte) (int, error) {
 		dynamicOffset += n
 	}
 	// Decode static field RecordId: uint64
-	t.RecordId, _, err = abi.DecodeUint64(data[224:])
+	t.RecordId, _, err = abi.DecodeUint64(data[192:])
 	if err != nil {
 		return 0, err
 	}
 	// Decode static field Index: uint64
-	t.Index, _, err = abi.DecodeUint64(data[256:])
+	t.Index, _, err = abi.DecodeUint64(data[224:])
 	if err != nil {
 		return 0, err
 	}
 	// Decode static field IsLatest: bool
-	t.IsLatest, _, err = abi.DecodeBool(data[288:])
+	t.IsLatest, _, err = abi.DecodeBool(data[256:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode static field RegistryId: uint64
+	t.RegistryId, _, err = abi.DecodeUint64(data[288:])
 	if err != nil {
 		return 0, err
 	}
@@ -508,7 +492,7 @@ func (t *Registry) Decode(data []byte) (int, error) {
 	return dynamicOffset, nil
 }
 
-// EncodeRecordSlice encodes (string,string,string,string,string,string,string,uint64,uint64,bool)[] to ABI bytes
+// EncodeRecordSlice encodes (string,string,string,string,string,string,uint64,uint64,bool,uint64)[] to ABI bytes
 func EncodeRecordSlice(value []Record, buf []byte) (int, error) {
 	// Encode length
 	binary.BigEndian.PutUint64(buf[24:32], uint64(len(value)))
@@ -558,7 +542,7 @@ func EncodeRegistrySlice(value []Registry, buf []byte) (int, error) {
 	return dynamicOffset + 32, nil
 }
 
-// SizeRecordSlice returns the encoded size of (string,string,string,string,string,string,string,uint64,uint64,bool)[]
+// SizeRecordSlice returns the encoded size of (string,string,string,string,string,string,uint64,uint64,bool,uint64)[]
 func SizeRecordSlice(value []Record) int {
 	size := 32 + 32*len(value) // length + offset pointers for dynamic elements
 	for _, elem := range value {
@@ -576,7 +560,7 @@ func SizeRegistrySlice(value []Registry) int {
 	return size
 }
 
-// DecodeRecordSlice decodes (string,string,string,string,string,string,string,uint64,uint64,bool)[] from ABI bytes
+// DecodeRecordSlice decodes (string,string,string,string,string,string,uint64,uint64,bool,uint64)[] from ABI bytes
 func DecodeRecordSlice(data []byte) ([]Record, int, error) {
 	// Decode length
 	if len(data) < 32 {
@@ -683,7 +667,7 @@ func (value AddRecordCall) EncodeTo(buf []byte) (int, error) {
 		err error
 		n   int
 	)
-	// Field Record: (string,string,string,string,string,string,string,uint64,uint64,bool)
+	// Field Record: (string,string,string,string,string,string,uint64,uint64,bool,uint64)
 	// Encode offset pointer
 	binary.BigEndian.PutUint64(buf[0+24:0+32], uint64(dynamicOffset))
 	// Encode dynamic data
@@ -1320,7 +1304,7 @@ var _ abi.Tuple = (*RecordsCall)(nil)
 
 // RecordsCall represents an ABI tuple
 type RecordsCall struct {
-	Registry   string
+	RegistryId uint64
 	Checksum   string
 	RecordId   uint64
 	Index      uint64
@@ -1330,7 +1314,6 @@ type RecordsCall struct {
 // EncodedSize returns the total encoded size of RecordsCall
 func (t RecordsCall) EncodedSize() int {
 	dynamicSize := 0
-	dynamicSize += abi.SizeString(t.Registry)
 	dynamicSize += abi.SizeString(t.Checksum)
 	dynamicSize += t.Pagination.EncodedSize()
 
@@ -1345,15 +1328,10 @@ func (value RecordsCall) EncodeTo(buf []byte) (int, error) {
 		err error
 		n   int
 	)
-	// Field Registry: string
-	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[0+24:0+32], uint64(dynamicOffset))
-	// Encode dynamic data
-	n, err = abi.EncodeString(value.Registry, buf[dynamicOffset:])
-	if err != nil {
+	// Field RegistryId: uint64
+	if _, err := abi.EncodeUint64(value.RegistryId, buf[0:]); err != nil {
 		return 0, err
 	}
-	dynamicOffset += n
 
 	// Field Checksum: string
 	// Encode offset pointer
@@ -1408,20 +1386,10 @@ func (t *RecordsCall) Decode(data []byte) (int, error) {
 		offset int
 	)
 	dynamicOffset := 160
-	// Decode dynamic field Registry
-	{
-		offset, err = abi.DecodeSize(data[0:])
-		if err != nil {
-			return 0, err
-		}
-		if offset != dynamicOffset {
-			return 0, abi.ErrInvalidOffsetForDynamicField
-		}
-		t.Registry, n, err = abi.DecodeString(data[dynamicOffset:])
-		if err != nil {
-			return 0, err
-		}
-		dynamicOffset += n
+	// Decode static field RegistryId: uint64
+	t.RegistryId, _, err = abi.DecodeUint64(data[0:])
+	if err != nil {
+		return 0, err
 	}
 	// Decode dynamic field Checksum
 	{
@@ -1493,14 +1461,14 @@ func (t RecordsCall) EncodeWithSelector() ([]byte, error) {
 
 // NewRecordsCall constructs a new RecordsCall
 func NewRecordsCall(
-	registry string,
+	registryId uint64,
 	checksum string,
 	recordId uint64,
 	index uint64,
 	pagination cmn.PageRequest,
 ) *RecordsCall {
 	return &RecordsCall{
-		Registry:   registry,
+		RegistryId: registryId,
 		Checksum:   checksum,
 		RecordId:   recordId,
 		Index:      index,
@@ -1535,7 +1503,7 @@ func (value RecordsReturn) EncodeTo(buf []byte) (int, error) {
 		err error
 		n   int
 	)
-	// Field Records: (string,string,string,string,string,string,string,uint64,uint64,bool)[]
+	// Field Records: (string,string,string,string,string,string,uint64,uint64,bool,uint64)[]
 	// Encode offset pointer
 	binary.BigEndian.PutUint64(buf[0+24:0+32], uint64(dynamicOffset))
 	// Encode dynamic data
@@ -1613,21 +1581,19 @@ func (t *RecordsReturn) Decode(data []byte) (int, error) {
 
 var _ abi.Method = (*RegistriesCall)(nil)
 
-const RegistriesCallStaticSize = 96
+const RegistriesCallStaticSize = 64
 
 var _ abi.Tuple = (*RegistriesCall)(nil)
 
 // RegistriesCall represents an ABI tuple
 type RegistriesCall struct {
 	RegistryId uint64
-	Name       string
 	Pagination cmn.PageRequest
 }
 
 // EncodedSize returns the total encoded size of RegistriesCall
 func (t RegistriesCall) EncodedSize() int {
 	dynamicSize := 0
-	dynamicSize += abi.SizeString(t.Name)
 	dynamicSize += t.Pagination.EncodedSize()
 
 	return RegistriesCallStaticSize + dynamicSize
@@ -1646,19 +1612,9 @@ func (value RegistriesCall) EncodeTo(buf []byte) (int, error) {
 		return 0, err
 	}
 
-	// Field Name: string
-	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[32+24:32+32], uint64(dynamicOffset))
-	// Encode dynamic data
-	n, err = abi.EncodeString(value.Name, buf[dynamicOffset:])
-	if err != nil {
-		return 0, err
-	}
-	dynamicOffset += n
-
 	// Field Pagination: (bytes,uint64,uint64,bool,bool)
 	// Encode offset pointer
-	binary.BigEndian.PutUint64(buf[64+24:64+32], uint64(dynamicOffset))
+	binary.BigEndian.PutUint64(buf[32+24:32+32], uint64(dynamicOffset))
 	// Encode dynamic data
 	n, err = value.Pagination.EncodeTo(buf[dynamicOffset:])
 	if err != nil {
@@ -1680,7 +1636,7 @@ func (value RegistriesCall) Encode() ([]byte, error) {
 
 // Decode decodes RegistriesCall from ABI bytes in the provided buffer
 func (t *RegistriesCall) Decode(data []byte) (int, error) {
-	if len(data) < 96 {
+	if len(data) < 64 {
 		return 0, io.ErrUnexpectedEOF
 	}
 	var (
@@ -1688,30 +1644,15 @@ func (t *RegistriesCall) Decode(data []byte) (int, error) {
 		n      int
 		offset int
 	)
-	dynamicOffset := 96
+	dynamicOffset := 64
 	// Decode static field RegistryId: uint64
 	t.RegistryId, _, err = abi.DecodeUint64(data[0:])
 	if err != nil {
 		return 0, err
 	}
-	// Decode dynamic field Name
-	{
-		offset, err = abi.DecodeSize(data[32:])
-		if err != nil {
-			return 0, err
-		}
-		if offset != dynamicOffset {
-			return 0, abi.ErrInvalidOffsetForDynamicField
-		}
-		t.Name, n, err = abi.DecodeString(data[dynamicOffset:])
-		if err != nil {
-			return 0, err
-		}
-		dynamicOffset += n
-	}
 	// Decode dynamic field Pagination
 	{
-		offset, err = abi.DecodeSize(data[64:])
+		offset, err = abi.DecodeSize(data[32:])
 		if err != nil {
 			return 0, err
 		}
@@ -1755,12 +1696,10 @@ func (t RegistriesCall) EncodeWithSelector() ([]byte, error) {
 // NewRegistriesCall constructs a new RegistriesCall
 func NewRegistriesCall(
 	registryId uint64,
-	name string,
 	pagination cmn.PageRequest,
 ) *RegistriesCall {
 	return &RegistriesCall{
 		RegistryId: registryId,
-		Name:       name,
 		Pagination: pagination,
 	}
 }

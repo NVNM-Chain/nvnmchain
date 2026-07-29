@@ -45,7 +45,7 @@ import (
 	"github.com/NVNM-Chain/nvnmchain/app/ante"
 	appparams "github.com/NVNM-Chain/nvnmchain/app/params"
 	"github.com/NVNM-Chain/nvnmchain/app/upgrades"
-	"github.com/NVNM-Chain/nvnmchain/app/upgrades/v1_1"
+	"github.com/NVNM-Chain/nvnmchain/app/upgrades/v1_2"
 	_ "github.com/NVNM-Chain/nvnmchain/client/docs/statik"
 	"github.com/NVNM-Chain/nvnmchain/client/docs/swagger"
 	taxkeeper "github.com/NVNM-Chain/nvnmchain/x/tax/keeper"
@@ -221,7 +221,7 @@ var maccPerms = map[string][]string{
 	anchoringtypes.ModuleName: nil,
 }
 
-var Upgrades = []upgrades.Upgrade{v1_1.Upgrade}
+var Upgrades = []upgrades.Upgrade{v1_2.Upgrade}
 
 var (
 	_ runtime.AppI            = (*App)(nil)
@@ -926,7 +926,7 @@ func New(
 
 	// Register any on-chain upgrades.
 	app.setupUpgradeStoreLoaders()
-	app.setupUpgradeHandlers()
+	app.setupUpgradeHandlers(homePath)
 
 	// At startup, after all modules have been registered, check that all proto
 	// annotations are correct.
@@ -1236,15 +1236,18 @@ func (app *App) setupUpgradeStoreLoaders() {
 	}
 }
 
-func (app *App) setupUpgradeHandlers() {
+func (app *App) setupUpgradeHandlers(homeDir string) {
 	for _, upgrade := range Upgrades {
 		app.UpgradeKeeper.SetUpgradeHandler(
 			upgrade.UpgradeName,
 			upgrade.CreateUpgradeHandler(
 				app.ModuleManager,
 				app.configurator,
-				&upgrades.UpgradeKeepers{},
+				&upgrades.UpgradeKeepers{
+					AnchoringKeeper: app.AnchoringKeeper,
+				},
 				app.keys,
+				homeDir,
 			),
 		)
 	}
