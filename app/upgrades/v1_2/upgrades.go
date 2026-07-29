@@ -35,7 +35,8 @@ func CreateUpgradeHandler(
 		}
 
 		exportDir := ResolveExportDir(homeDir, "v1_2", exportDirEnvVar)
-		if err := SeedAnchoringData(ctx, keepers, exportDir, data.RegistriesJSON, data.ManifestJSON); err != nil {
+		seedCtx := ctx.WithEventManager(sdk.NewEventManager())
+		if err := SeedAnchoringData(seedCtx, keepers, exportDir, data.RegistriesJSON, data.ManifestJSON); err != nil {
 			return vm, fmt.Errorf("failed to seed anchoring data: %w", err)
 		}
 
