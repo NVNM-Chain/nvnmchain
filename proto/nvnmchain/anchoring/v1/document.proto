@@ -11,7 +11,8 @@ message Registry {
   // Unique ID (auto-incrementing uint64 is standard for Cosmos collections)
   uint64 id = 1;
 
-  // Name of the registry. Unique identifier.
+  // Name of the registry. Not guaranteed unique — multiple registries may share
+  // the same name.
   string name = 2;
 
   // Description of what this registry verifies
@@ -29,8 +30,8 @@ message Registry {
 
 message Record {
   option (gogoproto.equal) = true;
-  // The registry name under which this record is categorized.
-  string registry = 1;
+  reserved 1;
+  reserved "registry";
 
   // A link to where the document is stored (e.g., IPFS).
   string uri = 2;
@@ -58,4 +59,7 @@ message Record {
 
   // Indicates if this is the latest version of the record.
   bool is_latest = 10;
+
+  // The id of the registry this record belongs to.
+  uint64 registry_id = 11;
 }

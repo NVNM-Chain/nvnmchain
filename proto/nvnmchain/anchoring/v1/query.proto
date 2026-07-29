@@ -27,7 +27,7 @@ service Query {
     option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/registries";
   }
 
-  // Registry queries a specific registry by id or name
+  // Registry queries a specific registry by id
   rpc Registry(QueryRegistryRequest) returns (QueryRegistryResponse) {
     option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/registry";
   }
@@ -67,8 +67,6 @@ message QueryRecordsResponse {
 message QueryRegistriesRequest {
   // registry_id is an optional filter for a specific registry
   uint64 registry_id = 1;
-  // name is an optional filter for a specific registry by name
-  string name = 2;
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
@@ -85,8 +83,6 @@ message QueryRegistriesResponse {
 message QueryRegistryRequest {
   // id is the unique identifier of the registry
   uint64 id = 1;
-  // name is the name of the registry (alternative to id)
-  string name = 2;
 }
 
 // QueryRegistryResponse is response type for the Query/Registry RPC method.
