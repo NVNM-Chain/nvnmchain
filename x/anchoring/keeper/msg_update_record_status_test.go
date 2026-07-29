@@ -92,7 +92,7 @@ func TestMsgUpdateRecordStatus_MsgServer_Cases(t *testing.T) {
 	ms := keeper.NewMsgServerImpl(k)
 	sender := keepertest.TestSenderAddr
 	registryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "reg1")
-	recordID := keepertest.MustAddAnchoringRecord(t, k, ctx, sender, "reg1", "deadbeef", "sha256")
+	recordID := keepertest.MustAddAnchoringRecord(t, k, ctx, sender, registryID, "deadbeef", "sha256")
 	testCases := []struct {
 		name            string
 		req             *types.MsgUpdateRecordStatus
@@ -154,7 +154,7 @@ func TestMsgUpdateRecordStatus_RecordRoleDoesNotBleedAcrossRegistries(t *testing
 	victimAdmin := keepertest.TestSenderAddr
 	attacker := types.DefaultParams().Admin
 	victimRegistryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, victimAdmin, victimRegistry)
-	victimRecordID := keepertest.MustAddAnchoringRecord(t, k, ctx, victimAdmin, victimRegistry, checksum, "sha256")
+	victimRecordID := keepertest.MustAddAnchoringRecord(t, k, ctx, victimAdmin, victimRegistryID, checksum, "sha256")
 
 	updateVictimStatus := func(status string) error {
 		_, err := ms.UpdateRecordStatus(ctx, &types.MsgUpdateRecordStatus{
@@ -176,7 +176,7 @@ func TestMsgUpdateRecordStatus_RecordRoleDoesNotBleedAcrossRegistries(t *testing
 	assertUnauthorized(updateVictimStatus("unauthorized-pre"))
 
 	attackerRegistryID := keepertest.MustCreateAnchoringRegistry(t, k, ctx, attacker, attackerReg)
-	keepertest.MustAddAnchoringRecord(t, k, ctx, attacker, attackerReg, checksum, "sha256")
+	keepertest.MustAddAnchoringRecord(t, k, ctx, attacker, attackerRegistryID, checksum, "sha256")
 
 	// Attacker can grant themselves record-level editor in attacker registry.
 	_, err := ms.GrantRole(ctx, &types.MsgGrantRole{

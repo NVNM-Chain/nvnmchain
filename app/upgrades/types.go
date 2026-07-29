@@ -3,6 +3,7 @@ package upgrades
 import (
 	storetypes "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
+	anchoringkeeper "github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 )
@@ -15,8 +16,10 @@ type Upgrade struct {
 	// Upgrade version name, for the upgrade handler, e.g. `v7`
 	UpgradeName string
 
-	// CreateUpgradeHandler defines the function that creates an upgrade handler
-	CreateUpgradeHandler func(*module.Manager, module.Configurator, *UpgradeKeepers, map[string]*storetypes.KVStoreKey) upgradetypes.UpgradeHandler
+	// CreateUpgradeHandler defines the function that creates an upgrade handler. homeDir is the
+	// node's home directory, for upgrades that must read local files too large to embed in the
+	// binary (e.g. a bulk data migration) — most upgrades can ignore it.
+	CreateUpgradeHandler func(mm *module.Manager, configurator module.Configurator, keepers *UpgradeKeepers, storekeys map[string]*storetypes.KVStoreKey, homeDir string) upgradetypes.UpgradeHandler
 
 	// Store upgrades, should be used for any new modules introduced, new modules deleted, or store names renamed.
 	StoreUpgrades storetypes.StoreUpgrades
@@ -37,4 +40,6 @@ type Fork struct {
 	BeginForkLogic func(ctx sdk.Context)
 }
 
-type UpgradeKeepers struct{}
+type UpgradeKeepers struct {
+	AnchoringKeeper anchoringkeeper.Keeper
+}

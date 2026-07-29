@@ -25,9 +25,9 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	registryOne := testRegistry(1, "kyc_registry", "KYC document registry", sample.AccAddress(), "2024-01-01T00:00:00Z")
 	registryTwo := testRegistry(2, "aml_registry", "AML document registry", sample.AccAddress(), "2024-01-02T00:00:00Z")
 
-	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001","figi":"BBG000B9M9V0","individualId":"individual_001"}`, "2024-01-01T10:00:00Z", 1)
-	recordTwo := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash002", `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`, "2024-01-01T11:00:00Z", 2)
-	recordThree := testRecord("aml_registry", "ipfs://QmExample3", "sha256hash003", `{"document":"aml_document_001","figi":"BBG000B9M9V2","individualId":"individual_003"}`, "2024-01-02T10:00:00Z", 1)
+	recordOne := testRecordWithRegistryId(1, "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001","figi":"BBG000B9M9V0","individualId":"individual_001"}`, "2024-01-01T10:00:00Z", 1)
+	recordTwo := testRecordWithRegistryId(1, "ipfs://QmExample2", "sha256hash002", `{"document":"kyc_document_002","figi":"BBG000B9M9V1","individualId":"individual_002"}`, "2024-01-01T11:00:00Z", 2)
+	recordThree := testRecordWithRegistryId(2, "ipfs://QmExample3", "sha256hash003", `{"document":"aml_document_001","figi":"BBG000B9M9V2","individualId":"individual_003"}`, "2024-01-02T10:00:00Z", 1)
 
 	adminRole := k.RegistryRole(1, "admin")
 	adminRoleKeyBytes := encodeRBACRoleAdminKey(t, adminRole)
@@ -77,15 +77,6 @@ func TestInitGenesisAndExportGenesis(t *testing.T) {
 	storedRegistry2, err := k.Registries.Get(ctx, 2)
 	require.NoError(t, err)
 	require.Equal(t, registryTwo.Name, storedRegistry2.Name)
-
-	// Verify registry names mapping
-	regId1, err := k.RegistryIdByName.Get(ctx, "kyc_registry")
-	require.NoError(t, err)
-	require.Equal(t, uint64(1), regId1)
-
-	regId2, err := k.RegistryIdByName.Get(ctx, "aml_registry")
-	require.NoError(t, err)
-	require.Equal(t, uint64(2), regId2)
 
 	// Verify registry count
 	regCount, err := k.RegistryCount.Get(ctx)
@@ -205,8 +196,8 @@ func TestInitGenesisEmpty(t *testing.T) {
 func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
 	k, ctx, _ := keeper.AnchoringKeeper(t)
 	registry := testRegistry(1, "kyc_registry", "KYC document registry", sample.AccAddress(), "2024-01-01T00:00:00Z")
-	recordOne := testRecord("kyc_registry", "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001"}`, "2024-01-01T10:00:00Z", 1)
-	recordDuplicateKey := testRecord("kyc_registry", "ipfs://QmExample2", "sha256hash999", `{"document":"kyc_document_999"}`, "2024-01-01T11:00:00Z", 1)
+	recordOne := testRecordWithRegistryId(1, "ipfs://QmExample1", "sha256hash001", `{"document":"kyc_document_001"}`, "2024-01-01T10:00:00Z", 1)
+	recordDuplicateKey := testRecordWithRegistryId(1, "ipfs://QmExample2", "sha256hash999", `{"document":"kyc_document_999"}`, "2024-01-01T11:00:00Z", 1)
 
 	genState := types.GenesisState{
 		Params: testParams(),
@@ -221,6 +212,37 @@ func TestInitGenesisRejectsDuplicateRecordKeys(t *testing.T) {
 	require.Contains(t, err.Error(), "registry_id=1")
 	require.Contains(t, err.Error(), "record_id=1")
 	require.Contains(t, err.Error(), "index=1")
+}
+
+func TestInitGenesisAllowsDuplicateRegistryNames(t *testing.T) {
+	k, ctx, _ := keeper.AnchoringKeeper(t)
+	registryOne := testRegistry(1, "shared-name", "first registry", sample.AccAddress(), "2024-01-01T00:00:00Z")
+	registryTwo := testRegistry(2, "shared-name", "second registry", sample.AccAddress(), "2024-01-02T00:00:00Z")
+
+	// Both records reference their registry by id directly, sidestepping the
+	// deprecated (and now ambiguous, since the name is shared) name-based fallback.
+	recordOne := testRecordWithRegistryId(1, "ipfs://QmExample1", "sha256hash001", `{"document":"doc1"}`, "2024-01-01T10:00:00Z", 1)
+	recordTwo := testRecordWithRegistryId(2, "ipfs://QmExample2", "sha256hash002", `{"document":"doc2"}`, "2024-01-02T10:00:00Z", 1)
+
+	err := k.InitGenesis(ctx, types.GenesisState{
+		Params: testParams(),
+		Registries: map[uint64]types.Registry{
+			1: registryOne,
+			2: registryTwo,
+		},
+		Records: []types.Record{recordOne, recordTwo},
+	})
+	require.NoError(t, err)
+
+	storedOne, err := k.Records.Get(ctx, collections.Join3(uint64(1), uint64(1), uint64(1)))
+	require.NoError(t, err)
+	require.Equal(t, "sha256hash001", storedOne.Checksum)
+	require.Equal(t, uint64(1), storedOne.RegistryId)
+
+	storedTwo, err := k.Records.Get(ctx, collections.Join3(uint64(2), uint64(1), uint64(1)))
+	require.NoError(t, err)
+	require.Equal(t, "sha256hash002", storedTwo.Checksum)
+	require.Equal(t, uint64(2), storedTwo.RegistryId)
 }
 
 func TestInitGenesisRejectsInvalidRegistryFields(t *testing.T) {
@@ -267,8 +289,8 @@ func TestInitGenesisRejectsOversizedRecordFields(t *testing.T) {
 	k, ctx, _ := keeper.AnchoringKeeper(t)
 
 	registry := testRegistry(1, "kyc_registry", "KYC document registry", sample.AccAddress(), "2024-01-01T00:00:00Z")
-	record := testRecord(
-		"kyc_registry",
+	record := testRecordWithRegistryId(
+		1,
 		"ipfs://QmExample1",
 		"sha256hash001",
 		strings.Repeat("a", types.MaxRecordMetadataLen+1),
@@ -299,9 +321,9 @@ func testRegistry(id uint64, name, description, creator, createdAt string) types
 	}
 }
 
-func testRecord(registry, uri, checksum, metadata, timestamp string, recordID uint64) types.Record {
+func testRecordWithRegistryId(registryId uint64, uri, checksum, metadata, timestamp string, recordID uint64) types.Record {
 	return types.Record{
-		Registry:     registry,
+		RegistryId:   registryId,
 		Uri:          uri,
 		Checksum:     checksum,
 		ChecksumAlgo: "SHA-256",

@@ -8,7 +8,6 @@ import (
 
 func FromABIRecord(rec Record) types.Record {
 	return types.Record{
-		Registry:     rec.Registry,
 		Uri:          rec.Uri,
 		Checksum:     rec.Checksum,
 		ChecksumAlgo: rec.ChecksumAlgo,
@@ -18,12 +17,12 @@ func FromABIRecord(rec Record) types.Record {
 		RecordId:     rec.RecordId,
 		Index:        rec.Index,
 		IsLatest:     rec.IsLatest,
+		RegistryId:   rec.RegistryId,
 	}
 }
 
 func ToABIRecord(rec types.Record) Record {
 	return Record{
-		Registry:     rec.Registry,
 		Uri:          rec.Uri,
 		Checksum:     rec.Checksum,
 		ChecksumAlgo: rec.ChecksumAlgo,
@@ -33,6 +32,7 @@ func ToABIRecord(rec types.Record) Record {
 		RecordId:     rec.RecordId,
 		Index:        rec.Index,
 		IsLatest:     rec.IsLatest,
+		RegistryId:   rec.RegistryId,
 	}
 }
 
