@@ -107,6 +107,18 @@ func SeedAnchoringData(ctx sdk.Context, keepers *upgrades.UpgradeKeepers, export
 		return fmt.Errorf("registries.json has %d registries, manifest.json expects %d", len(registries), manifest.Totals.Registries)
 	}
 
+	// registryIds below is keyed by name, so a duplicate name would silently collapse two
+	// distinct registries into one id and misattribute the first registry's records to the
+	// second. Registry names are no longer required to be unique on-chain, so this must be
+	// checked explicitly here rather than relying on AddRegistry to reject it.
+	seenNames := make(map[string]struct{}, len(registries))
+	for _, r := range registries {
+		if _, ok := seenNames[r.Name]; ok {
+			return fmt.Errorf("registries.json has duplicate registry name %q", r.Name)
+		}
+		seenNames[r.Name] = struct{}{}
+	}
+
 	adminAddr, err := sdk.AccAddressFromBech32(MainnetRegistryAdmin)
 	if err != nil {
 		return fmt.Errorf("invalid MainnetRegistryAdmin address %q: %w", MainnetRegistryAdmin, err)

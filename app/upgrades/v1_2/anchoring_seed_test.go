@@ -215,6 +215,21 @@ func TestSeedAnchoringData_UnknownRegistryInManifestRejected(t *testing.T) {
 	require.Contains(t, err.Error(), "unknown registry")
 }
 
+func TestSeedAnchoringData_DuplicateRegistryNameRejected(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx := newTestAnchoringKeeper(t)
+
+	manifest := MigrationManifest{}
+	manifest.Totals.Registries = 2
+	manifest.Totals.Records = 0
+	manifestJSON, err := json.Marshal(manifest)
+	require.NoError(t, err)
+
+	err = SeedAnchoringData(ctx, &upgrades.UpgradeKeepers{AnchoringKeeper: k}, t.TempDir(), fixtureRegistriesJSON(t, "reg-a", "reg-a"), manifestJSON)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), `duplicate registry name "reg-a"`)
+}
+
 func TestSeedAnchoringData_MissingFileOnDiskRejected(t *testing.T) {
 	appparams.SetAddressPrefixes()
 	k, ctx := newTestAnchoringKeeper(t)
