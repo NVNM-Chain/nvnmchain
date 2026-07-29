@@ -33,7 +33,7 @@ The module defines several important types:
 1. `Params`: Module parameters (includes an `admin` address)
 2. `GenesisState`: Initial state of the module
 3. `Registry`: A registry of records (id, name, description, creator, created_at, metadata)
-4. `Record`: An anchored record (registry, uri, checksum, checksum_algo, metadata, timestamp, status, record_id, index, is_latest)
+4. `Record`: An anchored record (uri, checksum, checksum_algo, metadata, timestamp, status, record_id, index, is_latest, registry_id)
 
 ### Messages and Queries
 
@@ -50,8 +50,8 @@ The module defines several important types:
 
 - `Params`: Fetch module params
 - `Records`: List records filtered by checksum/registry_id/record_id/index (paginated)
-- `Registries`: List registries filtered by registry_id/name (paginated)
-- `Registry`: Fetch a single registry by id or name
+- `Registries`: List registries filtered by registry_id (paginated)
+- `Registry`: Fetch a single registry by id
 
 ## Usage
 
@@ -71,11 +71,11 @@ The `UpdateParams` function updates module parameters. In practice, this is admi
 
 ### AddRegistry
 
-The `AddRegistry` function creates a new registry.
+The `AddRegistry` function creates a new registry. Registry `name` is **not** unique — multiple registries may share the same name, and a registry is always referenced canonically by its auto-incrementing `id`, never by name.
 
 ### AddRecord
 
-The `AddRecord` function adds a new record (and automatically versions it via `record_id` and `index`) under the registry indicated by `record.registry`. The `Msg/AddRecord` response returns the assigned `record_id`.
+The `AddRecord` function adds a new record (and automatically versions it via `record_id` and `index`) under the registry indicated by `record.registry_id`. The `Msg/AddRecord` response returns the assigned `record_id`.
 
 ### UpdateRecordStatus
 
@@ -112,7 +112,6 @@ The following Solidity-style ABI is generated from the `HumanABI` definitions in
 ```solidity
 interface IAnchoringPrecompile {
 	struct Record {
-		string registry;
 		string uri;
 		string checksum;
 		string checksumAlgo;
@@ -122,6 +121,7 @@ interface IAnchoringPrecompile {
 		uint64 recordId;
 		uint64 index;
 		bool isLatest;
+		uint64 registryId;
 	}
 
 	struct Registry {
@@ -157,11 +157,11 @@ interface IAnchoringPrecompile {
 	function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status)
 		external;
 
-	function records(string registry, string checksum, uint64 recordId, uint64 index, PageRequest pagination)
+	function records(uint64 registryId, string checksum, uint64 recordId, uint64 index, PageRequest pagination)
 		external
 		returns (Record[] records, PageResponse pagination);
 
-	function registries(uint64 registryId, string name, PageRequest pagination)
+	function registries(uint64 registryId, PageRequest pagination)
 		external
 		returns (Registry[] registries, PageResponse pagination);
 
@@ -177,11 +177,11 @@ interface IAnchoringPrecompile {
 
 Selectors are the first 4 bytes of `keccak256(<function signature>)` and are generated into `x/anchoring/precompile/anchoring.abi.go`.
 
-- `addRecord((string,string,string,string,string,string,string,uint64,uint64,bool))`: `0x9b7b7869`
+- `addRecord((string,string,string,string,string,string,uint64,uint64,bool,uint64))`: `0x64d25295`
 - `addRegistry(string,string,string)`: `0x318b38b1`
 - `grantRole(uint64,string,address,string)`: `0xb8fdd1a7`
-- `records(string,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`: `0x02abafdf`
-- `registries(uint64,string,(bytes,uint64,uint64,bool,bool))`: `0x15ae270f`
+- `records(uint64,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`: `0xc7be5e37`
+- `registries(uint64,(bytes,uint64,uint64,bool,bool))`: `0x17bd3e65`
 - `revokeRole(uint64,string,address,string)`: `0xacd58bc7`
 - `updateRecordStatus(uint64,uint64,uint64,string)`: `0x97b40c25`
 
@@ -198,11 +198,10 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 - Return value encoding: returns `(uint64 registryId)` encoded as a single 32-byte word (left-padded).
 - Expected gas (rough): ~`80,000–250,000` EVM gas (depends on KV writes and string lengths)
 - Authorization checks:
-	- No RBAC permission check; effectively any EVM caller can create a registry as long as `name` is unique.
+	- No RBAC permission check; any EVM caller can create a registry. Registry `name` is not required to be unique.
 - State mutations:
 	- Creates `registryId = RegistryCount + 1`
 	- Stores `Registries[registryId] = {id, name, description, creator, created_at, metadata}`
-	- Stores `RegistryIdByName[name] = registryId`
 	- Initializes RBAC: sets the registry admin role to be its own admin; adds the creator as a member of the registry admin role
 	- Initializes registry record counter; updates `RegistryCount`
 - Events emitted:
@@ -210,10 +209,10 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 
 #### addRecord
 
-- Function signature (for `keccak256`): `addRecord((string,string,string,string,string,string,string,uint64,uint64,bool))`
-- Function selector: `0x9b7b7869`
+- Function signature (for `keccak256`): `addRecord((string,string,string,string,string,string,uint64,uint64,bool,uint64))`
+- Function selector: `0x64d25295`
 - Inputs: `Record record` where:
-	- `Record = (string registry, string uri, string checksum, string checksumAlgo, string metadata, string timestamp, string status, uint64 recordId, uint64 index, bool isLatest)`
+	- `Record = (string uri, string checksum, string checksumAlgo, string metadata, string timestamp, string status, uint64 recordId, uint64 index, bool isLatest, uint64 registryId)`
 - Parameter encoding (Ethereum ABI):
 	- Call data = selector + `abi.encode(record)`
 	- Tuples are encoded like structs: offsets for dynamic fields (`string`s) plus 32-byte words for static fields (`uint64`, `bool`).
@@ -227,7 +226,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 		- registry-scoped role, or
 		- global role.
 - State mutations:
-	- Resolves `registryId` from `record.registry` name
+	- Uses `record.registryId` directly and verifies the registry exists (`Registries[registryId]`)
 	- Determines/assigns `recordId` for `(registryId, checksum)`; increments per-registry record counters when needed
 	- Increments per-record `index` and sets:
 		- `record.Timestamp = blockTime`
@@ -302,12 +301,11 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 
 #### records
 
-- Function signature (for `keccak256`): `records(string,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`
-- Function selector: `0x02abafdf`
+- Function signature (for `keccak256`): `records(uint64,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`
+- Function selector: `0xc7be5e37`
 - Return value encoding: returns `(Record[] records, PageResponse pagination)` encoded per standard Ethereum ABI rules for dynamic arrays/tuples.
 - State queried:
-	- If `registry != ""`, resolves registry name → `registryId` via `RegistryIdByName`.
-	- Queries Cosmos module state via the anchoring gRPC query server (`Query/Records`) with filters `checksum`, `registry_id`, `record_id`, `index`, and pagination.
+	- Queries Cosmos module state via the anchoring gRPC query server (`Query/Records`) with filters `registry_id`, `checksum`, `record_id`, `index`, and pagination.
 - Data source: Cosmos state (Cosmos SDK KV/collections), not EVM contract storage.
 - Staleness: within a single EVM tx, it should observe up-to-date Cosmos cached state because the precompile commits the cache context before executing each call.
 
@@ -316,7 +314,6 @@ Example output (mapped to `Record` field names):
 ```json
 [
 	{
-		"registry": "test-registry",
 		"uri": "ipfs://abc123",
 		"checksum": "abc123",
 		"checksumAlgo": "sha256",
@@ -325,10 +322,10 @@ Example output (mapped to `Record` field names):
 		"status": "",
 		"recordId": 1,
 		"index": 2,
-		"isLatest": true
+		"isLatest": true,
+		"registryId": 1
 	},
 	{
-		"registry": "test-registry",
 		"uri": "ipfs://def456",
 		"checksum": "def456",
 		"checksumAlgo": "sha256",
@@ -337,7 +334,8 @@ Example output (mapped to `Record` field names):
 		"status": "",
 		"recordId": 2,
 		"index": 1,
-		"isLatest": true
+		"isLatest": true,
+		"registryId": 1
 	}
 ]
 ```
@@ -346,11 +344,11 @@ Note: on-chain (ABI) the `metadata` field is returned as a JSON-encoded `string`
 
 #### registries
 
-- Function signature (for `keccak256`): `registries(uint64,string,(bytes,uint64,uint64,bool,bool))`
-- Function selector: `0x15ae270f`
+- Function signature (for `keccak256`): `registries(uint64,(bytes,uint64,uint64,bool,bool))`
+- Function selector: `0x17bd3e65`
 - Return value encoding: returns `(Registry[] registries, PageResponse pagination)` encoded per standard Ethereum ABI rules for dynamic arrays/tuples.
 - State queried:
-	- Queries Cosmos module state via the anchoring gRPC query server (`Query/Registries`) with filters `registry_id`, `name`, and pagination.
+	- Queries Cosmos module state via the anchoring gRPC query server (`Query/Registries`) with filter `registry_id` and pagination.
 - Data source: Cosmos state (Cosmos SDK KV/collections), not EVM storage.
 - Staleness: same semantics as `records` for the current EVM tx.
 
