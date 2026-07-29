@@ -5,11 +5,6 @@ The mainnet case-law export (`mainnet-full-export/`: **2,114 registries, 11,944,
 complete, state pilot, and state remainder) is loaded entirely by a single chain upgrade, in
 one `SeedAnchoringData` call within the upgrade handler.
 
-> **Note:** an earlier design split this across two separate upgrades (v1.2.0 + v1.3.0) purely
-> to bound peak memory per upgrade. They've since been combined into this single v1.2.0
-> upgrade — see step 3 below for what that means for RAM headroom: you now need enough for
-> the **full dataset in one pass**, not a fraction of it.
-
 The bulk tranche data is **not** embedded in the binary. Every validator must independently
 stage it on local disk before the upgrade height, and the handler verifies it byte-for-byte
 against checksums baked into the binary before writing anything to state.
