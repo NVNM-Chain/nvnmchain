@@ -9,7 +9,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
 	// mantra/v0.6.x
-	github.com/cosmos/evm => github.com/MANTRA-Chain/evm v0.6.0-v8-mantra-4
+	github.com/cosmos/evm => github.com/MANTRA-Chain/evm v0.6.1-v8-mantra-1
 
 	// branch: release/1.16
 	github.com/ethereum/go-ethereum => github.com/cosmos/go-ethereum v1.16.2-cosmos-1
@@ -26,10 +26,10 @@ replace (
 
 replace (
 	cosmossdk.io/api => github.com/MANTRA-Chain/cosmos-sdk/api v0.0.0-20260402055312-eca3f45af560
-	// Direct cosmos-sdk branch link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/mantra/v0.53.6, current branch: mantra/v0.53.6
-	// Direct commit link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/eca3f45af56019d6e184b795b8216c447040f84c
-	// Direct tag link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/v0.53.6-v8-mantra-1
-	github.com/cosmos/cosmos-sdk => github.com/MANTRA-Chain/cosmos-sdk v0.53.6-v8-mantra-1
+	// Direct cosmos-sdk branch link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/mantra/v0.53.8, current branch: mantra/v0.53.6
+	// Direct commit link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/58cc2eb4a66fcab2359a69d262b984958c8d9273
+	// Direct tag link: https://github.com/MANTRA-Chain/cosmos-sdk/tree/v0.53.8-v8-mantra-1
+	github.com/cosmos/cosmos-sdk => github.com/MANTRA-Chain/cosmos-sdk v0.53.8-v8-mantra-1
 )
 
 require (
@@ -49,7 +49,7 @@ require (
 	cosmossdk.io/x/tx v0.14.0
 	cosmossdk.io/x/upgrade v0.2.0
 	github.com/bufbuild/buf v1.46.0
-	github.com/cometbft/cometbft v0.38.23-0.20260422215035-4928b26fd5ba
+	github.com/cometbft/cometbft v0.38.23
 	github.com/cosmos/cosmos-db v1.1.3
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
 	github.com/cosmos/cosmos-sdk v0.53.6
