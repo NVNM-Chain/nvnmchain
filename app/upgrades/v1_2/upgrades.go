@@ -34,10 +34,12 @@ func CreateUpgradeHandler(
 			return vm, err
 		}
 
-		exportDir := ResolveExportDir(homeDir, "v1_2", exportDirEnvVar)
-		seedCtx := ctx.WithEventManager(sdk.NewEventManager())
-		if err := SeedAnchoringData(seedCtx, keepers, exportDir, data.RegistriesJSON, data.ManifestJSON); err != nil {
-			return vm, fmt.Errorf("failed to seed anchoring data: %w", err)
+		if ctx.ChainID() != "nvnm-testnet-1" {
+			exportDir := ResolveExportDir(homeDir, "v1_2", exportDirEnvVar)
+			seedCtx := ctx.WithEventManager(sdk.NewEventManager())
+			if err := SeedAnchoringData(seedCtx, keepers, exportDir, data.RegistriesJSON, data.ManifestJSON); err != nil {
+				return vm, fmt.Errorf("failed to seed anchoring data: %w", err)
+			}
 		}
 
 		ctx.Logger().Info("Upgrade v1.2.0 complete")
