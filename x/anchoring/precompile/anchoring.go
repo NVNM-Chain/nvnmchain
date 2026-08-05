@@ -35,6 +35,12 @@ var HumanABI = []string{
 
 	"function grantRole(uint64 registryId, string checksum, address account, string role) returns ()",
 	"function revokeRole(uint64 registryId, string checksum, address account, string role) returns ()",
+
+	"event AddRegistry(address indexed caller, uint64 registryId, string name)",
+	"event AddRecord(address indexed caller, uint64 registryId, uint64 recordId, uint64 index, string checksum)",
+	"event UpdateRecordStatus(address indexed caller, uint64 registryId, uint64 recordId, uint64 index, string status)",
+	"event GrantRole(address indexed caller, uint64 registryId, string checksum, address account, string role)",
+	"event RevokeRole(address indexed caller, uint64 registryId, string checksum, address account, string role)",
 }
 
 var AnchoringPrecompileAddress = common.HexToAddress("0x0000000000000000000000000000000000000a00")
