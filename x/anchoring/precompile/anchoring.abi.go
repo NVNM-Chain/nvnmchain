@@ -2134,3 +2134,943 @@ func NewUpdateRecordStatusCall(
 type UpdateRecordStatusReturn struct {
 	abi.EmptyTuple
 }
+
+// Event signatures
+var (
+	// AddRecord(address,uint64,uint64,uint64,string)
+	AddRecordEventTopic = common.Hash{0x1a, 0x32, 0x95, 0xfa, 0x8c, 0xc0, 0xe2, 0x8c, 0x95, 0xd2, 0x19, 0x12, 0xc9, 0xe6, 0x95, 0x8f, 0x3b, 0xc7, 0x40, 0x23, 0x17, 0x81, 0xf7, 0x64, 0x0a, 0xd8, 0x85, 0xc9, 0x72, 0xa3, 0x52, 0xfd}
+	// AddRegistry(address,uint64,string)
+	AddRegistryEventTopic = common.Hash{0x18, 0x17, 0x91, 0xbc, 0x37, 0x9a, 0xce, 0xdd, 0x36, 0x15, 0xcf, 0x06, 0x5d, 0x3c, 0x27, 0x5d, 0xfa, 0x6a, 0x3c, 0x46, 0x14, 0xc9, 0x06, 0x5d, 0x54, 0xc9, 0x87, 0x73, 0xf5, 0x76, 0x10, 0x8d}
+	// GrantRole(address,uint64,string,address,string)
+	GrantRoleEventTopic = common.Hash{0x0f, 0x49, 0xe3, 0x65, 0xba, 0xf9, 0x0d, 0xeb, 0x7d, 0x1f, 0x63, 0xe5, 0x76, 0x63, 0x79, 0x07, 0xe1, 0x2d, 0x1d, 0xdc, 0x75, 0xd1, 0xac, 0x68, 0x89, 0x4a, 0x2b, 0xcd, 0x19, 0x2b, 0x6d, 0xdb}
+	// RevokeRole(address,uint64,string,address,string)
+	RevokeRoleEventTopic = common.Hash{0x82, 0x36, 0xb7, 0x6c, 0xce, 0x80, 0xea, 0xf6, 0x9b, 0x54, 0xd8, 0x92, 0x68, 0xd0, 0x0f, 0xda, 0x3d, 0xec, 0x9e, 0x5e, 0x05, 0x4f, 0x15, 0x48, 0xeb, 0xbb, 0x1f, 0x8b, 0x20, 0xb3, 0xb0, 0x8b}
+	// UpdateRecordStatus(address,uint64,uint64,uint64,string)
+	UpdateRecordStatusEventTopic = common.Hash{0xd7, 0xb7, 0x54, 0x57, 0xd4, 0x12, 0x93, 0xea, 0xb4, 0x82, 0x99, 0x75, 0xc9, 0x51, 0xce, 0x8c, 0x53, 0x10, 0x68, 0x66, 0xf0, 0xc4, 0x29, 0xd1, 0x75, 0xfc, 0x6c, 0x91, 0xcd, 0xad, 0x5a, 0xde}
+)
+
+// AddRecordEvent represents the AddRecord event
+var _ abi.Event = (*AddRecordEvent)(nil)
+
+type AddRecordEvent struct {
+	AddRecordEventIndexed
+	AddRecordEventData
+}
+
+// NewAddRecordEvent constructs a new AddRecord event
+func NewAddRecordEvent(
+	caller common.Address,
+	registryId uint64,
+	recordId uint64,
+	index uint64,
+	checksum string,
+) *AddRecordEvent {
+	return &AddRecordEvent{
+		AddRecordEventIndexed: AddRecordEventIndexed{
+			Caller: caller,
+		},
+		AddRecordEventData: AddRecordEventData{
+			RegistryId: registryId,
+			RecordId:   recordId,
+			Index:      index,
+			Checksum:   checksum,
+		},
+	}
+}
+
+// GetEventName returns the event name
+func (e AddRecordEvent) GetEventName() string {
+	return "AddRecord"
+}
+
+// GetEventID returns the event ID (topic)
+func (e AddRecordEvent) GetEventID() common.Hash {
+	return AddRecordEventTopic
+}
+
+// AddRecord represents an ABI event
+type AddRecordEventIndexed struct {
+	Caller common.Address
+}
+
+// EncodeTopics encodes indexed fields of AddRecord event to topics
+func (e AddRecordEventIndexed) EncodeTopics() ([]common.Hash, error) {
+	topics := make([]common.Hash, 0, 2)
+	topics = append(topics, AddRecordEventTopic)
+	{
+		// Caller
+		var hash common.Hash
+		if _, err := abi.EncodeAddress(e.Caller, hash[:]); err != nil {
+			return nil, err
+		}
+		topics = append(topics, hash)
+	}
+	return topics, nil
+}
+
+// DecodeTopics decodes indexed fields of AddRecord event from topics, ignore hash topics
+func (e *AddRecordEventIndexed) DecodeTopics(topics []common.Hash) error {
+	if len(topics) != 2 {
+		return abi.ErrInvalidNumberOfTopics
+	}
+	if topics[0] != AddRecordEventTopic {
+		return abi.ErrInvalidEventTopic
+	}
+	var err error
+	e.Caller, _, err = abi.DecodeAddress(topics[1][:])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+const AddRecordEventDataStaticSize = 128
+
+var _ abi.Tuple = (*AddRecordEventData)(nil)
+
+// AddRecordEventData represents an ABI tuple
+type AddRecordEventData struct {
+	RegistryId uint64
+	RecordId   uint64
+	Index      uint64
+	Checksum   string
+}
+
+// EncodedSize returns the total encoded size of AddRecordEventData
+func (t AddRecordEventData) EncodedSize() int {
+	dynamicSize := 0
+	dynamicSize += abi.SizeString(t.Checksum)
+
+	return AddRecordEventDataStaticSize + dynamicSize
+}
+
+// EncodeTo encodes AddRecordEventData to ABI bytes in the provided buffer
+func (value AddRecordEventData) EncodeTo(buf []byte) (int, error) {
+	// Encode tuple fields
+	dynamicOffset := AddRecordEventDataStaticSize // Start dynamic data after static section
+	var (
+		err error
+		n   int
+	)
+	// Field RegistryId: uint64
+	if _, err := abi.EncodeUint64(value.RegistryId, buf[0:]); err != nil {
+		return 0, err
+	}
+
+	// Field RecordId: uint64
+	if _, err := abi.EncodeUint64(value.RecordId, buf[32:]); err != nil {
+		return 0, err
+	}
+
+	// Field Index: uint64
+	if _, err := abi.EncodeUint64(value.Index, buf[64:]); err != nil {
+		return 0, err
+	}
+
+	// Field Checksum: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[96+24:96+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Checksum, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	return dynamicOffset, nil
+}
+
+// Encode encodes AddRecordEventData to ABI bytes
+func (value AddRecordEventData) Encode() ([]byte, error) {
+	buf := make([]byte, value.EncodedSize())
+	if _, err := value.EncodeTo(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// Decode decodes AddRecordEventData from ABI bytes in the provided buffer
+func (t *AddRecordEventData) Decode(data []byte) (int, error) {
+	if len(data) < 128 {
+		return 0, io.ErrUnexpectedEOF
+	}
+	var (
+		err    error
+		n      int
+		offset int
+	)
+	dynamicOffset := 128
+	// Decode static field RegistryId: uint64
+	t.RegistryId, _, err = abi.DecodeUint64(data[0:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode static field RecordId: uint64
+	t.RecordId, _, err = abi.DecodeUint64(data[32:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode static field Index: uint64
+	t.Index, _, err = abi.DecodeUint64(data[64:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode dynamic field Checksum
+	{
+		offset, err = abi.DecodeSize(data[96:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Checksum, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	return dynamicOffset, nil
+}
+
+// AddRegistryEvent represents the AddRegistry event
+var _ abi.Event = (*AddRegistryEvent)(nil)
+
+type AddRegistryEvent struct {
+	AddRegistryEventIndexed
+	AddRegistryEventData
+}
+
+// NewAddRegistryEvent constructs a new AddRegistry event
+func NewAddRegistryEvent(
+	caller common.Address,
+	registryId uint64,
+	name string,
+) *AddRegistryEvent {
+	return &AddRegistryEvent{
+		AddRegistryEventIndexed: AddRegistryEventIndexed{
+			Caller: caller,
+		},
+		AddRegistryEventData: AddRegistryEventData{
+			RegistryId: registryId,
+			Name:       name,
+		},
+	}
+}
+
+// GetEventName returns the event name
+func (e AddRegistryEvent) GetEventName() string {
+	return "AddRegistry"
+}
+
+// GetEventID returns the event ID (topic)
+func (e AddRegistryEvent) GetEventID() common.Hash {
+	return AddRegistryEventTopic
+}
+
+// AddRegistry represents an ABI event
+type AddRegistryEventIndexed struct {
+	Caller common.Address
+}
+
+// EncodeTopics encodes indexed fields of AddRegistry event to topics
+func (e AddRegistryEventIndexed) EncodeTopics() ([]common.Hash, error) {
+	topics := make([]common.Hash, 0, 2)
+	topics = append(topics, AddRegistryEventTopic)
+	{
+		// Caller
+		var hash common.Hash
+		if _, err := abi.EncodeAddress(e.Caller, hash[:]); err != nil {
+			return nil, err
+		}
+		topics = append(topics, hash)
+	}
+	return topics, nil
+}
+
+// DecodeTopics decodes indexed fields of AddRegistry event from topics, ignore hash topics
+func (e *AddRegistryEventIndexed) DecodeTopics(topics []common.Hash) error {
+	if len(topics) != 2 {
+		return abi.ErrInvalidNumberOfTopics
+	}
+	if topics[0] != AddRegistryEventTopic {
+		return abi.ErrInvalidEventTopic
+	}
+	var err error
+	e.Caller, _, err = abi.DecodeAddress(topics[1][:])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+const AddRegistryEventDataStaticSize = 64
+
+var _ abi.Tuple = (*AddRegistryEventData)(nil)
+
+// AddRegistryEventData represents an ABI tuple
+type AddRegistryEventData struct {
+	RegistryId uint64
+	Name       string
+}
+
+// EncodedSize returns the total encoded size of AddRegistryEventData
+func (t AddRegistryEventData) EncodedSize() int {
+	dynamicSize := 0
+	dynamicSize += abi.SizeString(t.Name)
+
+	return AddRegistryEventDataStaticSize + dynamicSize
+}
+
+// EncodeTo encodes AddRegistryEventData to ABI bytes in the provided buffer
+func (value AddRegistryEventData) EncodeTo(buf []byte) (int, error) {
+	// Encode tuple fields
+	dynamicOffset := AddRegistryEventDataStaticSize // Start dynamic data after static section
+	var (
+		err error
+		n   int
+	)
+	// Field RegistryId: uint64
+	if _, err := abi.EncodeUint64(value.RegistryId, buf[0:]); err != nil {
+		return 0, err
+	}
+
+	// Field Name: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[32+24:32+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Name, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	return dynamicOffset, nil
+}
+
+// Encode encodes AddRegistryEventData to ABI bytes
+func (value AddRegistryEventData) Encode() ([]byte, error) {
+	buf := make([]byte, value.EncodedSize())
+	if _, err := value.EncodeTo(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// Decode decodes AddRegistryEventData from ABI bytes in the provided buffer
+func (t *AddRegistryEventData) Decode(data []byte) (int, error) {
+	if len(data) < 64 {
+		return 0, io.ErrUnexpectedEOF
+	}
+	var (
+		err    error
+		n      int
+		offset int
+	)
+	dynamicOffset := 64
+	// Decode static field RegistryId: uint64
+	t.RegistryId, _, err = abi.DecodeUint64(data[0:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode dynamic field Name
+	{
+		offset, err = abi.DecodeSize(data[32:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Name, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	return dynamicOffset, nil
+}
+
+// GrantRoleEvent represents the GrantRole event
+var _ abi.Event = (*GrantRoleEvent)(nil)
+
+type GrantRoleEvent struct {
+	GrantRoleEventIndexed
+	GrantRoleEventData
+}
+
+// NewGrantRoleEvent constructs a new GrantRole event
+func NewGrantRoleEvent(
+	caller common.Address,
+	registryId uint64,
+	checksum string,
+	account common.Address,
+	role string,
+) *GrantRoleEvent {
+	return &GrantRoleEvent{
+		GrantRoleEventIndexed: GrantRoleEventIndexed{
+			Caller: caller,
+		},
+		GrantRoleEventData: GrantRoleEventData{
+			RegistryId: registryId,
+			Checksum:   checksum,
+			Account:    account,
+			Role:       role,
+		},
+	}
+}
+
+// GetEventName returns the event name
+func (e GrantRoleEvent) GetEventName() string {
+	return "GrantRole"
+}
+
+// GetEventID returns the event ID (topic)
+func (e GrantRoleEvent) GetEventID() common.Hash {
+	return GrantRoleEventTopic
+}
+
+// GrantRole represents an ABI event
+type GrantRoleEventIndexed struct {
+	Caller common.Address
+}
+
+// EncodeTopics encodes indexed fields of GrantRole event to topics
+func (e GrantRoleEventIndexed) EncodeTopics() ([]common.Hash, error) {
+	topics := make([]common.Hash, 0, 2)
+	topics = append(topics, GrantRoleEventTopic)
+	{
+		// Caller
+		var hash common.Hash
+		if _, err := abi.EncodeAddress(e.Caller, hash[:]); err != nil {
+			return nil, err
+		}
+		topics = append(topics, hash)
+	}
+	return topics, nil
+}
+
+// DecodeTopics decodes indexed fields of GrantRole event from topics, ignore hash topics
+func (e *GrantRoleEventIndexed) DecodeTopics(topics []common.Hash) error {
+	if len(topics) != 2 {
+		return abi.ErrInvalidNumberOfTopics
+	}
+	if topics[0] != GrantRoleEventTopic {
+		return abi.ErrInvalidEventTopic
+	}
+	var err error
+	e.Caller, _, err = abi.DecodeAddress(topics[1][:])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+const GrantRoleEventDataStaticSize = 128
+
+var _ abi.Tuple = (*GrantRoleEventData)(nil)
+
+// GrantRoleEventData represents an ABI tuple
+type GrantRoleEventData struct {
+	RegistryId uint64
+	Checksum   string
+	Account    common.Address
+	Role       string
+}
+
+// EncodedSize returns the total encoded size of GrantRoleEventData
+func (t GrantRoleEventData) EncodedSize() int {
+	dynamicSize := 0
+	dynamicSize += abi.SizeString(t.Checksum)
+	dynamicSize += abi.SizeString(t.Role)
+
+	return GrantRoleEventDataStaticSize + dynamicSize
+}
+
+// EncodeTo encodes GrantRoleEventData to ABI bytes in the provided buffer
+func (value GrantRoleEventData) EncodeTo(buf []byte) (int, error) {
+	// Encode tuple fields
+	dynamicOffset := GrantRoleEventDataStaticSize // Start dynamic data after static section
+	var (
+		err error
+		n   int
+	)
+	// Field RegistryId: uint64
+	if _, err := abi.EncodeUint64(value.RegistryId, buf[0:]); err != nil {
+		return 0, err
+	}
+
+	// Field Checksum: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[32+24:32+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Checksum, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	// Field Account: address
+	if _, err := abi.EncodeAddress(value.Account, buf[64:]); err != nil {
+		return 0, err
+	}
+
+	// Field Role: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[96+24:96+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Role, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	return dynamicOffset, nil
+}
+
+// Encode encodes GrantRoleEventData to ABI bytes
+func (value GrantRoleEventData) Encode() ([]byte, error) {
+	buf := make([]byte, value.EncodedSize())
+	if _, err := value.EncodeTo(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// Decode decodes GrantRoleEventData from ABI bytes in the provided buffer
+func (t *GrantRoleEventData) Decode(data []byte) (int, error) {
+	if len(data) < 128 {
+		return 0, io.ErrUnexpectedEOF
+	}
+	var (
+		err    error
+		n      int
+		offset int
+	)
+	dynamicOffset := 128
+	// Decode static field RegistryId: uint64
+	t.RegistryId, _, err = abi.DecodeUint64(data[0:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode dynamic field Checksum
+	{
+		offset, err = abi.DecodeSize(data[32:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Checksum, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	// Decode static field Account: address
+	t.Account, _, err = abi.DecodeAddress(data[64:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode dynamic field Role
+	{
+		offset, err = abi.DecodeSize(data[96:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Role, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	return dynamicOffset, nil
+}
+
+// RevokeRoleEvent represents the RevokeRole event
+var _ abi.Event = (*RevokeRoleEvent)(nil)
+
+type RevokeRoleEvent struct {
+	RevokeRoleEventIndexed
+	RevokeRoleEventData
+}
+
+// NewRevokeRoleEvent constructs a new RevokeRole event
+func NewRevokeRoleEvent(
+	caller common.Address,
+	registryId uint64,
+	checksum string,
+	account common.Address,
+	role string,
+) *RevokeRoleEvent {
+	return &RevokeRoleEvent{
+		RevokeRoleEventIndexed: RevokeRoleEventIndexed{
+			Caller: caller,
+		},
+		RevokeRoleEventData: RevokeRoleEventData{
+			RegistryId: registryId,
+			Checksum:   checksum,
+			Account:    account,
+			Role:       role,
+		},
+	}
+}
+
+// GetEventName returns the event name
+func (e RevokeRoleEvent) GetEventName() string {
+	return "RevokeRole"
+}
+
+// GetEventID returns the event ID (topic)
+func (e RevokeRoleEvent) GetEventID() common.Hash {
+	return RevokeRoleEventTopic
+}
+
+// RevokeRole represents an ABI event
+type RevokeRoleEventIndexed struct {
+	Caller common.Address
+}
+
+// EncodeTopics encodes indexed fields of RevokeRole event to topics
+func (e RevokeRoleEventIndexed) EncodeTopics() ([]common.Hash, error) {
+	topics := make([]common.Hash, 0, 2)
+	topics = append(topics, RevokeRoleEventTopic)
+	{
+		// Caller
+		var hash common.Hash
+		if _, err := abi.EncodeAddress(e.Caller, hash[:]); err != nil {
+			return nil, err
+		}
+		topics = append(topics, hash)
+	}
+	return topics, nil
+}
+
+// DecodeTopics decodes indexed fields of RevokeRole event from topics, ignore hash topics
+func (e *RevokeRoleEventIndexed) DecodeTopics(topics []common.Hash) error {
+	if len(topics) != 2 {
+		return abi.ErrInvalidNumberOfTopics
+	}
+	if topics[0] != RevokeRoleEventTopic {
+		return abi.ErrInvalidEventTopic
+	}
+	var err error
+	e.Caller, _, err = abi.DecodeAddress(topics[1][:])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+const RevokeRoleEventDataStaticSize = 128
+
+var _ abi.Tuple = (*RevokeRoleEventData)(nil)
+
+// RevokeRoleEventData represents an ABI tuple
+type RevokeRoleEventData struct {
+	RegistryId uint64
+	Checksum   string
+	Account    common.Address
+	Role       string
+}
+
+// EncodedSize returns the total encoded size of RevokeRoleEventData
+func (t RevokeRoleEventData) EncodedSize() int {
+	dynamicSize := 0
+	dynamicSize += abi.SizeString(t.Checksum)
+	dynamicSize += abi.SizeString(t.Role)
+
+	return RevokeRoleEventDataStaticSize + dynamicSize
+}
+
+// EncodeTo encodes RevokeRoleEventData to ABI bytes in the provided buffer
+func (value RevokeRoleEventData) EncodeTo(buf []byte) (int, error) {
+	// Encode tuple fields
+	dynamicOffset := RevokeRoleEventDataStaticSize // Start dynamic data after static section
+	var (
+		err error
+		n   int
+	)
+	// Field RegistryId: uint64
+	if _, err := abi.EncodeUint64(value.RegistryId, buf[0:]); err != nil {
+		return 0, err
+	}
+
+	// Field Checksum: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[32+24:32+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Checksum, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	// Field Account: address
+	if _, err := abi.EncodeAddress(value.Account, buf[64:]); err != nil {
+		return 0, err
+	}
+
+	// Field Role: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[96+24:96+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Role, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	return dynamicOffset, nil
+}
+
+// Encode encodes RevokeRoleEventData to ABI bytes
+func (value RevokeRoleEventData) Encode() ([]byte, error) {
+	buf := make([]byte, value.EncodedSize())
+	if _, err := value.EncodeTo(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// Decode decodes RevokeRoleEventData from ABI bytes in the provided buffer
+func (t *RevokeRoleEventData) Decode(data []byte) (int, error) {
+	if len(data) < 128 {
+		return 0, io.ErrUnexpectedEOF
+	}
+	var (
+		err    error
+		n      int
+		offset int
+	)
+	dynamicOffset := 128
+	// Decode static field RegistryId: uint64
+	t.RegistryId, _, err = abi.DecodeUint64(data[0:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode dynamic field Checksum
+	{
+		offset, err = abi.DecodeSize(data[32:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Checksum, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	// Decode static field Account: address
+	t.Account, _, err = abi.DecodeAddress(data[64:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode dynamic field Role
+	{
+		offset, err = abi.DecodeSize(data[96:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Role, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	return dynamicOffset, nil
+}
+
+// UpdateRecordStatusEvent represents the UpdateRecordStatus event
+var _ abi.Event = (*UpdateRecordStatusEvent)(nil)
+
+type UpdateRecordStatusEvent struct {
+	UpdateRecordStatusEventIndexed
+	UpdateRecordStatusEventData
+}
+
+// NewUpdateRecordStatusEvent constructs a new UpdateRecordStatus event
+func NewUpdateRecordStatusEvent(
+	caller common.Address,
+	registryId uint64,
+	recordId uint64,
+	index uint64,
+	status string,
+) *UpdateRecordStatusEvent {
+	return &UpdateRecordStatusEvent{
+		UpdateRecordStatusEventIndexed: UpdateRecordStatusEventIndexed{
+			Caller: caller,
+		},
+		UpdateRecordStatusEventData: UpdateRecordStatusEventData{
+			RegistryId: registryId,
+			RecordId:   recordId,
+			Index:      index,
+			Status:     status,
+		},
+	}
+}
+
+// GetEventName returns the event name
+func (e UpdateRecordStatusEvent) GetEventName() string {
+	return "UpdateRecordStatus"
+}
+
+// GetEventID returns the event ID (topic)
+func (e UpdateRecordStatusEvent) GetEventID() common.Hash {
+	return UpdateRecordStatusEventTopic
+}
+
+// UpdateRecordStatus represents an ABI event
+type UpdateRecordStatusEventIndexed struct {
+	Caller common.Address
+}
+
+// EncodeTopics encodes indexed fields of UpdateRecordStatus event to topics
+func (e UpdateRecordStatusEventIndexed) EncodeTopics() ([]common.Hash, error) {
+	topics := make([]common.Hash, 0, 2)
+	topics = append(topics, UpdateRecordStatusEventTopic)
+	{
+		// Caller
+		var hash common.Hash
+		if _, err := abi.EncodeAddress(e.Caller, hash[:]); err != nil {
+			return nil, err
+		}
+		topics = append(topics, hash)
+	}
+	return topics, nil
+}
+
+// DecodeTopics decodes indexed fields of UpdateRecordStatus event from topics, ignore hash topics
+func (e *UpdateRecordStatusEventIndexed) DecodeTopics(topics []common.Hash) error {
+	if len(topics) != 2 {
+		return abi.ErrInvalidNumberOfTopics
+	}
+	if topics[0] != UpdateRecordStatusEventTopic {
+		return abi.ErrInvalidEventTopic
+	}
+	var err error
+	e.Caller, _, err = abi.DecodeAddress(topics[1][:])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+const UpdateRecordStatusEventDataStaticSize = 128
+
+var _ abi.Tuple = (*UpdateRecordStatusEventData)(nil)
+
+// UpdateRecordStatusEventData represents an ABI tuple
+type UpdateRecordStatusEventData struct {
+	RegistryId uint64
+	RecordId   uint64
+	Index      uint64
+	Status     string
+}
+
+// EncodedSize returns the total encoded size of UpdateRecordStatusEventData
+func (t UpdateRecordStatusEventData) EncodedSize() int {
+	dynamicSize := 0
+	dynamicSize += abi.SizeString(t.Status)
+
+	return UpdateRecordStatusEventDataStaticSize + dynamicSize
+}
+
+// EncodeTo encodes UpdateRecordStatusEventData to ABI bytes in the provided buffer
+func (value UpdateRecordStatusEventData) EncodeTo(buf []byte) (int, error) {
+	// Encode tuple fields
+	dynamicOffset := UpdateRecordStatusEventDataStaticSize // Start dynamic data after static section
+	var (
+		err error
+		n   int
+	)
+	// Field RegistryId: uint64
+	if _, err := abi.EncodeUint64(value.RegistryId, buf[0:]); err != nil {
+		return 0, err
+	}
+
+	// Field RecordId: uint64
+	if _, err := abi.EncodeUint64(value.RecordId, buf[32:]); err != nil {
+		return 0, err
+	}
+
+	// Field Index: uint64
+	if _, err := abi.EncodeUint64(value.Index, buf[64:]); err != nil {
+		return 0, err
+	}
+
+	// Field Status: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[96+24:96+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Status, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	return dynamicOffset, nil
+}
+
+// Encode encodes UpdateRecordStatusEventData to ABI bytes
+func (value UpdateRecordStatusEventData) Encode() ([]byte, error) {
+	buf := make([]byte, value.EncodedSize())
+	if _, err := value.EncodeTo(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// Decode decodes UpdateRecordStatusEventData from ABI bytes in the provided buffer
+func (t *UpdateRecordStatusEventData) Decode(data []byte) (int, error) {
+	if len(data) < 128 {
+		return 0, io.ErrUnexpectedEOF
+	}
+	var (
+		err    error
+		n      int
+		offset int
+	)
+	dynamicOffset := 128
+	// Decode static field RegistryId: uint64
+	t.RegistryId, _, err = abi.DecodeUint64(data[0:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode static field RecordId: uint64
+	t.RecordId, _, err = abi.DecodeUint64(data[32:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode static field Index: uint64
+	t.Index, _, err = abi.DecodeUint64(data[64:])
+	if err != nil {
+		return 0, err
+	}
+	// Decode dynamic field Status
+	{
+		offset, err = abi.DecodeSize(data[96:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Status, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	return dynamicOffset, nil
+}

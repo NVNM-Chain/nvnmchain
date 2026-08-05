@@ -170,6 +170,12 @@ interface IAnchoringPrecompile {
 
 	function revokeRole(uint64 registryId, string checksum, address account, string role)
 		external;
+
+	event AddRegistry(address indexed caller, uint64 registryId, string name);
+	event AddRecord(address indexed caller, uint64 registryId, uint64 recordId, uint64 index, string checksum);
+	event UpdateRecordStatus(address indexed caller, uint64 registryId, uint64 recordId, uint64 index, string status);
+	event GrantRole(address indexed caller, uint64 registryId, string checksum, address account, string role);
+	event RevokeRole(address indexed caller, uint64 registryId, string checksum, address account, string role);
 }
 ```
 
@@ -184,6 +190,16 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 - `registries(uint64,(bytes,uint64,uint64,bool,bool))`: `0x17bd3e65`
 - `revokeRole(uint64,string,address,string)`: `0xacd58bc7`
 - `updateRecordStatus(uint64,uint64,uint64,string)`: `0x97b40c25`
+
+### Event Topics
+
+Event `topic0` is the full 32-byte `keccak256(<event signature>)` (unlike a function selector, it is not truncated to 4 bytes). `topic1` is the indexed caller address (`msg.sender`), left-padded to 32 bytes. Remaining fields are ABI-encoded into the log `data`. These are also generated into `x/anchoring/precompile/anchoring.abi.go` (as `<Name>EventTopic`).
+
+- `AddRegistry(address,uint64,string)`: `0x181791bc379acedd3615cf065d3c275dfa6a3c4614c9065d54c98773f576108d`
+- `AddRecord(address,uint64,uint64,uint64,string)`: `0x1a3295fa8cc0e28c95d21912c9e6958f3bc740231781f7640ad885c972a352fd`
+- `UpdateRecordStatus(address,uint64,uint64,uint64,string)`: `0xd7b75457d41293eab4829975c951ce8c53106866f0c429d175fc6c91cdad5ade`
+- `GrantRole(address,uint64,string,address,string)`: `0x0f49e365baf90deb7d1f63e576637907e12d1ddc75d1ac68894a2bcd192b6ddb`
+- `RevokeRole(address,uint64,string,address,string)`: `0x8236b76cce80eaf69b54d89268d00fda3dec9e5e054f1548ebbb1f8b20b3b08b`
 
 ### Write Operations (state-changing)
 
