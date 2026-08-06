@@ -62,11 +62,6 @@ paths:
                 items:
                   type: object
                   properties:
-                    registry:
-                      type: string
-                      description: >-
-                        The registry name under which this record is
-                        categorized.
                     uri:
                       type: string
                       description: A link to where the document is stored (e.g., IPFS).
@@ -106,6 +101,10 @@ paths:
                     is_latest:
                       type: boolean
                       description: Indicates if this is the latest version of the record.
+                    registry_id:
+                      type: string
+                      format: uint64
+                      description: The id of the registry this record belongs to.
                 title: records is a list of records
               pagination:
                 description: pagination defines the pagination in the response.
@@ -249,7 +248,11 @@ paths:
                         Cosmos collections)
                     name:
                       type: string
-                      description: Name of the registry. Unique identifier.
+                      description: >-
+                        Name of the registry. Not guaranteed unique — multiple
+                        registries may share
+
+                        the same name.
                     description:
                       type: string
                       title: Description of what this registry verifies
@@ -316,11 +319,6 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: name
-          description: name is an optional filter for a specific registry by name.
-          in: query
-          required: false
-          type: string
         - name: pagination.key
           description: |-
             key is a value returned in PageResponse.next_key to begin
@@ -378,7 +376,7 @@ paths:
         - Query
   /NVNM-Chain/nvnmchain/anchoring/v1/registry:
     get:
-      summary: Registry queries a specific registry by id or name
+      summary: Registry queries a specific registry by id
       operationId: Registry
       responses:
         '200':
@@ -397,7 +395,11 @@ paths:
                       collections)
                   name:
                     type: string
-                    description: Name of the registry. Unique identifier.
+                    description: >-
+                      Name of the registry. Not guaranteed unique — multiple
+                      registries may share
+
+                      the same name.
                   description:
                     type: string
                     title: Description of what this registry verifies
@@ -445,11 +447,6 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: name
-          description: name is the name of the registry (alternative to id).
-          in: query
-          required: false
-          type: string
       tags:
         - Query
   /cosmos/evm/vm/v1/account/{address}:
@@ -42878,9 +42875,6 @@ definitions:
         items:
           type: object
           properties:
-            registry:
-              type: string
-              description: The registry name under which this record is categorized.
             uri:
               type: string
               description: A link to where the document is stored (e.g., IPFS).
@@ -42912,6 +42906,10 @@ definitions:
             is_latest:
               type: boolean
               description: Indicates if this is the latest version of the record.
+            registry_id:
+              type: string
+              format: uint64
+              description: The id of the registry this record belongs to.
         title: records is a list of records
       pagination:
         description: pagination defines the pagination in the response.
@@ -42949,7 +42947,11 @@ definitions:
                 collections)
             name:
               type: string
-              description: Name of the registry. Unique identifier.
+              description: >-
+                Name of the registry. Not guaranteed unique — multiple
+                registries may share
+
+                the same name.
             description:
               type: string
               title: Description of what this registry verifies
@@ -43001,7 +43003,11 @@ definitions:
               collections)
           name:
             type: string
-            description: Name of the registry. Unique identifier.
+            description: >-
+              Name of the registry. Not guaranteed unique — multiple registries
+              may share
+
+              the same name.
           description:
             type: string
             title: Description of what this registry verifies
@@ -43021,9 +43027,6 @@ definitions:
   nvnmchain.anchoring.v1.Record:
     type: object
     properties:
-      registry:
-        type: string
-        description: The registry name under which this record is categorized.
       uri:
         type: string
         description: A link to where the document is stored (e.g., IPFS).
@@ -43055,6 +43058,10 @@ definitions:
       is_latest:
         type: boolean
         description: Indicates if this is the latest version of the record.
+      registry_id:
+        type: string
+        format: uint64
+        description: The id of the registry this record belongs to.
   nvnmchain.anchoring.v1.Registry:
     type: object
     properties:
@@ -43066,7 +43073,11 @@ definitions:
           collections)
       name:
         type: string
-        description: Name of the registry. Unique identifier.
+        description: >-
+          Name of the registry. Not guaranteed unique — multiple registries may
+          share
+
+          the same name.
       description:
         type: string
         title: Description of what this registry verifies
