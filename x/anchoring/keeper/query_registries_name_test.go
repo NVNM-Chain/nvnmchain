@@ -43,6 +43,26 @@ func TestQueryRegistries_NameFilter(t *testing.T) {
 	// An empty name leaves the listing unfiltered.
 	require.Len(t, ids(&types.QueryRegistriesRequest{}), 3)
 
+	// Prefix, suffix and contains match on substrings of the name.
+	shared := []uint64{firstID, secondID}
+	require.ElementsMatch(t, shared, ids(&types.QueryRegistriesRequest{NamePrefix: "shar"}))
+	require.ElementsMatch(t, shared, ids(&types.QueryRegistriesRequest{NameContains: "hare"}))
+	require.Equal(t, []uint64{otherID}, ids(&types.QueryRegistriesRequest{NameSuffix: "er"}))
+
+	// They are byte-exact too, and anchored: a prefix only matches at the
+	// start, a suffix only at the end.
+	require.Empty(t, ids(&types.QueryRegistriesRequest{NamePrefix: "Shar"}))
+	require.Empty(t, ids(&types.QueryRegistriesRequest{NamePrefix: "hared"}))
+	require.Empty(t, ids(&types.QueryRegistriesRequest{NameSuffix: "othe"}))
+
+	// Filters combine with AND rather than one winning, so a contradictory set
+	// returns nothing instead of silently honouring whichever came first.
+	require.ElementsMatch(t, shared, ids(&types.QueryRegistriesRequest{
+		NamePrefix: "sh", NameSuffix: "ed",
+	}))
+	require.Empty(t, ids(&types.QueryRegistriesRequest{NamePrefix: "sh", NameSuffix: "er"}))
+	require.Empty(t, ids(&types.QueryRegistriesRequest{Name: "shared", NameSuffix: "er"}))
+
 	// registry_id and name combine rather than one silently overriding the other.
 	require.Equal(t, []uint64{firstID}, ids(&types.QueryRegistriesRequest{RegistryId: firstID, Name: "shared"}))
 	require.Empty(t, ids(&types.QueryRegistriesRequest{RegistryId: otherID, Name: "shared"}))

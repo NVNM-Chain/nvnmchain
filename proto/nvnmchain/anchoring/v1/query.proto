@@ -73,6 +73,13 @@ message QueryRegistriesRequest {
   string name = 2;
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
+  // name_prefix, name_suffix and name_contains are optional substring filters
+  // on the name. All filters set on a request are combined with AND, so an
+  // unsatisfiable combination returns an empty page rather than ignoring one.
+  // Matching is byte-exact in every mode; none of them fold case.
+  string name_prefix = 4;
+  string name_suffix = 5;
+  string name_contains = 6;
 }
 
 // QueryRegistriesResponse is response type for the Query/Registries RPC method.
