@@ -50,7 +50,7 @@ The module defines several important types:
 
 - `Params`: Fetch module params
 - `Records`: List records filtered by checksum/registry_id/record_id/index (paginated)
-- `Registries`: List registries filtered by registry_id (paginated)
+- `Registries`: List registries filtered by registry_id and/or name (exact, prefix, suffix, contains; paginated)
 - `Registry`: Fetch a single registry by id
 
 ## Usage
@@ -183,6 +183,10 @@ interface IAnchoringPrecompile {
 		external
 		returns (Registry[] registries, PageResponse pagination);
 
+	function registriesByName(string name, string namePrefix, string nameSuffix, string nameContains, PageRequest pagination)
+		external
+		returns (Registry[] registries, PageResponse pagination);
+
 	function grantRole(uint64 registryId, string checksum, address account, string role)
 		external;
 
@@ -206,6 +210,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 - `grantRole(uint64,string,address,string)`: `0xb8fdd1a7`
 - `records(uint64,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`: `0xc7be5e37`
 - `registries(uint64,(bytes,uint64,uint64,bool,bool))`: `0x17bd3e65`
+- `registriesByName(string,string,string,string,(bytes,uint64,uint64,bool,bool))`: `0x424da219`
 - `revokeRole(uint64,string,address,string)`: `0xacd58bc7`
 - `updateRecordStatus(uint64,uint64,uint64,string)`: `0x97b40c25`
 
@@ -375,6 +380,22 @@ Note: on-chain (ABI) the `metadata` field is returned as a JSON-encoded `string`
 	- Queries Cosmos module state via the anchoring gRPC query server (`Query/Registries`) with filter `registry_id` and pagination.
 - Data source: Cosmos state (Cosmos SDK KV/collections), not EVM storage.
 - Staleness: same semantics as `records` for the current EVM tx.
+
+#### registriesByName
+
+- Function signature (for `keccak256`): `registriesByName(string,string,string,string,(bytes,uint64,uint64,bool,bool))`
+- Function selector: `0x424da219`
+- Return value encoding: identical to `registries`.
+- State queried:
+	- Same gRPC query server (`Query/Registries`), with the name filters instead of `registry_id`.
+- Matching: `name` is exact; `namePrefix`, `nameSuffix` and `nameContains` match
+	substrings. All are byte-exact — none fold case. Pass `""` for unused filters;
+	those set combine with AND, so a contradictory set returns an empty page.
+	Names are not unique, so several registries may be returned; disambiguate on
+	`creator` or `createdAt`.
+- Cost: a scan, not an index lookup. A name matching nothing decodes every
+	registry, bounded by the node's `query-gas-limit` (or, from within an EVM tx,
+	by the caller's remaining gas) rather than by the page limit.
 
 Example output (mapped to `Registry` field names):
 

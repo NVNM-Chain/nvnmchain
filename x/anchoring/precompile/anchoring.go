@@ -32,6 +32,11 @@ var HumanABI = []string{
 	"function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status) returns ()",
 	"function records(uint64 registryId, string checksum, uint64 recordId, uint64 index, PageRequest pagination) returns (Record[] records, PageResponse pagination)",
 	"function registries(uint64 registryId, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
+	// Separate method, not extra parameters on registries above: that would
+	// change its selector and break its callers, as v1.2 already did once.
+	// Mirrors the query's filters so both interfaces answer identically; unused
+	// filters are passed empty, and the set combines with AND.
+	"function registriesByName(string name, string namePrefix, string nameSuffix, string nameContains, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
 
 	"function grantRole(uint64 registryId, string checksum, address account, string role) returns ()",
 	"function revokeRole(uint64 registryId, string checksum, address account, string role) returns ()",
@@ -121,6 +126,8 @@ func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Co
 		return invcmn.Run(ctx, p.Records, input)
 	case RegistriesID:
 		return invcmn.Run(ctx, p.Registries, input)
+	case RegistriesByNameID:
+		return invcmn.Run(ctx, p.RegistriesByName, input)
 	case GrantRoleID:
 		return invcmn.RunWithStateDB(ctx, p.GrantRole, input, stateDB, contract)
 	case RevokeRoleID:
@@ -303,30 +310,56 @@ func (p Precompile) Records(
 	}, nil
 }
 
+// queryRegistries runs the registries query and converts it for ABI return.
+// Registries and RegistriesByName differ only in which filter they set.
+func (p Precompile) queryRegistries(
+	ctx sdk.Context,
+	req *types.QueryRegistriesRequest,
+) ([]Registry, invcmn.PageResponse, error) {
+	rsp, err := keeper.NewQueryServerImpl(p.keeper).Registries(ctx, req)
+	if err != nil {
+		return nil, invcmn.PageResponse{}, err
+	}
+
+	registries := make([]Registry, len(rsp.Registries))
+	for i, reg := range rsp.Registries {
+		registries[i] = ToABIRegistry(*reg)
+	}
+	return registries, invcmn.FromPageResponse(rsp.Pagination), nil
+}
+
 func (p Precompile) Registries(
 	ctx sdk.Context,
 	input RegistriesCall,
 ) (*RegistriesReturn, error) {
-	pgReq := input.Pagination.ToPageRequest()
-	querySrv := keeper.NewQueryServerImpl(p.keeper)
-
-	rsp, err := querySrv.Registries(ctx, &types.QueryRegistriesRequest{
+	registries, page, err := p.queryRegistries(ctx, &types.QueryRegistriesRequest{
 		RegistryId: input.RegistryId,
-		Pagination: pgReq,
+		Pagination: input.Pagination.ToPageRequest(),
 	})
 	if err != nil {
 		return nil, err
 	}
+	return &RegistriesReturn{Registries: registries, Pagination: page}, nil
+}
 
-	abiRegistries := make([]Registry, len(rsp.Registries))
-	for i, reg := range rsp.Registries {
-		abiRegistries[i] = ToABIRegistry(*reg)
+// RegistriesByName lists the registries whose name satisfies every filter set.
+// Names are not unique, so this may return several; callers disambiguate on
+// creator or createdAt.
+func (p Precompile) RegistriesByName(
+	ctx sdk.Context,
+	input RegistriesByNameCall,
+) (*RegistriesByNameReturn, error) {
+	registries, page, err := p.queryRegistries(ctx, &types.QueryRegistriesRequest{
+		Name:         input.Name,
+		NamePrefix:   input.NamePrefix,
+		NameSuffix:   input.NameSuffix,
+		NameContains: input.NameContains,
+		Pagination:   input.Pagination.ToPageRequest(),
+	})
+	if err != nil {
+		return nil, err
 	}
-
-	return &RegistriesReturn{
-		Registries: abiRegistries,
-		Pagination: invcmn.FromPageResponse(rsp.Pagination),
-	}, nil
+	return &RegistriesByNameReturn{Registries: registries, Pagination: page}, nil
 }
 
 // GrantRole grants a role to an address for a registry or document

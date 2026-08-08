@@ -25,6 +25,8 @@ var (
 	RecordsSelector = [4]byte{0xc7, 0xbe, 0x5e, 0x37}
 	// registries(uint64,(bytes,uint64,uint64,bool,bool))
 	RegistriesSelector = [4]byte{0x17, 0xbd, 0x3e, 0x65}
+	// registriesByName(string,string,string,string,(bytes,uint64,uint64,bool,bool))
+	RegistriesByNameSelector = [4]byte{0x42, 0x4d, 0xa2, 0x19}
 	// revokeRole(uint64,string,address,string)
 	RevokeRoleSelector = [4]byte{0xac, 0xd5, 0x8b, 0xc7}
 	// updateRecordStatus(uint64,uint64,uint64,string)
@@ -38,6 +40,7 @@ const (
 	GrantRoleID          = 3103642023
 	RecordsID            = 3351141943
 	RegistriesID         = 398278245
+	RegistriesByNameID   = 1112384025
 	RevokeRoleID         = 2899676103
 	UpdateRecordStatusID = 2545159205
 )
@@ -1765,6 +1768,337 @@ func (value RegistriesReturn) Encode() ([]byte, error) {
 
 // Decode decodes RegistriesReturn from ABI bytes in the provided buffer
 func (t *RegistriesReturn) Decode(data []byte) (int, error) {
+	if len(data) < 64 {
+		return 0, io.ErrUnexpectedEOF
+	}
+	var (
+		err    error
+		n      int
+		offset int
+	)
+	dynamicOffset := 64
+	// Decode dynamic field Registries
+	{
+		offset, err = abi.DecodeSize(data[0:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Registries, n, err = DecodeRegistrySlice(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	// Decode dynamic field Pagination
+	{
+		offset, err = abi.DecodeSize(data[32:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		n, err = t.Pagination.Decode(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	return dynamicOffset, nil
+}
+
+var _ abi.Method = (*RegistriesByNameCall)(nil)
+
+const RegistriesByNameCallStaticSize = 160
+
+var _ abi.Tuple = (*RegistriesByNameCall)(nil)
+
+// RegistriesByNameCall represents an ABI tuple
+type RegistriesByNameCall struct {
+	Name         string
+	NamePrefix   string
+	NameSuffix   string
+	NameContains string
+	Pagination   cmn.PageRequest
+}
+
+// EncodedSize returns the total encoded size of RegistriesByNameCall
+func (t RegistriesByNameCall) EncodedSize() int {
+	dynamicSize := 0
+	dynamicSize += abi.SizeString(t.Name)
+	dynamicSize += abi.SizeString(t.NamePrefix)
+	dynamicSize += abi.SizeString(t.NameSuffix)
+	dynamicSize += abi.SizeString(t.NameContains)
+	dynamicSize += t.Pagination.EncodedSize()
+
+	return RegistriesByNameCallStaticSize + dynamicSize
+}
+
+// EncodeTo encodes RegistriesByNameCall to ABI bytes in the provided buffer
+func (value RegistriesByNameCall) EncodeTo(buf []byte) (int, error) {
+	// Encode tuple fields
+	dynamicOffset := RegistriesByNameCallStaticSize // Start dynamic data after static section
+	var (
+		err error
+		n   int
+	)
+	// Field Name: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[0+24:0+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.Name, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	// Field NamePrefix: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[32+24:32+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.NamePrefix, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	// Field NameSuffix: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[64+24:64+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.NameSuffix, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	// Field NameContains: string
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[96+24:96+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = abi.EncodeString(value.NameContains, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	// Field Pagination: (bytes,uint64,uint64,bool,bool)
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[128+24:128+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = value.Pagination.EncodeTo(buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	return dynamicOffset, nil
+}
+
+// Encode encodes RegistriesByNameCall to ABI bytes
+func (value RegistriesByNameCall) Encode() ([]byte, error) {
+	buf := make([]byte, value.EncodedSize())
+	if _, err := value.EncodeTo(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// Decode decodes RegistriesByNameCall from ABI bytes in the provided buffer
+func (t *RegistriesByNameCall) Decode(data []byte) (int, error) {
+	if len(data) < 160 {
+		return 0, io.ErrUnexpectedEOF
+	}
+	var (
+		err    error
+		n      int
+		offset int
+	)
+	dynamicOffset := 160
+	// Decode dynamic field Name
+	{
+		offset, err = abi.DecodeSize(data[0:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.Name, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	// Decode dynamic field NamePrefix
+	{
+		offset, err = abi.DecodeSize(data[32:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.NamePrefix, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	// Decode dynamic field NameSuffix
+	{
+		offset, err = abi.DecodeSize(data[64:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.NameSuffix, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	// Decode dynamic field NameContains
+	{
+		offset, err = abi.DecodeSize(data[96:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		t.NameContains, n, err = abi.DecodeString(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	// Decode dynamic field Pagination
+	{
+		offset, err = abi.DecodeSize(data[128:])
+		if err != nil {
+			return 0, err
+		}
+		if offset != dynamicOffset {
+			return 0, abi.ErrInvalidOffsetForDynamicField
+		}
+		n, err = t.Pagination.Decode(data[dynamicOffset:])
+		if err != nil {
+			return 0, err
+		}
+		dynamicOffset += n
+	}
+	return dynamicOffset, nil
+}
+
+// GetMethodName returns the function name
+func (t RegistriesByNameCall) GetMethodName() string {
+	return "registriesByName"
+}
+
+// GetMethodID returns the function id
+func (t RegistriesByNameCall) GetMethodID() uint32 {
+	return RegistriesByNameID
+}
+
+// GetMethodSelector returns the function selector
+func (t RegistriesByNameCall) GetMethodSelector() [4]byte {
+	return RegistriesByNameSelector
+}
+
+// EncodeWithSelector encodes registriesByName arguments to ABI bytes including function selector
+func (t RegistriesByNameCall) EncodeWithSelector() ([]byte, error) {
+	result := make([]byte, 4+t.EncodedSize())
+	copy(result[:4], RegistriesByNameSelector[:])
+	if _, err := t.EncodeTo(result[4:]); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// NewRegistriesByNameCall constructs a new RegistriesByNameCall
+func NewRegistriesByNameCall(
+	name string,
+	namePrefix string,
+	nameSuffix string,
+	nameContains string,
+	pagination cmn.PageRequest,
+) *RegistriesByNameCall {
+	return &RegistriesByNameCall{
+		Name:         name,
+		NamePrefix:   namePrefix,
+		NameSuffix:   nameSuffix,
+		NameContains: nameContains,
+		Pagination:   pagination,
+	}
+}
+
+const RegistriesByNameReturnStaticSize = 64
+
+var _ abi.Tuple = (*RegistriesByNameReturn)(nil)
+
+// RegistriesByNameReturn represents an ABI tuple
+type RegistriesByNameReturn struct {
+	Registries []Registry
+	Pagination cmn.PageResponse
+}
+
+// EncodedSize returns the total encoded size of RegistriesByNameReturn
+func (t RegistriesByNameReturn) EncodedSize() int {
+	dynamicSize := 0
+	dynamicSize += SizeRegistrySlice(t.Registries)
+	dynamicSize += t.Pagination.EncodedSize()
+
+	return RegistriesByNameReturnStaticSize + dynamicSize
+}
+
+// EncodeTo encodes RegistriesByNameReturn to ABI bytes in the provided buffer
+func (value RegistriesByNameReturn) EncodeTo(buf []byte) (int, error) {
+	// Encode tuple fields
+	dynamicOffset := RegistriesByNameReturnStaticSize // Start dynamic data after static section
+	var (
+		err error
+		n   int
+	)
+	// Field Registries: (uint64,string,string,string,string,string)[]
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[0+24:0+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = EncodeRegistrySlice(value.Registries, buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	// Field Pagination: (bytes,uint64)
+	// Encode offset pointer
+	binary.BigEndian.PutUint64(buf[32+24:32+32], uint64(dynamicOffset))
+	// Encode dynamic data
+	n, err = value.Pagination.EncodeTo(buf[dynamicOffset:])
+	if err != nil {
+		return 0, err
+	}
+	dynamicOffset += n
+
+	return dynamicOffset, nil
+}
+
+// Encode encodes RegistriesByNameReturn to ABI bytes
+func (value RegistriesByNameReturn) Encode() ([]byte, error) {
+	buf := make([]byte, value.EncodedSize())
+	if _, err := value.EncodeTo(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// Decode decodes RegistriesByNameReturn from ABI bytes in the provided buffer
+func (t *RegistriesByNameReturn) Decode(data []byte) (int, error) {
 	if len(data) < 64 {
 		return 0, io.ErrUnexpectedEOF
 	}
