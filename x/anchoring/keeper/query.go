@@ -223,7 +223,11 @@ func (q queryServer) Records(ctx context.Context, req *types.QueryRecordsRequest
 	return &types.QueryRecordsResponse{Records: records, Pagination: pageRes}, nil
 }
 
-// Registries returns all registries with pagination, or a specific registry if registry_id is provided
+// Registries returns all registries with pagination, or a specific registry if
+// registry_id is provided. The optional name filter matches exactly and may
+// match several registries, since names are not unique. It is a scan, not an
+// index: a request matching nothing decodes every registry, bounded by the
+// node's query-gas-limit rather than by the page limit.
 func (q queryServer) Registries(ctx context.Context, req *types.QueryRegistriesRequest) (*types.QueryRegistriesResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
@@ -232,6 +236,9 @@ func (q queryServer) Registries(ctx context.Context, req *types.QueryRegistriesR
 		if err != nil {
 			return nil, err
 		}
+		if req.Name != "" && registry.Name != req.Name {
+			return &types.QueryRegistriesResponse{}, nil
+		}
 		return &types.QueryRegistriesResponse{
 			Registries: []*types.Registry{&registry},
 			Pagination: nil,
@@ -239,9 +246,14 @@ func (q queryServer) Registries(ctx context.Context, req *types.QueryRegistriesR
 	}
 
 	pageReq := sanitizePageRequest(req.Pagination, defaultPageLimit, maxPageLimit)
-	registries, pageRes, err := query.CollectionPaginate(ctx, q.k.Registries, pageReq, func(key uint64, registry types.Registry) (*types.Registry, error) {
-		return &registry, nil
-	})
+	registries, pageRes, err := query.CollectionFilteredPaginate(ctx, q.k.Registries, pageReq,
+		func(_ uint64, registry types.Registry) (bool, error) {
+			return req.Name == "" || registry.Name == req.Name, nil
+		},
+		func(_ uint64, registry types.Registry) (*types.Registry, error) {
+			return &registry, nil
+		},
+	)
 	if err != nil {
 		return nil, err
 	}

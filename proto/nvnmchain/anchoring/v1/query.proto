@@ -67,6 +67,10 @@ message QueryRecordsResponse {
 message QueryRegistriesRequest {
   // registry_id is an optional filter for a specific registry
   uint64 registry_id = 1;
+  // name is an optional exact-match filter. Registry names are not unique, so
+  // this may match more than one registry. Field 2 is the tag the pre-v1.2
+  // name filter used, reclaimed here with the same type and meaning.
+  string name = 2;
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
