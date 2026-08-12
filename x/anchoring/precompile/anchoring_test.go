@@ -199,3 +199,17 @@ func TestEnsureEOACaller_BlocksConstructorBypass(t *testing.T) {
 	require.Error(t, err)
 	require.ErrorIs(t, err, core.ErrSenderNoEOA)
 }
+
+// TestRegistriesByNameIsQueryOnly pins the ABI surface of the name lookup:
+// both selectors are consensus-visible, and adding the filter to registries
+// instead would have changed that method's selector.
+func TestRegistriesByNameIsQueryOnly(t *testing.T) {
+	require.Equal(t, [4]byte{0x42, 0x4d, 0xa2, 0x19}, RegistriesByNameSelector)
+	require.Equal(t, [4]byte{0x17, 0xbd, 0x3e, 0x65}, RegistriesSelector,
+		"adding registriesByName must not disturb the existing registries selector")
+
+	var p Precompile
+	require.False(t, p.IsTransactionID(RegistriesByNameID),
+		"registriesByName is a view; a transaction would demand an EOA caller")
+	require.Empty(t, p.methodName(RegistriesByNameID))
+}

@@ -326,6 +326,18 @@ paths:
           schema:
             type: string
             format: uint64
+        - name: name
+          description: >-
+            name is an optional exact-match filter. Registry names are not
+            unique, so
+
+            this may match more than one registry. Field 2 is the tag the pre-v1.2
+
+            name filter used, reclaimed here with the same type and meaning.
+          in: query
+          required: false
+          schema:
+            type: string
         - name: pagination.key
           description: |-
             key is a value returned in PageResponse.next_key to begin
@@ -380,6 +392,30 @@ paths:
           required: false
           schema:
             type: boolean
+        - name: name_prefix
+          description: >-
+            name_prefix, name_suffix and name_contains are optional substring
+            filters
+
+            on the name. All filters set on a request are combined with AND, so an
+
+            unsatisfiable combination returns an empty page rather than ignoring one.
+
+            Matching is byte-exact in every mode; none of them fold case.
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: name_suffix
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: name_contains
+          in: query
+          required: false
+          schema:
+            type: string
       tags:
         - Query
   /NVNM-Chain/nvnmchain/anchoring/v1/registry:
