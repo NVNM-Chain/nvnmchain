@@ -31,23 +31,38 @@ func (l *Listener) ListenFinalizeBlock(_ context.Context, _ abci.RequestFinalize
 	return nil
 }
 
-// ListenCommit indexes every Registry write in the just-committed changeset.
+// ListenCommit indexes every Registry write in the just-committed changeset
+// as one batch, so a block lands in the index atomically or not at all.
+//
+// baseapp only logs an error returned from here; it neither halts the node
+// nor retries. A block whose write failed therefore leaves the index behind
+// until the next restart, when Keeper.BackfillNameIndex re-walks the
+// collection.
 func (l *Listener) ListenCommit(_ context.Context, _ abci.ResponseCommit, changeSet []*storetypes.StoreKVPair) error {
+	var regs []*types.Registry
 	for _, pair := range changeSet {
-		if pair.StoreKey != types.StoreKey || pair.Delete {
+		if pair.StoreKey != types.StoreKey || pair.Delete || !bytes.HasPrefix(pair.Key, types.RegistriesKeyPrefix) {
 			continue
 		}
-		if !bytes.HasPrefix(pair.Key, types.RegistriesKeyPrefix) {
-			continue
-		}
-
 		reg := &types.Registry{}
 		if err := l.store.cdc.Unmarshal(pair.Value, reg); err != nil {
 			return fmt.Errorf("nameindex: decode registry write: %w", err)
 		}
-		if err := l.store.Upsert(reg); err != nil {
+		regs = append(regs, reg)
+	}
+	if len(regs) == 0 {
+		return nil
+	}
+
+	batch, err := l.store.Begin()
+	if err != nil {
+		return err
+	}
+	defer batch.Close()
+	for _, reg := range regs {
+		if err := batch.Upsert(reg); err != nil {
 			return err
 		}
 	}
-	return nil
+	return batch.Commit()
 }

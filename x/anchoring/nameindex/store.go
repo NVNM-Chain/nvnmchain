@@ -15,6 +15,9 @@ package nameindex
 import (
 	"database/sql"
 	"fmt"
+	"math"
+	"net/url"
+	"path/filepath"
 	"strings"
 
 	_ "modernc.org/sqlite"
@@ -58,15 +61,28 @@ type Store struct {
 // Open opens (creating if needed) the SQLite database at path and ensures
 // its schema exists. cdc is used to decode the raw Registry proto bytes
 // captured off the committed changeset.
+//
+// The database runs in WAL mode so RPC readers never block the writer:
+// ListenCommit runs synchronously inside block Commit, and a burst of
+// search queries must not delay it. Writers are serial by construction
+// (backfill at startup, then one batch per committed block); busy_timeout
+// covers the rare overlap with a WAL checkpoint.
 func Open(path string, cdc codec.BinaryCodec) (*Store, error) {
-	db, err := sql.Open("sqlite", path)
+	// Absolute so the URI below is always file:///..., never file://name
+	// with the file name parsed as a host.
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return nil, fmt.Errorf("nameindex: resolve %s: %w", path, err)
+	}
+	dsn := url.URL{
+		Scheme:   "file",
+		Path:     abs,
+		RawQuery: "_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)",
+	}
+	db, err := sql.Open("sqlite", dsn.String())
 	if err != nil {
 		return nil, fmt.Errorf("nameindex: open %s: %w", path, err)
 	}
-	// The index is only ever written from a single ABCIListener goroutine
-	// (block commit) plus occasional backfill; a single connection avoids
-	// SQLITE_BUSY without needing WAL/busy-timeout tuning.
-	db.SetMaxOpenConns(1)
 
 	if _, err := db.Exec(schema); err != nil {
 		_ = db.Close()
@@ -91,16 +107,18 @@ CREATE INDEX IF NOT EXISTS idx_registries_name_lower ON registries(name_lower);
 CREATE INDEX IF NOT EXISTS idx_registries_name_rev_lower ON registries(name_rev_lower);
 `
 
-// Upsert indexes (or re-indexes) a single registry. Registries are add-only
-// on-chain, but Upsert is idempotent so backfill and listener replay can
-// never desync the index.
-func (s *Store) Upsert(reg *types.Registry) error {
-	data, err := s.cdc.Marshal(reg)
+// execer is the subset of *sql.DB and *sql.Tx that upsert needs.
+type execer interface {
+	Exec(query string, args ...any) (sql.Result, error)
+}
+
+func upsert(e execer, cdc codec.BinaryCodec, reg *types.Registry) error {
+	data, err := cdc.Marshal(reg)
 	if err != nil {
 		return fmt.Errorf("nameindex: marshal registry %d: %w", reg.Id, err)
 	}
 	lower := strings.ToLower(reg.Name)
-	_, err = s.db.Exec(
+	_, err = e.Exec(
 		`INSERT INTO registries (id, name_lower, name_rev_lower, data) VALUES (?, ?, ?, ?)
 		 ON CONFLICT(id) DO UPDATE SET name_lower = excluded.name_lower,
 		                                name_rev_lower = excluded.name_rev_lower,
@@ -113,39 +131,76 @@ func (s *Store) Upsert(reg *types.Registry) error {
 	return nil
 }
 
+// Upsert indexes (or re-indexes) a single registry in its own transaction.
+// Registries are add-only on-chain, but Upsert is idempotent so backfill and
+// listener replay converge on the same content.
+func (s *Store) Upsert(reg *types.Registry) error {
+	return upsert(s.db, s.cdc, reg)
+}
+
+// Batch groups upserts into one SQLite transaction, so a backfill or a block
+// with several registry writes costs one fsync and lands atomically.
+type Batch struct {
+	tx  *sql.Tx
+	cdc codec.BinaryCodec
+}
+
+// Begin starts a write batch. Commit it to publish; defer Close so an early
+// return rolls it back.
+func (s *Store) Begin() (*Batch, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, fmt.Errorf("nameindex: begin: %w", err)
+	}
+	return &Batch{tx: tx, cdc: s.cdc}, nil
+}
+
+// Upsert indexes (or re-indexes) a registry within the batch.
+func (b *Batch) Upsert(reg *types.Registry) error {
+	return upsert(b.tx, b.cdc, reg)
+}
+
+// Commit publishes every Upsert in the batch at once.
+func (b *Batch) Commit() error {
+	if err := b.tx.Commit(); err != nil {
+		return fmt.Errorf("nameindex: commit: %w", err)
+	}
+	return nil
+}
+
+// Close rolls the batch back unless it was committed. Safe to defer
+// unconditionally.
+func (b *Batch) Close() {
+	_ = b.tx.Rollback() // sql.ErrTxDone after Commit; nothing to undo
+}
+
 // Search returns registries whose name matches query under mode, ordered by
 // id, applying a plain offset/limit page. Matching is always
 // case-insensitive.
 func (s *Store) Search(mode MatchMode, query string, limit, offset uint64) ([]*types.Registry, error) {
 	lower := strings.ToLower(query)
 
-	var column, pattern string
+	var where, arg string
 	switch mode {
 	case MatchModePrefix:
-		column, pattern = "name_lower", escapeLike(lower)+"%"
+		where, arg = `name_lower LIKE ? ESCAPE '\'`, escapeLike(lower)+"%"
 	case MatchModeSuffix:
-		column, pattern = "name_rev_lower", escapeLike(reverse(lower))+"%"
+		where, arg = `name_rev_lower LIKE ? ESCAPE '\'`, escapeLike(reverse(lower))+"%"
 	case MatchModeContains:
-		column, pattern = "name_lower", "%"+escapeLike(lower)+"%"
+		where, arg = `name_lower LIKE ? ESCAPE '\'`, "%"+escapeLike(lower)+"%"
 	default: // MatchModeExact
-		column, pattern = "name_lower", ""
+		where, arg = `name_lower = ?`, lower
 	}
 
-	var (
-		rows *sql.Rows
-		err  error
+	// database/sql rejects uint64 values above MaxInt64. Anything that large
+	// is past the end of any index, so clamp rather than fail the query.
+	limit = min(limit, math.MaxInt64)
+	offset = min(offset, math.MaxInt64)
+
+	rows, err := s.db.Query(
+		`SELECT data FROM registries WHERE `+where+` ORDER BY id LIMIT ? OFFSET ?`,
+		arg, int64(limit), int64(offset),
 	)
-	if mode == MatchModeExact {
-		rows, err = s.db.Query(
-			`SELECT data FROM registries WHERE name_lower = ? ORDER BY id LIMIT ? OFFSET ?`,
-			lower, limit, offset,
-		)
-	} else {
-		rows, err = s.db.Query(
-			fmt.Sprintf(`SELECT data FROM registries WHERE %s LIKE ? ESCAPE '\' ORDER BY id LIMIT ? OFFSET ?`, column),
-			pattern, limit, offset,
-		)
-	}
 	if err != nil {
 		return nil, fmt.Errorf("nameindex: search: %w", err)
 	}
