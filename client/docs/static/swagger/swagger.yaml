@@ -374,6 +374,182 @@ paths:
           type: boolean
       tags:
         - Query
+  /NVNM-Chain/nvnmchain/anchoring/v1/registries/search:
+    get:
+      summary: |-
+        SearchRegistriesByName looks up registries by name using an opt-in local
+        name index. It returns codes.FailedPrecondition on
+        nodes that do not have the name index enabled (see app.toml
+        [anchoring-name-index]); it is not part of the deterministic state
+        machine and results may differ across nodes depending on whether/when
+        each node enabled and backfilled its index.
+      operationId: SearchRegistriesByName
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              registries:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Unique ID (auto-incrementing uint64 is standard for
+                        Cosmos collections)
+                    name:
+                      type: string
+                      description: >-
+                        Name of the registry. Not guaranteed unique — multiple
+                        registries may share
+
+                        the same name.
+                    description:
+                      type: string
+                      title: Description of what this registry verifies
+                    creator:
+                      type: string
+                      description: The global creator. Usually has immutable admin rights.
+                    created_at:
+                      type: string
+                      title: Timestamp of creation
+                    metadata:
+                      type: string
+                      description: >-
+                        Additional metadata associated with the registry in
+                        stringified JSON format.
+                description: >-
+                  registries is a list of registries whose name matched the
+                  query.
+              pagination:
+                description: pagination defines the pagination in the response.
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+            description: |-
+              QuerySearchRegistriesByNameResponse is response type for the
+              Query/SearchRegistriesByName RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: name
+          description: name is the query string, matched case-insensitively per mode.
+          in: query
+          required: false
+          type: string
+        - name: mode
+          description: >-
+            mode selects exact/prefix/suffix/contains matching. Defaults to
+            EXACT.
+
+             - REGISTRY_NAME_MATCH_MODE_UNSPECIFIED: Unspecified defaults to EXACT.
+             - REGISTRY_NAME_MATCH_MODE_EXACT: Name must equal the query exactly (case-insensitive).
+             - REGISTRY_NAME_MATCH_MODE_PREFIX: Name must start with the query.
+             - REGISTRY_NAME_MATCH_MODE_SUFFIX: Name must end with the query.
+             - REGISTRY_NAME_MATCH_MODE_CONTAINS: Name must contain the query anywhere.
+          in: query
+          required: false
+          type: string
+          enum:
+            - REGISTRY_NAME_MATCH_MODE_UNSPECIFIED
+            - REGISTRY_NAME_MATCH_MODE_EXACT
+            - REGISTRY_NAME_MATCH_MODE_PREFIX
+            - REGISTRY_NAME_MATCH_MODE_SUFFIX
+            - REGISTRY_NAME_MATCH_MODE_CONTAINS
+          default: REGISTRY_NAME_MATCH_MODE_UNSPECIFIED
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /NVNM-Chain/nvnmchain/anchoring/v1/registry:
     get:
       summary: Registry queries a specific registry by id
@@ -43024,6 +43200,64 @@ definitions:
               JSON format.
         title: registry is the requested registry
     description: QueryRegistryResponse is response type for the Query/Registry RPC method.
+  nvnmchain.anchoring.v1.QuerySearchRegistriesByNameResponse:
+    type: object
+    properties:
+      registries:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+              title: >-
+                Unique ID (auto-incrementing uint64 is standard for Cosmos
+                collections)
+            name:
+              type: string
+              description: >-
+                Name of the registry. Not guaranteed unique — multiple
+                registries may share
+
+                the same name.
+            description:
+              type: string
+              title: Description of what this registry verifies
+            creator:
+              type: string
+              description: The global creator. Usually has immutable admin rights.
+            created_at:
+              type: string
+              title: Timestamp of creation
+            metadata:
+              type: string
+              description: >-
+                Additional metadata associated with the registry in stringified
+                JSON format.
+        description: registries is a list of registries whose name matched the query.
+      pagination:
+        description: pagination defines the pagination in the response.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    description: |-
+      QuerySearchRegistriesByNameResponse is response type for the
+      Query/SearchRegistriesByName RPC method.
   nvnmchain.anchoring.v1.Record:
     type: object
     properties:
@@ -43092,6 +43326,26 @@ definitions:
         description: >-
           Additional metadata associated with the registry in stringified JSON
           format.
+  nvnmchain.anchoring.v1.RegistryNameMatchMode:
+    type: string
+    enum:
+      - REGISTRY_NAME_MATCH_MODE_UNSPECIFIED
+      - REGISTRY_NAME_MATCH_MODE_EXACT
+      - REGISTRY_NAME_MATCH_MODE_PREFIX
+      - REGISTRY_NAME_MATCH_MODE_SUFFIX
+      - REGISTRY_NAME_MATCH_MODE_CONTAINS
+    default: REGISTRY_NAME_MATCH_MODE_UNSPECIFIED
+    description: >-
+      RegistryNameMatchMode selects how QuerySearchRegistriesByNameRequest.name
+      is
+
+      matched against a registry's name. Matching is always case-insensitive.
+
+       - REGISTRY_NAME_MATCH_MODE_UNSPECIFIED: Unspecified defaults to EXACT.
+       - REGISTRY_NAME_MATCH_MODE_EXACT: Name must equal the query exactly (case-insensitive).
+       - REGISTRY_NAME_MATCH_MODE_PREFIX: Name must start with the query.
+       - REGISTRY_NAME_MATCH_MODE_SUFFIX: Name must end with the query.
+       - REGISTRY_NAME_MATCH_MODE_CONTAINS: Name must contain the query anywhere.
   cosmos.evm.vm.v1.AccessControl:
     type: object
     properties:
