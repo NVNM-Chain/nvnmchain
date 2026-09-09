@@ -52,6 +52,7 @@ The module defines several important types:
 - `Records`: List records filtered by checksum/registry_id/record_id/index (paginated)
 - `Registries`: List registries filtered by registry_id (paginated)
 - `Registry`: Fetch a single registry by id
+- `SearchRegistriesByName`: Look up registries by name (exact/prefix/suffix/contains) via an opt-in local index — see [Registry Name Index](#registry-name-index) below
 
 ## Usage
 
@@ -82,6 +83,34 @@ The `AddRecord` function adds a new record (and automatically versions it via `r
 The `UpdateRecordStatus` function updates the `status` field of an existing record version.
 
 For more detailed information on the module's implementation and usage, please refer to the source code and comments within the `x/anchoring` directory.
+
+## Registry Name Index
+
+The on-chain KV store only supports registry lookups by `id`; it cannot answer "which
+registries contain X in their name" without a full scan inside consensus-critical
+code, so that index was deliberately retired (see `x/anchoring/types/keys.go`). To
+support flexible name search, the module ships an **opt-in, per-node, off-chain
+index**, implemented in `x/anchoring/nameindex`:
+
+- A node enables it via `[anchoring-name-index]` in `app.toml` (`enable = true`,
+  `db-path = "..."`). It is disabled by default.
+- When enabled, an `ABCIListener` hooks into `ListenCommit` and indexes every
+  committed `Registry` write into a local SQLite file. Hooking at commit time
+  (rather than inside the `AddRegistry` msg handler) ensures the index only ever
+  reflects state that was actually committed, never a tx branch that was later
+  rolled back.
+- On startup, the node backfills the index from the existing `Registries`
+  collection. Backfill and the listener both upsert idempotently, so enabling the
+  index late, restarting, or replaying blocks can never desync it.
+- `Query/SearchRegistriesByName` serves lookups straight from the local index
+  with four match modes (`EXACT`, `PREFIX`, `SUFFIX`, `CONTAINS`), always
+  case-insensitive. On a node that hasn't enabled the index, it returns
+  `codes.FailedPrecondition`.
+
+This index is **not part of consensus**: nodes are not required to run it, two
+nodes may answer a search differently while one is still backfilling, and its
+content is always derived from, never authoritative over, the on-chain
+`Registries` collection.
 
 ## EVM Precompile
 

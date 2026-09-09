@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/NVNM-Chain/nvnmchain/app"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/nameindex"
 	cmtcfg "github.com/cometbft/cometbft/config"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	cosmosevmserverconfig "github.com/cosmos/evm/server/config"
@@ -29,9 +30,10 @@ func initAppConfig() (string, interface{}) {
 	type CustomAppConfig struct {
 		serverconfig.Config
 
-		EVM     cosmosevmserverconfig.EVMConfig
-		JSONRPC cosmosevmserverconfig.JSONRPCConfig
-		TLS     cosmosevmserverconfig.TLSConfig
+		EVM                cosmosevmserverconfig.EVMConfig
+		JSONRPC            cosmosevmserverconfig.JSONRPCConfig
+		TLS                cosmosevmserverconfig.TLSConfig
+		AnchoringNameIndex nameindex.Config
 	}
 
 	// Optionally allow the chain developer to overwrite the SDK's default
@@ -42,10 +44,11 @@ func initAppConfig() (string, interface{}) {
 	evmConfig.EVMChainID = app.EVMChainID
 
 	customAppConfig := CustomAppConfig{
-		Config:  *srvCfg,
-		EVM:     *evmConfig,
-		JSONRPC: *cosmosevmserverconfig.DefaultJSONRPCConfig(),
-		TLS:     *cosmosevmserverconfig.DefaultTLSConfig(),
+		Config:             *srvCfg,
+		EVM:                *evmConfig,
+		JSONRPC:            *cosmosevmserverconfig.DefaultJSONRPCConfig(),
+		TLS:                *cosmosevmserverconfig.DefaultTLSConfig(),
+		AnchoringNameIndex: nameindex.DefaultConfig(),
 	}
 	// The SDK's default minimum gas price is set to "" (empty value) inside
 	// app.toml. If left empty by validators, the node will halt on startup.
@@ -62,7 +65,8 @@ func initAppConfig() (string, interface{}) {
 	srvCfg.MinGasPrices = "0anvnm"
 
 	customAppTemplate := serverconfig.DefaultConfigTemplate +
-		cosmosevmserverconfig.DefaultEVMConfigTemplate
+		cosmosevmserverconfig.DefaultEVMConfigTemplate +
+		nameindex.ConfigTemplate
 
 	return customAppTemplate, customAppConfig
 }
