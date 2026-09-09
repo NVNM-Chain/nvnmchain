@@ -106,3 +106,36 @@ func TestListener_ListenCommit_BlockIsAtomic(t *testing.T) {
 	require.NoError(t, err)
 	require.Empty(t, got, "a block that fails to decode must not be half-indexed")
 }
+
+// TestListener_ListenCommit_NoRegistryWrites covers the common case: almost
+// every block touches no registry at all, and those must not open a SQLite
+// transaction. An empty or wholly-irrelevant changeset returns before Begin.
+func TestListener_ListenCommit_NoRegistryWrites(t *testing.T) {
+	cdc := codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
+	s := newStore(t)
+	l := nameindex.NewListener(s)
+
+	// Seed one registry so an accidental write would be visible as a change.
+	registryKey := append(append([]byte{}, types.RegistriesKeyPrefix...), 0, 0, 0, 0, 0, 0, 0, 1)
+	require.NoError(t, l.ListenCommit(context.Background(), abci.ResponseCommit{},
+		[]*storetypes.StoreKVPair{{
+			StoreKey: types.StoreKey,
+			Key:      registryKey,
+			Value:    mustMarshal(t, cdc, &types.Registry{Id: 1, Name: "seeded"}),
+		}},
+	))
+
+	otherKey := append(append([]byte{}, types.RecordsKeyPrefix...), 1)
+	for _, changeSet := range [][]*storetypes.StoreKVPair{
+		nil,
+		{},
+		{{StoreKey: types.StoreKey, Key: otherKey, Value: []byte("record")}},
+		{{StoreKey: "other-module", Key: registryKey, Value: []byte("whatever")}},
+	} {
+		require.NoError(t, l.ListenCommit(context.Background(), abci.ResponseCommit{}, changeSet))
+	}
+
+	got, err := s.Search(nameindex.MatchModeExact, "seeded", 50, 0)
+	require.NoError(t, err)
+	require.Len(t, got, 1, "blocks without registry writes must not disturb the index")
+}

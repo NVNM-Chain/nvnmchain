@@ -33,15 +33,11 @@ var HumanABI = []string{
 	"function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status) returns ()",
 	"function records(uint64 registryId, string checksum, uint64 recordId, uint64 index, PageRequest pagination) returns (Record[] records, PageResponse pagination)",
 	"function registries(uint64 registryId, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
-	// A separate method rather than extra parameters on registries above:
-	// adding parameters would change that method's selector and break its
-	// callers, as the v1.2 registryId change already did once.
-	//
-	// This one is served from a node-local index that is NOT part of
-	// consensus, so it is callable only from a query context and only by an
-	// EOA. See registriesByNameGate in Execute for why both are required.
+	// A separate method so the registries selector above stays stable. Served
+	// from a node-local index that is not consensus state, so it is callable
+	// only from a query context and only by an EOA; see registriesByNameGate.
 	// matchMode mirrors types.RegistryNameMatchMode: 0/1 exact, 2 prefix,
-	// 3 suffix, 4 contains. Matching is case-insensitive in every mode.
+	// 3 suffix, 4 contains.
 	"function registriesByName(string name, uint8 matchMode, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
 
 	"function grantRole(uint64 registryId, string checksum, address account, string role) returns ()",

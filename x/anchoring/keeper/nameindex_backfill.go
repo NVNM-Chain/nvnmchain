@@ -2,24 +2,36 @@ package keeper
 
 import (
 	"context"
+	"errors"
 	"fmt"
+
+	"cosmossdk.io/collections"
 
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 )
 
-// BackfillNameIndex walks every existing registry into k.NameIndex in one
-// transaction. Upsert is idempotent, so it runs on every start; that is what
-// catches the index up after it was enabled late, after a block whose
-// ListenCommit failed, or after a restart following state sync.
-//
-// State sync applies its snapshot after the app is constructed, so a freshly
-// synced node indexes the snapshot's registries on its next restart;
-// registries created after the sync are indexed by the listener as they
-// commit.
+// BackfillNameIndex brings k.NameIndex up to date with the Registries
+// collection. Registries are add-only with dense ids, so an index holding as
+// many rows as RegistryCount is complete and nothing is read. Otherwise every
+// registry is upserted in one transaction, which is what catches the index up
+// after it was enabled late, after a block whose ListenCommit failed, or on
+// the restart after state sync (the snapshot lands after this runs).
 func (k Keeper) BackfillNameIndex(ctx context.Context) error {
 	if k.NameIndex == nil {
 		return nil
 	}
+	total, err := k.RegistryCount.Get(ctx)
+	if err != nil && !errors.Is(err, collections.ErrNotFound) {
+		return err
+	}
+	indexed, err := k.NameIndex.Count()
+	if err != nil {
+		return err
+	}
+	if indexed == total {
+		return nil
+	}
+
 	batch, err := k.NameIndex.Begin()
 	if err != nil {
 		return err

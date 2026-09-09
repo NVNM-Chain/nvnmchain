@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"errors"
 
 	"cosmossdk.io/collections"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/nameindex"
@@ -279,6 +280,9 @@ func (q queryServer) SearchRegistriesByName(_ context.Context, req *types.QueryS
 
 	pageReq := sanitizePageRequest(req.Pagination, defaultPageLimit, maxPageLimit)
 	registries, err := q.k.NameIndex.Search(nameindex.FromProto(req.Mode), req.Name, pageReq.Limit, pageReq.Offset)
+	if errors.Is(err, nameindex.ErrContainsTooShort) {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
