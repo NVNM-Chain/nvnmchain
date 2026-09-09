@@ -18,6 +18,7 @@ import (
 	_ "github.com/ethereum/go-ethereum/eth/tracers/native"
 
 	abci "github.com/cometbft/cometbft/abci/types"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	clienthelpers "cosmossdk.io/client/v2/helpers"
 	"cosmossdk.io/core/appmodule"
@@ -112,6 +113,7 @@ import (
 	"cosmossdk.io/client/v2/autocli"
 	anchoringkeeper "github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
 	anchoring "github.com/NVNM-Chain/nvnmchain/x/anchoring/module"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/nameindex"
 	anchoringprecompile "github.com/NVNM-Chain/nvnmchain/x/anchoring/precompile"
 	anchoringtypes "github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	chainante "github.com/cosmos/evm/ante"
@@ -447,6 +449,23 @@ func New(
 		app.AccountKeeper.AddressCodec(),
 		runtime.NewKVStoreService(keys[anchoringtypes.StoreKey]),
 	)
+
+	// Opt-in local registry name index (see [anchoring-name-index] in
+	// app.toml). Disabled nodes leave AnchoringKeeper.NameIndex nil, which
+	// makes Query/SearchRegistriesByName return FailedPrecondition.
+	nameIndexCfg := nameindex.ReadConfig(appOpts, homePath)
+	if nameIndexCfg.Enabled {
+		nameIndexStore, err := nameindex.Open(nameIndexCfg.DBPath, appCodec)
+		if err != nil {
+			panic(fmt.Errorf("failed to open anchoring name index: %w", err))
+		}
+		app.AnchoringKeeper.NameIndex = nameIndexStore
+
+		app.CommitMultiStore().AddListeners([]storetypes.StoreKey{keys[anchoringtypes.StoreKey]})
+		streamingManager := app.StreamingManager()
+		streamingManager.ABCIListeners = append(streamingManager.ABCIListeners, nameindex.NewListener(nameIndexStore))
+		app.SetStreamingManager(streamingManager)
+	}
 
 	app.BankKeeper.BaseSendKeeper = app.BankKeeper.SetHooks(
 		banktypes.NewMultiBankHooks())
@@ -876,6 +895,13 @@ func New(
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
 			panic(fmt.Errorf("error loading last version: %w", err))
+		}
+
+		if app.AnchoringKeeper.NameIndex != nil {
+			backfillCtx := app.NewUncachedContext(true, cmtproto.Header{})
+			if err := app.AnchoringKeeper.BackfillNameIndex(backfillCtx); err != nil {
+				panic(fmt.Errorf("failed to backfill anchoring name index: %w", err))
+			}
 		}
 	}
 

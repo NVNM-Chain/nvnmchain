@@ -31,6 +31,31 @@ service Query {
   rpc Registry(QueryRegistryRequest) returns (QueryRegistryResponse) {
     option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/registry";
   }
+
+  // SearchRegistriesByName looks up registries by name using an opt-in local
+  // name index. It returns codes.Unimplemented / codes.FailedPrecondition on
+  // nodes that do not have the name index enabled (see app.toml
+  // [anchoring-name-index]); it is not part of the deterministic state
+  // machine and results may differ across nodes depending on whether/when
+  // each node enabled and backfilled its index.
+  rpc SearchRegistriesByName(QuerySearchRegistriesByNameRequest) returns (QuerySearchRegistriesByNameResponse) {
+    option (google.api.http).get = "/NVNM-Chain/nvnmchain/anchoring/v1/registries/search";
+  }
+}
+
+// RegistryNameMatchMode selects how QuerySearchRegistriesByNameRequest.name is
+// matched against a registry's name. Matching is always case-insensitive.
+enum RegistryNameMatchMode {
+  // Unspecified defaults to EXACT.
+  REGISTRY_NAME_MATCH_MODE_UNSPECIFIED = 0;
+  // Name must equal the query exactly (case-insensitive).
+  REGISTRY_NAME_MATCH_MODE_EXACT = 1;
+  // Name must start with the query.
+  REGISTRY_NAME_MATCH_MODE_PREFIX = 2;
+  // Name must end with the query.
+  REGISTRY_NAME_MATCH_MODE_SUFFIX = 3;
+  // Name must contain the query anywhere.
+  REGISTRY_NAME_MATCH_MODE_CONTAINS = 4;
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -89,4 +114,25 @@ message QueryRegistryRequest {
 message QueryRegistryResponse {
   // registry is the requested registry
   Registry registry = 1;
+}
+
+// QuerySearchRegistriesByNameRequest is request type for the
+// Query/SearchRegistriesByName RPC method.
+message QuerySearchRegistriesByNameRequest {
+  // name is the query string, matched case-insensitively per mode.
+  string name = 1;
+  // mode selects exact/prefix/suffix/contains matching. Defaults to EXACT.
+  RegistryNameMatchMode mode = 2;
+  // pagination defines an optional pagination for the request. Only offset
+  // and limit are honored; count_total is not supported.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QuerySearchRegistriesByNameResponse is response type for the
+// Query/SearchRegistriesByName RPC method.
+message QuerySearchRegistriesByNameResponse {
+  // registries is a list of registries whose name matched the query.
+  repeated Registry registries = 1;
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
