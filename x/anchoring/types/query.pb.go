@@ -710,7 +710,7 @@ type QueryClient interface {
 	// Registry queries a specific registry by id
 	Registry(ctx context.Context, in *QueryRegistryRequest, opts ...grpc.CallOption) (*QueryRegistryResponse, error)
 	// SearchRegistriesByName looks up registries by name using an opt-in local
-	// name index. It returns codes.Unimplemented / codes.FailedPrecondition on
+	// name index. It returns codes.FailedPrecondition on
 	// nodes that do not have the name index enabled (see app.toml
 	// [anchoring-name-index]); it is not part of the deterministic state
 	// machine and results may differ across nodes depending on whether/when
@@ -782,7 +782,7 @@ type QueryServer interface {
 	// Registry queries a specific registry by id
 	Registry(context.Context, *QueryRegistryRequest) (*QueryRegistryResponse, error)
 	// SearchRegistriesByName looks up registries by name using an opt-in local
-	// name index. It returns codes.Unimplemented / codes.FailedPrecondition on
+	// name index. It returns codes.FailedPrecondition on
 	// nodes that do not have the name index enabled (see app.toml
 	// [anchoring-name-index]); it is not part of the deterministic state
 	// machine and results may differ across nodes depending on whether/when
