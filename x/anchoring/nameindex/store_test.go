@@ -1,6 +1,7 @@
 package nameindex_test
 
 import (
+	"math"
 	"path/filepath"
 	"testing"
 
@@ -112,6 +113,42 @@ func TestStore_Pagination(t *testing.T) {
 	require.Equal(t, uint64(1), page1[0].Id)
 	require.Equal(t, uint64(3), page2[0].Id)
 	require.Equal(t, uint64(5), page3[0].Id)
+}
+
+func TestStore_BatchIsAtomic(t *testing.T) {
+	s := newStore(t)
+
+	// A batch closed without Commit leaves nothing behind.
+	batch, err := s.Begin()
+	require.NoError(t, err)
+	require.NoError(t, batch.Upsert(&types.Registry{Id: 1, Name: "dropped"}))
+	batch.Close()
+	got, err := s.Search(nameindex.MatchModeExact, "dropped", 50, 0)
+	require.NoError(t, err)
+	require.Empty(t, got)
+
+	// A committed batch publishes every row at once; Close after Commit is a
+	// no-op.
+	batch, err = s.Begin()
+	require.NoError(t, err)
+	require.NoError(t, batch.Upsert(&types.Registry{Id: 1, Name: "kept"}))
+	require.NoError(t, batch.Upsert(&types.Registry{Id: 2, Name: "kept"}))
+	require.NoError(t, batch.Commit())
+	batch.Close()
+	got, err = s.Search(nameindex.MatchModeExact, "kept", 50, 0)
+	require.NoError(t, err)
+	require.Len(t, got, 2)
+}
+
+func TestStore_OffsetPastInt64IsEmpty(t *testing.T) {
+	s := newStore(t)
+	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "reg"}))
+
+	// database/sql refuses uint64 values with the high bit set; the store
+	// must clamp rather than surface a driver error for a valid request.
+	got, err := s.Search(nameindex.MatchModeExact, "reg", math.MaxUint64, math.MaxUint64)
+	require.NoError(t, err)
+	require.Empty(t, got)
 }
 
 func TestStore_UpsertIsIdempotent(t *testing.T) {

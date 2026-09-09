@@ -15,8 +15,8 @@ const TomlSection = "anchoring-name-index"
 // Config controls whether this node builds and serves the registry name
 // index, and where its backing SQLite file lives.
 type Config struct {
-	// Enabled turns the index on: it registers the ABCIListener, runs a
-	// one-time backfill if the index is empty, and serves
+	// Enabled turns the index on: it registers the ABCIListener, backfills
+	// from the Registries collection on every start, and serves
 	// Query/SearchRegistriesByName. Disabled by default.
 	Enabled bool
 	// DBPath is the SQLite file path. Relative paths are resolved under

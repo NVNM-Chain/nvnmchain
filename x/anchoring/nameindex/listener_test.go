@@ -74,3 +74,35 @@ func TestListener_ListenCommit(t *testing.T) {
 
 	require.NoError(t, l.ListenFinalizeBlock(context.Background(), abci.RequestFinalizeBlock{}, abci.ResponseFinalizeBlock{}))
 }
+
+// TestListener_ListenCommit_BlockIsAtomic checks that a block is indexed all
+// or nothing: a write that cannot be decoded must not leave the block's
+// earlier registries behind, since the backfill on restart is what repairs a
+// failed block and it should start from a clean slate for it.
+func TestListener_ListenCommit_BlockIsAtomic(t *testing.T) {
+	cdc := codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
+	s := newStore(t)
+	l := nameindex.NewListener(s)
+
+	registryKey := func(id byte) []byte {
+		return append(append([]byte{}, types.RegistriesKeyPrefix...), 0, 0, 0, 0, 0, 0, 0, id)
+	}
+	changeSet := []*storetypes.StoreKVPair{
+		{
+			StoreKey: types.StoreKey,
+			Key:      registryKey(1),
+			Value:    mustMarshal(t, cdc, &types.Registry{Id: 1, Name: "first"}),
+		},
+		{
+			StoreKey: types.StoreKey,
+			Key:      registryKey(2),
+			Value:    []byte{0xff, 0xff},
+		},
+	}
+
+	require.Error(t, l.ListenCommit(context.Background(), abci.ResponseCommit{}, changeSet))
+
+	got, err := s.Search(nameindex.MatchModeExact, "first", 50, 0)
+	require.NoError(t, err)
+	require.Empty(t, got, "a block that fails to decode must not be half-indexed")
+}

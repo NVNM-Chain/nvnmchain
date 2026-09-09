@@ -86,44 +86,35 @@ For more detailed information on the module's implementation and usage, please r
 
 ## Registry Name Index
 
-The on-chain KV store only supports registry lookups by `id`; it cannot answer "which
-registries contain X in their name" without a full scan inside consensus-critical
-code, so that index was deliberately retired (see `x/anchoring/types/keys.go`). To
-support flexible name search, the module ships an **opt-in, per-node, off-chain
-index**, implemented in `x/anchoring/nameindex`:
+Registries are addressed by `id` on chain. Names are not unique, and the
+name → id index was retired (see `x/anchoring/types/keys.go`), so name search
+is served by an **opt-in, per-node, off-chain index** in `x/anchoring/nameindex`:
 
-- A node enables it via `[anchoring-name-index]` in `app.toml` (`enabled = true`,
-  `db-path = "..."`). It is disabled by default. The key is `enabled`, not
-  `enable`: a misspelling is read as `false` and the node silently serves
-  nothing.
-- When enabled, an `ABCIListener` hooks into `ListenCommit` and indexes every
-  committed `Registry` write into a local SQLite file. Hooking at commit time
-  (rather than inside the `AddRegistry` msg handler) ensures the index only ever
-  reflects state that was actually committed, never a tx branch that was later
-  rolled back.
-- On startup, the node backfills the index from the existing `Registries`
-  collection. Backfill and the listener both upsert idempotently, so enabling the
-  index late, restarting, or replaying blocks can never desync it.
-- `Query/SearchRegistriesByName` serves lookups straight from the local index
-  with four match modes (`EXACT`, `PREFIX`, `SUFFIX`, `CONTAINS`), always
-  case-insensitive. On a node that hasn't enabled the index, it returns
+- Enable it with `enabled = true` under `[anchoring-name-index]` in `app.toml`
+  (`db-path` defaults to `data/anchoring_name_index.db`). Off by default. The
+  key is `enabled`, not `enable`; a misspelling reads as `false`.
+- An `ABCIListener` indexes each committed `Registry` write into a local SQLite
+  file, one transaction per block. It only ever sees committed state, never a
+  tx branch that was rolled back.
+- On every start the node backfills the index from the `Registries` collection
+  in a single transaction. Both paths upsert, so enabling late, restarting, or
+  replaying blocks converges on the same content.
+- `Query/SearchRegistriesByName` (REST `.../anchoring/v1/registries/search`)
+  serves `EXACT`, `PREFIX`, `SUFFIX` and `CONTAINS` lookups, case-insensitive,
+  with offset/limit paging. A node without the index returns
   `codes.FailedPrecondition`.
-- The same lookup is reachable over JSON-RPC as the `registriesByName`
-  precompile method, for clients that only speak `eth_call`. See
-  [registriesByName](#registriesbyname).
+- The same lookup is exposed to `eth_call` as the `registriesByName` precompile
+  method; see [registriesByName](#registriesbyname).
 
-This index is **not part of consensus**: nodes are not required to run it, two
-nodes may answer a search differently while one is still backfilling, and its
-content is always derived from, never authoritative over, the on-chain
-`Registries` collection.
+The index is **not part of consensus**: it is derived from, never authoritative
+over, the on-chain collection, and two nodes may answer differently while one
+is still catching up. Two operational caveats follow:
 
-That is exactly why the precompile method is restricted to a query context and
-an EOA caller. A node-local answer is harmless in a read, but inside block
-execution a disagreement between validators is an AppHash divergence rather than
-a stale result. The gates and their ordering are described under
-[registriesByName](#registriesbyname); the short version is that the
-query-context check must be decided before the index is touched, so that an
-indexed and an unindexed validator reject an offending transaction identically.
+- baseapp only logs a listener error. A block whose index write failed is
+  picked up by the backfill on the next restart.
+- State sync applies its snapshot after the app is built, so a freshly synced
+  node indexes pre-snapshot registries on its next restart. Registries created
+  after the sync are indexed as they commit.
 
 ## EVM Precompile
 
