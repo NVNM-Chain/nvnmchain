@@ -19,7 +19,7 @@ type Upgrade struct {
 	// CreateUpgradeHandler defines the function that creates an upgrade handler. homeDir is the
 	// node's home directory, for upgrades that must read local files too large to embed in the
 	// binary (e.g. a bulk data migration) — most upgrades can ignore it.
-	CreateUpgradeHandler func(mm *module.Manager, configurator module.Configurator, keepers *UpgradeKeepers, storekeys map[string]*storetypes.KVStoreKey, homeDir string) upgradetypes.UpgradeHandler
+	CreateUpgradeHandler func(mm *module.Manager, configurator module.Configurator, keepers *UpgradeKeepers, storekeys map[string]*storetypes.KVStoreKey) upgradetypes.UpgradeHandler
 
 	// Store upgrades, should be used for any new modules introduced, new modules deleted, or store names renamed.
 	StoreUpgrades storetypes.StoreUpgrades
