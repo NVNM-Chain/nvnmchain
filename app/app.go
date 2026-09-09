@@ -926,7 +926,7 @@ func New(
 
 	// Register any on-chain upgrades.
 	app.setupUpgradeStoreLoaders()
-	app.setupUpgradeHandlers(homePath)
+	app.setupUpgradeHandlers()
 
 	// At startup, after all modules have been registered, check that all proto
 	// annotations are correct.
@@ -1236,7 +1236,7 @@ func (app *App) setupUpgradeStoreLoaders() {
 	}
 }
 
-func (app *App) setupUpgradeHandlers(homeDir string) {
+func (app *App) setupUpgradeHandlers() {
 	for _, upgrade := range Upgrades {
 		app.UpgradeKeeper.SetUpgradeHandler(
 			upgrade.UpgradeName,
