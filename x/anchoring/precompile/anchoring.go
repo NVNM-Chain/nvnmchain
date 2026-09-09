@@ -3,6 +3,7 @@
 package precompile
 
 import (
+	"errors"
 	"fmt"
 
 	cmn "github.com/cosmos/evm/precompiles/common"
@@ -32,6 +33,16 @@ var HumanABI = []string{
 	"function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status) returns ()",
 	"function records(uint64 registryId, string checksum, uint64 recordId, uint64 index, PageRequest pagination) returns (Record[] records, PageResponse pagination)",
 	"function registries(uint64 registryId, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
+	// A separate method rather than extra parameters on registries above:
+	// adding parameters would change that method's selector and break its
+	// callers, as the v1.2 registryId change already did once.
+	//
+	// This one is served from a node-local index that is NOT part of
+	// consensus, so it is callable only from a query context and only by an
+	// EOA. See registriesByNameGate in Execute for why both are required.
+	// matchMode mirrors types.RegistryNameMatchMode: 0/1 exact, 2 prefix,
+	// 3 suffix, 4 contains. Matching is case-insensitive in every mode.
+	"function registriesByName(string name, uint8 matchMode, PageRequest pagination) returns (Registry[] registries, PageResponse pagination)",
 
 	"function grantRole(uint64 registryId, string checksum, address account, string role) returns ()",
 	"function revokeRole(uint64 registryId, string checksum, address account, string role) returns ()",
@@ -121,6 +132,11 @@ func (p Precompile) Execute(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Co
 		return invcmn.Run(ctx, p.Records, input)
 	case RegistriesID:
 		return invcmn.Run(ctx, p.Registries, input)
+	case RegistriesByNameID:
+		if err := p.registriesByNameGate(ctx, stateDB, contract, txOrigin); err != nil {
+			return encodeRevertReason(err.Error()), vm.ErrExecutionReverted
+		}
+		return invcmn.Run(ctx, p.RegistriesByName, input)
 	case GrantRoleID:
 		return invcmn.RunWithStateDB(ctx, p.GrantRole, input, stateDB, contract)
 	case RevokeRoleID:
@@ -191,6 +207,57 @@ func (Precompile) ensureNoValue(contract *vm.Contract) error {
 		return fmt.Errorf(erc20.ErrCannotReceiveFunds, value.String())
 	}
 	return nil
+}
+
+// Revert reasons for registriesByName. They are distinct so a client can tell
+// "nobody may ask this way" apart from "this node cannot answer": the second is
+// fixed by pointing at a node that has the index, the first never is.
+var (
+	ErrRegistriesByNameInTx     = errors.New("registriesByName is query-only: use eth_call, not a transaction")
+	ErrRegistriesByNameIndexOff = errors.New("registry name index is not enabled on this node; see [anchoring-name-index] in app.toml")
+)
+
+// registriesByNameGate decides whether this node may answer a registriesByName
+// call. It runs before the index is read, and every check in it is one that
+// all nodes answer identically, so a rejection is itself deterministic.
+//
+// The index is node-local (opt-in, possibly still backfilling), so its answer
+// must never reach block execution, where two validators disagreeing is an
+// AppHash divergence rather than a stale read. ctx.IsCheckTx() separates the
+// two: baseapp builds FinalizeBlock state with isCheckTx=false and every query
+// context (eth_call, eth_estimateGas, simulation) with true, and x/vm carries
+// the flag through its cache contexts untouched. ctx.ExecMode() cannot stand
+// in: in cosmos-sdk v0.53 a finalize context still reports ExecModeCheck.
+//
+// The EOA check alone would not do: a plain transaction sent straight to the
+// precompile has msg.sender == tx.origin and no code at origin, yet runs in
+// every validator's block. It sits on top of the query gate so no contract
+// can build on an answer that would revert the moment the same path ran in a
+// transaction.
+func (p Precompile) registriesByNameGate(ctx sdk.Context, stateDB vm.StateDB, contract *vm.Contract, txOrigin common.Address) error {
+	if !ctx.IsCheckTx() {
+		return ErrRegistriesByNameInTx
+	}
+	if err := p.ensureEOACaller(stateDB, contract, "registriesByName", txOrigin); err != nil {
+		// Collapse to the bare sentinel, as the transaction path does: the
+		// revert reason is returned to the caller, and the detail from
+		// ensureEOACaller names the caller and origin addresses.
+		return core.ErrSenderNoEOA
+	}
+	if p.keeper.NameIndex == nil {
+		return ErrRegistriesByNameIndexOff
+	}
+	return nil
+}
+
+// matchModeFromABI maps the uint8 carried over the ABI onto the query enum.
+// Unknown values are rejected rather than silently falling back to exact match,
+// so a caller that means "contains" never gets told "no results" instead.
+func matchModeFromABI(mode uint8) (types.RegistryNameMatchMode, error) {
+	if _, ok := types.RegistryNameMatchMode_name[int32(mode)]; !ok {
+		return 0, fmt.Errorf("invalid matchMode %d: want 0/1 exact, 2 prefix, 3 suffix, 4 contains", mode)
+	}
+	return types.RegistryNameMatchMode(mode), nil
 }
 
 func (p Precompile) AddRegistry(
@@ -327,6 +394,57 @@ func (p Precompile) Registries(
 		Registries: abiRegistries,
 		Pagination: invcmn.FromPageResponse(rsp.Pagination),
 	}, nil
+}
+
+// RegistriesByName looks up registries whose name matches, using the node's
+// opt-in local name index. Names are not unique, so this may return several;
+// callers disambiguate on creator or createdAt.
+//
+// Reachable only from a query context and only for an EOA caller — see
+// registriesByNameGate, which has already run by the time we get here.
+func (p Precompile) RegistriesByName(
+	ctx sdk.Context,
+	input RegistriesByNameCall,
+) (*RegistriesByNameReturn, error) {
+	mode, err := matchModeFromABI(input.MatchMode)
+	if err != nil {
+		return nil, err
+	}
+
+	querySrv := keeper.NewQueryServerImpl(p.keeper)
+	rsp, err := querySrv.SearchRegistriesByName(ctx, &types.QuerySearchRegistriesByNameRequest{
+		Name:       input.Name,
+		Mode:       mode,
+		Pagination: input.Pagination.ToPageRequest(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	abiRegistries := make([]Registry, len(rsp.Registries))
+	for i, reg := range rsp.Registries {
+		abiRegistries[i] = ToABIRegistry(*reg)
+	}
+
+	// The index lives outside the SDK store, so nothing above moved the gas
+	// meter. Bill each row at the KV read rate so a call pays for what it
+	// returns; the page cap in sanitizePageRequest is what bounds the scan.
+	p.chargeIndexReadGas(ctx, abiRegistries)
+
+	return &RegistriesByNameReturn{
+		Registries: abiRegistries,
+		Pagination: invcmn.FromPageResponse(rsp.Pagination),
+	}, nil
+}
+
+// chargeIndexReadGas meters a name-index read against the KV read schedule.
+func (p Precompile) chargeIndexReadGas(ctx sdk.Context, registries []Registry) {
+	for _, reg := range registries {
+		ctx.GasMeter().ConsumeGas(
+			p.KvGasConfig.ReadCostFlat+p.KvGasConfig.ReadCostPerByte*uint64(reg.EncodedSize()),
+			"anchoring name index read",
+		)
+	}
 }
 
 // GrantRole grants a role to an address for a registry or document
