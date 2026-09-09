@@ -509,12 +509,10 @@ func New(
 		runtime.NewKVStoreService(keys[anchoringtypes.StoreKey]),
 	)
 
-	// Opt-in local registry name index (see [anchoring-name-index] in
-	// app.toml). Disabled nodes leave AnchoringKeeper.NameIndex nil, which
-	// makes Query/SearchRegistriesByName return FailedPrecondition.
-	//
-	// This must run before configStaticPrecompiles and NewAppModule below:
-	// both copy the keeper by value and would otherwise carry a nil index.
+	// Opt-in local registry name index ([anchoring-name-index] in app.toml).
+	// A nil NameIndex makes Query/SearchRegistriesByName return
+	// FailedPrecondition. Must run before configStaticPrecompiles and
+	// NewAppModule below, which copy the keeper by value.
 	nameIndexCfg := nameindex.ReadConfig(appOpts, homePath)
 	if nameIndexCfg.Enabled {
 		nameIndexStore, err := nameindex.Open(nameIndexCfg.DBPath, appCodec)

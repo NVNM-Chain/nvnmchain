@@ -15,12 +15,10 @@ const TomlSection = "anchoring-name-index"
 // Config controls whether this node builds and serves the registry name
 // index, and where its backing SQLite file lives.
 type Config struct {
-	// Enabled turns the index on: it registers the ABCIListener, backfills
-	// from the Registries collection on every start, and serves
-	// Query/SearchRegistriesByName. Disabled by default.
+	// Enabled registers the ABCIListener, backfills on start, and serves
+	// Query/SearchRegistriesByName. Off by default.
 	Enabled bool
-	// DBPath is the SQLite file path. Relative paths are resolved under
-	// <home>/data.
+	// DBPath is the SQLite file. Relative paths resolve under <home>/data.
 	DBPath string
 }
 
@@ -47,14 +45,12 @@ const ConfigTemplate = `
 
 [anchoring-name-index]
 
-# Enabled builds and serves an opt-in local SQLite index of anchoring registry
-# names, supporting exact/prefix/suffix/contains lookups via
-# Query/SearchRegistriesByName. It is not part of consensus: disabled nodes
-# simply don't serve that one RPC. Disabled by default.
+# Build and serve a local SQLite index of anchoring registry names for
+# Query/SearchRegistriesByName and the registriesByName precompile method.
+# Not part of consensus: a disabled node just does not serve that lookup.
 enabled = {{ .AnchoringNameIndex.Enabled }}
 
-# DBPath is the SQLite file backing the index. Relative paths are resolved
-# under <home>/data.
+# SQLite file backing the index. Relative paths resolve under <home>/data.
 db-path = "{{ .AnchoringNameIndex.DBPath }}"
 `
 

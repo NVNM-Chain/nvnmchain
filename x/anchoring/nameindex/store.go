@@ -19,6 +19,7 @@ import (
 	"net/url"
 	"path/filepath"
 	"strings"
+	"unicode/utf8"
 
 	_ "modernc.org/sqlite"
 
@@ -52,6 +53,13 @@ func FromProto(m types.RegistryNameMatchMode) MatchMode {
 	}
 }
 
+// MinContainsQueryLen is the shortest CONTAINS query a trigram index can
+// answer. The other modes have no minimum.
+const MinContainsQueryLen = 3
+
+// ErrContainsTooShort rejects a shorter one rather than scanning for it.
+var ErrContainsTooShort = fmt.Errorf("contains query needs at least %d characters", MinContainsQueryLen)
+
 // Store is a local, opt-in SQLite-backed index of registry names.
 type Store struct {
 	db  *sql.DB
@@ -67,6 +75,10 @@ type Store struct {
 // search queries must not delay it. Writers are serial by construction
 // (backfill at startup, then one batch per committed block); busy_timeout
 // covers the rare overlap with a WAL checkpoint.
+//
+// case_sensitive_like is on because SQLite serves LIKE from a B-tree index
+// only when it is. Both sides are lowercased in Go, so matching stays
+// case-insensitive.
 func Open(path string, cdc codec.BinaryCodec) (*Store, error) {
 	// Absolute so the URI below is always file:///..., never file://name
 	// with the file name parsed as a host.
@@ -77,16 +89,29 @@ func Open(path string, cdc codec.BinaryCodec) (*Store, error) {
 	dsn := url.URL{
 		Scheme:   "file",
 		Path:     abs,
-		RawQuery: "_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)",
+		RawQuery: "_pragma=busy_timeout(5000)&_pragma=case_sensitive_like(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)",
 	}
 	db, err := sql.Open("sqlite", dsn.String())
 	if err != nil {
 		return nil, fmt.Errorf("nameindex: open %s: %w", path, err)
 	}
 
+	// Remember whether the trigram index already exists: a file written before
+	// it was added has rows the triggers never saw, so build it from them.
+	var hadFTS int
+	if err := db.QueryRow(`SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'registries_fts'`).Scan(&hadFTS); err != nil {
+		_ = db.Close()
+		return nil, fmt.Errorf("nameindex: inspect schema: %w", err)
+	}
 	if _, err := db.Exec(schema); err != nil {
 		_ = db.Close()
 		return nil, fmt.Errorf("nameindex: migrate schema: %w", err)
+	}
+	if hadFTS == 0 {
+		if _, err := db.Exec(`INSERT INTO registries_fts(registries_fts) VALUES ('rebuild')`); err != nil {
+			_ = db.Close()
+			return nil, fmt.Errorf("nameindex: build trigram index: %w", err)
+		}
 	}
 
 	return &Store{db: db, cdc: cdc}, nil
@@ -94,6 +119,16 @@ func Open(path string, cdc codec.BinaryCodec) (*Store, error) {
 
 func (s *Store) Close() error {
 	return s.db.Close()
+}
+
+// Count returns the number of indexed registries. Ids are dense and add-only,
+// so a count equal to the chain's RegistryCount means the index is complete.
+func (s *Store) Count() (uint64, error) {
+	var n uint64
+	if err := s.db.QueryRow(`SELECT count(*) FROM registries`).Scan(&n); err != nil {
+		return 0, fmt.Errorf("nameindex: count: %w", err)
+	}
+	return n, nil
 }
 
 const schema = `
@@ -105,6 +140,26 @@ CREATE TABLE IF NOT EXISTS registries (
 );
 CREATE INDEX IF NOT EXISTS idx_registries_name_lower ON registries(name_lower);
 CREATE INDEX IF NOT EXISTS idx_registries_name_rev_lower ON registries(name_rev_lower);
+
+-- Trigram index serving CONTAINS. External-content: it stores only the
+-- trigram postings and reads name_lower back from registries, and the
+-- triggers keep it current inside the same transaction as the row.
+CREATE VIRTUAL TABLE IF NOT EXISTS registries_fts USING fts5(
+	name_lower,
+	content='registries',
+	content_rowid='id',
+	tokenize='trigram'
+);
+CREATE TRIGGER IF NOT EXISTS registries_fts_ai AFTER INSERT ON registries BEGIN
+	INSERT INTO registries_fts(rowid, name_lower) VALUES (new.id, new.name_lower);
+END;
+CREATE TRIGGER IF NOT EXISTS registries_fts_au AFTER UPDATE ON registries BEGIN
+	INSERT INTO registries_fts(registries_fts, rowid, name_lower) VALUES ('delete', old.id, old.name_lower);
+	INSERT INTO registries_fts(rowid, name_lower) VALUES (new.id, new.name_lower);
+END;
+CREATE TRIGGER IF NOT EXISTS registries_fts_ad AFTER DELETE ON registries BEGIN
+	INSERT INTO registries_fts(registries_fts, rowid, name_lower) VALUES ('delete', old.id, old.name_lower);
+END;
 `
 
 // execer is the subset of *sql.DB and *sql.Tx that upsert needs.
@@ -174,33 +229,44 @@ func (b *Batch) Close() {
 	_ = b.tx.Rollback() // sql.ErrTxDone after Commit; nothing to undo
 }
 
-// Search returns registries whose name matches query under mode, ordered by
-// id, applying a plain offset/limit page. Matching is always
-// case-insensitive.
-func (s *Store) Search(mode MatchMode, query string, limit, offset uint64) ([]*types.Registry, error) {
-	lower := strings.ToLower(query)
-
-	var where, arg string
+// searchStmt builds the statement Search runs for mode. The lowercased query
+// is folded into the single bound pattern argument; LIMIT and OFFSET are bound
+// after it by the caller. It is separate from Search so tests can EXPLAIN the
+// exact statement and pin which index serves each mode.
+func searchStmt(mode MatchMode, lower string) (stmt, arg string) {
+	var where string
 	switch mode {
+	case MatchModeContains:
+		// FTS5 serves ORDER BY rowid natively, so the page comes straight
+		// off the trigram index and each hit is one primary-key lookup.
+		return `SELECT r.data FROM registries_fts f JOIN registries r ON r.id = f.rowid ` +
+			`WHERE f.name_lower MATCH ? ORDER BY f.rowid LIMIT ? OFFSET ?`, ftsPhrase(lower)
 	case MatchModePrefix:
 		where, arg = `name_lower LIKE ? ESCAPE '\'`, escapeLike(lower)+"%"
 	case MatchModeSuffix:
 		where, arg = `name_rev_lower LIKE ? ESCAPE '\'`, escapeLike(reverse(lower))+"%"
-	case MatchModeContains:
-		where, arg = `name_lower LIKE ? ESCAPE '\'`, "%"+escapeLike(lower)+"%"
 	default: // MatchModeExact
 		where, arg = `name_lower = ?`, lower
 	}
+	return `SELECT data FROM registries WHERE ` + where + ` ORDER BY id LIMIT ? OFFSET ?`, arg
+}
+
+// Search returns registries whose name matches query under mode, ordered by
+// id, applying a plain offset/limit page. Matching is always
+// case-insensitive. A CONTAINS query shorter than MinContainsQueryLen
+// characters returns ErrContainsTooShort.
+func (s *Store) Search(mode MatchMode, query string, limit, offset uint64) ([]*types.Registry, error) {
+	if mode == MatchModeContains && utf8.RuneCountInString(query) < MinContainsQueryLen {
+		return nil, ErrContainsTooShort
+	}
+	stmt, arg := searchStmt(mode, strings.ToLower(query))
 
 	// database/sql rejects uint64 values above MaxInt64. Anything that large
 	// is past the end of any index, so clamp rather than fail the query.
 	limit = min(limit, math.MaxInt64)
 	offset = min(offset, math.MaxInt64)
 
-	rows, err := s.db.Query(
-		`SELECT data FROM registries WHERE `+where+` ORDER BY id LIMIT ? OFFSET ?`,
-		arg, int64(limit), int64(offset),
-	)
+	rows, err := s.db.Query(stmt, arg, int64(limit), int64(offset))
 	if err != nil {
 		return nil, fmt.Errorf("nameindex: search: %w", err)
 	}
@@ -229,6 +295,12 @@ func (s *Store) Search(mode MatchMode, query string, limit, offset uint64) ([]*t
 func escapeLike(s string) string {
 	r := strings.NewReplacer(`\`, `\\`, `%`, `\%`, `_`, `\_`)
 	return r.Replace(s)
+}
+
+// ftsPhrase quotes s as one FTS5 string so every character in it, including
+// the operators and quotes FTS5 would otherwise parse, is matched literally.
+func ftsPhrase(s string) string {
+	return `"` + strings.ReplaceAll(s, `"`, `""`) + `"`
 }
 
 // reverse reverses s by rune so multi-byte UTF-8 registry names still match

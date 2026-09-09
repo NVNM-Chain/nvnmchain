@@ -49,6 +49,44 @@ func TestBackfillNameIndex_ThenSearch(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Len(t, resp.Registries, 2)
+
+	// Complete index: the backfill compares counts and reads nothing. A row
+	// altered behind its back survives, which a re-walk would overwrite.
+	require.NoError(t, store.Upsert(&types.Registry{Id: 1, Name: "renamed_locally"}))
+	require.NoError(t, k.BackfillNameIndex(ctx))
+	got, err := store.Search(nameindex.MatchModeExact, "renamed_locally", 50, 0)
+	require.NoError(t, err)
+	require.Len(t, got, 1, "a complete index must not be re-walked on start")
+
+	// Behind by one registry: the counts differ and the walk repairs it.
+	keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "late_registry")
+	require.NoError(t, k.BackfillNameIndex(ctx))
+	got, err = store.Search(nameindex.MatchModeExact, "kyc_registry", 50, 0)
+	require.NoError(t, err)
+	require.Len(t, got, 1, "the re-walk restores the chain's name")
+	got, err = store.Search(nameindex.MatchModeExact, "late_registry", 50, 0)
+	require.NoError(t, err)
+	require.Len(t, got, 1)
+}
+
+func TestSearchRegistriesByName_ContainsTooShort(t *testing.T) {
+	appparams.SetAddressPrefixes()
+	k, ctx, _ := keepertest.AnchoringKeeper(t)
+	cdc := codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
+	store, err := nameindex.Open(filepath.Join(t.TempDir(), "test.db"), cdc)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = store.Close() })
+	k.NameIndex = store
+
+	// A CONTAINS query below the trigram width is the caller's mistake, not
+	// the node's, so it surfaces as InvalidArgument rather than Internal.
+	qs := keeper.NewQueryServerImpl(k)
+	_, err = qs.SearchRegistriesByName(ctx, &types.QuerySearchRegistriesByNameRequest{
+		Name: "ab",
+		Mode: types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS,
+	})
+	require.Equal(t, codes.InvalidArgument, status.Code(err))
+	require.ErrorContains(t, err, "at least 3 characters")
 }
 
 func TestSearchRegistriesByName_DisabledOnNode(t *testing.T) {

@@ -33,7 +33,7 @@ The module defines several important types:
 1. `Params`: Module parameters (includes an `admin` address)
 2. `GenesisState`: Initial state of the module
 3. `Registry`: A registry of records (id, name, description, creator, created_at, metadata)
-4. `Record`: An anchored record (registry, uri, checksum, checksum_algo, metadata, timestamp, status, record_id, index, is_latest)
+4. `Record`: An anchored record (uri, checksum, checksum_algo, metadata, timestamp, status, record_id, index, is_latest, registry_id)
 
 ### Messages and Queries
 
@@ -72,11 +72,11 @@ The `UpdateParams` function updates module parameters. In practice, this is admi
 
 ### AddRegistry
 
-The `AddRegistry` function creates a new registry.
+The `AddRegistry` function creates a new registry. Registry `name` is **not** unique — multiple registries may share the same name, and a registry is always referenced canonically by its auto-incrementing `id`, never by name.
 
 ### AddRecord
 
-The `AddRecord` function adds a new record (and automatically versions it via `record_id` and `index`) under the registry indicated by `record.registry`. The `Msg/AddRecord` response returns the assigned `record_id`.
+The `AddRecord` function adds a new record (and automatically versions it via `record_id` and `index`) under the registry indicated by `record.registry_id`. The `Msg/AddRecord` response returns the assigned `record_id`.
 
 ### UpdateRecordStatus
 
@@ -86,35 +86,31 @@ For more detailed information on the module's implementation and usage, please r
 
 ## Registry Name Index
 
-Registries are addressed by `id` on chain. Names are not unique, and the
-name → id index was retired (see `x/anchoring/types/keys.go`), so name search
-is served by an **opt-in, per-node, off-chain index** in `x/anchoring/nameindex`:
+Registries are addressed by `id` on chain; names are not unique and have no
+on-chain index. Name search is an **opt-in, per-node, off-chain** SQLite index
+in `x/anchoring/nameindex`.
 
-- Enable it with `enabled = true` under `[anchoring-name-index]` in `app.toml`
-  (`db-path` defaults to `data/anchoring_name_index.db`). Off by default. The
-  key is `enabled`, not `enable`; a misspelling reads as `false`.
-- An `ABCIListener` indexes each committed `Registry` write into a local SQLite
-  file, one transaction per block. It only ever sees committed state, never a
-  tx branch that was rolled back.
-- On every start the node backfills the index from the `Registries` collection
-  in a single transaction. Both paths upsert, so enabling late, restarting, or
-  replaying blocks converges on the same content.
-- `Query/SearchRegistriesByName` (REST `.../anchoring/v1/registries/search`)
-  serves `EXACT`, `PREFIX`, `SUFFIX` and `CONTAINS` lookups, case-insensitive,
-  with offset/limit paging. A node without the index returns
-  `codes.FailedPrecondition`.
-- The same lookup is exposed to `eth_call` as the `registriesByName` precompile
-  method; see [registriesByName](#registriesbyname).
+- **Enable:** `enabled = true` under `[anchoring-name-index]` in `app.toml`
+  (`db-path` defaults to `data/anchoring_name_index.db`). Off by default; the
+  key is `enabled`, not `enable`.
+- **Sync:** an `ABCIListener` indexes each committed `Registry` write, one
+  transaction per block, so it never sees a rolled-back tx. On start the node
+  compares the index's row count with `RegistryCount` and, only if they
+  differ, re-upserts every registry in one transaction.
+- **Query:** `Query/SearchRegistriesByName` (REST
+  `.../anchoring/v1/registries/search`) with `EXACT`, `PREFIX`, `SUFFIX` or
+  `CONTAINS`, case-insensitive, offset/limit paging (default 50, max 200).
+  Nodes without the index answer `FailedPrecondition`. The same lookup is the
+  `registriesByName` precompile method for `eth_call` callers.
+- **Cost:** every mode is an index lookup. `EXACT` and `PREFIX` use a B-tree
+  on the lowercased name, `SUFFIX` one on the reversed name, and `CONTAINS` an
+  FTS5 trigram index kept current by triggers. `CONTAINS` therefore needs at
+  least 3 characters; shorter queries return `InvalidArgument`.
 
-The index is **not part of consensus**: it is derived from, never authoritative
-over, the on-chain collection, and two nodes may answer differently while one
-is still catching up. Two operational caveats follow:
-
-- baseapp only logs a listener error. A block whose index write failed is
-  picked up by the backfill on the next restart.
-- State sync applies its snapshot after the app is built, so a freshly synced
-  node indexes pre-snapshot registries on its next restart. Registries created
-  after the sync are indexed as they commit.
+The index is **not consensus state**: it is derived from the on-chain
+collection, nodes need not run it, and two nodes can differ while one catches
+up. baseapp only logs a listener error, and state sync lands after the startup
+check, so in both cases the next restart repairs the index.
 
 ## EVM Precompile
 
@@ -261,7 +257,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 - Return value encoding: returns `(uint64 registryId)` encoded as a single 32-byte word (left-padded).
 - Expected gas (rough): ~`80,000–250,000` EVM gas (depends on KV writes and string lengths)
 - Authorization checks:
-	- No RBAC permission check; any EVM caller can create a registry. `name` is not required to be unique.
+	- No RBAC permission check; any EVM caller can create a registry. Registry `name` is not required to be unique.
 - State mutations:
 	- Creates `registryId = RegistryCount + 1`
 	- Stores `Registries[registryId] = {id, name, description, creator, created_at, metadata}`
@@ -288,7 +284,7 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 		- checksum-scoped role, or
 		- registry-scoped role.
 - State mutations:
-	- Uses `record.registryId` directly and verifies the registry exists
+	- Uses `record.registryId` directly and verifies the registry exists (`Registries[registryId]`)
 	- Determines/assigns `recordId` for `(registryId, checksum)`; increments per-registry record counters when needed
 	- Increments per-record `index` and sets:
 		- `record.Timestamp = blockTime`
@@ -433,17 +429,14 @@ Example output (mapped to `Registry` field names):
 
 - Function signature (for `keccak256`): `registriesByName(string,uint8,(bytes,uint64,uint64,bool,bool))`
 - Function selector: `0x5522e6c6`
-- Inputs: `(string name, uint8 matchMode, PageRequest pagination)`. `matchMode` mirrors `RegistryNameMatchMode`: `0`/`1` exact, `2` prefix, `3` suffix, `4` contains; anything else reverts with `invalid matchMode`. Matching is case-insensitive.
-- Return value encoding: `(Registry[] registries, PageResponse pagination)`, as for `registries`. Names are not unique, so several may come back; disambiguate on `creator` or `createdAt`.
-- Data source: the node's **local name index** (see [Registry Name Index](#registry-name-index)), not Cosmos state.
+- Inputs: `(string name, uint8 matchMode, PageRequest pagination)`. `matchMode` mirrors `RegistryNameMatchMode`: `0`/`1` exact, `2` prefix, `3` suffix, `4` contains; any other value reverts with `invalid matchMode`.
+- Returns `(Registry[] registries, PageResponse pagination)`, as `registries` does. Names are not unique, so disambiguate on `creator` or `createdAt`.
+- Data source: the node's [Registry Name Index](#registry-name-index), not Cosmos state.
 
-Because the answer is node-local, the call is served only when all of the following hold, checked in this order:
+The answer is node-local, so the call is served only from a query context, only for an EOA, and only on a node with the index, checked in that order:
 
-1. **Query context.** `eth_call` and `eth_estimateGas` are served; a transaction reverts with `registriesByName is query-only: use eth_call, not a transaction`. The check is `ctx.IsCheckTx()`, which every validator evaluates identically, so a transaction is rejected the same way on indexed and unindexed nodes and consensus never depends on the index.
-2. **EOA caller.** `msg.sender` must equal `tx.origin` and carry no contract code (an EIP-7702 delegation is fine); otherwise `sender not an eoa`. This keeps contracts from depending on an answer that would revert in a transaction.
-3. **Index enabled.** Otherwise `registry name index is not enabled on this node; see [anchoring-name-index] in app.toml`.
+1. `eth_call` and `eth_estimateGas` are served; a transaction reverts with `registriesByName is query-only: use eth_call, not a transaction`. The check is `ctx.IsCheckTx()`, which every validator evaluates identically, so consensus never depends on the index.
+2. `msg.sender` must equal `tx.origin` with no contract code (EIP-7702 delegation is fine), else `sender not an eoa`. A contract must not build on an answer that would revert in a transaction.
+3. Without the index the call reverts with `registry name index is not enabled on this node; see [anchoring-name-index] in app.toml`.
 
-Two things worth knowing:
-
-- Returned rows are billed at the KV read rate (`chargeIndexReadGas`), so a call pays for what it returns; the scan itself is bounded by the query's page cap.
-- `debug_traceTransaction` re-executes under a query context, so on an indexed node the trace of a reverted `registriesByName` transaction shows a successful call. The receipt is authoritative.
+Returned rows are billed at the KV read rate (`chargeIndexReadGas`). `debug_traceTransaction` re-executes under a query context, so a reverted `registriesByName` transaction traces as a success on an indexed node; the receipt is authoritative.

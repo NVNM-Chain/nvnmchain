@@ -85,6 +85,55 @@ func TestStore_LikeMetacharactersAreLiteral(t *testing.T) {
 	require.Equal(t, []string{"50%_off"}, names(t, got))
 }
 
+func TestStore_ContainsNeedsThreeCharacters(t *testing.T) {
+	s := newStore(t)
+	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "kyc_registry"}))
+	require.NoError(t, s.Upsert(&types.Registry{Id: 2, Name: "café"}))
+
+	_, err := s.Search(nameindex.MatchModeContains, "ky", 50, 0)
+	require.ErrorIs(t, err, nameindex.ErrContainsTooShort)
+
+	// The floor is counted in characters, not bytes: "afé" is 3 runes.
+	got, err := s.Search(nameindex.MatchModeContains, "afé", 50, 0)
+	require.NoError(t, err)
+	require.Equal(t, []string{"café"}, names(t, got))
+
+	// The other modes have no minimum.
+	got, err = s.Search(nameindex.MatchModePrefix, "k", 50, 0)
+	require.NoError(t, err)
+	require.Equal(t, []string{"kyc_registry"}, names(t, got))
+}
+
+func TestStore_ContainsTreatsFTSSyntaxAsText(t *testing.T) {
+	s := newStore(t)
+	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: `say "hi" OR NOT`}))
+	require.NoError(t, s.Upsert(&types.Registry{Id: 2, Name: "plain"}))
+
+	// Quotes and FTS5 operators in the query are matched as characters.
+	got, err := s.Search(nameindex.MatchModeContains, `"hi" OR`, 50, 0)
+	require.NoError(t, err)
+	require.Equal(t, []string{`say "hi" OR NOT`}, names(t, got))
+
+	got, err = s.Search(nameindex.MatchModeContains, "NOT plain", 50, 0)
+	require.NoError(t, err)
+	require.Empty(t, got, `"NOT" must not act as an operator`)
+}
+
+func TestStore_ContainsFollowsRename(t *testing.T) {
+	// Upserting an existing id takes the UPDATE path, whose trigger must drop
+	// the old name's trigrams and index the new one.
+	s := newStore(t)
+	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "alpha-one"}))
+	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "beta-two"}))
+
+	got, err := s.Search(nameindex.MatchModeContains, "alpha", 50, 0)
+	require.NoError(t, err)
+	require.Empty(t, got)
+	got, err = s.Search(nameindex.MatchModeContains, "beta", 50, 0)
+	require.NoError(t, err)
+	require.Equal(t, []string{"beta-two"}, names(t, got))
+}
+
 func TestStore_UnicodeSuffix(t *testing.T) {
 	s := newStore(t)
 	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "café-Registry"}))
