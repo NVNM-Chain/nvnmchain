@@ -1,6 +1,7 @@
 package nameindex_test
 
 import (
+	"fmt"
 	"math"
 	"path/filepath"
 	"testing"
@@ -72,6 +73,32 @@ func TestStore_MatchModes(t *testing.T) {
 		require.NoError(t, err)
 		require.Empty(t, got)
 	})
+}
+
+// TestStore_CaseInsensitiveAcrossModes pins that every mode folds case on
+// both sides of the comparison: a mixed-case stored name is found by
+// queries in a different case, in every mode, not just prefix (where the
+// other MatchModes tests happen to exercise it incidentally via seed data).
+func TestStore_CaseInsensitiveAcrossModes(t *testing.T) {
+	s := newStore(t)
+	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "Kyc_Registry"}))
+
+	testCases := []struct {
+		mode  nameindex.MatchMode
+		query string
+	}{
+		{nameindex.MatchModeExact, "KYC_REGISTRY"},
+		{nameindex.MatchModePrefix, "KYC"},
+		{nameindex.MatchModeSuffix, "REGISTRY"},
+		{nameindex.MatchModeContains, "C_REG"},
+	}
+	for _, tc := range testCases {
+		t.Run(fmt.Sprintf("mode=%d query=%s", tc.mode, tc.query), func(t *testing.T) {
+			got, err := s.Search(tc.mode, tc.query, 50, 0)
+			require.NoError(t, err)
+			require.Equal(t, []string{"Kyc_Registry"}, names(t, got))
+		})
+	}
 }
 
 func TestStore_LikeMetacharactersAreLiteral(t *testing.T) {

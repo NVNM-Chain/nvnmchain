@@ -75,9 +75,16 @@ func Open(path string, cdc codec.BinaryCodec) (*Store, error) {
 		return nil, fmt.Errorf("nameindex: resolve %s: %w", path, err)
 	}
 	dsn := url.URL{
-		Scheme:   "file",
-		Path:     abs,
-		RawQuery: "_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)",
+		Scheme: "file",
+		Path:   abs,
+		// case_sensitive_like: every comparison here is already against a
+		// pre-lowercased column and a pre-lowercased argument (see Upsert and
+		// Search), so SQLite's own case-folding is redundant — but leaving it
+		// on silently disables the LIKE index optimization below, because a
+		// case-insensitive 'foo%' could also match 'FOO...', which falls
+		// outside a binary-collated index range scan. With it on, prefix and
+		// suffix both become an indexed range SEARCH instead of a table SCAN.
+		RawQuery: "_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)&_pragma=case_sensitive_like(1)",
 	}
 	db, err := sql.Open("sqlite", dsn.String())
 	if err != nil {
