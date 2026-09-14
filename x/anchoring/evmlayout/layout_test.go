@@ -56,7 +56,7 @@ func seedFixtureCorpus(t *testing.T, k anchoringkeeper.Keeper, ctx sdk.Context) 
 		require.NoError(t, err)
 	}
 
-	_, err = k.AddRegistry(ctx, alice.Bytes(), "us-ca1", "", "")
+	_, err = k.AddRegistry(ctx, alice.Bytes(), "US-CA1", "", "")
 	require.NoError(t, err)
 
 	for _, g := range []struct{ checksum, role string }{

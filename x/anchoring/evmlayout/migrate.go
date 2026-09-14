@@ -52,7 +52,8 @@ func skipZero(sink Sink) Sink {
 }
 
 // migrateRegistries writes each registry and, from the same walk, the name index: names are not
-// unique, so each gets a list of ids, in sorted name order so a dump is reproducible.
+// unique, so each gets a list of ids, keyed as the contract folds a lookup and in sorted key
+// order so a dump is reproducible.
 func migrateRegistries(ctx sdk.Context, k keeper.Keeper, emit Sink) error {
 	var previous uint64
 	byName := map[string][]uint64{}
@@ -63,7 +64,8 @@ func migrateRegistries(ctx sdk.Context, k keeper.Keeper, emit Sink) error {
 			return true, fmt.Errorf("ids must run from 1 with no gaps, got %d after %d", id, previous)
 		}
 		previous = id
-		byName[registry.Name] = append(byName[registry.Name], id) // ascending, as the contract appends
+		key := asciiLower(registry.Name)
+		byName[key] = append(byName[key], id) // ascending, as the contract appends
 		return false, emitAll(emit, registryWrites(registryBase(id), registry))
 	})
 	if err != nil {
@@ -83,6 +85,18 @@ func migrateRegistries(ctx sdk.Context, k keeper.Keeper, emit Sink) error {
 		}
 	}
 	return nil
+}
+
+// asciiLower folds A-Z only, byte for byte as the contract's _lower does. The node's index folded
+// by Unicode, so a name with a capital from another script is the one exact match that moves.
+func asciiLower(s string) string {
+	b := []byte(s)
+	for i, c := range b {
+		if 'A' <= c && c <= 'Z' {
+			b[i] = c + 'a' - 'A'
+		}
+	}
+	return string(b)
 }
 
 func migrateRecordCounts(ctx sdk.Context, k keeper.Keeper, emit Sink) error {
