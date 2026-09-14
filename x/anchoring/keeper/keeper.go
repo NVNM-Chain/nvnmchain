@@ -6,6 +6,7 @@ import (
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/address"
 	"cosmossdk.io/core/store"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/nameindex"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/rbac"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -40,6 +41,11 @@ type (
 		// document checksum + registryId => recordId
 		RecordIdByChecksumAndRegistry collections.Map[collections.Pair[string, uint64], uint64]
 		RBAC                          rbac.RBACKeeper
+
+		// NameIndex is the opt-in local registry name index. It is nil unless
+		// the node has enabled [anchoring-name-index] in app.toml; callers
+		// must treat a nil NameIndex as "the search RPC is unavailable here".
+		NameIndex *nameindex.Store
 	}
 )
 

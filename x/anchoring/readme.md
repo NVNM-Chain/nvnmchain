@@ -50,8 +50,9 @@ The module defines several important types:
 
 - `Params`: Fetch module params
 - `Records`: List records filtered by checksum/registry_id/record_id/index (paginated)
-- `Registries`: List registries filtered by registry_id/name (paginated)
-- `Registry`: Fetch a single registry by id or name
+- `Registries`: List registries filtered by registry_id (paginated)
+- `Registry`: Fetch a single registry by id
+- `SearchRegistriesByName`: Look up registries by name (exact/prefix/suffix/contains) via an opt-in local index — see [Registry Name Index](#registry-name-index) below
 
 ## Usage
 
@@ -83,6 +84,38 @@ The `UpdateRecordStatus` function updates the `status` field of an existing reco
 
 For more detailed information on the module's implementation and usage, please refer to the source code and comments within the `x/anchoring` directory.
 
+## Registry Name Index
+
+Registries are addressed by `id` on chain. Names are not unique, and the
+name → id index was retired (see `x/anchoring/types/keys.go`), so name search
+is served by an **opt-in, per-node, off-chain index** in `x/anchoring/nameindex`:
+
+- Enable it with `enabled = true` under `[anchoring-name-index]` in `app.toml`
+  (`db-path` defaults to `data/anchoring_name_index.db`). Off by default. The
+  key is `enabled`, not `enable`; a misspelling reads as `false`.
+- An `ABCIListener` indexes each committed `Registry` write into a local SQLite
+  file, one transaction per block. It only ever sees committed state, never a
+  tx branch that was rolled back.
+- On every start the node backfills the index from the `Registries` collection
+  in a single transaction. Both paths upsert, so enabling late, restarting, or
+  replaying blocks converges on the same content.
+- `Query/SearchRegistriesByName` (REST `.../anchoring/v1/registries/search`)
+  serves `EXACT`, `PREFIX`, `SUFFIX` and `CONTAINS` lookups, case-insensitive,
+  with offset/limit paging. A node without the index returns
+  `codes.FailedPrecondition`.
+- The same lookup is exposed to `eth_call` as the `registriesByName` precompile
+  method; see [registriesByName](#registriesbyname).
+
+The index is **not part of consensus**: it is derived from, never authoritative
+over, the on-chain collection, and two nodes may answer differently while one
+is still catching up. Two operational caveats follow:
+
+- baseapp only logs a listener error. A block whose index write failed is
+  picked up by the backfill on the next restart.
+- State sync applies its snapshot after the app is built, so a freshly synced
+  node indexes pre-snapshot registries on its next restart. Registries created
+  after the sync are indexed as they commit.
+
 ## EVM Precompile
 
 The Anchoring module exposes an EVM precompile at:
@@ -112,7 +145,6 @@ The following Solidity-style ABI is generated from the `HumanABI` definitions in
 ```solidity
 interface IAnchoringPrecompile {
 	struct Record {
-		string registry;
 		string uri;
 		string checksum;
 		string checksumAlgo;
@@ -122,6 +154,7 @@ interface IAnchoringPrecompile {
 		uint64 recordId;
 		uint64 index;
 		bool isLatest;
+		uint64 registryId;
 	}
 
 	struct Registry {
@@ -157,11 +190,16 @@ interface IAnchoringPrecompile {
 	function updateRecordStatus(uint64 registryId, uint64 recordId, uint64 index, string status)
 		external;
 
-	function records(string registry, string checksum, uint64 recordId, uint64 index, PageRequest pagination)
+	function records(uint64 registryId, string checksum, uint64 recordId, uint64 index, PageRequest pagination)
 		external
 		returns (Record[] records, PageResponse pagination);
 
-	function registries(uint64 registryId, string name, PageRequest pagination)
+	function registries(uint64 registryId, PageRequest pagination)
+		external
+		returns (Registry[] registries, PageResponse pagination);
+
+	// Query-context, EOA-only. See registriesByName below.
+	function registriesByName(string name, uint8 matchMode, PageRequest pagination)
 		external
 		returns (Registry[] registries, PageResponse pagination);
 
@@ -177,11 +215,12 @@ interface IAnchoringPrecompile {
 
 Selectors are the first 4 bytes of `keccak256(<function signature>)` and are generated into `x/anchoring/precompile/anchoring.abi.go`.
 
-- `addRecord((string,string,string,string,string,string,string,uint64,uint64,bool))`: `0x9b7b7869`
+- `addRecord((string,string,string,string,string,string,uint64,uint64,bool,uint64))`: `0x64d25295`
 - `addRegistry(string,string,string)`: `0x318b38b1`
 - `grantRole(uint64,string,address,string)`: `0xb8fdd1a7`
-- `records(string,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`: `0x02abafdf`
-- `registries(uint64,string,(bytes,uint64,uint64,bool,bool))`: `0x15ae270f`
+- `records(uint64,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`: `0xc7be5e37`
+- `registries(uint64,(bytes,uint64,uint64,bool,bool))`: `0x17bd3e65`
+- `registriesByName(string,uint8,(bytes,uint64,uint64,bool,bool))`: `0x5522e6c6`
 - `revokeRole(uint64,string,address,string)`: `0xacd58bc7`
 - `updateRecordStatus(uint64,uint64,uint64,string)`: `0x97b40c25`
 
@@ -198,11 +237,10 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 - Return value encoding: returns `(uint64 registryId)` encoded as a single 32-byte word (left-padded).
 - Expected gas (rough): ~`80,000–250,000` EVM gas (depends on KV writes and string lengths)
 - Authorization checks:
-	- No RBAC permission check; effectively any EVM caller can create a registry as long as `name` is unique.
+	- No RBAC permission check; any EVM caller can create a registry. `name` is not required to be unique.
 - State mutations:
 	- Creates `registryId = RegistryCount + 1`
 	- Stores `Registries[registryId] = {id, name, description, creator, created_at, metadata}`
-	- Stores `RegistryIdByName[name] = registryId`
 	- Initializes RBAC: sets the registry admin role to be its own admin; adds the creator as a member of the registry admin role
 	- Initializes registry record counter; updates `RegistryCount`
 - Events emitted:
@@ -210,10 +248,10 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 
 #### addRecord
 
-- Function signature (for `keccak256`): `addRecord((string,string,string,string,string,string,string,uint64,uint64,bool))`
-- Function selector: `0x9b7b7869`
+- Function signature (for `keccak256`): `addRecord((string,string,string,string,string,string,uint64,uint64,bool,uint64))`
+- Function selector: `0x64d25295`
 - Inputs: `Record record` where:
-	- `Record = (string registry, string uri, string checksum, string checksumAlgo, string metadata, string timestamp, string status, uint64 recordId, uint64 index, bool isLatest)`
+	- `Record = (string uri, string checksum, string checksumAlgo, string metadata, string timestamp, string status, uint64 recordId, uint64 index, bool isLatest, uint64 registryId)`
 - Parameter encoding (Ethereum ABI):
 	- Call data = selector + `abi.encode(record)`
 	- Tuples are encoded like structs: offsets for dynamic fields (`string`s) plus 32-byte words for static fields (`uint64`, `bool`).
@@ -224,10 +262,9 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 - Authorization checks:
 	- Caller must have `admin` or `editor` via one of:
 		- checksum-scoped role, or
-		- registry-scoped role, or
-		- global role.
+		- registry-scoped role.
 - State mutations:
-	- Resolves `registryId` from `record.registry` name
+	- Uses `record.registryId` directly and verifies the registry exists
 	- Determines/assigns `recordId` for `(registryId, checksum)`; increments per-registry record counters when needed
 	- Increments per-record `index` and sets:
 		- `record.Timestamp = blockTime`
@@ -302,12 +339,11 @@ Selectors are the first 4 bytes of `keccak256(<function signature>)` and are gen
 
 #### records
 
-- Function signature (for `keccak256`): `records(string,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`
-- Function selector: `0x02abafdf`
+- Function signature (for `keccak256`): `records(uint64,string,uint64,uint64,(bytes,uint64,uint64,bool,bool))`
+- Function selector: `0xc7be5e37`
 - Return value encoding: returns `(Record[] records, PageResponse pagination)` encoded per standard Ethereum ABI rules for dynamic arrays/tuples.
 - State queried:
-	- If `registry != ""`, resolves registry name → `registryId` via `RegistryIdByName`.
-	- Queries Cosmos module state via the anchoring gRPC query server (`Query/Records`) with filters `checksum`, `registry_id`, `record_id`, `index`, and pagination.
+	- Queries Cosmos module state via the anchoring gRPC query server (`Query/Records`) with filters `registry_id`, `checksum`, `record_id`, `index`, and pagination. Registries are addressed by id: the name → id index was retired when names stopped being unique.
 - Data source: Cosmos state (Cosmos SDK KV/collections), not EVM contract storage.
 - Staleness: within a single EVM tx, it should observe up-to-date Cosmos cached state because the precompile commits the cache context before executing each call.
 
@@ -316,28 +352,28 @@ Example output (mapped to `Record` field names):
 ```json
 [
 	{
-		"registry": "test-registry",
 		"uri": "ipfs://abc123",
 		"checksum": "abc123",
 		"checksumAlgo": "sha256",
 		"metadata": {"document": "Record 1 v2", "figi": "", "individualId": ""},
 		"timestamp": "2026-01-30 05:39:59.971631 +0000 UTC",
-		"status": "",
+		"status": "active",
 		"recordId": 1,
 		"index": 2,
-		"isLatest": true
+		"isLatest": true,
+		"registryId": 1
 	},
 	{
-		"registry": "test-registry",
 		"uri": "ipfs://def456",
 		"checksum": "def456",
 		"checksumAlgo": "sha256",
 		"metadata": {"document": "Record 2", "figi": "", "individualId": ""},
 		"timestamp": "2026-01-30 05:40:01.228424 +0000 UTC",
-		"status": "",
+		"status": "active",
 		"recordId": 2,
 		"index": 1,
-		"isLatest": true
+		"isLatest": true,
+		"registryId": 1
 	}
 ]
 ```
@@ -346,11 +382,11 @@ Note: on-chain (ABI) the `metadata` field is returned as a JSON-encoded `string`
 
 #### registries
 
-- Function signature (for `keccak256`): `registries(uint64,string,(bytes,uint64,uint64,bool,bool))`
-- Function selector: `0x15ae270f`
+- Function signature (for `keccak256`): `registries(uint64,(bytes,uint64,uint64,bool,bool))`
+- Function selector: `0x17bd3e65`
 - Return value encoding: returns `(Registry[] registries, PageResponse pagination)` encoded per standard Ethereum ABI rules for dynamic arrays/tuples.
 - State queried:
-	- Queries Cosmos module state via the anchoring gRPC query server (`Query/Registries`) with filters `registry_id`, `name`, and pagination.
+	- Queries Cosmos module state via the anchoring gRPC query server (`Query/Registries`) with `registry_id` and pagination. `registry_id = 0` lists all registries; there is no name filter here — see `registriesByName`.
 - Data source: Cosmos state (Cosmos SDK KV/collections), not EVM storage.
 - Staleness: same semantics as `records` for the current EVM tx.
 
@@ -363,7 +399,27 @@ Example output (mapped to `Registry` field names):
 		"name": "query-specific-reg",
 		"description": "query-specific-reg",
 		"creator": "nvnm1x7x9pkfxf33l87ftspk5aetwnkr0lvlv9f9fwy",
-		"createdAt": "2026-01-30 05:40:15.090584 +0000 UTC"
+		"createdAt": "2026-01-30 05:40:15.090584 +0000 UTC",
+		"metadata": "{}"
 	}
 ]
 ```
+
+#### registriesByName
+
+- Function signature (for `keccak256`): `registriesByName(string,uint8,(bytes,uint64,uint64,bool,bool))`
+- Function selector: `0x5522e6c6`
+- Inputs: `(string name, uint8 matchMode, PageRequest pagination)`. `matchMode` mirrors `RegistryNameMatchMode`: `0`/`1` exact, `2` prefix, `3` suffix, `4` contains; anything else reverts with `invalid matchMode`. Matching is case-insensitive.
+- Return value encoding: `(Registry[] registries, PageResponse pagination)`, as for `registries`. Names are not unique, so several may come back; disambiguate on `creator` or `createdAt`.
+- Data source: the node's **local name index** (see [Registry Name Index](#registry-name-index)), not Cosmos state.
+
+Because the answer is node-local, the call is served only when all of the following hold, checked in this order:
+
+1. **Query context.** `eth_call` and `eth_estimateGas` are served; a transaction reverts with `registriesByName is query-only: use eth_call, not a transaction`. The check is `ctx.IsCheckTx()`, which every validator evaluates identically, so a transaction is rejected the same way on indexed and unindexed nodes and consensus never depends on the index.
+2. **EOA caller.** `msg.sender` must equal `tx.origin` and carry no contract code (an EIP-7702 delegation is fine); otherwise `sender not an eoa`. This keeps contracts from depending on an answer that would revert in a transaction.
+3. **Index enabled.** Otherwise `registry name index is not enabled on this node; see [anchoring-name-index] in app.toml`.
+
+Two things worth knowing:
+
+- Returned rows are billed at the KV read rate (`chargeIndexReadGas`), so a call pays for what it returns; the scan itself is bounded by the query's page cap.
+- `debug_traceTransaction` re-executes under a query context, so on an indexed node the trace of a reverted `registriesByName` transaction shows a successful call. The receipt is authoritative.
