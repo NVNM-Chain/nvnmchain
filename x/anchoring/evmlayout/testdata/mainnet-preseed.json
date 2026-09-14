@@ -1,0 +1,2494 @@
+{
+ "height": 2046499,
+ "admin": "nvnm1qkptlvhg2cw5scmw0rcwdvfe6k5y9050pymmm9",
+ "seed_time": "2026-07-30T15:04:00.973906311Z",
+ "registries": [
+  {
+   "id": "1",
+   "name": "nvnm-whitepaper",
+   "description": "The official registry for the canonical specifications and whitepapers of the NVNM Chain protocol.",
+   "creator": "nvnm1qkptlvhg2cw5scmw0rcwdvfe6k5y9050pymmm9",
+   "created_at": "2026-05-08 14:27:37.0589859 +0000 UTC",
+   "metadata": "{\"owner\":\"NVNM Foundation\", \"purpose\":\"Protocol Documentation\", \"website\":\"https://nvnmchain.io\"}"
+  },
+  {
+   "id": "2",
+   "name": "ffb6a246-5570-44ee-bd82-08b1a5d081tttt",
+   "description": "ffb6a246-5570-44ee-bd82-08b1a5d0tttt",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-13 17:18:17.946502867 +0000 UTC"
+  },
+  {
+   "id": "3",
+   "name": "33a345b7-7934-4e66-b17b-fad7a4d5cff8",
+   "description": "33a345b7-7934-4e66-b17b-fad7a4d5cff8",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 07:43:39.09648256 +0000 UTC"
+  },
+  {
+   "id": "4",
+   "name": "cf554739-a6e2-42c6-a1ef-9586f13360af",
+   "description": "cf554739-a6e2-42c6-a1ef-9586f13360af",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 07:49:25.030184827 +0000 UTC"
+  },
+  {
+   "id": "5",
+   "name": "1ffaeec8-cd29-44a6-9762-7676e43bdc22",
+   "description": "1ffaeec8-cd29-44a6-9762-7676e43bdc22",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 07:55:09.498143089 +0000 UTC"
+  },
+  {
+   "id": "6",
+   "name": "3705b41e-192c-4ced-910a-c10062eb4777",
+   "description": "3705b41e-192c-4ced-910a-c10062eb4777",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 07:59:50.045284453 +0000 UTC"
+  },
+  {
+   "id": "7",
+   "name": "0c01ffe3-6a69-4d9b-8ffd-10c201bcf551",
+   "description": "0c01ffe3-6a69-4d9b-8ffd-10c201bcf551",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 08:29:10.166603583 +0000 UTC"
+  },
+  {
+   "id": "8",
+   "name": "fa5fe451-855c-4b01-851b-a02300d46237",
+   "description": "fa5fe451-855c-4b01-851b-a02300d46237",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 08:42:50.771000528 +0000 UTC"
+  },
+  {
+   "id": "9",
+   "name": "fcf4d2b5-80d9-4a13-aff7-f5b7966fc72f",
+   "description": "fcf4d2b5-80d9-4a13-aff7-f5b7966fc72f",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 08:48:32.186333562 +0000 UTC"
+  },
+  {
+   "id": "10",
+   "name": "3ee2b373-f17b-4c1c-9ed7-0c5a5d2fbfe6",
+   "description": "3ee2b373-f17b-4c1c-9ed7-0c5a5d2fbfe6",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 08:50:17.906405976 +0000 UTC"
+  },
+  {
+   "id": "11",
+   "name": "242bed70-40a5-42fb-bfdb-c04fb5ce8e77",
+   "description": "242bed70-40a5-42fb-bfdb-c04fb5ce8e77",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 10:41:19.75989896 +0000 UTC"
+  },
+  {
+   "id": "12",
+   "name": "f8dd0c80-0254-4058-a9f8-72986799a593",
+   "description": "f8dd0c80-0254-4058-a9f8-72986799a593",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 12:56:03.412236794 +0000 UTC"
+  },
+  {
+   "id": "13",
+   "name": "6281a9c8-4ac2-4f44-8a4d-7a92f2d4f675",
+   "description": "6281a9c8-4ac2-4f44-8a4d-7a92f2d4f675",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 13:23:27.006211704 +0000 UTC"
+  },
+  {
+   "id": "14",
+   "name": "b7b926ac-ba3c-41d1-9e3c-3d93af371581",
+   "description": "b7b926ac-ba3c-41d1-9e3c-3d93af371581",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 13:24:38.019255142 +0000 UTC"
+  },
+  {
+   "id": "15",
+   "name": "5d33035a-fd32-4018-af5c-d8508e6da81e",
+   "description": "5d33035a-fd32-4018-af5c-d8508e6da81e",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 14:34:38.6963737 +0000 UTC"
+  },
+  {
+   "id": "16",
+   "name": "aeb8692c-8aae-47c4-a307-5847c48aa526",
+   "description": "aeb8692c-8aae-47c4-a307-5847c48aa526",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 14:37:59.265365455 +0000 UTC"
+  },
+  {
+   "id": "17",
+   "name": "914b11ed-240f-4383-9948-770f004b7227",
+   "description": "914b11ed-240f-4383-9948-770f004b7227",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 14:39:20.335058756 +0000 UTC"
+  },
+  {
+   "id": "18",
+   "name": "521522ac-6bea-4c1e-8711-57fe8bcf9897",
+   "description": "521522ac-6bea-4c1e-8711-57fe8bcf9897",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 15:12:26.985627799 +0000 UTC"
+  },
+  {
+   "id": "19",
+   "name": "Metropolis Innovation Tower",
+   "description": "Due-diligence document anchors for the Metropolis Innovation Tower Sale.",
+   "creator": "nvnm14a3em3mr9mvta9ccgk80wn0dxgzt5lkt2r8trx",
+   "created_at": "2026-05-14 15:15:19.016166985 +0000 UTC"
+  },
+  {
+   "id": "20",
+   "name": "547f2bc0-0992-46cc-9a4f-844f87207813",
+   "description": "547f2bc0-0992-46cc-9a4f-844f87207813",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 15:30:40.63145649 +0000 UTC"
+  },
+  {
+   "id": "21",
+   "name": "68661329-7030-4777-8bc9-7485ed59a5f4",
+   "description": "68661329-7030-4777-8bc9-7485ed59a5f4",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 15:38:52.215948592 +0000 UTC"
+  },
+  {
+   "id": "22",
+   "name": "e983844c-82da-4b88-a12f-d727f116a7fb",
+   "description": "e983844c-82da-4b88-a12f-d727f116a7fb",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 15:39:16.512913742 +0000 UTC"
+  },
+  {
+   "id": "23",
+   "name": "d602f6bc-b5b7-4263-9afe-bd334d20e594",
+   "description": "d602f6bc-b5b7-4263-9afe-bd334d20e594",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-05-14 16:44:58.572145817 +0000 UTC"
+  },
+  {
+   "id": "24",
+   "name": "88b9d1d7-efff-4e31-a5d2-57e18eb2b70c",
+   "description": "88b9d1d7-efff-4e31-a5d2-57e18eb2b70c",
+   "creator": "nvnm103t5ypyrgtt4segqnx7qrj6xtc73080w65rd90",
+   "created_at": "2026-05-15 00:42:15.518617256 +0000 UTC"
+  },
+  {
+   "id": "25",
+   "name": "7c80ea81-61ed-4b4f-9cd9-0b68f8cf7fa0",
+   "description": "7c80ea81-61ed-4b4f-9cd9-0b68f8cf7fa0",
+   "creator": "nvnm103t5ypyrgtt4segqnx7qrj6xtc73080w65rd90",
+   "created_at": "2026-05-15 00:45:01.153106682 +0000 UTC"
+  },
+  {
+   "id": "26",
+   "name": "6521719d-1b1b-40d7-8446-d682ef1b188a",
+   "description": "6521719d-1b1b-40d7-8446-d682ef1b188a",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-05-15 00:48:03.733292703 +0000 UTC"
+  },
+  {
+   "id": "27",
+   "name": "94bfe945-32b8-478a-b508-8b35db275bf4",
+   "description": "94bfe945-32b8-478a-b508-8b35db275bf4",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-05-15 00:50:51.967418735 +0000 UTC"
+  },
+  {
+   "id": "28",
+   "name": "e8c36e1e-08a7-4ada-8326-2611478a402c",
+   "description": "e8c36e1e-08a7-4ada-8326-2611478a402c",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-05-15 00:51:34.639574302 +0000 UTC"
+  },
+  {
+   "id": "29",
+   "name": "fca14b6c-5901-4ad4-a4d7-72389499f7f1",
+   "description": "fca14b6c-5901-4ad4-a4d7-72389499f7f1",
+   "creator": "nvnm1ra5jcxrpp43p307efg336t0yaxe9rhdaywavkw",
+   "created_at": "2026-05-15 01:06:47.320591569 +0000 UTC"
+  },
+  {
+   "id": "30",
+   "name": "9d694391-cd61-4d16-bbff-13035d6a7847",
+   "description": "9d694391-cd61-4d16-bbff-13035d6a7847",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-05-15 01:11:41.515933442 +0000 UTC"
+  },
+  {
+   "id": "31",
+   "name": "aa54a15f-021e-413e-9c23-7c20d7090404",
+   "description": "aa54a15f-021e-413e-9c23-7c20d7090404",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-05-15 01:16:44.534459261 +0000 UTC"
+  },
+  {
+   "id": "32",
+   "name": "365e1024-bea3-4f35-ba9a-76ad52331e79",
+   "description": "365e1024-bea3-4f35-ba9a-76ad52331e79",
+   "creator": "nvnm103t5ypyrgtt4segqnx7qrj6xtc73080w65rd90",
+   "created_at": "2026-05-15 01:17:51.281969805 +0000 UTC"
+  },
+  {
+   "id": "33",
+   "name": "9688fc01-933f-4759-842d-15fb124cc690",
+   "description": "9688fc01-933f-4759-842d-15fb124cc690",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-05-15 01:18:41.054004477 +0000 UTC"
+  },
+  {
+   "id": "34",
+   "name": "bd5d4fd5-b2e4-4cac-8b51-7302b8bb125c",
+   "description": "bd5d4fd5-b2e4-4cac-8b51-7302b8bb125c",
+   "creator": "nvnm1ra5jcxrpp43p307efg336t0yaxe9rhdaywavkw",
+   "created_at": "2026-05-15 01:19:47.610857389 +0000 UTC"
+  },
+  {
+   "id": "35",
+   "name": "442320b2-49ae-41f1-a8bd-7fe70f78d611",
+   "description": "442320b2-49ae-41f1-a8bd-7fe70f78d611",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-05-15 01:26:48.83705324 +0000 UTC"
+  },
+  {
+   "id": "36",
+   "name": "8244f359-1978-472a-96af-b0c0df6b4c69",
+   "description": "8244f359-1978-472a-96af-b0c0df6b4c69",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-05-15 01:31:50.530410972 +0000 UTC"
+  },
+  {
+   "id": "37",
+   "name": "e3dc96b9-d49a-40b3-9fd1-1e8a6b2ec49d",
+   "description": "e3dc96b9-d49a-40b3-9fd1-1e8a6b2ec49d",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-05-15 01:42:19.659178487 +0000 UTC"
+  },
+  {
+   "id": "38",
+   "name": "64483910-1038-467e-a401-db63eb846fe9",
+   "description": "64483910-1038-467e-a401-db63eb846fe9",
+   "creator": "nvnm1ra5jcxrpp43p307efg336t0yaxe9rhdaywavkw",
+   "created_at": "2026-05-15 01:47:11.618750518 +0000 UTC"
+  },
+  {
+   "id": "39",
+   "name": "6bdc6d93-d4df-4cae-a11e-41f50929756f",
+   "description": "6bdc6d93-d4df-4cae-a11e-41f50929756f",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-05-15 02:01:44.393853021 +0000 UTC"
+  },
+  {
+   "id": "40",
+   "name": "942c4b6f-f863-4ed6-81b9-d73bcef66ac1",
+   "description": "942c4b6f-f863-4ed6-81b9-d73bcef66ac1",
+   "creator": "nvnm103t5ypyrgtt4segqnx7qrj6xtc73080w65rd90",
+   "created_at": "2026-05-20 00:21:21.997803116 +0000 UTC"
+  },
+  {
+   "id": "41",
+   "name": "bcb64e2e-ac5a-494d-94e9-ac19ce5b7dd8",
+   "description": "bcb64e2e-ac5a-494d-94e9-ac19ce5b7dd8",
+   "creator": "nvnm103t5ypyrgtt4segqnx7qrj6xtc73080w65rd90",
+   "created_at": "2026-05-21 00:23:36.594969095 +0000 UTC"
+  },
+  {
+   "id": "42",
+   "name": "b913ac2c-2132-48d8-a65a-37baad9e00ec",
+   "description": "b913ac2c-2132-48d8-a65a-37baad9e00ec",
+   "creator": "nvnm103t5ypyrgtt4segqnx7qrj6xtc73080w65rd90",
+   "created_at": "2026-05-21 00:29:30.809252581 +0000 UTC"
+  },
+  {
+   "id": "43",
+   "name": "b7e0dd5a-26c0-41a7-bb91-1f55a1985dc2",
+   "description": "b7e0dd5a-26c0-41a7-bb91-1f55a1985dc2",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-05-21 00:59:25.261416629 +0000 UTC"
+  },
+  {
+   "id": "44",
+   "name": "c58ef19b-02bf-41ab-b004-f430cfd3f6f0",
+   "description": "c58ef19b-02bf-41ab-b004-f430cfd3f6f0",
+   "creator": "nvnm103t5ypyrgtt4segqnx7qrj6xtc73080w65rd90",
+   "created_at": "2026-05-22 00:09:00.097939648 +0000 UTC"
+  },
+  {
+   "id": "45",
+   "name": "8f6c6b59-e1fa-4eea-8500-29f2ff2b4244",
+   "description": "8f6c6b59-e1fa-4eea-8500-29f2ff2b4244",
+   "creator": "nvnm1ra5jcxrpp43p307efg336t0yaxe9rhdaywavkw",
+   "created_at": "2026-05-22 00:21:00.271921385 +0000 UTC"
+  },
+  {
+   "id": "46",
+   "name": "53bea839-4336-4797-b044-11cbae04ad60",
+   "description": "53bea839-4336-4797-b044-11cbae04ad60",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-05-22 00:21:32.384267774 +0000 UTC"
+  },
+  {
+   "id": "47",
+   "name": "6f7cf66c-a1a1-498d-a9da-dad442498dc0",
+   "description": "6f7cf66c-a1a1-498d-a9da-dad442498dc0",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-05-22 00:30:19.643632619 +0000 UTC"
+  },
+  {
+   "id": "48",
+   "name": "0592ce16-a73e-4ade-8596-a3cd606148fc",
+   "description": "0592ce16-a73e-4ade-8596-a3cd606148fc",
+   "creator": "nvnm19wnwqky7xajl5htvum5df4c3cxlm3d33a2xjmt",
+   "created_at": "2026-06-03 20:21:14.39109114 +0000 UTC"
+  },
+  {
+   "id": "49",
+   "name": "fef1d0b2-bdb9-402d-abb9-c4a5de712c1e",
+   "description": "fef1d0b2-bdb9-402d-abb9-c4a5de712c1e",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-06-04 12:22:10.676448358 +0000 UTC"
+  },
+  {
+   "id": "50",
+   "name": "0aa35ff3-400b-4584-80d9-cff09a2f08d4",
+   "description": "0aa35ff3-400b-4584-80d9-cff09a2f08d4",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-06-05 00:58:40.114081075 +0000 UTC"
+  },
+  {
+   "id": "51",
+   "name": "72299d2e-0d46-4a45-a1d8-6221d4a22dd6",
+   "description": "72299d2e-0d46-4a45-a1d8-6221d4a22dd6",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-06-05 01:12:39.741233051 +0000 UTC"
+  },
+  {
+   "id": "52",
+   "name": "b97bf567-bbeb-4145-9636-c48dd4e30cdc",
+   "description": "b97bf567-bbeb-4145-9636-c48dd4e30cdc",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-06-05 01:55:14.711829198 +0000 UTC"
+  },
+  {
+   "id": "53",
+   "name": "6fdb000b-3821-4718-b4d0-25e50d9f04b2",
+   "description": "6fdb000b-3821-4718-b4d0-25e50d9f04b2",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-06-05 03:12:47.377395774 +0000 UTC"
+  },
+  {
+   "id": "54",
+   "name": "07421967-93ea-4b01-8b12-1635217291d7",
+   "description": "07421967-93ea-4b01-8b12-1635217291d7",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-06-05 15:50:41.9521073 +0000 UTC"
+  },
+  {
+   "id": "55",
+   "name": "11846caf-c4e1-4e62-b4f2-da0f6e0cceff",
+   "description": "11846caf-c4e1-4e62-b4f2-da0f6e0cceff",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-06-05 16:14:51.578637906 +0000 UTC"
+  },
+  {
+   "id": "56",
+   "name": "d616b5d4-199d-47f3-971a-4adf1d4f64ca",
+   "description": "d616b5d4-199d-47f3-971a-4adf1d4f64ca",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-06-08 11:34:24.804557474 +0000 UTC"
+  },
+  {
+   "id": "57",
+   "name": "e937e9ea-2b28-4ebe-b63c-dfefa7aee402",
+   "description": "e937e9ea-2b28-4ebe-b63c-dfefa7aee402",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-06-09 11:30:01.716235163 +0000 UTC"
+  },
+  {
+   "id": "58",
+   "name": "d1ddf678-128e-45fc-8a00-094d2a009be9",
+   "description": "d1ddf678-128e-45fc-8a00-094d2a009be9",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-06-19 11:16:51.751125916 +0000 UTC"
+  },
+  {
+   "id": "59",
+   "name": "507b9988-22da-408b-a324-eaca95028321",
+   "description": "507b9988-22da-408b-a324-eaca95028321",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-06-25 01:16:50.973004087 +0000 UTC"
+  },
+  {
+   "id": "60",
+   "name": "93382caf-7fb5-46d7-8559-e6d540587cbb",
+   "description": "93382caf-7fb5-46d7-8559-e6d540587cbb",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-07-03 08:13:15.054513881 +0000 UTC"
+  },
+  {
+   "id": "61",
+   "name": "2de83af1-cc29-4361-bfa1-c42bf8f7f232",
+   "description": "2de83af1-cc29-4361-bfa1-c42bf8f7f232",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-07-03 08:17:39.965414241 +0000 UTC"
+  },
+  {
+   "id": "62",
+   "name": "96745593-9aed-4445-8d0d-63ef858b425c",
+   "description": "96745593-9aed-4445-8d0d-63ef858b425c",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-07-03 08:48:42.036212143 +0000 UTC"
+  },
+  {
+   "id": "63",
+   "name": "48eb7457-0eb9-443c-afdf-597b60619fed",
+   "description": "48eb7457-0eb9-443c-afdf-597b60619fed",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-07-03 09:21:53.234318106 +0000 UTC"
+  },
+  {
+   "id": "64",
+   "name": "b309a33e-f5ec-4669-a944-07a6d98e5112",
+   "description": "b309a33e-f5ec-4669-a944-07a6d98e5112",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-07-13 07:34:21.353345703 +0000 UTC"
+  },
+  {
+   "id": "65",
+   "name": "7a5982ad-ae65-4355-934d-b7aab3090d8a",
+   "description": "7a5982ad-ae65-4355-934d-b7aab3090d8a",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-07-14 01:14:35.681485044 +0000 UTC"
+  },
+  {
+   "id": "66",
+   "name": "b6e8fc50-80a1-454f-ad4c-b47420098914",
+   "description": "b6e8fc50-80a1-454f-ad4c-b47420098914",
+   "creator": "nvnm1awv2rd0g2rakksxx2rg754q0dwh4crzr997ww8",
+   "created_at": "2026-07-14 02:31:40.40265076 +0000 UTC"
+  },
+  {
+   "id": "67",
+   "name": "3f6224d5-3460-403d-8342-ecfec79184f7",
+   "description": "3f6224d5-3460-403d-8342-ecfec79184f7",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-07-17 06:16:36.758722859 +0000 UTC"
+  },
+  {
+   "id": "68",
+   "name": "3a09cd41-c566-43b5-bf9b-4ed0d2d015dd",
+   "description": "3a09cd41-c566-43b5-bf9b-4ed0d2d015dd",
+   "creator": "nvnm19ac29t5ydpt3mmejf8y47shzzvnqhjpr7eq90u",
+   "created_at": "2026-07-29 05:29:37.045703206 +0000 UTC"
+  }
+ ],
+ "records": [
+  {
+   "registry_id": "1",
+   "stored": {
+    "uri": "https://ipfs.mantrachain.io/ipfs/bafybeihmn3lmp3rrppm3ckadnnnbyoucbb7e7dr2qui2m2ts3oda7poi7m",
+    "checksum": "6a09b805309cd6e86b0721d4a59956c38dbca89ac7fb4b24b8e89d7f7e729c0c",
+    "checksum_algo": "sha256",
+    "metadata": "{\"version\":\"1.0\",\"title\":\"NVNM Chain Whitepaper\",\"author\":\"Albert Berdellans\",\"organization\":\"NVNM Labs\",\"date\":\"May 2026\",\"summary\":\"Accountability infrastructure for agentic activity\"}",
+    "timestamp": "2026-05-08 14:27:37.0589859 +0000 UTC",
+    "status": "active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "1"
+   }
+  },
+  {
+   "registry_id": "6",
+   "stored": {
+    "uri": "https://qa9-api.inveniam.io/dataroom/2/10313796331726400",
+    "checksum": "a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"73b376fc-13d4-4340-ba0f-60461a661cc1\",\"fileId\":\"347ba31b-57de-493d-acc8-a488f0477988\",\"uri\":\"https://qa9-api.inveniam.io/dataroom/2/10313796331726400\",\"checksum\":\"a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-14 08:00:42.678981393 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "6"
+   }
+  },
+  {
+   "registry_id": "9",
+   "stored": {
+    "uri": "https://qa9-api.inveniam.io/dataroom/2/10313710763123000",
+    "checksum": "a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"cc68e50e-3331-46f0-881f-c1ce21c7c695\",\"fileId\":\"de127dec-df5e-47e7-91a8-8e15ed65b3ec\",\"uri\":\"https://qa9-api.inveniam.io/dataroom/2/10313710763123000\",\"checksum\":\"a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-14 08:49:18.002211605 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "9"
+   }
+  },
+  {
+   "registry_id": "11",
+   "stored": {
+    "uri": "https://qa9-api.inveniam.io/dataroom/2/103137133261106400",
+    "checksum": "a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"2854d5bd-1fb4-4a77-8a6a-cd52a88c7ff3\",\"fileId\":\"75364b0d-d4f2-47a4-a0c0-4eb0ef9d173c\",\"uri\":\"https://qa9-api.inveniam.io/dataroom/2/103137133261106400\",\"checksum\":\"a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-14 10:42:19.428368615 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "11"
+   }
+  },
+  {
+   "registry_id": "13",
+   "stored": {
+    "uri": "https://qa9-api.inveniam.io/dataroom/2/10313717123818712800",
+    "checksum": "40c5b733d0e21c53a9e40fa6eb9df01bb6898b842f5f13bd42db5624c2a97dd0",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"8f19e9af-383a-42d8-81e3-5ff0a3e1bb89\",\"fileId\":\"41745b09-c070-41af-b22b-adf697a5f0b7\",\"uri\":\"https://qa9-api.inveniam.io/dataroom/2/10313717123818712800\",\"checksum\":\"40c5b733d0e21c53a9e40fa6eb9df01bb6898b842f5f13bd42db5624c2a97dd0\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-14 13:31:53.807826964 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "13"
+   }
+  },
+  {
+   "registry_id": "13",
+   "stored": {
+    "uri": "https://qa9-api.inveniam.io/dataroom/2/10313717423518312800",
+    "checksum": "5804de61eaabdc64535c0a8642621794517351a4975fd91ea255348b63fc0916",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"00f6f3ea-19a4-4eef-8f99-062d9fa5ae57\",\"fileId\":\"31dee4e4-fd1e-496c-9790-005abb662650\",\"uri\":\"https://qa9-api.inveniam.io/dataroom/2/10313717423518312800\",\"checksum\":\"5804de61eaabdc64535c0a8642621794517351a4975fd91ea255348b63fc0916\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-14 13:44:55.700759501 +0000 UTC",
+    "status": "Active",
+    "record_id": "2",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "13"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/da030ec2-02f2-4fef-bfb5-a09a4bfb0725",
+    "checksum": "bc38b687406e8eb8681f42a980d9e78143ce173ffeb5137e825961cd4846dfdd",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:09:42.822745+00:00\",\"sizeBytes\":3637,\"sourceDocumentName\":\"MIT_00_Transaction_Summary.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_00_Transaction_Summary.pdf\"}",
+    "timestamp": "2026-05-14 15:15:50.459455826 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/7a784a82-7db9-4769-8475-abd93a221d8f",
+    "checksum": "72844e93e8495d7cbb375ed4f2310a6929060b8dfadfbee237b64274dd974277",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:09:42.822745+00:00\",\"sizeBytes\":21743,\"sourceDocumentName\":\"MIT_04_Rent_Roll.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_04_Rent_Roll.xlsx\"}",
+    "timestamp": "2026-05-14 15:16:22.623394536 +0000 UTC",
+    "status": "Active",
+    "record_id": "2",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "18",
+   "stored": {
+    "uri": "https://uatme21-api.prod21.inveniam.io/dataroom/2/103137197167919200",
+    "checksum": "92e217e3af76729f080f20af066a90dc57cf791de5747168a8ba5f48f20734fd",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"10550739-197b-4845-b15f-e40e14e3c4f2\",\"fileId\":\"71a8a0ea-ab12-4de1-acb7-80cc38c3cf9f\",\"uri\":\"https://uatme21-api.prod21.inveniam.io/dataroom/2/103137197167919200\",\"checksum\":\"92e217e3af76729f080f20af066a90dc57cf791de5747168a8ba5f48f20734fd\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-14 15:24:25.531304525 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "18"
+   }
+  },
+  {
+   "registry_id": "18",
+   "stored": {
+    "uri": "https://uatme21-api.prod21.inveniam.io/dataroom/2/10313719816262000",
+    "checksum": "c2e7ad1f2053084e05e3e150bb18869aa8a05ad919c7cda08ddd95dda1e0e6e8",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"4439b625-1923-4010-9882-21d6ef723baa\",\"fileId\":\"76d6c948-47f0-4f0c-bb76-5b0e35584eb9\",\"uri\":\"https://uatme21-api.prod21.inveniam.io/dataroom/2/10313719816262000\",\"checksum\":\"c2e7ad1f2053084e05e3e150bb18869aa8a05ad919c7cda08ddd95dda1e0e6e8\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-14 15:28:49.101504127 +0000 UTC",
+    "status": "Active",
+    "record_id": "2",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "18"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/a1561425-de8f-41c6-9ba9-ab166d38e3a1",
+    "checksum": "ac446949c977bb399812209243d6aeba96e0ec3d1fb8d856fcce396a8b6f8cc5",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":50303,\"sourceDocumentName\":\"MIT_01_Investment_Committee_Memo.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_01_Investment_Committee_Memo.docx\"}",
+    "timestamp": "2026-05-14 15:31:19.281544259 +0000 UTC",
+    "status": "Active",
+    "record_id": "3",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/173a43be-a601-4c40-8439-32f1c5e8e91f",
+    "checksum": "d32d5b03c974a422acc55aed6078f540fe6e09eff35ed87b903497aa6c036bc8",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":49970,\"sourceDocumentName\":\"MIT_01_Letter_of_Intent.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_01_Letter_of_Intent.docx\"}",
+    "timestamp": "2026-05-14 15:31:43.512783465 +0000 UTC",
+    "status": "Active",
+    "record_id": "4",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/513a1e1b-eae0-49f9-ac46-558b0f30542b",
+    "checksum": "700b25ac66ffdf622be62a5e9d48004f0b757bdfeca8958a12a15f5a950b9b75",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":49692,\"sourceDocumentName\":\"MIT_01_Property_Access_Agreement.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_01_Property_Access_Agreement.docx\"}",
+    "timestamp": "2026-05-14 15:32:32.572319558 +0000 UTC",
+    "status": "Active",
+    "record_id": "5",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/f223ee79-4235-4f9a-bebc-3fbd27788657",
+    "checksum": "a6420f6174f0b653d1de610789e8da64e21bd4e63637c424829c5d0eabb9c642",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":49624,\"sourceDocumentName\":\"MIT_02_Escrow_Instructions.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_02_Escrow_Instructions.docx\"}",
+    "timestamp": "2026-05-14 15:33:04.385022785 +0000 UTC",
+    "status": "Active",
+    "record_id": "6",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/f49173a9-fba2-46d7-badb-b2bcf891ca6f",
+    "checksum": "bdfe84efe341f7e0d4eb5257702930e40608baf492f4d712034a54ad0cbc6362",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3723,\"sourceDocumentName\":\"MIT_03_Special_Warranty_Deed.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_03_Special_Warranty_Deed.pdf\"}",
+    "timestamp": "2026-05-14 15:33:50.049706153 +0000 UTC",
+    "status": "Active",
+    "record_id": "7",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/fbf6b18b-223a-4250-9673-1c061bfa5a1e",
+    "checksum": "6cf568f2e76ca6863d35188fc821ea107666b08fea66c41985b2b683332c83a6",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3853,\"sourceDocumentName\":\"MIT_03_Survey_Certification_and_TableA.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_03_Survey_Certification_and_TableA.pdf\"}",
+    "timestamp": "2026-05-14 15:34:14.418335414 +0000 UTC",
+    "status": "Active",
+    "record_id": "8",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/868efa4d-2c5a-4a71-a8b4-1e4bfc5c4722",
+    "checksum": "43da9680d5cfb9b17a40d120e750f18c233c1a922a9b1b071143e36c6ec6e183",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":4129,\"sourceDocumentName\":\"MIT_03_Title_Commitment.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_03_Title_Commitment.pdf\"}",
+    "timestamp": "2026-05-14 15:34:42.409953299 +0000 UTC",
+    "status": "Active",
+    "record_id": "9",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/c2df94a6-9e67-40ac-bb6b-daeea9026285",
+    "checksum": "b97dccb1c038a36f2bdaa177bc9f53de1f55019abe4487427a7c6a77d6c03862",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3785,\"sourceDocumentName\":\"MIT_03_Zoning_Report.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_03_Zoning_Report.pdf\"}",
+    "timestamp": "2026-05-14 15:35:17.837275948 +0000 UTC",
+    "status": "Active",
+    "record_id": "10",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/bcd287d0-e2d6-4ddf-b4d7-c58bfebf8cb9",
+    "checksum": "ee02e0ff2fe95081b9fc15af9d69942fee0b9bff820110a236dc6d5eaa7a2dcb",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3743,\"sourceDocumentName\":\"MIT_04_Assignment_Assumption_of_Leases.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_04_Assignment_Assumption_of_Leases.pdf\"}",
+    "timestamp": "2026-05-14 15:35:42.21438223 +0000 UTC",
+    "status": "Active",
+    "record_id": "11",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/515b8fc4-8958-46cf-8876-eee3888d373f",
+    "checksum": "e5431342239dfea29ba6f2f92e56f51d4021a000675d2d548348321f0a60ed19",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":22429,\"sourceDocumentName\":\"MIT_04_Lease_Abstracts.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_04_Lease_Abstracts.xlsx\"}",
+    "timestamp": "2026-05-14 15:36:17.186971673 +0000 UTC",
+    "status": "Active",
+    "record_id": "12",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/4dd7f071-2ac6-47ea-a0ef-e2216f7cce68",
+    "checksum": "52092229ff9816817603afc32a7049e7dfadb7ae6a9988e4ab941f005a70f5f9",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":49556,\"sourceDocumentName\":\"MIT_04_SNDA_Form.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_04_SNDA_Form.docx\"}",
+    "timestamp": "2026-05-14 15:36:31.865925236 +0000 UTC",
+    "status": "Active",
+    "record_id": "13",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/016f494b-d38c-48f6-ba73-b478c6b376f4",
+    "checksum": "d91df158bdc2a9f90dd2908737d5f00c40e75ba3873a1e8c6b3b13b94f272637",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":9563,\"sourceDocumentName\":\"MIT_04_Tenant_Estoppel_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_04_Tenant_Estoppel_Packet.pdf\"}",
+    "timestamp": "2026-05-14 15:37:07.15745586 +0000 UTC",
+    "status": "Active",
+    "record_id": "14",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/b69707e0-cd56-4aa4-a555-d469fc1d9f2d",
+    "checksum": "c84da6862ecda91d4ddec14ef323d069315bbe57b10aaf2dcede017c1d066571",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":17965,\"sourceDocumentName\":\"MIT_05_Closing_Statement.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_05_Closing_Statement.xlsx\"}",
+    "timestamp": "2026-05-14 15:37:42.214300946 +0000 UTC",
+    "status": "Active",
+    "record_id": "15",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/f6f09bd2-3f86-476c-9f2c-1492089ab349",
+    "checksum": "a0255bdfdb6d8ab5a3c7e78f221a9de2e909967f43df21b3cefbc3abb0f080a8",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3430,\"sourceDocumentName\":\"MIT_05_Insurance_Coverage_Summary.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_05_Insurance_Coverage_Summary.pdf\"}",
+    "timestamp": "2026-05-14 15:37:55.698364095 +0000 UTC",
+    "status": "Active",
+    "record_id": "16",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/2fd4b2a2-62ab-47d7-bd9c-c69014c5f127",
+    "checksum": "eb8cdead8d633b8e61b0f71e7e4b96c8e38e506394ee87f1e8b71e905a2ca479",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":20281,\"sourceDocumentName\":\"MIT_05_Pro_Forma_Valuation_Model.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_05_Pro_Forma_Valuation_Model.xlsx\"}",
+    "timestamp": "2026-05-14 15:38:16.764784794 +0000 UTC",
+    "status": "Active",
+    "record_id": "17",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/095f682d-81f7-4881-b580-178eb42c72f1",
+    "checksum": "b12fa1ae19be5a94bc22398b7be1979229d7c79664a8ae1443d2c1d639abfbf5",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":21681,\"sourceDocumentName\":\"MIT_05_Service_Contracts_and_Capex_Schedule.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_05_Service_Contracts_and_Capex_Schedule.xlsx\"}",
+    "timestamp": "2026-05-14 15:38:45.751307446 +0000 UTC",
+    "status": "Active",
+    "record_id": "18",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/c9dcab05-61fc-4218-8f76-74b709bb6c90",
+    "checksum": "9e3eeef7d3b2af5e2e12cb8d382b592e1e6dc1a3b5424138c67cc95c38de26a6",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":19059,\"sourceDocumentName\":\"MIT_05_T12_Operating_Statement.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_05_T12_Operating_Statement.xlsx\"}",
+    "timestamp": "2026-05-14 15:39:13.743858001 +0000 UTC",
+    "status": "Active",
+    "record_id": "19",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/23b32cb9-5dbe-4c8e-a3c8-9ffd0708fc4b",
+    "checksum": "abfe65e5163cde785aa34e0a708663374eb7e83dd6c86f07f62f78a234a2b442",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3597,\"sourceDocumentName\":\"MIT_06_Phase_I_Environmental_Site_Assessment.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_06_Phase_I_Environmental_Site_Assessment.pdf\"}",
+    "timestamp": "2026-05-14 15:39:45.315582378 +0000 UTC",
+    "status": "Active",
+    "record_id": "20",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/d17c9227-46ca-4d50-8426-d9b3382bffb4",
+    "checksum": "148605b430d7e9d47965ac371610cd9909ca204c8a02f3dbb18e8fee97b0900d",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3352,\"sourceDocumentName\":\"MIT_07_Assignment_Assumption_of_Contracts.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_07_Assignment_Assumption_of_Contracts.pdf\"}",
+    "timestamp": "2026-05-14 15:40:13.281134542 +0000 UTC",
+    "status": "Active",
+    "record_id": "21",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/ff960be2-1afe-4e6f-9406-b330b97d473e",
+    "checksum": "289377d51247c9db2b6266cb038111f429f6a00f07db2f405238acc71fde755c",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3380,\"sourceDocumentName\":\"MIT_07_Bill_of_Sale.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_07_Bill_of_Sale.pdf\"}",
+    "timestamp": "2026-05-14 15:40:26.921843461 +0000 UTC",
+    "status": "Active",
+    "record_id": "22",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/14b6ed86-9537-4653-a318-3df9263a3c3a",
+    "checksum": "d489d351dc6bbc4ebccffc361c280c3c808fb97a8c91e794e3c7b50f03d6d61c",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3050,\"sourceDocumentName\":\"MIT_07_FIRPTA_Certificate.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_07_FIRPTA_Certificate.pdf\"}",
+    "timestamp": "2026-05-14 15:40:41.483994534 +0000 UTC",
+    "status": "Active",
+    "record_id": "23",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/74b5ae87-a262-4b19-b9d6-96dd59bde074",
+    "checksum": "6fb10c0cebcfcead7ff3c95620dde5a38033b432af6cb803064e8fd6e70b85a1",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":3240,\"sourceDocumentName\":\"MIT_07_Owner_Title_Affidavit.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_07_Owner_Title_Affidavit.pdf\"}",
+    "timestamp": "2026-05-14 15:41:29.988375307 +0000 UTC",
+    "status": "Active",
+    "record_id": "24",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/4dfee046-3316-4424-a0fd-8e284da95597",
+    "checksum": "f5133ef97b567091bd1291568b85f125c3d62720201d0ae5d060d9dfe6c960e0",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":18382,\"sourceDocumentName\":\"MIT_08_Lender_Diligence_Checklist.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_08_Lender_Diligence_Checklist.xlsx\"}",
+    "timestamp": "2026-05-14 15:41:44.501110244 +0000 UTC",
+    "status": "Active",
+    "record_id": "25",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/964615e5-6718-45fc-97a3-d45182b473de",
+    "checksum": "3200b5564b3b65d5e0db67173659a76cfba1b0c09df91bfabe1a0c2688a6435d",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:29:18.871979+00:00\",\"sizeBytes\":49884,\"sourceDocumentName\":\"MIT_08_Loan_Commitment_Letter.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_08_Loan_Commitment_Letter.docx\"}",
+    "timestamp": "2026-05-14 15:41:58.135520999 +0000 UTC",
+    "status": "Active",
+    "record_id": "26",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/39fb2d57-d4be-4acc-9910-e5039c7a7b69",
+    "checksum": "85a2ad26c0a357762cccec5742aa4058c4c6c459bee16cb4765531feea2598e8",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":20234,\"sourceDocumentName\":\"MIT_00_Deal_Document_Index.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_00_Deal_Document_Index.xlsx\"}",
+    "timestamp": "2026-05-14 15:59:35.937115916 +0000 UTC",
+    "status": "Active",
+    "record_id": "27",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/2e4a82a7-0fe3-4e05-bbc7-cd94c7d31d12",
+    "checksum": "64708c3450f4060ba1610ffae24e2e1e77ee6407de3d2d7b7122acb6b0c92e5e",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":53278,\"sourceDocumentName\":\"MIT_02_Purchase_and_Sale_Agreement.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_02_Purchase_and_Sale_Agreement.docx\"}",
+    "timestamp": "2026-05-14 16:00:21.107813035 +0000 UTC",
+    "status": "Active",
+    "record_id": "28",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/d955a711-825d-47d2-9002-8aaf57ece1b0",
+    "checksum": "fadba4cfe7431f2faf67471ed59c590b81fabdec345a275429b2f7d81bd7e046",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3609,\"sourceDocumentName\":\"MIT_09_ALTA_Survey_Map_Sheets.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_ALTA_Survey_Map_Sheets.pdf\"}",
+    "timestamp": "2026-05-14 16:00:49.0720947 +0000 UTC",
+    "status": "Active",
+    "record_id": "29",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/5d85f27c-57f0-42e7-9553-e8078565d064",
+    "checksum": "7fed20f689775281097b3d0bd3e907c1bebf1b0ed70d341c3e6e4750b02ba21b",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3104,\"sourceDocumentName\":\"MIT_09_Appraisal_Report.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Appraisal_Report.pdf\"}",
+    "timestamp": "2026-05-14 16:01:20.393746284 +0000 UTC",
+    "status": "Active",
+    "record_id": "30",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/43b2625a-3b63-4217-89cb-7b2bbb8a4026",
+    "checksum": "ef60294bd92bd8d3e226edd34fc619e82b68d11fdb1cbe288040339cf282a552",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3035,\"sourceDocumentName\":\"MIT_09_As_Built_Drawings_O_M_Manuals_Transmittal.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_As_Built_Drawings_O_M_Manuals_Transmittal.pdf\"}",
+    "timestamp": "2026-05-14 16:01:52.239222922 +0000 UTC",
+    "status": "Active",
+    "record_id": "31",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/cf834e78-a1c0-4e3f-baf5-1eb042dca755",
+    "checksum": "6ee5673bcd0fbeda4e8825f3c40fa59aad6a2639099e04990bf3fda2087317ea",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3024,\"sourceDocumentName\":\"MIT_09_Assumed_Service_Contract_Consent_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Assumed_Service_Contract_Consent_Packet.pdf\"}",
+    "timestamp": "2026-05-14 16:02:23.912600755 +0000 UTC",
+    "status": "Active",
+    "record_id": "32",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/c63c8e72-e50a-448f-99d1-9d6e998d53e5",
+    "checksum": "6c0dbe7c043ff5a642652e9e1e5f34298b7a2fafcea5bb5f2685d377f98ea177",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":14766,\"sourceDocumentName\":\"MIT_09_Bid_Process_Log.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Bid_Process_Log.xlsx\"}",
+    "timestamp": "2026-05-14 16:02:52.048588022 +0000 UTC",
+    "status": "Active",
+    "record_id": "33",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/eac7d07f-c64e-4bd2-bc6b-8ba884a2be8c",
+    "checksum": "06e8150db0914a4e790cff8e839d1c394d538a2a9af9e5af26c82b0e41aba893",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":48543,\"sourceDocumentName\":\"MIT_09_Borrower_Counsel_Legal_Opinion.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Borrower_Counsel_Legal_Opinion.docx\"}",
+    "timestamp": "2026-05-14 16:03:30.521047586 +0000 UTC",
+    "status": "Active",
+    "record_id": "34",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/fc053368-9876-4afd-b3d5-4538e3c4e58f",
+    "checksum": "9f6cce8f20214c79c0dae551d6b0acc7164caa68cf5cbbf42b00655efa287158",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":2733,\"sourceDocumentName\":\"MIT_09_Broker_Commission_Invoice.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Broker_Commission_Invoice.pdf\"}",
+    "timestamp": "2026-05-14 16:03:47.624470902 +0000 UTC",
+    "status": "Active",
+    "record_id": "35",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/3a7e750f-afda-4024-9537-b104ec4ad2bb",
+    "checksum": "d909491f043f8a41cc1d2fd5b23b459a2a36150bb53f4f7eb645b77256f866d1",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":2822,\"sourceDocumentName\":\"MIT_09_Broker_Engagement_Letter.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Broker_Engagement_Letter.pdf\"}",
+    "timestamp": "2026-05-14 16:04:19.395336078 +0000 UTC",
+    "status": "Active",
+    "record_id": "36",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/40e0bb90-96b0-4095-97e0-b4ac21741f2a",
+    "checksum": "db724a2dd45a9300d9a028269c7fcfd6ee7e2033d2283b236dee2477a7ac8100",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3022,\"sourceDocumentName\":\"MIT_09_Buyer_Closing_Certificate.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Buyer_Closing_Certificate.pdf\"}",
+    "timestamp": "2026-05-14 16:04:47.133912703 +0000 UTC",
+    "status": "Active",
+    "record_id": "37",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/524128b9-ce62-45ed-b3f4-859e59d90396",
+    "checksum": "69c0f758d0d0e20429e486e21b8129d3d8290637a7a752f79445a835989fa5d6",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":16371,\"sourceDocumentName\":\"MIT_09_CAM_Reconciliation_and_Budget_Support.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_CAM_Reconciliation_and_Budget_Support.xlsx\"}",
+    "timestamp": "2026-05-14 16:05:50.676384664 +0000 UTC",
+    "status": "Active",
+    "record_id": "38",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/9c77e834-9992-48e9-b4dc-7668dd8298fc",
+    "checksum": "75f5f4cb943cb7218e94a2b3ba46d6e3f6d3738a18d8506fd31088c4caa18926",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":2952,\"sourceDocumentName\":\"MIT_09_Certificate_of_Occupancy_and_Permits_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Certificate_of_Occupancy_and_Permits_Packet.pdf\"}",
+    "timestamp": "2026-05-14 16:06:22.14604204 +0000 UTC",
+    "status": "Active",
+    "record_id": "39",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/966b394e-1796-409c-b7e5-7a0cc5c48fee",
+    "checksum": "5ee55664dcd476e78167c1c74f9ab0d23c114ebbc9a353c785c5a26a1ee02bcd",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":14963,\"sourceDocumentName\":\"MIT_09_Closing_Deliverables_Signature_Authority_Matrix.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Closing_Deliverables_Signature_Authority_Matrix.xlsx\"}",
+    "timestamp": "2026-05-14 16:06:50.003593547 +0000 UTC",
+    "status": "Active",
+    "record_id": "40",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/e8576c93-9baa-42c6-96b1-e025753702e7",
+    "checksum": "b56f8c599e636e5b7d072a1feb140b8178403282c68cea77fb588b3bd0f39a77",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":15090,\"sourceDocumentName\":\"MIT_09_Construction_Closeout_Permit_Warranty_Index.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Construction_Closeout_Permit_Warranty_Index.xlsx\"}",
+    "timestamp": "2026-05-14 16:07:21.591706577 +0000 UTC",
+    "status": "Active",
+    "record_id": "41",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/cb44d4ed-2b4e-4e6f-8ba2-18b8fc10138c",
+    "checksum": "6f24b9d6edef4bf2e1839116ca946169403feb852882da50ea8f4899993aa101",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":14963,\"sourceDocumentName\":\"MIT_09_Critical_Dates_and_Approvals_Tracker.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Critical_Dates_and_Approvals_Tracker.xlsx\"}",
+    "timestamp": "2026-05-14 16:07:53.128407674 +0000 UTC",
+    "status": "Active",
+    "record_id": "42",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/15038932-1e0f-471c-9c32-153444103eb8",
+    "checksum": "3a9fd05482f2eec9b56fc6f77cec847f1c4e1b68dd44072667577a9a8fef1649",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":15079,\"sourceDocumentName\":\"MIT_09_Data_Room_Access_Audit.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Data_Room_Access_Audit.xlsx\"}",
+    "timestamp": "2026-05-14 16:08:21.173564139 +0000 UTC",
+    "status": "Active",
+    "record_id": "43",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/19d1baab-d476-4414-b875-0533a91bc4f6",
+    "checksum": "6d51daa56878c94adc91df19315a6ca45f37b52ce78b194ec8e6beff1dc6c931",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":16782,\"sourceDocumentName\":\"MIT_09_General_Ledger_and_AR_Support.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_General_Ledger_and_AR_Support.xlsx\"}",
+    "timestamp": "2026-05-14 16:08:49.15108919 +0000 UTC",
+    "status": "Active",
+    "record_id": "44",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/e36e65f9-5c4f-447f-add9-2e22284d671f",
+    "checksum": "506bbb8ae958e48a7722fbae57eb0b018d1da440442afcfa06f544ea20cbad5b",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":2988,\"sourceDocumentName\":\"MIT_09_Guaranty_and_Environmental_Indemnity.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Guaranty_and_Environmental_Indemnity.pdf\"}",
+    "timestamp": "2026-05-14 16:09:27.937346525 +0000 UTC",
+    "status": "Active",
+    "record_id": "45",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/4bed343a-c108-4706-bf2f-fb67d97b7e42",
+    "checksum": "9692d0a33bc93bdfd2b05023018bb0c406f4a0b78927f7adc8ed2f6c5461c5eb",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3168,\"sourceDocumentName\":\"MIT_09_Holdback_Escrow_Agreement.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Holdback_Escrow_Agreement.pdf\"}",
+    "timestamp": "2026-05-14 16:09:52.310772789 +0000 UTC",
+    "status": "Active",
+    "record_id": "46",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/24cc14a4-eb6c-4aeb-b3ff-d6415c93e06b",
+    "checksum": "3cba0922839a317c993b80ae6377f345beca5e24cf2c0c0fd1647365fbe6cc1b",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3208,\"sourceDocumentName\":\"MIT_09_KYC_AML_Sanctions_Certificate.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_KYC_AML_Sanctions_Certificate.pdf\"}",
+    "timestamp": "2026-05-14 16:10:20.970416125 +0000 UTC",
+    "status": "Active",
+    "record_id": "47",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/5c8c8b7f-fb34-4403-926d-65201c004095",
+    "checksum": "4090446371693279de6843d39b346f015ef0394c24343c909c9c6f6122f51c2f",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":2890,\"sourceDocumentName\":\"MIT_09_Lender_Insurance_Requirements_and_Binder.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Lender_Insurance_Requirements_and_Binder.pdf\"}",
+    "timestamp": "2026-05-14 16:10:49.112521043 +0000 UTC",
+    "status": "Active",
+    "record_id": "48",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/39b8e32c-1ba2-4dcd-9191-528b9fd9a6a3",
+    "checksum": "9337a9de362eeea7319b9023b3250f5d6f9cceaff3182a19d572230fd37261c6",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3178,\"sourceDocumentName\":\"MIT_09_Lien_Waiver_and_GC_Affidavit_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Lien_Waiver_and_GC_Affidavit_Packet.pdf\"}",
+    "timestamp": "2026-05-14 16:11:17.144871496 +0000 UTC",
+    "status": "Active",
+    "record_id": "49",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/2ae476fa-eed3-4694-8fca-1fa77e32cd79",
+    "checksum": "24097a212a1f852765762e91c6b5b76ceb24c0c992a0361d845fdaeff0103d19",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3338,\"sourceDocumentName\":\"MIT_09_Loan_Agreement.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Loan_Agreement.pdf\"}",
+    "timestamp": "2026-05-14 16:11:34.097202187 +0000 UTC",
+    "status": "Active",
+    "record_id": "50",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/338fc045-afe4-4800-a827-4112b51cabfd",
+    "checksum": "423c60eaefceab8abf474b75d02206c3012e09d3b52e57e5eb37efe5c9b37587",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3270,\"sourceDocumentName\":\"MIT_09_Major_Tenant_Credit_Snapshots.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Major_Tenant_Credit_Snapshots.pdf\"}",
+    "timestamp": "2026-05-14 16:11:48.531860729 +0000 UTC",
+    "status": "Active",
+    "record_id": "51",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/a8230b7f-f71e-464c-b599-52f859526ea2",
+    "checksum": "ef72f722848cd102e1134080ddf3696f054ba348cbaf0b70ed00740f550156c0",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":16053,\"sourceDocumentName\":\"MIT_09_Master_Diligence_Request_List.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Master_Diligence_Request_List.xlsx\"}",
+    "timestamp": "2026-05-14 16:12:16.736242269 +0000 UTC",
+    "status": "Active",
+    "record_id": "52",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/ab9cc866-4138-4f8c-918f-df0cba4bd8b1",
+    "checksum": "0c6cff7cd09a2469adc2becb9f9ceaec007305db9e089b8172a0c2cd13d7d64e",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":28705,\"sourceDocumentName\":\"MIT_09_Master_Lease_File_Binder.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Master_Lease_File_Binder.pdf\"}",
+    "timestamp": "2026-05-14 16:12:44.725607803 +0000 UTC",
+    "status": "Active",
+    "record_id": "53",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/f8739328-76c5-4a6b-ba13-2406f43dfa64",
+    "checksum": "ed1a8f5bc99e1efc5ad9eb2ffa6348ab128be38264d1df9cd2722e31b0966b01",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3075,\"sourceDocumentName\":\"MIT_09_Mortgage_Deed_of_Trust.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Mortgage_Deed_of_Trust.pdf\"}",
+    "timestamp": "2026-05-14 16:13:16.207269616 +0000 UTC",
+    "status": "Active",
+    "record_id": "54",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/4ea1e8ca-e759-486c-8665-3663eb2dca9e",
+    "checksum": "c922bdb572b538ff2fdbce3cf6b58100fd7935a0cc382a6c6d0c3a967dd7b1d2",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3028,\"sourceDocumentName\":\"MIT_09_Municipal_Zoning_Letter_and_Violation_Search.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Municipal_Zoning_Letter_and_Violation_Search.pdf\"}",
+    "timestamp": "2026-05-14 16:13:47.871022459 +0000 UTC",
+    "status": "Active",
+    "record_id": "55",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/7ae0af50-b3ac-4f7c-9a9a-8bcb65c534ff",
+    "checksum": "c6d8725340333ce1254fc7fb74b3e48a1dae7d7d9e32b0ddb02401f1ec2f7fd0",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":6224,\"sourceDocumentName\":\"MIT_09_Offering_Memorandum.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Offering_Memorandum.pdf\"}",
+    "timestamp": "2026-05-14 16:14:19.728930058 +0000 UTC",
+    "status": "Active",
+    "record_id": "56",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/0bb25d1e-fbba-46ae-a1ee-282be867814e",
+    "checksum": "5f07fec43b1e0ddd4d47007eae81b83ad55d125b89e7d25324624eea6245e792",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":15086,\"sourceDocumentName\":\"MIT_09_Post_Closing_Obligations_Tracker.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Post_Closing_Obligations_Tracker.xlsx\"}",
+    "timestamp": "2026-05-14 16:14:51.329470278 +0000 UTC",
+    "status": "Active",
+    "record_id": "57",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/dc166cf3-497e-47de-a98f-2ad15891d37f",
+    "checksum": "2603ed72d6d5876c905a076bc88a5c31845c908cc12ca90b274dec0fd8da2a75",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":2733,\"sourceDocumentName\":\"MIT_09_Promissory_Note.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Promissory_Note.pdf\"}",
+    "timestamp": "2026-05-14 16:15:40.297040388 +0000 UTC",
+    "status": "Active",
+    "record_id": "58",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/c40d85d7-91e2-4399-862f-0a327625d2c8",
+    "checksum": "6ef87cdc0d21f93a8f93945475511c27df7fb1b7ce9a65262e761a96ef0dad4b",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":48578,\"sourceDocumentName\":\"MIT_09_Property_Management_Transition_Plan.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Property_Management_Transition_Plan.docx\"}",
+    "timestamp": "2026-05-14 16:16:08.575125256 +0000 UTC",
+    "status": "Active",
+    "record_id": "59",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/9e0a91eb-6887-4179-b295-ac0ecf6e4194",
+    "checksum": "e6c303f55d4a9fd23105389ac940c1267fd73ba00bc27ad9636836c2f94b92a9",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":2819,\"sourceDocumentName\":\"MIT_09_Property_Tax_Bills_Assessment_Notices.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Property_Tax_Bills_Assessment_Notices.pdf\"}",
+    "timestamp": "2026-05-14 16:16:19.541631655 +0000 UTC",
+    "status": "Active",
+    "record_id": "60",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/e7d46f4a-0bc0-4119-b366-3953d90139a9",
+    "checksum": "aa5929e0604e6801388a20f9d0d5333c35a50e81a6d6871fafe12e632e82a259",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":15444,\"sourceDocumentName\":\"MIT_09_QA_Log_and_Issue_Register.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_QA_Log_and_Issue_Register.xlsx\"}",
+    "timestamp": "2026-05-14 16:16:53.856014231 +0000 UTC",
+    "status": "Active",
+    "record_id": "61",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/dc0fc764-b470-4033-8bec-5050c01f9d16",
+    "checksum": "2a4e08265383a13d846cca2d3b1d6cb8986e1d80a7e92cfcc9b5baf9e2ea2a88",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3103,\"sourceDocumentName\":\"MIT_09_Recordable_Releases_and_Post_Closing_Deliverables.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Recordable_Releases_and_Post_Closing_Deliverables.pdf\"}",
+    "timestamp": "2026-05-14 16:17:18.999850732 +0000 UTC",
+    "status": "Active",
+    "record_id": "62",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/35f1fba7-cd67-45c8-bf2c-098244f29324",
+    "checksum": "ecc022f299720b8ce449ebd1bf4c4b7f1a5a2894bdefc061aea7c9d68dc3cc18",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3009,\"sourceDocumentName\":\"MIT_09_Reliance_Letters_PCA_PhaseI.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Reliance_Letters_PCA_PhaseI.pdf\"}",
+    "timestamp": "2026-05-14 16:17:50.81844209 +0000 UTC",
+    "status": "Active",
+    "record_id": "63",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/f9d9b12e-6063-45cc-bd76-553ffa5b1df3",
+    "checksum": "6261ba1e0b686eecfe90e415f3f0df7f13891d37e5ec932923cf9112c0e3b9da",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":16560,\"sourceDocumentName\":\"MIT_09_Security_Deposits_LCs_TI_LC_Schedule.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Security_Deposits_LCs_TI_LC_Schedule.xlsx\"}",
+    "timestamp": "2026-05-14 16:18:25.165473918 +0000 UTC",
+    "status": "Active",
+    "record_id": "64",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/80cf80c7-fe99-49f5-b332-9dbbad0ac969",
+    "checksum": "9b0e6ae92288a19439b90b4e3a09f2b89b2d588ae7cd31663ab42eb652776367",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3049,\"sourceDocumentName\":\"MIT_09_Seller_Closing_Certificate.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Seller_Closing_Certificate.pdf\"}",
+    "timestamp": "2026-05-14 16:18:53.437767346 +0000 UTC",
+    "status": "Active",
+    "record_id": "65",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/d59bc7e6-3082-406e-b1f7-195343ceac90",
+    "checksum": "ad3158bf9f817525b62c574c7df64fa8d10c5137a01cf2d1f4d90c0df4920910",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3370,\"sourceDocumentName\":\"MIT_09_Seller_Entity_Authority_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Seller_Entity_Authority_Packet.pdf\"}",
+    "timestamp": "2026-05-14 16:19:18.925475056 +0000 UTC",
+    "status": "Active",
+    "record_id": "66",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/1a2d926d-8e92-48fe-a82b-64eee1b55d7b",
+    "checksum": "84b8c28fbed5ef13475b898bec70e3a924d29c8b9301d0dc3f38feb0c346586a",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":18278,\"sourceDocumentName\":\"MIT_09_Sources_and_Uses_Funds_Flow.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Sources_and_Uses_Funds_Flow.xlsx\"}",
+    "timestamp": "2026-05-14 16:19:50.453213186 +0000 UTC",
+    "status": "Active",
+    "record_id": "67",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/378acf37-4e2e-488c-8ea6-012c04b90e90",
+    "checksum": "e78ac05ec07cd83f3caee375a2d01894d1901ad76de5c581f64ec1170471c922",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":17105,\"sourceDocumentName\":\"MIT_09_Supplemental_Document_Index.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Supplemental_Document_Index.xlsx\"}",
+    "timestamp": "2026-05-14 16:20:35.957744415 +0000 UTC",
+    "status": "Active",
+    "record_id": "68",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/af0a587b-3587-4bd3-9c60-372b6d6e93e8",
+    "checksum": "ef2d6b932f1725014ddcff3088579d0a31c807ee1f81f8dcf1e1b4727c92123c",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3204,\"sourceDocumentName\":\"MIT_09_Tax_Abatement_PILOT_Agreement.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Tax_Abatement_PILOT_Agreement.pdf\"}",
+    "timestamp": "2026-05-14 16:20:46.906677886 +0000 UTC",
+    "status": "Active",
+    "record_id": "69",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/6f73e82b-4716-4cf0-80dd-f4f5a11590d1",
+    "checksum": "f4c909341eaeb27947f9b0844e3e0fe83686df40f6810bf1c6abf72f1d4336c4",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":14647,\"sourceDocumentName\":\"MIT_09_Tax_Proration_Transfer_Tax_Workpaper.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Tax_Proration_Transfer_Tax_Workpaper.xlsx\"}",
+    "timestamp": "2026-05-14 16:21:18.495810823 +0000 UTC",
+    "status": "Active",
+    "record_id": "70",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/063a69e5-1862-40e4-8957-5389958396e6",
+    "checksum": "a2284543dff99b462194cc165c350f74a38ba21a0869cf14ca3bd8c712380d71",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3213,\"sourceDocumentName\":\"MIT_09_Tenant_Correspondence_Default_Notice_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Tenant_Correspondence_Default_Notice_Packet.pdf\"}",
+    "timestamp": "2026-05-14 16:22:00.585815405 +0000 UTC",
+    "status": "Active",
+    "record_id": "71",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/38fd3c9a-ff62-4875-8831-00983dd24a5a",
+    "checksum": "a2b620fa8e560c633886e45807166cdd99e382cefe4a41195d15ff96551b7ad3",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":2970,\"sourceDocumentName\":\"MIT_09_Tenant_Notice_Mailing_Certificate.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Tenant_Notice_Mailing_Certificate.pdf\"}",
+    "timestamp": "2026-05-14 16:22:53.870094468 +0000 UTC",
+    "status": "Active",
+    "record_id": "72",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/fb527808-9d7b-42d4-8136-1f6317aa1a4d",
+    "checksum": "a73d9d25208ce7fbaa2732005384d151c869e2d84c7fa837f76482db9a5d5804",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3425,\"sourceDocumentName\":\"MIT_09_Title_Exception_Documents_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Title_Exception_Documents_Packet.pdf\"}",
+    "timestamp": "2026-05-14 16:23:35.727687451 +0000 UTC",
+    "status": "Active",
+    "record_id": "73",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/5d9fea3b-0929-4e4c-b0e3-b2b9186ef418",
+    "checksum": "69cc7c37ce7410421fce61a66e3be7448107adc99d3fb5c546dd3debfc3fcae8",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":48466,\"sourceDocumentName\":\"MIT_09_Title_Objection_Letter.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Title_Objection_Letter.docx\"}",
+    "timestamp": "2026-05-14 16:23:53.91007061 +0000 UTC",
+    "status": "Active",
+    "record_id": "74",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/305e293d-5877-4c59-a3b4-cd0062db5379",
+    "checksum": "753280928a0de6989d1d04b9c91152de8325c1e8380fdc1978c5585ad9804137",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":15304,\"sourceDocumentName\":\"MIT_09_Transaction_Parties_Contact_List.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Transaction_Parties_Contact_List.xlsx\"}",
+    "timestamp": "2026-05-14 16:24:07.596805018 +0000 UTC",
+    "status": "Active",
+    "record_id": "75",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/36bf3682-9dd8-46f7-9e04-fa9450cc6d4f",
+    "checksum": "fe01825f6241c8d1b84ae47f4ef579eb6e77e8556dfb18766d0d8f2402b1c0a9",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3129,\"sourceDocumentName\":\"MIT_09_UCC_Bankruptcy_Litigation_Searches.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_UCC_Bankruptcy_Litigation_Searches.pdf\"}",
+    "timestamp": "2026-05-14 16:24:53.724302524 +0000 UTC",
+    "status": "Active",
+    "record_id": "76",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/189e9565-a3e9-4b5a-88aa-d91cffb4e0a6",
+    "checksum": "227211d05fb138edd737b89339ce0b806e8e98b3c63bfe943c542e4d87901cc3",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":15062,\"sourceDocumentName\":\"MIT_09_Utility_Transfer_and_Building_Systems_Access_Plan.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Utility_Transfer_and_Building_Systems_Access_Plan.xlsx\"}",
+    "timestamp": "2026-05-14 16:25:25.260049495 +0000 UTC",
+    "status": "Active",
+    "record_id": "77",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/cc2171fd-5454-41d8-9a1b-a5b8f0e96744",
+    "checksum": "d228f7a4bdc6bfbae5751cf027e272e9eec4f4cf6a80a21b35aeb96a8cddd984",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":2884,\"sourceDocumentName\":\"MIT_09_Vendor_Certificates_of_Insurance_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Vendor_Certificates_of_Insurance_Packet.pdf\"}",
+    "timestamp": "2026-05-14 16:25:53.255012889 +0000 UTC",
+    "status": "Active",
+    "record_id": "78",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/ff4d6f93-edaf-406b-bd32-77fd743e6e8d",
+    "checksum": "c2966628efda6745eaa301b46e5afcdebeeff18ec250d0e1cb2ae38382394464",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T15:58:31.470623+00:00\",\"sizeBytes\":3234,\"sourceDocumentName\":\"MIT_09_Wire_Instructions_and_Funds_Flow_Control_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Wire_Instructions_and_Funds_Flow_Control_Packet.pdf\"}",
+    "timestamp": "2026-05-14 16:26:21.338938881 +0000 UTC",
+    "status": "Active",
+    "record_id": "79",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/5d8442fd-e624-4bdd-9c3c-1d23e0d96c3c",
+    "checksum": "a5566591921de8814843a15052941ed94cb0fb8f47984d0423ecfbbd38d71ea2",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T16:33:43.991659+00:00\",\"sizeBytes\":50229,\"sourceDocumentName\":\"MIT_01_Confidentiality_Agreement.docx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_01_Confidentiality_Agreement.docx\"}",
+    "timestamp": "2026-05-14 16:34:32.265393262 +0000 UTC",
+    "status": "Active",
+    "record_id": "80",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/2315c759-2c85-4fd9-b5f3-0557d1a304da",
+    "checksum": "bd0e0dde698d3e53c9c20ae794302c7fb4f3a543436b23872823220cf543ecbf",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T16:33:43.991659+00:00\",\"sizeBytes\":3100,\"sourceDocumentName\":\"MIT_09_Pro_Forma_Title_Policies.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Pro_Forma_Title_Policies.pdf\"}",
+    "timestamp": "2026-05-14 16:35:20.996723471 +0000 UTC",
+    "status": "Active",
+    "record_id": "81",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/93bad68e-5ddc-449c-a5d8-d6755499b990",
+    "checksum": "803ae03643df7b506a764380a2690373c2a42bd2467457731a9bfd24534f9b42",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T16:33:43.991659+00:00\",\"sizeBytes\":16739,\"sourceDocumentName\":\"MIT_09_Tenant_Estoppel_SNDA_Status_Tracker.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Tenant_Estoppel_SNDA_Status_Tracker.xlsx\"}",
+    "timestamp": "2026-05-14 16:35:56.016490244 +0000 UTC",
+    "status": "Active",
+    "record_id": "82",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/e6671183-9706-4322-b620-3906270dd9cc",
+    "checksum": "8e38cf3e3ad73dc50b684475bcbcc4bf91c0f20eadea5492ae3da8bd81f445cf",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T16:33:43.991659+00:00\",\"sizeBytes\":3054,\"sourceDocumentName\":\"MIT_09_Transfer_Tax_Declaration.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Transfer_Tax_Declaration.pdf\"}",
+    "timestamp": "2026-05-14 16:36:10.531767459 +0000 UTC",
+    "status": "Active",
+    "record_id": "83",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/e4987d40-ebb2-460a-9868-257d7f591fe0",
+    "checksum": "091a330d7b10a4191b00e0a668f9775672cb325a5b7a9e5b6e117ceb4462a54e",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T16:33:43.991659+00:00\",\"sizeBytes\":18293,\"sourceDocumentName\":\"MIT_10_Full_Data_Room_Index.xlsx\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_10_Full_Data_Room_Index.xlsx\"}",
+    "timestamp": "2026-05-14 16:36:44.727940487 +0000 UTC",
+    "status": "Active",
+    "record_id": "84",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "19",
+   "stored": {
+    "uri": "inveniam://deals/6473d941-2780-4f9a-8549-e81a4bf76b5c/documents/6aedbab1-1c94-4dea-96ce-624f3ea30b4a?retry=3",
+    "checksum": "fab55b59ebdafaa5bdefeece9b8a87e8a688f1733512817bf2f774592b167569",
+    "checksum_algo": "sha256",
+    "metadata": "{\"asOf\":\"2026-05-14T16:40:55.836553+00:00\",\"retry\":\"3\",\"sizeBytes\":3144,\"sourceDocumentName\":\"MIT_09_Buyer_Entity_Authority_Packet.pdf\",\"sourceDocumentPath\":\"/Metropolis Innovation Tower/MIT_09_Buyer_Entity_Authority_Packet.pdf\"}",
+    "timestamp": "2026-05-14 16:42:13.069255813 +0000 UTC",
+    "status": "Active",
+    "record_id": "85",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "19"
+   }
+  },
+  {
+   "registry_id": "24",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/1031386923130000",
+    "checksum": "9a92c0ff3b4d240881a10f8ffb8a56ff187eb855dea8f66074516a1ddc3c0200",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"7c6959e0-50cf-47b8-adeb-0687633faca4\",\"fileId\":\"bc5f8deb-5680-4a12-b461-8a3cab9da202\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/1031386923130000\",\"checksum\":\"9a92c0ff3b4d240881a10f8ffb8a56ff187eb855dea8f66074516a1ddc3c0200\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 00:44:43.305961375 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "24"
+   }
+  },
+  {
+   "registry_id": "25",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/1031387012519112800",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"e888deff-e317-4a3e-95bf-ec62987ce369\",\"fileId\":\"4e9fe5db-d166-4cc2-b733-4c82360e9b23\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/1031387012519112800\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 00:47:20.712437989 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "25"
+   }
+  },
+  {
+   "registry_id": "26",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/10313870229296400",
+    "checksum": "7320c432bce7fa3b22309df9387263cc333e3b832cad957790c9b1df5cf012e0",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"1a1616e2-8637-4294-87a5-dab74e0695ef\",\"fileId\":\"34354958-8a3a-41ab-8619-aedc0a276736\",\"uri\":\"https://api.inveniam.io/dataroom/2/10313870229296400\",\"checksum\":\"7320c432bce7fa3b22309df9387263cc333e3b832cad957790c9b1df5cf012e0\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 00:48:56.536046142 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "26"
+   }
+  },
+  {
+   "registry_id": "28",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103138711862436400",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"e3b34782-4235-471d-9477-5acf1e81e693\",\"fileId\":\"974d4b3f-fd68-4115-8079-a079ab4dddff\",\"uri\":\"https://api.inveniam.io/dataroom/2/103138711862436400\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 00:52:37.798261486 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "28"
+   }
+  },
+  {
+   "registry_id": "27",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/10313872182536400",
+    "checksum": "2c6e9e04d060ae9f4851af15140c52443efa995f6d2af74794281d064d93b343",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"fd0b65f7-2b6c-40b3-be1c-98288d4b1957\",\"fileId\":\"0d9bfbb8-1e53-41ac-bf91-60ab4cf5e6bf\",\"uri\":\"https://api.inveniam.io/dataroom/2/10313872182536400\",\"checksum\":\"2c6e9e04d060ae9f4851af15140c52443efa995f6d2af74794281d064d93b343\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 00:54:05.451754332 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "27"
+   }
+  },
+  {
+   "registry_id": "27",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/10313872100121000",
+    "checksum": "106f01d171ed413116f8f2a1c73ea2dcce96afa6cfad48e5e14c884ce8601625",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"fe67a1f4-af3e-4434-b24f-1677f1462a83\",\"fileId\":\"7999a6a3-6bbb-49dc-a7c3-507915378379\",\"uri\":\"https://api.inveniam.io/dataroom/2/10313872100121000\",\"checksum\":\"106f01d171ed413116f8f2a1c73ea2dcce96afa6cfad48e5e14c884ce8601625\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 00:55:29.496222991 +0000 UTC",
+    "status": "Active",
+    "record_id": "2",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "27"
+   }
+  },
+  {
+   "registry_id": "29",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/103138752196419200",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"fa1de37a-1cd4-42aa-8a00-9f5761803b0b\",\"fileId\":\"74b4de08-bfa2-4e82-b49b-a9fbc061ad96\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/103138752196419200\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:10:45.305372988 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "29"
+   }
+  },
+  {
+   "registry_id": "30",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103138767662000",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"d2eb9f0a-b0a3-49c2-8d63-b4a194c2768e\",\"fileId\":\"bb023e50-0a9d-4b96-b473-84119efa5e4e\",\"uri\":\"https://api.inveniam.io/dataroom/2/103138767662000\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:12:34.02440721 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "registry_id": "30"
+   }
+  },
+  {
+   "registry_id": "30",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/10313876188172000",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"49f369e1-589f-4c5c-a3da-159d33cc1d05\",\"fileId\":\"e95e2b44-fb97-4836-8cd5-a3df0297bdc0\",\"uri\":\"https://api.inveniam.io/dataroom/2/10313876188172000\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:14:30.719242536 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "2",
+    "is_latest": true,
+    "registry_id": "30"
+   }
+  },
+  {
+   "registry_id": "32",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/103138785637000",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"c447be47-10f1-43fc-8c99-7a1516f0e856\",\"fileId\":\"c561d6f5-85ee-497c-b251-5e1145c2d03d\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/103138785637000\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:21:09.05501479 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "32"
+   }
+  },
+  {
+   "registry_id": "33",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/1031387814020312800",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"776ed90a-d4c8-46c4-ae22-e9cf1f4c1055\",\"fileId\":\"14b1170b-fc78-486e-b631-4e9e6167f35b\",\"uri\":\"https://api.inveniam.io/dataroom/2/1031387814020312800\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:22:22.822071982 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "33"
+   }
+  },
+  {
+   "registry_id": "35",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103138791943819200",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"86b43761-89a1-495c-ac3f-4412afc00f2e\",\"fileId\":\"53244686-465c-4907-a4d7-d70bc8bbaaee\",\"uri\":\"https://api.inveniam.io/dataroom/2/103138791943819200\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:27:41.599452046 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "35"
+   }
+  },
+  {
+   "registry_id": "37",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103138839020312800",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"4769a620-46d1-46f0-aacc-b57399620ad2\",\"fileId\":\"fc7eb31c-0509-4df4-ac83-00b59aba04b8\",\"uri\":\"https://api.inveniam.io/dataroom/2/103138839020312800\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:43:22.857736702 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "registry_id": "37"
+   }
+  },
+  {
+   "registry_id": "34",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/1031388313021019200",
+    "checksum": "a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"0c81bbdb-7ba8-4e6e-8ba6-0bd9dc87eb26\",\"fileId\":\"2aeb4ba0-08c2-47cd-a027-752845c1a15e\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/1031388313021019200\",\"checksum\":\"a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:44:12.123433808 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "34"
+   }
+  },
+  {
+   "registry_id": "37",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/1031388315613819200",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"655e7f8e-78a4-4233-9c26-1eabbbe6dd4b\",\"fileId\":\"c48039a0-83c0-4219-a3e8-de90665e051b\",\"uri\":\"https://api.inveniam.io/dataroom/2/1031388315613819200\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:44:30.174613009 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "2",
+    "is_latest": true,
+    "registry_id": "37"
+   }
+  },
+  {
+   "registry_id": "36",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103138841021106400",
+    "checksum": "a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"1c7e7110-990a-4165-9ee7-47a1d1ca6861\",\"fileId\":\"1d888165-f3ac-463b-856e-e0082f127b86\",\"uri\":\"https://api.inveniam.io/dataroom/2/103138841021106400\",\"checksum\":\"a60b47363265d4dfa0ed2a7585a5f19f5ab8e565f0efde2da525ef4cc901ab56\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:47:56.715767348 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "36"
+   }
+  },
+  {
+   "registry_id": "38",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/10313884135686400",
+    "checksum": "20d0bedfd43cf85b3888a6f2dfc9fba982820a8aeb15b146a66384da2ed0e230",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"464d4b22-5c17-4332-a771-52bdbcddab85\",\"fileId\":\"a850ef0f-44a4-4720-8635-ef3446a51c7b\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/10313884135686400\",\"checksum\":\"20d0bedfd43cf85b3888a6f2dfc9fba982820a8aeb15b146a66384da2ed0e230\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 01:48:38.314762056 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "38"
+   }
+  },
+  {
+   "registry_id": "39",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103138872392096400",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"74fc674c-caab-48fa-be43-e4590cc17594\",\"fileId\":\"9bb2f187-8568-48b0-b15d-541178176e61\",\"uri\":\"https://api.inveniam.io/dataroom/2/103138872392096400\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-15 02:03:26.457050646 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "39"
+   }
+  },
+  {
+   "registry_id": "40",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/10314417620716312800",
+    "checksum": "2bfd6868108fbb19e6acffe9faeb49e2891b4e7db435c9d5db2b72dc7fb1df0e",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"20e01f71-cb2f-4506-b4ce-52267909474a\",\"fileId\":\"e6c6e609-9b3d-4996-b27e-78f66ac2afd8\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/10314417620716312800\",\"checksum\":\"2bfd6868108fbb19e6acffe9faeb49e2891b4e7db435c9d5db2b72dc7fb1df0e\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-20 00:22:43.045285873 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "40"
+   }
+  },
+  {
+   "registry_id": "41",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/103145250213208000",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"35921286-6652-4a5e-ac66-7bbcc9f6239b\",\"fileId\":\"70deea33-5edd-412d-b393-31c446f9810e\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/103145250213208000\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-21 00:24:32.6922679 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "41"
+   }
+  },
+  {
+   "registry_id": "42",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/1031452553725319200",
+    "checksum": "9a92c0ff3b4d240881a10f8ffb8a56ff187eb855dea8f66074516a1ddc3c0200",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"e655e413-d6c9-4519-bf9a-a62923e0690e\",\"fileId\":\"837b3242-e2d3-403e-9c7e-a814732bd2f8\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/1031452553725319200\",\"checksum\":\"9a92c0ff3b4d240881a10f8ffb8a56ff187eb855dea8f66074516a1ddc3c0200\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-21 00:43:31.26492714 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "42"
+   }
+  },
+  {
+   "registry_id": "43",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/1031463171066400",
+    "checksum": "62185ee35bfdd80cd6eae43552763df9ab8688588278d3ca09d1b3bff6cde9e5",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"50d4c3cf-68cb-4aae-b86e-7cf7034f3704\",\"fileId\":\"0d1e931a-07a3-4bb0-a4fc-1341ff4765a3\",\"uri\":\"https://api.inveniam.io/dataroom/2/1031463171066400\",\"checksum\":\"62185ee35bfdd80cd6eae43552763df9ab8688588278d3ca09d1b3bff6cde9e5\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-21 01:00:28.606720024 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "43"
+   }
+  },
+  {
+   "registry_id": "44",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/1031476557456400",
+    "checksum": "e3af41a762ad1a7204cba1d7a5919d706e47719efee6cb349ff08ccabcdddbcd",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"a7b4aa62-eb9b-48a5-b889-6ee58db23d74\",\"fileId\":\"b67e0996-b2a6-4f31-a844-c383059db63f\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/1031476557456400\",\"checksum\":\"e3af41a762ad1a7204cba1d7a5919d706e47719efee6cb349ff08ccabcdddbcd\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-22 00:10:39.898387244 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "44"
+   }
+  },
+  {
+   "registry_id": "45",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/1031476721912819200",
+    "checksum": "d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"96581a1d-015e-408c-b7ea-c41eb14c96c8\",\"fileId\":\"d85d13aa-4b73-4898-a6c2-7fc3df1c56c1\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/1031476721912819200\",\"checksum\":\"d458b61c1c41e97f37bdb5b805cee54abea9c6263dd8c225ec506316ac3779e1\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-22 00:22:14.102155041 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "45"
+   }
+  },
+  {
+   "registry_id": "45",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/10314768482396400",
+    "checksum": "d15788d57708f8d65ed51f02a7951562cf7fea84699d6874b48bc43a303cfd11",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"e02bede5-d9b9-4db7-b5ea-034382502e05\",\"fileId\":\"8b0b8ea1-2a40-46b1-8ba9-1bad6a6e00e9\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/10314768482396400\",\"checksum\":\"d15788d57708f8d65ed51f02a7951562cf7fea84699d6874b48bc43a303cfd11\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-22 00:23:38.271017293 +0000 UTC",
+    "status": "Active",
+    "record_id": "2",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "45"
+   }
+  },
+  {
+   "registry_id": "47",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103147692241746400",
+    "checksum": "4f5dd292e4f358be17c966a5faf4b5cefd4e68f697ce835da1271fda8ebb96d3",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"424e3e29-7bff-42dc-8ff9-10b7061025db\",\"fileId\":\"ed3736e7-6645-44ac-b4c5-325c2664ece6\",\"uri\":\"https://api.inveniam.io/dataroom/2/103147692241746400\",\"checksum\":\"4f5dd292e4f358be17c966a5faf4b5cefd4e68f697ce835da1271fda8ebb96d3\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-22 00:30:51.295079313 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "47"
+   }
+  },
+  {
+   "registry_id": "47",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103147701261000",
+    "checksum": "5cad1814be4d9dfef3f4898dda0cd60ad0451ca332c223ff81f884d50bb404ed",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"2e94bee9-c74e-4b16-8203-7fa2572dbef1\",\"fileId\":\"de733eec-0c70-4dd1-b72b-5a2e2e93cb3d\",\"uri\":\"https://api.inveniam.io/dataroom/2/103147701261000\",\"checksum\":\"5cad1814be4d9dfef3f4898dda0cd60ad0451ca332c223ff81f884d50bb404ed\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-05-22 00:31:38.223551079 +0000 UTC",
+    "status": "Active",
+    "record_id": "2",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "47"
+   }
+  },
+  {
+   "registry_id": "51",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/1031658523718212800",
+    "checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"5f64d9cb-1f4a-4a0e-bdb3-56573f64226a\",\"fileId\":\"62622154-4fa9-45e9-8022-bc5cf7273676\",\"uri\":\"https://api.inveniam.io/dataroom/2/1031658523718212800\",\"checksum\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-06-05 01:13:38.842039024 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "51"
+   }
+  },
+  {
+   "registry_id": "50",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103165871755519200",
+    "checksum": "a28e36e2d07fae91a1de364c725f2b8d8ac83ec3a561aa57f819d59bc8c08dea",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"ba0a5f25-16ab-4f55-b903-060852d246df\",\"fileId\":\"614c3fe3-8aff-43f4-b754-b5bc2af5847f\",\"uri\":\"https://api.inveniam.io/dataroom/2/103165871755519200\",\"checksum\":\"a28e36e2d07fae91a1de364c725f2b8d8ac83ec3a561aa57f819d59bc8c08dea\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-06-05 01:21:17.747807627 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "50"
+   }
+  },
+  {
+   "registry_id": "54",
+   "stored": {
+    "uri": "https://uat-api.inveniam.io/dataroom/2/1031663024312919200",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"ab6c6d98-4ee6-4deb-b54e-e645a1539dee\",\"fileId\":\"dc10f650-bfcb-45ac-a9cc-897ca61f6181\",\"uri\":\"https://uat-api.inveniam.io/dataroom/2/1031663024312919200\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-06-05 15:51:55.455892974 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "54"
+   }
+  },
+  {
+   "registry_id": "55",
+   "stored": {
+    "uri": "https://uat-api.inveniam.io/dataroom/2/1031663617012719200",
+    "checksum": "b0b39563c15f001eb28acc27e33d74d3bec1f7e23cd5879a2593fd1f398e71d9",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"14a15d5f-6f15-4b9f-8e05-aeb43d307196\",\"fileId\":\"94a9af19-1b76-4333-a82b-8f79e31d067a\",\"uri\":\"https://uat-api.inveniam.io/dataroom/2/1031663617012719200\",\"checksum\":\"b0b39563c15f001eb28acc27e33d74d3bec1f7e23cd5879a2593fd1f398e71d9\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-06-05 16:16:54.354106921 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "55"
+   }
+  },
+  {
+   "registry_id": "58",
+   "stored": {
+    "uri": "https://uat-api.inveniam.io/dataroom/2/103183230216736400",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"23609218-4ed9-45d8-9b4d-b63a3ec8b039\",\"fileId\":\"7b07b9ae-238c-4fa7-aece-efe7635b2e6b\",\"uri\":\"https://uat-api.inveniam.io/dataroom/2/103183230216736400\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-06-19 11:19:24.581556288 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "58"
+   }
+  },
+  {
+   "registry_id": "61",
+   "stored": {
+    "uri": "https://uat-api.inveniam.io/dataroom/2/10320119619806400",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"40687795-3b95-4190-8770-dca5ccb3e075\",\"fileId\":\"924f5dda-06c9-4caf-a924-cd5a77423d26\",\"uri\":\"https://uat-api.inveniam.io/dataroom/2/10320119619806400\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-07-03 08:20:08.138469722 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "61"
+   }
+  },
+  {
+   "registry_id": "62",
+   "stored": {
+    "uri": "https://uat-api.inveniam.io/dataroom/2/10320120345806400",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"a2e5f384-7c0f-4659-b022-b3f9be24d62c\",\"fileId\":\"debc0af3-dc50-4da1-8cb1-76558df92d96\",\"uri\":\"https://uat-api.inveniam.io/dataroom/2/10320120345806400\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-07-03 08:51:14.249112503 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "62"
+   }
+  },
+  {
+   "registry_id": "63",
+   "stored": {
+    "uri": "https://uat-api.inveniam.io/dataroom/2/103201210199173000",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"0e3a2ef1-9268-4d9a-a66b-6ee397d88ed1\",\"fileId\":\"80c6b4df-5193-458d-9d8f-dfceb19c5114\",\"uri\":\"https://uat-api.inveniam.io/dataroom/2/103201210199173000\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-07-03 09:24:24.885912222 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "63"
+   }
+  },
+  {
+   "registry_id": "64",
+   "stored": {
+    "uri": "https://uat-api.inveniam.io/dataroom/2/103214154231246000",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"922939ba-b0fa-474e-ad53-ee74dc66741a\",\"fileId\":\"07ebf91b-1a92-4632-889c-7288118e9463\",\"uri\":\"https://uat-api.inveniam.io/dataroom/2/103214154231246000\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-07-13 07:40:35.51227335 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "64"
+   }
+  },
+  {
+   "registry_id": "65",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/103215140162237000",
+    "checksum": "4332d5104849a0263fc5c52f2912bd27802f7712b423429fe6f0a84067c676fe",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"e73f08e7-e656-4b3e-af21-9a045b4cfa7b\",\"fileId\":\"ca9fe820-45b7-412a-a748-abef95236705\",\"uri\":\"https://api.inveniam.io/dataroom/2/103215140162237000\",\"checksum\":\"4332d5104849a0263fc5c52f2912bd27802f7712b423429fe6f0a84067c676fe\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-07-14 01:16:42.547047011 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "65"
+   }
+  },
+  {
+   "registry_id": "65",
+   "stored": {
+    "uri": "https://api.inveniam.io/dataroom/2/10321515715825000",
+    "checksum": "82244d9f45b413d09ce338d926b9aa3818029dbbc9a032f51b285cc674034cac",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"febed200-ba09-4224-a3e7-bd16875b202f\",\"fileId\":\"ab07c1a4-3b0b-4f17-9e04-de55e0aa15c0\",\"uri\":\"https://api.inveniam.io/dataroom/2/10321515715825000\",\"checksum\":\"82244d9f45b413d09ce338d926b9aa3818029dbbc9a032f51b285cc674034cac\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-07-14 02:30:51.557460534 +0000 UTC",
+    "status": "Active",
+    "record_id": "2",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "65"
+   }
+  },
+  {
+   "registry_id": "66",
+   "stored": {
+    "uri": "https://prdme21-api.prod21.inveniam.io/dataroom/2/10321515724314612800",
+    "checksum": "7290e8136944a68053713570633b9edd4f847c462bc6db5ef04dbfce2da8cfae",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"5f557d02-e395-45ca-a14a-50735833ea04\",\"fileId\":\"5596a9e2-55fa-494b-a043-422e603a18e3\",\"uri\":\"https://prdme21-api.prod21.inveniam.io/dataroom/2/10321515724314612800\",\"checksum\":\"7290e8136944a68053713570633b9edd4f847c462bc6db5ef04dbfce2da8cfae\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-07-14 02:32:28.882099197 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "66"
+   }
+  },
+  {
+   "registry_id": "67",
+   "stored": {
+    "uri": "https://uat-api.inveniam.io/dataroom/2/10321917416091000",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"03dd3736-e96e-4c5d-ad3c-a02419b3ffeb\",\"fileId\":\"2ba7adac-4e82-4e39-b75d-1b94d86af1cd\",\"uri\":\"https://uat-api.inveniam.io/dataroom/2/10321917416091000\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-07-17 06:19:05.4400388 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "67"
+   }
+  },
+  {
+   "registry_id": "68",
+   "stored": {
+    "uri": "https://uat-api.inveniam.io/dataroom/2/103235222451512800",
+    "checksum": "0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30",
+    "checksum_algo": "-",
+    "metadata": "{\"taxonomyId\":\"5b0e6ca3-1286-4fbf-b9de-660577ad5cc5\",\"fileId\":\"ccb878fc-d05c-491c-bc01-4e84e5b3022d\",\"uri\":\"https://uat-api.inveniam.io/dataroom/2/103235222451512800\",\"checksum\":\"0d30702e33793163f41455a5b3d5e79f4b80762bb857c4f3a892952bf3222a30\",\"dealName\":\"-\",\"document\":\"-\",\"checksumAlgo\":\"-\",\"timestamp\":\"-\",\"location\":\"-\",\"individualId\":\"-\"}",
+    "timestamp": "2026-07-29 05:32:10.459612007 +0000 UTC",
+    "status": "Active",
+    "record_id": "1",
+    "index": "1",
+    "is_latest": true,
+    "registry_id": "68"
+   }
+  }
+ ]
+}

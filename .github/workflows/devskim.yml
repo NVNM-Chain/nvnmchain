@@ -27,6 +27,9 @@ jobs:
 
       - name: Run DevSkim scanner
         uses: microsoft/DevSkim-Action@v1
+        with:
+          # The fixture's checksums are 64 hex characters, which the token rule reads as keys.
+          ignore-globs: "**/.git/**,**/bin/**,**/x/anchoring/evmlayout/testdata/**"
 
       - name: Upload DevSkim scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
