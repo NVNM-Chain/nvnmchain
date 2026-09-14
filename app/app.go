@@ -513,9 +513,8 @@ func New(
 	// A nil NameIndex makes Query/SearchRegistriesByName return
 	// FailedPrecondition. Must run before configStaticPrecompiles and
 	// NewAppModule below, which copy the keeper by value.
-	nameIndexCfg := nameindex.ReadConfig(appOpts, homePath)
-	if nameIndexCfg.Enabled {
-		nameIndexStore, err := nameindex.Open(nameIndexCfg.DBPath, appCodec)
+	if cfg := nameindex.ReadConfig(appOpts, homePath); cfg.Enabled {
+		nameIndexStore, err := nameindex.Open(cfg.DBPath, appCodec)
 		if err != nil {
 			panic(fmt.Errorf("failed to open anchoring name index: %w", err))
 		}

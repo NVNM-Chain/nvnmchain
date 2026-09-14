@@ -223,7 +223,8 @@ var (
 // two: baseapp builds FinalizeBlock state with isCheckTx=false and every query
 // context (eth_call, eth_estimateGas, simulation) with true, and x/vm carries
 // the flag through its cache contexts untouched. ctx.ExecMode() cannot stand
-// in: in cosmos-sdk v0.53 a finalize context still reports ExecModeCheck.
+// in: WithIsCheckTx(false) resets it to ExecModeCheck, so a context built
+// that way reports Check inside a block.
 //
 // The EOA check alone would not do: a plain transaction sent straight to the
 // precompile has msg.sender == tx.origin and no code at origin, yet runs in

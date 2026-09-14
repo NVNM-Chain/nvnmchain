@@ -70,24 +70,10 @@ func Open(path string, cdc codec.BinaryCodec) (*Store, error) {
 		return nil, fmt.Errorf("nameindex: open %s: %w", path, err)
 	}
 
-	// Remember whether the trigram index already exists: a file written before
-	// it was added has rows the triggers never saw, so build it from them.
-	var hadFTS int
-	if err := db.QueryRow(`SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = 'registries_fts'`).Scan(&hadFTS); err != nil {
-		_ = db.Close()
-		return nil, fmt.Errorf("nameindex: inspect schema: %w", err)
-	}
 	if _, err := db.Exec(schema); err != nil {
 		_ = db.Close()
 		return nil, fmt.Errorf("nameindex: migrate schema: %w", err)
 	}
-	if hadFTS == 0 {
-		if _, err := db.Exec(`INSERT INTO registries_fts(registries_fts) VALUES ('rebuild')`); err != nil {
-			_ = db.Close()
-			return nil, fmt.Errorf("nameindex: build trigram index: %w", err)
-		}
-	}
-
 	return &Store{db: db, cdc: cdc}, nil
 }
 

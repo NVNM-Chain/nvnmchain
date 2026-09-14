@@ -12,6 +12,8 @@ import (
 // the registry name index.
 const TomlSection = "anchoring-name-index"
 
+const defaultDBPath = "anchoring_name_index.db"
+
 // Config controls whether this node builds and serves the registry name
 // index, and where its backing SQLite file lives.
 type Config struct {
@@ -28,7 +30,7 @@ func ReadConfig(appOpts servertypes.AppOptions, homeDir string) Config {
 	enabled := cast.ToBool(appOpts.Get(TomlSection + ".enabled"))
 	dbPath := cast.ToString(appOpts.Get(TomlSection + ".db-path"))
 	if dbPath == "" {
-		dbPath = "anchoring_name_index.db"
+		dbPath = defaultDBPath
 	}
 	if !filepath.IsAbs(dbPath) {
 		dbPath = filepath.Join(homeDir, "data", dbPath)
@@ -57,5 +59,5 @@ db-path = "{{ .AnchoringNameIndex.DBPath }}"
 // DefaultConfig returns the disabled-by-default config used to seed a fresh
 // app.toml.
 func DefaultConfig() Config {
-	return Config{Enabled: false, DBPath: "anchoring_name_index.db"}
+	return Config{DBPath: defaultDBPath}
 }

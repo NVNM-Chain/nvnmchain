@@ -45,7 +45,10 @@ func queryPlan(t *testing.T, s *Store, mode types.RegistryNameMatchMode, query s
 
 // TestSearchPlansUseIndexes pins which index serves each mode. SQLite only
 // serves LIKE from a B-tree index with case_sensitive_like on; without it
-// even a prefix pattern is a full table scan, silently.
+// even a prefix pattern is a full table scan, silently. That matters because
+// the precompile bills only the rows a call returns, not the rows SQLite
+// examines: a lost index would turn an empty page into free CPU, and
+// store_test.go, which asserts on results, would not notice.
 func TestSearchPlansUseIndexes(t *testing.T) {
 	s := openStore(t)
 	for i := 1; i <= 20; i++ {
@@ -74,31 +77,6 @@ func TestSearchPlansUseIndexes(t *testing.T) {
 		require.Contains(t, joined, tc.want, "mode %d", tc.mode)
 		require.Equal(t, tc.sorts, strings.Contains(joined, "TEMP B-TREE"), "mode %d: %v", tc.mode, plan)
 	}
-}
-
-// TestOpen_BuildsTrigramIndexForExistingRows covers an index file written
-// before the trigram index existed: its rows never passed through the
-// triggers, so the first open with the new schema must index them.
-func TestOpen_BuildsTrigramIndexForExistingRows(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "index.db")
-	cdc := codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
-	s, err := Open(path, cdc)
-	require.NoError(t, err)
-
-	// Roll the file back to the pre-trigram schema, then write through it.
-	_, err = s.db.Exec(`DROP TRIGGER registries_fts_ai; DROP TRIGGER registries_fts_au;
-		DROP TRIGGER registries_fts_ad; DROP TABLE registries_fts;`)
-	require.NoError(t, err)
-	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "legacy-fund"}))
-	require.NoError(t, s.Close())
-
-	s, err = Open(path, cdc)
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = s.Close() })
-	got, err := s.Search(types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS, "fund", 50, 0)
-	require.NoError(t, err)
-	require.Len(t, got, 1)
-	require.Equal(t, "legacy-fund", got[0].Name)
 }
 
 // TestOpen_WALReadersDoNotBlockWriter pins the property ListenCommit relies
