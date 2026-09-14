@@ -2,8 +2,10 @@ package keeper
 
 import (
 	"context"
+	"errors"
 
 	"cosmossdk.io/collections"
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/nameindex"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -263,4 +265,31 @@ func (q queryServer) Registry(ctx context.Context, req *types.QueryRegistryReque
 	}
 
 	return &types.QueryRegistryResponse{Registry: &registry}, nil
+}
+
+// SearchRegistriesByName looks up registries by name via the node's opt-in
+// local name index (see [anchoring-name-index] in app.toml). It returns
+// codes.FailedPrecondition on a node that has not enabled the index.
+func (q queryServer) SearchRegistriesByName(_ context.Context, req *types.QuerySearchRegistriesByNameRequest) (*types.QuerySearchRegistriesByNameResponse, error) {
+	if q.k.NameIndex == nil {
+		return nil, status.Error(codes.FailedPrecondition, "registry name index is not enabled on this node; see [anchoring-name-index] in app.toml")
+	}
+	if req == nil || req.Name == "" {
+		return nil, status.Error(codes.InvalidArgument, "name must be provided")
+	}
+
+	pageReq := sanitizePageRequest(req.Pagination, defaultPageLimit, maxPageLimit)
+	registries, err := q.k.NameIndex.Search(req.Mode, req.Name, pageReq.Limit, pageReq.Offset)
+	if errors.Is(err, nameindex.ErrContainsTooShort) {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	var pageRes *query.PageResponse
+	if req.Pagination != nil {
+		pageRes = &query.PageResponse{}
+	}
+	return &types.QuerySearchRegistriesByNameResponse{Registries: registries, Pagination: pageRes}, nil
 }
