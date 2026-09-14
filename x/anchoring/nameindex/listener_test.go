@@ -61,13 +61,13 @@ func TestListener_ListenCommit(t *testing.T) {
 
 	require.NoError(t, l.ListenCommit(context.Background(), abci.ResponseCommit{}, changeSet))
 
-	got, err := s.Search(nameindex.MatchModeExact, "indexed_registry", 50, 0)
+	got, err := s.Search(exact, "indexed_registry", 50, 0)
 	require.NoError(t, err)
 	require.Len(t, got, 1)
 	require.Equal(t, uint64(1), got[0].Id)
 
 	for _, name := range []string{"should_not_index", "deleted_registry"} {
-		got, err := s.Search(nameindex.MatchModeExact, name, 50, 0)
+		got, err := s.Search(exact, name, 50, 0)
 		require.NoError(t, err)
 		require.Emptyf(t, got, "expected %q to not be indexed", name)
 	}
@@ -102,7 +102,7 @@ func TestListener_ListenCommit_BlockIsAtomic(t *testing.T) {
 
 	require.Error(t, l.ListenCommit(context.Background(), abci.ResponseCommit{}, changeSet))
 
-	got, err := s.Search(nameindex.MatchModeExact, "first", 50, 0)
+	got, err := s.Search(exact, "first", 50, 0)
 	require.NoError(t, err)
 	require.Empty(t, got, "a block that fails to decode must not be half-indexed")
 }
@@ -135,7 +135,7 @@ func TestListener_ListenCommit_NoRegistryWrites(t *testing.T) {
 		require.NoError(t, l.ListenCommit(context.Background(), abci.ResponseCommit{}, changeSet))
 	}
 
-	got, err := s.Search(nameindex.MatchModeExact, "seeded", 50, 0)
+	got, err := s.Search(exact, "seeded", 50, 0)
 	require.NoError(t, err)
 	require.Len(t, got, 1, "blocks without registry writes must not disturb the index")
 }

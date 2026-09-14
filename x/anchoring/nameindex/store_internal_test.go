@@ -25,7 +25,7 @@ func openStore(t *testing.T) *Store {
 
 // queryPlan returns the EXPLAIN QUERY PLAN detail lines for the statement
 // Search would run for mode and query.
-func queryPlan(t *testing.T, s *Store, mode MatchMode, query string) []string {
+func queryPlan(t *testing.T, s *Store, mode types.RegistryNameMatchMode, query string) []string {
 	t.Helper()
 	stmt, arg := searchStmt(mode, query)
 	rows, err := s.db.Query("EXPLAIN QUERY PLAN "+stmt, arg, 50, 0)
@@ -53,7 +53,7 @@ func TestSearchPlansUseIndexes(t *testing.T) {
 	}
 
 	testCases := []struct {
-		mode  MatchMode
+		mode  types.RegistryNameMatchMode
 		query string
 		want  string
 		// sorts is whether the plan sorts its matches into id order. Range
@@ -62,10 +62,10 @@ func TestSearchPlansUseIndexes(t *testing.T) {
 		// come back in rowid order.
 		sorts bool
 	}{
-		{MatchModeExact, "reg-01-fund", "USING INDEX idx_registries_name_lower", false},
-		{MatchModePrefix, "reg", "USING INDEX idx_registries_name_lower", true},
-		{MatchModeSuffix, "fund", "USING INDEX idx_registries_name_rev_lower", true},
-		{MatchModeContains, "fund", "SCAN f VIRTUAL TABLE INDEX", false},
+		{types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_EXACT, "reg-01-fund", "USING INDEX idx_registries_name_lower", false},
+		{types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_PREFIX, "reg", "USING INDEX idx_registries_name_lower", true},
+		{types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_SUFFIX, "fund", "USING INDEX idx_registries_name_rev_lower", true},
+		{types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS, "fund", "SCAN f VIRTUAL TABLE INDEX", false},
 	}
 	for _, tc := range testCases {
 		plan := queryPlan(t, s, tc.mode, tc.query)
@@ -95,7 +95,7 @@ func TestOpen_BuildsTrigramIndexForExistingRows(t *testing.T) {
 	s, err = Open(path, cdc)
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = s.Close() })
-	got, err := s.Search(MatchModeContains, "fund", 50, 0)
+	got, err := s.Search(types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS, "fund", 50, 0)
 	require.NoError(t, err)
 	require.Len(t, got, 1)
 	require.Equal(t, "legacy-fund", got[0].Name)
@@ -127,27 +127,4 @@ func TestOpen_WALReadersDoNotBlockWriter(t *testing.T) {
 	// succeeds immediately; in rollback-journal mode it would block on the
 	// reader until busy_timeout expired and then fail.
 	require.NoError(t, s.Upsert(&types.Registry{Id: 2, Name: "b"}))
-}
-
-// TestFromProto pins the wire enum → MatchMode mapping. The default arm is the
-// interesting one: an unspecified mode, which is what a caller gets by leaving
-// the field out, must resolve to exact rather than to whatever iota happens to
-// put first.
-func TestFromProto(t *testing.T) {
-	testCases := []struct {
-		proto types.RegistryNameMatchMode
-		want  MatchMode
-	}{
-		{types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_UNSPECIFIED, MatchModeExact},
-		{types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_EXACT, MatchModeExact},
-		{types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_PREFIX, MatchModePrefix},
-		{types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_SUFFIX, MatchModeSuffix},
-		{types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS, MatchModeContains},
-		// An out-of-range value cannot widen access: it falls back to exact,
-		// the narrowest mode, not to contains.
-		{types.RegistryNameMatchMode(99), MatchModeExact},
-	}
-	for _, tc := range testCases {
-		require.Equal(t, tc.want, FromProto(tc.proto), tc.proto.String())
-	}
 }

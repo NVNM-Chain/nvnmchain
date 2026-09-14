@@ -13,6 +13,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	exact    = types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_EXACT
+	prefix   = types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_PREFIX
+	suffix   = types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_SUFFIX
+	contains = types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS
+)
+
 func newStore(t *testing.T) *nameindex.Store {
 	t.Helper()
 	cdc := codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
@@ -45,31 +52,31 @@ func TestStore_MatchModes(t *testing.T) {
 	}
 
 	t.Run("exact is case-insensitive", func(t *testing.T) {
-		got, err := s.Search(nameindex.MatchModeExact, "kyc_registry", 50, 0)
+		got, err := s.Search(exact, "kyc_registry", 50, 0)
 		require.NoError(t, err)
 		require.Equal(t, []string{"kyc_registry"}, names(t, got))
 	})
 
 	t.Run("prefix", func(t *testing.T) {
-		got, err := s.Search(nameindex.MatchModePrefix, "kyc", 50, 0)
+		got, err := s.Search(prefix, "kyc", 50, 0)
 		require.NoError(t, err)
 		require.ElementsMatch(t, []string{"kyc_registry", "KYC_Extended"}, names(t, got))
 	})
 
 	t.Run("suffix", func(t *testing.T) {
-		got, err := s.Search(nameindex.MatchModeSuffix, "registry", 50, 0)
+		got, err := s.Search(suffix, "registry", 50, 0)
 		require.NoError(t, err)
 		require.ElementsMatch(t, []string{"kyc_registry", "aml_registry"}, names(t, got))
 	})
 
 	t.Run("contains", func(t *testing.T) {
-		got, err := s.Search(nameindex.MatchModeContains, "_reg", 50, 0)
+		got, err := s.Search(contains, "_reg", 50, 0)
 		require.NoError(t, err)
 		require.ElementsMatch(t, []string{"kyc_registry", "aml_registry"}, names(t, got))
 	})
 
 	t.Run("no match", func(t *testing.T) {
-		got, err := s.Search(nameindex.MatchModeContains, "zzz", 50, 0)
+		got, err := s.Search(contains, "zzz", 50, 0)
 		require.NoError(t, err)
 		require.Empty(t, got)
 	})
@@ -84,13 +91,13 @@ func TestStore_CaseInsensitiveAcrossModes(t *testing.T) {
 	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "Kyc_Registry"}))
 
 	testCases := []struct {
-		mode  nameindex.MatchMode
+		mode  types.RegistryNameMatchMode
 		query string
 	}{
-		{nameindex.MatchModeExact, "KYC_REGISTRY"},
-		{nameindex.MatchModePrefix, "KYC"},
-		{nameindex.MatchModeSuffix, "REGISTRY"},
-		{nameindex.MatchModeContains, "C_REG"},
+		{exact, "KYC_REGISTRY"},
+		{prefix, "KYC"},
+		{suffix, "REGISTRY"},
+		{contains, "C_REG"},
 	}
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("mode=%d query=%s", tc.mode, tc.query), func(t *testing.T) {
@@ -101,13 +108,34 @@ func TestStore_CaseInsensitiveAcrossModes(t *testing.T) {
 	}
 }
 
+// TestStore_UnknownModeIsExact pins the default arm: an unspecified mode, which
+// is what a caller gets by leaving the field out, and any out-of-range value
+// both resolve to exact, the narrowest mode, never to contains.
+func TestStore_UnknownModeIsExact(t *testing.T) {
+	s := newStore(t)
+	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "kyc_registry"}))
+
+	for _, mode := range []types.RegistryNameMatchMode{
+		types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_UNSPECIFIED,
+		types.RegistryNameMatchMode(99),
+	} {
+		got, err := s.Search(mode, "kyc_registry", 50, 0)
+		require.NoError(t, err)
+		require.Equal(t, []string{"kyc_registry"}, names(t, got), mode.String())
+
+		got, err = s.Search(mode, "kyc", 50, 0)
+		require.NoError(t, err)
+		require.Empty(t, got, "%s must not widen to a substring match", mode)
+	}
+}
+
 func TestStore_LikeMetacharactersAreLiteral(t *testing.T) {
 	s := newStore(t)
 	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "50%_off"}))
 	require.NoError(t, s.Upsert(&types.Registry{Id: 2, Name: "50X_off"}))
 
 	// A literal "%" or "_" in the query must not act as a SQL LIKE wildcard.
-	got, err := s.Search(nameindex.MatchModeContains, "%_off", 50, 0)
+	got, err := s.Search(contains, "%_off", 50, 0)
 	require.NoError(t, err)
 	require.Equal(t, []string{"50%_off"}, names(t, got))
 }
@@ -117,16 +145,16 @@ func TestStore_ContainsNeedsThreeCharacters(t *testing.T) {
 	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "kyc_registry"}))
 	require.NoError(t, s.Upsert(&types.Registry{Id: 2, Name: "café"}))
 
-	_, err := s.Search(nameindex.MatchModeContains, "ky", 50, 0)
+	_, err := s.Search(contains, "ky", 50, 0)
 	require.ErrorIs(t, err, nameindex.ErrContainsTooShort)
 
 	// The floor is counted in characters, not bytes: "afé" is 3 runes.
-	got, err := s.Search(nameindex.MatchModeContains, "afé", 50, 0)
+	got, err := s.Search(contains, "afé", 50, 0)
 	require.NoError(t, err)
 	require.Equal(t, []string{"café"}, names(t, got))
 
 	// The other modes have no minimum.
-	got, err = s.Search(nameindex.MatchModePrefix, "k", 50, 0)
+	got, err = s.Search(prefix, "k", 50, 0)
 	require.NoError(t, err)
 	require.Equal(t, []string{"kyc_registry"}, names(t, got))
 }
@@ -137,11 +165,11 @@ func TestStore_ContainsTreatsFTSSyntaxAsText(t *testing.T) {
 	require.NoError(t, s.Upsert(&types.Registry{Id: 2, Name: "plain"}))
 
 	// Quotes and FTS5 operators in the query are matched as characters.
-	got, err := s.Search(nameindex.MatchModeContains, `"hi" OR`, 50, 0)
+	got, err := s.Search(contains, `"hi" OR`, 50, 0)
 	require.NoError(t, err)
 	require.Equal(t, []string{`say "hi" OR NOT`}, names(t, got))
 
-	got, err = s.Search(nameindex.MatchModeContains, "NOT plain", 50, 0)
+	got, err = s.Search(contains, "NOT plain", 50, 0)
 	require.NoError(t, err)
 	require.Empty(t, got, `"NOT" must not act as an operator`)
 }
@@ -153,10 +181,10 @@ func TestStore_ContainsFollowsRename(t *testing.T) {
 	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "alpha-one"}))
 	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "beta-two"}))
 
-	got, err := s.Search(nameindex.MatchModeContains, "alpha", 50, 0)
+	got, err := s.Search(contains, "alpha", 50, 0)
 	require.NoError(t, err)
 	require.Empty(t, got)
-	got, err = s.Search(nameindex.MatchModeContains, "beta", 50, 0)
+	got, err = s.Search(contains, "beta", 50, 0)
 	require.NoError(t, err)
 	require.Equal(t, []string{"beta-two"}, names(t, got))
 }
@@ -165,7 +193,7 @@ func TestStore_UnicodeSuffix(t *testing.T) {
 	s := newStore(t)
 	require.NoError(t, s.Upsert(&types.Registry{Id: 1, Name: "café-Registry"}))
 
-	got, err := s.Search(nameindex.MatchModeSuffix, "registry", 50, 0)
+	got, err := s.Search(suffix, "registry", 50, 0)
 	require.NoError(t, err)
 	require.Equal(t, []string{"café-Registry"}, names(t, got))
 }
@@ -176,11 +204,11 @@ func TestStore_Pagination(t *testing.T) {
 		require.NoError(t, s.Upsert(&types.Registry{Id: i, Name: "reg"}))
 	}
 
-	page1, err := s.Search(nameindex.MatchModeExact, "reg", 2, 0)
+	page1, err := s.Search(exact, "reg", 2, 0)
 	require.NoError(t, err)
-	page2, err := s.Search(nameindex.MatchModeExact, "reg", 2, 2)
+	page2, err := s.Search(exact, "reg", 2, 2)
 	require.NoError(t, err)
-	page3, err := s.Search(nameindex.MatchModeExact, "reg", 2, 4)
+	page3, err := s.Search(exact, "reg", 2, 4)
 	require.NoError(t, err)
 
 	require.Len(t, page1, 2)
@@ -199,7 +227,7 @@ func TestStore_BatchIsAtomic(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, batch.Upsert(&types.Registry{Id: 1, Name: "dropped"}))
 	batch.Close()
-	got, err := s.Search(nameindex.MatchModeExact, "dropped", 50, 0)
+	got, err := s.Search(exact, "dropped", 50, 0)
 	require.NoError(t, err)
 	require.Empty(t, got)
 
@@ -211,7 +239,7 @@ func TestStore_BatchIsAtomic(t *testing.T) {
 	require.NoError(t, batch.Upsert(&types.Registry{Id: 2, Name: "kept"}))
 	require.NoError(t, batch.Commit())
 	batch.Close()
-	got, err = s.Search(nameindex.MatchModeExact, "kept", 50, 0)
+	got, err = s.Search(exact, "kept", 50, 0)
 	require.NoError(t, err)
 	require.Len(t, got, 2)
 }
@@ -222,7 +250,7 @@ func TestStore_OffsetPastInt64IsEmpty(t *testing.T) {
 
 	// database/sql refuses uint64 values with the high bit set; the store
 	// must clamp rather than surface a driver error for a valid request.
-	got, err := s.Search(nameindex.MatchModeExact, "reg", math.MaxUint64, math.MaxUint64)
+	got, err := s.Search(exact, "reg", math.MaxUint64, math.MaxUint64)
 	require.NoError(t, err)
 	require.Empty(t, got)
 }
@@ -235,7 +263,7 @@ func TestStore_UpsertIsIdempotent(t *testing.T) {
 	reg.Description = "v2"
 	require.NoError(t, s.Upsert(reg))
 
-	got, err := s.Search(nameindex.MatchModeExact, "original", 50, 0)
+	got, err := s.Search(exact, "original", 50, 0)
 	require.NoError(t, err)
 	require.Len(t, got, 1)
 	require.Equal(t, "v2", got[0].Description)

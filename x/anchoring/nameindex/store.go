@@ -27,32 +27,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-// MatchMode mirrors types.RegistryNameMatchMode, kept as its own type so this
-// package does not need to import the query-request wrapper.
-type MatchMode int32
-
-const (
-	MatchModeExact MatchMode = iota
-	MatchModePrefix
-	MatchModeSuffix
-	MatchModeContains
-)
-
-// FromProto maps the generated enum onto MatchMode, defaulting the
-// unspecified value to an exact match.
-func FromProto(m types.RegistryNameMatchMode) MatchMode {
-	switch m {
-	case types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_PREFIX:
-		return MatchModePrefix
-	case types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_SUFFIX:
-		return MatchModeSuffix
-	case types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS:
-		return MatchModeContains
-	default:
-		return MatchModeExact
-	}
-}
-
 // MinContainsQueryLen is the shortest CONTAINS query a trigram index can
 // answer. The other modes have no minimum.
 const MinContainsQueryLen = 3
@@ -233,19 +207,19 @@ func (b *Batch) Close() {
 // is folded into the single bound pattern argument; LIMIT and OFFSET are bound
 // after it by the caller. It is separate from Search so tests can EXPLAIN the
 // exact statement and pin which index serves each mode.
-func searchStmt(mode MatchMode, lower string) (stmt, arg string) {
+func searchStmt(mode types.RegistryNameMatchMode, lower string) (stmt, arg string) {
 	var where string
 	switch mode {
-	case MatchModeContains:
+	case types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS:
 		// FTS5 serves ORDER BY rowid natively, so the page comes straight
 		// off the trigram index and each hit is one primary-key lookup.
 		return `SELECT r.data FROM registries_fts f JOIN registries r ON r.id = f.rowid ` +
 			`WHERE f.name_lower MATCH ? ORDER BY f.rowid LIMIT ? OFFSET ?`, ftsPhrase(lower)
-	case MatchModePrefix:
+	case types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_PREFIX:
 		where, arg = `name_lower LIKE ? ESCAPE '\'`, escapeLike(lower)+"%"
-	case MatchModeSuffix:
+	case types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_SUFFIX:
 		where, arg = `name_rev_lower LIKE ? ESCAPE '\'`, escapeLike(reverse(lower))+"%"
-	default: // MatchModeExact
+	default: // EXACT; also UNSPECIFIED and any out-of-range value
 		where, arg = `name_lower = ?`, lower
 	}
 	return `SELECT data FROM registries WHERE ` + where + ` ORDER BY id LIMIT ? OFFSET ?`, arg
@@ -255,8 +229,8 @@ func searchStmt(mode MatchMode, lower string) (stmt, arg string) {
 // id, applying a plain offset/limit page. Matching is always
 // case-insensitive. A CONTAINS query shorter than MinContainsQueryLen
 // characters returns ErrContainsTooShort.
-func (s *Store) Search(mode MatchMode, query string, limit, offset uint64) ([]*types.Registry, error) {
-	if mode == MatchModeContains && utf8.RuneCountInString(query) < MinContainsQueryLen {
+func (s *Store) Search(mode types.RegistryNameMatchMode, query string, limit, offset uint64) ([]*types.Registry, error) {
+	if mode == types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS && utf8.RuneCountInString(query) < MinContainsQueryLen {
 		return nil, ErrContainsTooShort
 	}
 	stmt, arg := searchStmt(mode, strings.ToLower(query))

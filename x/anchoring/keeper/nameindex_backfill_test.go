@@ -54,17 +54,17 @@ func TestBackfillNameIndex_ThenSearch(t *testing.T) {
 	// altered behind its back survives, which a re-walk would overwrite.
 	require.NoError(t, store.Upsert(&types.Registry{Id: 1, Name: "renamed_locally"}))
 	require.NoError(t, k.BackfillNameIndex(ctx))
-	got, err := store.Search(nameindex.MatchModeExact, "renamed_locally", 50, 0)
+	got, err := store.Search(types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_EXACT, "renamed_locally", 50, 0)
 	require.NoError(t, err)
 	require.Len(t, got, 1, "a complete index must not be re-walked on start")
 
 	// Behind by one registry: the counts differ and the walk repairs it.
 	keepertest.MustCreateAnchoringRegistry(t, k, ctx, sender, "late_registry")
 	require.NoError(t, k.BackfillNameIndex(ctx))
-	got, err = store.Search(nameindex.MatchModeExact, "kyc_registry", 50, 0)
+	got, err = store.Search(types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_EXACT, "kyc_registry", 50, 0)
 	require.NoError(t, err)
 	require.Len(t, got, 1, "the re-walk restores the chain's name")
-	got, err = store.Search(nameindex.MatchModeExact, "late_registry", 50, 0)
+	got, err = store.Search(types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_EXACT, "late_registry", 50, 0)
 	require.NoError(t, err)
 	require.Len(t, got, 1)
 }

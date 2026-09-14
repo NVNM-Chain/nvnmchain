@@ -279,7 +279,7 @@ func (q queryServer) SearchRegistriesByName(_ context.Context, req *types.QueryS
 	}
 
 	pageReq := sanitizePageRequest(req.Pagination, defaultPageLimit, maxPageLimit)
-	registries, err := q.k.NameIndex.Search(nameindex.FromProto(req.Mode), req.Name, pageReq.Limit, pageReq.Offset)
+	registries, err := q.k.NameIndex.Search(req.Mode, req.Name, pageReq.Limit, pageReq.Offset)
 	if errors.Is(err, nameindex.ErrContainsTooShort) {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
