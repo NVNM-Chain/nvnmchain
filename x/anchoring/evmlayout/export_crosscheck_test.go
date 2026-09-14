@@ -49,7 +49,12 @@ func TestTheSeedMatchesTheExport(t *testing.T) {
 	// registry is the next version of that record, so its occurrence is its index, and only the
 	// last one is latest.
 	rows, bad := 0, 0
+	oneFileEach := make(map[string]bool, len(e.Files))
 	for _, entry := range e.Files {
+		// Versions are counted per file below, but the keeper counts them across the whole seed.
+		require.Falsef(t, oneFileEach[entry.Registry], "registry %q is split across files", entry.Registry)
+		oneFileEach[entry.Registry] = true
+
 		id := ids[entry.Registry]
 		recs := readTranche(t, e.Dir, entry)
 		versions := make(map[string]uint64, entry.Records)

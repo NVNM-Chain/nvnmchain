@@ -241,6 +241,7 @@ func seedTheExport(t *testing.T, k anchoringkeeper.Keeper, ctx sdk.Context, e ex
 	for _, r := range e.Registries {
 		id, err := k.AddRegistry(ctx, creator, r.Name, r.Description, r.Metadata)
 		require.NoError(t, err)
+		require.NotContainsf(t, ids, r.Name, "two registries named %q", r.Name)
 		ids[r.Name] = id
 	}
 	t.Logf("registries %d in %s", len(e.Registries), time.Since(began).Round(time.Millisecond))
