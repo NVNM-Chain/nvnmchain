@@ -1,3 +1,3 @@
 [submodule "nvnm-contracts"]
 	path = contracts
-	url = ../nvnmchain-contracts.git
+	url = https://github.com/NVNM-Chain/nvnmchain-contracts.git
