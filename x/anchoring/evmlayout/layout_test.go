@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/NVNM-Chain/nvnmchain/x/anchoring/evmlayout"
 	anchoringkeeper "github.com/NVNM-Chain/nvnmchain/x/anchoring/keeper"
 	"github.com/NVNM-Chain/nvnmchain/x/anchoring/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -24,11 +25,22 @@ var (
 	blockTime   = time.Unix(1757376000, 0).UTC()
 )
 
-// The fixture's corpus has to migrate to exactly the slots the contract wrote for it.
+// The fixture's corpus has to migrate to exactly the slots the contract wrote for it, save the
+// header: the contract leaves the admin's 20 bytes empty and the migration fills them in.
 func TestMigrationMatchesWhatTheContractWrote(t *testing.T) {
 	k, ctx := anchoringKeeper(t)
 	seedFixtureCorpus(t, k, ctx)
-	require.Equal(t, readFixture(t), migrated(t, k, ctx))
+
+	written := migrated(t, k, ctx)
+	header := evmlayout.Word(evmlayout.SlotHeader)
+	slot := written[header]
+	require.Equal(t, moduleAdmin, common.BytesToAddress(slot[12:]), "the admin the module had")
+
+	fixture := readFixture(t)
+	expected := fixture[header]
+	copy(expected[12:], slot[12:]) // only the admin's bytes; the count still has to agree
+	fixture[header] = expected
+	require.Equal(t, fixture, written)
 }
 
 // The calls SeedFixture.t.sol makes, in the same order.

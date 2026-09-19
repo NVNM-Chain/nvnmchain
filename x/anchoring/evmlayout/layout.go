@@ -18,7 +18,7 @@ const (
 	SlotRoleAdmin uint64 = iota
 	SlotRoleMembers
 	SlotRoleMemberCount
-	SlotHeader // _moduleAdmin in the low 20 bytes, _registryCount in the 8 above
+	SlotHeader // the old admin in the low 20 bytes, _registryCount in the 8 above
 	SlotRegistries
 	SlotRecordCount
 	SlotLatestIndex
