@@ -9,9 +9,6 @@ import "nvnmchain/anchoring/v1/document.proto";
 import "nvnmchain/anchoring/v1/params.proto";
 
 option go_package = "github.com/NVNM-Chain/nvnmchain/x/anchoring/types";
-// Also register types with golang/protobuf so grpc-gateway v1 can resolve
-// enum query parameters (e.g. mode=REGISTRY_NAME_MATCH_MODE_PREFIX) by name.
-option (gogoproto.goproto_registration) = true;
 
 // Query defines the gRPC querier service.
 service Query {

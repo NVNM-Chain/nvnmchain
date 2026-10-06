@@ -23,7 +23,9 @@ func TestGatewayParsesRegistryNameMatchMode(t *testing.T) {
 		require.Equal(t, want, req.Mode, value)
 	}
 
-	var req types.QuerySearchRegistriesByNameRequest
-	err := runtime.PopulateQueryParameters(&req, url.Values{"mode": {"BOGUS"}}, utilities.NewDoubleArray(nil))
-	require.Error(t, err)
+	for _, value := range []string{"BOGUS", "99", "-1"} {
+		var req types.QuerySearchRegistriesByNameRequest
+		err := runtime.PopulateQueryParameters(&req, url.Values{"mode": {value}}, utilities.NewDoubleArray(nil))
+		require.Error(t, err, value)
+	}
 }
