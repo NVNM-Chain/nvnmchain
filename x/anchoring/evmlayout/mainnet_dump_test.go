@@ -31,9 +31,8 @@ import (
 //	NVNMCHAIN_DUMP_OUT=$HOME/anchoring-state.bin \
 //	go test -run TestDumpTheMainnetSeed -v -timeout 4h ./x/anchoring/evmlayout/
 //
-// It replays mainnet before v1.2.0 (NVNMCHAIN_PRESEED, default testdata/mainnet-preseed.json), the
-// v1.2.0 seed, and what mainnet took after it (NVNMCHAIN_POSTSEED, default
-// testdata/mainnet-postseed.json), so ids, creators and timestamps come out as mainnet holds them.
+// It replays mainnet before the v1.2.0 seed (NVNMCHAIN_PRESEED), the seed, and mainnet since it
+// (NVNMCHAIN_POSTSEED), so ids, creators and timestamps come out as mainnet holds them.
 // NVNMCHAIN_EXPORT_LIMIT stops the seed early, NVNMCHAIN_DUMP_ADDRESS replaces Address, and
 // NVNMCHAIN_DUMP_OUT must be absolute or the file lands in the package directory.
 const (
@@ -52,30 +51,21 @@ const (
 	goTimeLayout = "2006-01-02 15:04:05.999999999 -0700 MST" // time.Time.String()
 )
 
-// Mainnet's anchoring state before the seed, as nvnmchaind queries return it.
-type preseed struct {
+// Mainnet's anchoring rows as nvnmchaind queries return them, in the order mainnet wrote them.
+type fixture struct {
 	Admin      string           `json:"admin"`
 	SeedTime   time.Time        `json:"seed_time"`
 	Registries []storedRegistry `json:"registries"`
-	Records    []storedVersion  `json:"records"`
-}
-
-// What mainnet took after the seed, as nvnmchaind queries return it at the fixture's height:
-// records in the order they were written, each with the status it holds there.
-type postseed struct {
-	Registries    []storedRegistry `json:"registries"`
-	Records       []storedVersion  `json:"records"`
+	Records    []struct {
+		RegistryID uint64       `json:"registry_id,string"`
+		Stored     storedRecord `json:"stored"`
+	} `json:"records"`
 	StatusUpdates []struct {
 		RegistryID uint64 `json:"registry_id,string"`
 		RecordID   uint64 `json:"record_id,string"`
 		Index      uint64 `json:"index,string"`
 		Status     string `json:"status"`
 	} `json:"status_updates"`
-}
-
-type storedVersion struct {
-	RegistryID uint64       `json:"registry_id,string"`
-	Stored     storedRecord `json:"stored"`
 }
 
 type storedRegistry struct {
@@ -169,9 +159,9 @@ func TestDumpTheMainnetSeed(t *testing.T) {
 	require.NoError(t, err)
 
 	k, ctx := anchoringKeeper(t)
-	state := replayPreseed(t, k, ctx)
+	state := replay(t, k, ctx, preseedEnvVar, defaultPreseed)
 	seedTheExport(t, k, ctx.WithBlockTime(state.SeedTime), readExport(t, dir), limit)
-	replayPostseed(t, k, ctx)
+	replay(t, k, ctx, postseedEnvVar, defaultPostseed)
 	count, err := k.RegistryCount.Get(ctx)
 	require.NoError(t, err)
 	t.Logf("registries %d in all, seeded at %s", count, state.SeedTime)
@@ -198,53 +188,29 @@ func chainTime(t *testing.T, s string) time.Time {
 	return at
 }
 
-// replayPreseed puts back what mainnet held before the seed, from NVNMCHAIN_PRESEED, so the seeded
-// ids carry on from there.
-func replayPreseed(t *testing.T, k anchoringkeeper.Keeper, ctx sdk.Context) preseed {
+// replay puts a fixture's rows through the keeper, each at its own block time.
+func replay(t *testing.T, k anchoringkeeper.Keeper, ctx sdk.Context, envVar, fallback string) fixture {
 	t.Helper()
-	var state preseed
-	readJSON(t, cmp.Or(os.Getenv(preseedEnvVar), defaultPreseed), &state)
+	var state fixture
+	path := cmp.Or(os.Getenv(envVar), fallback)
+	readJSON(t, path, &state)
 	require.NoError(t, k.Params.Set(ctx, types.NewParams(state.Admin)))
-	replay(t, k, ctx, state.Registries, state.Records)
-	t.Logf("preseed    %d registries, %d record versions", len(state.Registries), len(state.Records))
-	return state
-}
 
-// replayPostseed adds what mainnet took after the seed, from NVNMCHAIN_POSTSEED, so the dump
-// holds mainnet as of that fixture's height and not as of the seed.
-func replayPostseed(t *testing.T, k anchoringkeeper.Keeper, ctx sdk.Context) {
-	t.Helper()
-	var state postseed
-	readJSON(t, cmp.Or(os.Getenv(postseedEnvVar), defaultPostseed), &state)
-	replay(t, k, ctx, state.Registries, state.Records)
-
-	for _, u := range state.StatusUpdates {
-		registry, err := k.Registries.Get(ctx, u.RegistryID)
-		require.NoError(t, err)
-		require.NoError(t, k.UpdateRecordStatus(ctx, sdk.MustAccAddressFromBech32(registry.Creator),
-			u.RegistryID, u.RecordID, u.Index, u.Status))
-	}
-	t.Logf("postseed   %d registries, %d record versions, %d status updates",
-		len(state.Registries), len(state.Records), len(state.StatusUpdates))
-}
-
-// replay adds registries and then record versions through the keeper, each row at its own block
-// time. Every value is read back, not just the ids.
-func replay(t *testing.T, k anchoringkeeper.Keeper, ctx sdk.Context, registries []storedRegistry, records []storedVersion) {
-	t.Helper()
-	for _, r := range registries {
-		at := chainTime(t, r.CreatedAt)
-		id, err := k.AddRegistry(ctx.WithBlockTime(at), sdk.MustAccAddressFromBech32(r.Creator),
-			r.Name, r.Description, r.Metadata)
+	for _, r := range state.Registries {
+		id, err := k.AddRegistry(ctx.WithBlockTime(chainTime(t, r.CreatedAt)),
+			sdk.MustAccAddressFromBech32(r.Creator), r.Name, r.Description, r.Metadata)
 		require.NoError(t, err)
 		require.Equal(t, r.ID, id)
 	}
 	// The sender is not stored and mainnet has granted no role, so the registry's creator stands in.
-	for _, r := range records {
-		registry, err := k.Registries.Get(ctx, r.RegistryID)
+	creator := func(registryID uint64) sdk.AccAddress {
+		registry, err := k.Registries.Get(ctx, registryID)
 		require.NoError(t, err)
+		return sdk.MustAccAddressFromBech32(registry.Creator)
+	}
+	for _, r := range state.Records {
 		id, err := k.AddRecord(ctx.WithBlockTime(chainTime(t, r.Stored.Timestamp)),
-			sdk.MustAccAddressFromBech32(registry.Creator), types.Record{
+			creator(r.RegistryID), types.Record{
 				RegistryId:   r.RegistryID,
 				Uri:          r.Stored.Uri,
 				Checksum:     r.Stored.Checksum,
@@ -258,18 +224,25 @@ func replay(t *testing.T, k anchoringkeeper.Keeper, ctx sdk.Context, registries 
 		require.NoError(t, err)
 		require.Equal(t, r.Stored.Index, index)
 	}
+	for _, u := range state.StatusUpdates {
+		require.NoError(t, k.UpdateRecordStatus(ctx, creator(u.RegistryID),
+			u.RegistryID, u.RecordID, u.Index, u.Status))
+	}
 
 	// Every value, not just the ids, has to come out as the chain holds it.
-	for _, r := range registries {
+	for _, r := range state.Registries {
 		got, err := k.Registries.Get(ctx, r.ID)
 		require.NoError(t, err)
 		require.Equal(t, r.registry(), got)
 	}
-	for _, r := range records {
+	for _, r := range state.Records {
 		got, err := k.Records.Get(ctx, collections.Join3(r.RegistryID, r.Stored.RecordID, r.Stored.Index))
 		require.NoError(t, err)
 		require.Equal(t, r.Stored.record(), got)
 	}
+	t.Logf("replayed   %d registries, %d record versions, %d status updates from %s",
+		len(state.Registries), len(state.Records), len(state.StatusUpdates), path)
+	return state
 }
 
 // seedTheExport adds e as the v1.2 seed did, as MainnetRegistryAdmin at ctx's block time:
