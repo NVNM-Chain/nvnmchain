@@ -123,8 +123,9 @@ message QuerySearchRegistriesByNameRequest {
   string name = 1;
   // mode selects exact/prefix/suffix/contains matching. Defaults to EXACT.
   RegistryNameMatchMode mode = 2;
-  // pagination defines an optional pagination for the request. Only offset
-  // and limit are honored; count_total is not supported.
+  // pagination defines an optional pagination for the request. key, offset
+  // and limit are honored, and next_key in the response pages the same way
+  // as Query/Registries; count_total and reverse are not supported.
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 

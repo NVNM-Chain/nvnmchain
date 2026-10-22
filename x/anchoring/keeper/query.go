@@ -279,7 +279,21 @@ func (q queryServer) SearchRegistriesByName(_ context.Context, req *types.QueryS
 	}
 
 	pageReq := sanitizePageRequest(req.Pagination, defaultPageLimit, maxPageLimit)
-	registries, err := q.k.NameIndex.Search(req.Mode, req.Name, pageReq.Limit, pageReq.Offset)
+	// Keys use the Registries collection's id encoding, so a next_key here
+	// has the same shape and meaning as one from Query/Registries: the id of
+	// the first registry on the following page.
+	var start uint64
+	if len(pageReq.Key) != 0 {
+		if pageReq.Offset != 0 {
+			return nil, status.Error(codes.InvalidArgument, "pagination: either offset or key is expected, got both")
+		}
+		n, id, err := collections.Uint64Key.Decode(pageReq.Key)
+		if err != nil || n != len(pageReq.Key) {
+			return nil, status.Error(codes.InvalidArgument, "pagination: invalid key")
+		}
+		start = id
+	}
+	registries, next, err := q.k.NameIndex.Search(req.Mode, req.Name, start, pageReq.Limit, pageReq.Offset)
 	if errors.Is(err, nameindex.ErrContainsTooShort) {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -288,8 +302,14 @@ func (q queryServer) SearchRegistriesByName(_ context.Context, req *types.QueryS
 	}
 
 	var pageRes *query.PageResponse
-	if req.Pagination != nil {
+	if req.Pagination != nil || next != 0 {
 		pageRes = &query.PageResponse{}
+		if next != 0 {
+			pageRes.NextKey = make([]byte, collections.Uint64Key.Size(next))
+			if _, err := collections.Uint64Key.Encode(pageRes.NextKey, next); err != nil {
+				return nil, status.Error(codes.Internal, err.Error())
+			}
+		}
 	}
 	return &types.QuerySearchRegistriesByNameResponse{Registries: registries, Pagination: pageRes}, nil
 }
