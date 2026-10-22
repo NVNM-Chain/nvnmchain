@@ -28,7 +28,7 @@ func openStore(t *testing.T) *Store {
 func queryPlan(t *testing.T, s *Store, mode types.RegistryNameMatchMode, query string) []string {
 	t.Helper()
 	stmt, arg := searchStmt(mode, query)
-	rows, err := s.db.Query("EXPLAIN QUERY PLAN "+stmt, arg, 50, 0)
+	rows, err := s.db.Query("EXPLAIN QUERY PLAN "+stmt, arg, 5, 50, 0)
 	require.NoError(t, err)
 	defer rows.Close()
 

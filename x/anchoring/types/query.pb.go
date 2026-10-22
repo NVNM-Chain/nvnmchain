@@ -497,8 +497,9 @@ type QuerySearchRegistriesByNameRequest struct {
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// mode selects exact/prefix/suffix/contains matching. Defaults to EXACT.
 	Mode RegistryNameMatchMode `protobuf:"varint,2,opt,name=mode,proto3,enum=nvnmchain.anchoring.v1.RegistryNameMatchMode" json:"mode,omitempty"`
-	// pagination defines an optional pagination for the request. Only offset
-	// and limit are honored; count_total is not supported.
+	// pagination defines an optional pagination for the request. key, offset
+	// and limit are honored, and next_key in the response pages the same way
+	// as Query/Registries; count_total and reverse are not supported.
 	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 

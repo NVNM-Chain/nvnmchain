@@ -190,17 +190,18 @@ func (b *Batch) Close() {
 }
 
 // searchStmt builds the statement Search runs for mode. The lowercased query
-// is folded into the single bound pattern argument; LIMIT and OFFSET are bound
-// after it by the caller. It is separate from Search so tests can EXPLAIN the
-// exact statement and pin which index serves each mode.
+// is folded into the single bound pattern argument; the start id, LIMIT and
+// OFFSET are bound after it by the caller. It is separate from Search so
+// tests can EXPLAIN the exact statement and pin which index serves each mode.
 func searchStmt(mode types.RegistryNameMatchMode, lower string) (stmt, arg string) {
 	var where string
 	switch mode {
 	case types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS:
-		// FTS5 serves ORDER BY rowid natively, so the page comes straight
-		// off the trigram index and each hit is one primary-key lookup.
-		return `SELECT r.data FROM registries_fts f JOIN registries r ON r.id = f.rowid ` +
-			`WHERE f.name_lower MATCH ? ORDER BY f.rowid LIMIT ? OFFSET ?`, ftsPhrase(lower)
+		// FTS5 serves ORDER BY rowid and a rowid lower bound natively, so the
+		// page comes straight off the trigram index and each hit is one
+		// primary-key lookup.
+		return `SELECT r.id, r.data FROM registries_fts f JOIN registries r ON r.id = f.rowid ` +
+			`WHERE f.name_lower MATCH ? AND f.rowid >= ? ORDER BY f.rowid LIMIT ? OFFSET ?`, ftsPhrase(lower)
 	case types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_PREFIX:
 		where, arg = `name_lower LIKE ? ESCAPE '\'`, escapeLike(lower)+"%"
 	case types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_SUFFIX:
@@ -208,46 +209,58 @@ func searchStmt(mode types.RegistryNameMatchMode, lower string) (stmt, arg strin
 	default: // EXACT; also UNSPECIFIED and any out-of-range value
 		where, arg = `name_lower = ?`, lower
 	}
-	return `SELECT data FROM registries WHERE ` + where + ` ORDER BY id LIMIT ? OFFSET ?`, arg
+	return `SELECT id, data FROM registries WHERE ` + where + ` AND id >= ? ORDER BY id LIMIT ? OFFSET ?`, arg
 }
 
-// Search returns registries whose name matches query under mode, ordered by
-// id, applying a plain offset/limit page. Matching is always
-// case-insensitive. A CONTAINS query shorter than MinContainsQueryLen
-// characters returns ErrContainsTooShort.
-func (s *Store) Search(mode types.RegistryNameMatchMode, query string, limit, offset uint64) ([]*types.Registry, error) {
+// Search returns up to limit registries whose name matches query under mode,
+// ordered by id, starting at the first match with id >= start and then
+// skipping offset matches. Matching is always case-insensitive. A CONTAINS
+// query shorter than MinContainsQueryLen characters returns
+// ErrContainsTooShort.
+//
+// next is the id of the first match after the page, to pass back as start
+// for the following page, or 0 when the page is the last one. Registry ids
+// start at 1, so a start of 0 means "from the beginning".
+func (s *Store) Search(mode types.RegistryNameMatchMode, query string, start, limit, offset uint64) (results []*types.Registry, next uint64, err error) {
 	if mode == types.RegistryNameMatchMode_REGISTRY_NAME_MATCH_MODE_CONTAINS && utf8.RuneCountInString(query) < MinContainsQueryLen {
-		return nil, ErrContainsTooShort
+		return nil, 0, ErrContainsTooShort
 	}
 	stmt, arg := searchStmt(mode, strings.ToLower(query))
 
 	// database/sql rejects uint64 values above MaxInt64. Anything that large
 	// is past the end of any index, so clamp rather than fail the query.
-	limit = min(limit, math.MaxInt64)
+	// limit leaves room for the one extra row that tells us whether there is
+	// a next page.
+	start = min(start, math.MaxInt64)
+	limit = min(limit, math.MaxInt64-1)
 	offset = min(offset, math.MaxInt64)
 
-	rows, err := s.db.Query(stmt, arg, int64(limit), int64(offset))
+	rows, err := s.db.Query(stmt, arg, int64(start), int64(limit)+1, int64(offset))
 	if err != nil {
-		return nil, fmt.Errorf("nameindex: search: %w", err)
+		return nil, 0, fmt.Errorf("nameindex: search: %w", err)
 	}
 	defer rows.Close()
 
-	var results []*types.Registry
 	for rows.Next() {
+		var id uint64
 		var data []byte
-		if err := rows.Scan(&data); err != nil {
-			return nil, fmt.Errorf("nameindex: scan: %w", err)
+		if err := rows.Scan(&id, &data); err != nil {
+			return nil, 0, fmt.Errorf("nameindex: scan: %w", err)
+		}
+		if uint64(len(results)) == limit {
+			next = id
+			break
 		}
 		reg := &types.Registry{}
 		if err := s.cdc.Unmarshal(data, reg); err != nil {
-			return nil, fmt.Errorf("nameindex: decode registry: %w", err)
+			return nil, 0, fmt.Errorf("nameindex: decode registry: %w", err)
 		}
 		results = append(results, reg)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("nameindex: search: %w", err)
+		return nil, 0, fmt.Errorf("nameindex: search: %w", err)
 	}
-	return results, nil
+	return results, next, nil
 }
 
 // escapeLike escapes the LIKE metacharacters in a literal so the query only

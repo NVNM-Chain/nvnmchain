@@ -279,7 +279,20 @@ func (q queryServer) SearchRegistriesByName(_ context.Context, req *types.QueryS
 	}
 
 	pageReq := sanitizePageRequest(req.Pagination, defaultPageLimit, maxPageLimit)
-	registries, err := q.k.NameIndex.Search(req.Mode, req.Name, pageReq.Limit, pageReq.Offset)
+	// Keys use the Registries collection's id encoding, so a next_key here
+	// has the same shape and meaning as one from Query/Registries: the id of
+	// the first registry on the following page.
+	var start uint64
+	if len(pageReq.Key) != 0 {
+		if pageReq.Offset != 0 {
+			return nil, status.Error(codes.InvalidArgument, "pagination: either offset or key is expected, got both")
+		}
+		if len(pageReq.Key) != 8 {
+			return nil, status.Error(codes.InvalidArgument, "pagination: invalid key")
+		}
+		start = sdk.BigEndianToUint64(pageReq.Key)
+	}
+	registries, next, err := q.k.NameIndex.Search(req.Mode, req.Name, start, pageReq.Limit, pageReq.Offset)
 	if errors.Is(err, nameindex.ErrContainsTooShort) {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -288,8 +301,11 @@ func (q queryServer) SearchRegistriesByName(_ context.Context, req *types.QueryS
 	}
 
 	var pageRes *query.PageResponse
-	if req.Pagination != nil {
+	if req.Pagination != nil || next != 0 {
 		pageRes = &query.PageResponse{}
+	}
+	if next != 0 {
+		pageRes.NextKey = sdk.Uint64ToBigEndian(next)
 	}
 	return &types.QuerySearchRegistriesByNameResponse{Registries: registries, Pagination: pageRes}, nil
 }
