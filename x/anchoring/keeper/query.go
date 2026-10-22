@@ -287,11 +287,10 @@ func (q queryServer) SearchRegistriesByName(_ context.Context, req *types.QueryS
 		if pageReq.Offset != 0 {
 			return nil, status.Error(codes.InvalidArgument, "pagination: either offset or key is expected, got both")
 		}
-		n, id, err := collections.Uint64Key.Decode(pageReq.Key)
-		if err != nil || n != len(pageReq.Key) {
+		if len(pageReq.Key) != 8 {
 			return nil, status.Error(codes.InvalidArgument, "pagination: invalid key")
 		}
-		start = id
+		start = sdk.BigEndianToUint64(pageReq.Key)
 	}
 	registries, next, err := q.k.NameIndex.Search(req.Mode, req.Name, start, pageReq.Limit, pageReq.Offset)
 	if errors.Is(err, nameindex.ErrContainsTooShort) {
@@ -304,12 +303,9 @@ func (q queryServer) SearchRegistriesByName(_ context.Context, req *types.QueryS
 	var pageRes *query.PageResponse
 	if req.Pagination != nil || next != 0 {
 		pageRes = &query.PageResponse{}
-		if next != 0 {
-			pageRes.NextKey = make([]byte, collections.Uint64Key.Size(next))
-			if _, err := collections.Uint64Key.Encode(pageRes.NextKey, next); err != nil {
-				return nil, status.Error(codes.Internal, err.Error())
-			}
-		}
+	}
+	if next != 0 {
+		pageRes.NextKey = sdk.Uint64ToBigEndian(next)
 	}
 	return &types.QuerySearchRegistriesByNameResponse{Registries: registries, Pagination: pageRes}, nil
 }
