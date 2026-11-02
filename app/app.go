@@ -223,7 +223,7 @@ var maccPerms = map[string][]string{
 	anchoringtypes.ModuleName: nil,
 }
 
-var Upgrades = []upgrades.Upgrade{v1_3.Upgrade}
+var Upgrades = []upgrades.Upgrade{v1_3.Upgrade, v1_3.UpgradeV131}
 
 var (
 	_ runtime.AppI            = (*App)(nil)
