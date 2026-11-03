@@ -18,7 +18,7 @@ func CreateUpgradeHandler(
 ) upgradetypes.UpgradeHandler {
 	return func(c context.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
 		ctx := sdk.UnwrapSDKContext(c)
-		ctx.Logger().Info("Starting v1.3.0 upgrade...")
+		ctx.Logger().Info("Starting upgrade...", "name", plan.Name)
 
 		ctx.Logger().Info("Running module migrations...")
 		vm, err := mm.RunMigrations(ctx, configurator, vm)
@@ -26,7 +26,7 @@ func CreateUpgradeHandler(
 			return vm, err
 		}
 
-		ctx.Logger().Info("Upgrade v1.3.0 complete")
+		ctx.Logger().Info("Upgrade complete", "name", plan.Name)
 		return vm, nil
 	}
 }
