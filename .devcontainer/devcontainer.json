@@ -1,5 +1,5 @@
 {
 	"name": "NVNM Chain Dev Container",
-	"image": "mcr.microsoft.com/devcontainers/go:1-1.24-bookworm",
+	"image": "mcr.microsoft.com/devcontainers/go:2-1.26-bookworm",
 	"postCreateCommand": "curl https://get.ignite.com/cli | bash && mv ignite /usr/local/go/bin"
 }

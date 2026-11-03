@@ -59,3 +59,5 @@ jobs:
           git-ref: ${{ github.event.inputs.release_tag || github.ref_name }}
           registry: ghcr.io/${{ env.OWNER_LC }}
           skip: ${{ github.event_name == 'pull_request' }}
+          # heighliner defaults to alpine3.21, which has no go1.26 golang image
+          additional-args: --alpine-version 3.23
