@@ -187,6 +187,7 @@ release:
 	docker run \
 		--rm \
 		-e GITHUB_TOKEN=$(GITHUB_TOKEN) \
+		-e GOTOOLCHAIN=auto \
 		-e CMT_VERSION=$(CMT_VERSION) \
 		-e REPO_OWNER=$(REPO_OWNER) \
 		-e REPO_NAME=$(REPO_NAME) \
@@ -203,9 +204,11 @@ endif
 
 # uses goreleaser to create static binaries for linux and darwin on local machine
 # platform is set because not setting it results in broken builds for linux-amd64
+# GOTOOLCHAIN=auto overrides the images' GOTOOLCHAIN=local so go fetches the go.mod version
 goreleaser-build-local:
 	docker run \
 		--rm \
+		-e GOTOOLCHAIN=auto \
 		-e CMT_VERSION=$(CMT_VERSION) \
 		-e REPO_OWNER=$(REPO_OWNER) \
 		-e REPO_NAME=$(REPO_NAME) \
