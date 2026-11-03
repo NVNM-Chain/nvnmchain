@@ -63,6 +63,7 @@ func initRootCmd(
 		pruning.Cmd(sdkAppCreator, app.DefaultNodeHome),
 		confixcmd.ConfigCommand(),
 		snapshot.Cmd(sdkAppCreator),
+		upgradeHandlersCommand(),
 	)
 
 	// add server commands
