@@ -15,6 +15,8 @@ func upgradeHandlersCommand() *cobra.Command {
 		Use:   "upgrade-handlers",
 		Short: "List the upgrade plan names this binary has handlers for",
 		Args:  cobra.NoArgs,
+		// only reads this process, so skip the root's config and home interception
+		PersistentPreRunE: func(*cobra.Command, []string) error { return nil },
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			names := make([]string, len(app.Upgrades))
 			for i, u := range app.Upgrades {
