@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG GO_VERSION="1.24.12"
+ARG GO_VERSION="1.26.10"
 ARG IMG_TAG="latest"
 ARG BUILD_TAGS="netgo,ledger,muslc"
 
