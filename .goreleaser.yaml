@@ -174,7 +174,7 @@ release:
 
     ````bash
     git clone https://github.com/{{ .Env.REPO_OWNER }}/{{ .Env.REPO_NAME }}
-    cd nvnmchain && git checkout v{{ .Version }}
+    cd {{ .Env.REPO_NAME }} && git checkout v{{ .Version }}
     make install
     ````
 

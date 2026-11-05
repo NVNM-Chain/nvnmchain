@@ -1,7 +1,7 @@
 # Nvnmchain
-- name: nvnmchain
+- name: nvnmlayer2
   github-organization: NVNM-Chain
-  github-repo: nvnmchain
+  github-repo: nvnmlayer2
   dockerfile: cosmos
   build-target: |
     LEDGER_ENABLED=true BUILD_TAGS='muslc osusergo' LINK_STATICALLY=true make build

@@ -48,7 +48,7 @@ jobs:
 
       - uses: strangelove-ventures/heighliner-build-action@main
         with:
-          chain: nvnmchain
+          chain: nvnmlayer2
           chains-spec-file: chains.yaml
           clone-key: ${{ secrets.GIT_CLONE_KEY }}
           # Switch to the original heighliner owner and tag for the build after https://github.com/amygdala-labs/heighliner/pull/345 is merged

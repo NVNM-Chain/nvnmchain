@@ -64,8 +64,8 @@ Parameters (governable):
 ### Installation
 
 ```bash
-git clone https://github.com/NVNM-Chain/nvnmchain.git
-cd nvnmchain
+git clone https://github.com/NVNM-Chain/nvnmlayer2.git
+cd nvnmlayer2
 make install
 ```
 
