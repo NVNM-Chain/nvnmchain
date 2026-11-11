@@ -22,7 +22,7 @@ func TestTheSeedMatchesTheExport(t *testing.T) {
 	}
 
 	k, ctx := anchoringKeeper(t)
-	state := replayPreseed(t, k, ctx)
+	state := replay(t, k, ctx, preseedEnvVar, defaultPreseed)
 	seedCtx := ctx.WithBlockTime(state.SeedTime)
 	e := readExport(t, dir)
 	ids := seedTheExport(t, k, seedCtx, e, 0)
